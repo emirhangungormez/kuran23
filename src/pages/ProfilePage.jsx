@@ -27,8 +27,8 @@ export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState('son')
     const { settings, updateSettings, toggleAuthor } = useSettings();
     const { canAccessUsageAnalytics, remainingAdsToUnlock } = useSupporter()
-    const { user, isLoggedIn, authFetch } = useAuth()
-    const userId = user?.id || settings?.userId || 1;
+    const { user, isLoggedIn, changePassword } = useAuth()
+    const userId = user?.id || settings?.userId || '';
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false)
     const [availableTranslations, setAvailableTranslations] = useState([])
     const [showIconModal, setShowIconModal] = useState(false)
@@ -173,20 +173,12 @@ export default function ProfilePage() {
         setIsPasswordLoading(true)
         setPasswordStatus({ type: '', message: '' })
         try {
-            const response = await authFetch('/api/auth.php?action=change-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    old_password: passwordData.old,
-                    new_password: passwordData.new
-                })
-            })
-            const data = await response.json()
-            if (data.success) {
+            const result = await changePassword(passwordData.old, passwordData.new)
+            if (result.success) {
                 setPasswordStatus({ type: 'success', message: 'Şifreniz başarıyla güncellendi.' })
                 setPasswordData({ old: '', new: '' })
             } else {
-                setPasswordStatus({ type: 'error', message: data.error || 'Bir hata oluştu.' })
+                setPasswordStatus({ type: 'error', message: result.error || 'Bir hata oluştu.' })
             }
         } catch (err) {
             setPasswordStatus({ type: 'error', message: 'Sunucuyla bağlantı kurulamadı.' })

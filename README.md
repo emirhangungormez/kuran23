@@ -45,3 +45,18 @@ npm run dev
 
 ---
 *Geliştirme Notu: Proje tasarımı Apple Glassmorphism estetiği ve Apple Human Interface Guidelines'dan ilham alınarak hazırlanmıştır.*
+## Supabase Migration (MySQL -> PostgreSQL)
+1. Add migration vars from `.env.example` into your `.env`.
+2. Dry-run first:
+```bash
+npm run migrate:supabase:dry
+```
+3. Run actual migration:
+```bash
+npm run migrate:supabase
+```
+4. To auto-create missing `auth.users` records from legacy users:
+```bash
+$env:MIGRATION_CREATE_MISSING_AUTH='true'; npm run migrate:supabase
+```
+5. Migration report is written to: `supabase/migrations/reports/*.json`

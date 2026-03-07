@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+﻿import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useAuth } from './AuthContext'
 import { getArabicFontFamily, getArabicPrimaryFont } from '../utils/typography'
+import { supabase } from '../infrastructure/supabaseClient'
 
 const SettingsContext = createContext()
 
@@ -35,7 +36,7 @@ export function SettingsProvider({ children }) {
             if (!saved) return defaults
             const parsed = JSON.parse(saved)
             return { ...defaults, ...parsed }
-        } catch (e) {
+        } catch {
             return defaults
         }
     })
@@ -54,16 +55,37 @@ export function SettingsProvider({ children }) {
         return () => document.removeEventListener('playerVisible', handlePlayerVisible)
     }, [])
 
-    // Update settings when user logs in/out
+    // Update and hydrate settings when user logs in
     useEffect(() => {
-        if (user) {
-            updateSettings({
-                userName: user.full_name || user.username,
-                userBio: user.bio || 'Kuran-ı Kerim okuyucusu',
-                profileIcon: user.profile_icon || 'muessis',
-                hatimCount: user.hatim_count || 0
-            })
+        let active = true
+
+        const hydrate = async () => {
+            if (!user?.id) return
+
+            const { data } = await supabase
+                .from('user_settings')
+                .select('settings_json')
+                .eq('user_id', user.id)
+                .maybeSingle()
+
+            if (!active) return
+
+            const remoteSettings = data?.settings_json && typeof data.settings_json === 'object'
+                ? data.settings_json
+                : {}
+
+            setSettings(prev => ({
+                ...prev,
+                ...remoteSettings,
+                userName: user.full_name || user.username || prev.userName,
+                userBio: user.bio || prev.userBio || 'Kuran-ı Kerim okuyucusu',
+                profileIcon: user.profile_icon || prev.profileIcon || 'muessis',
+                hatimCount: user.hatim_count || prev.hatimCount || 0
+            }))
         }
+
+        hydrate()
+        return () => { active = false }
     }, [user])
 
     // LocalStorage sync
@@ -79,18 +101,18 @@ export function SettingsProvider({ children }) {
         }
     }, [settings])
 
-    // Backend sync
+    // Supabase sync
     useEffect(() => {
-        if (user) {
-            const timer = setTimeout(() => {
-                fetch(`/api/sync.php?action=sync_settings&user_id=${user.id}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ settings })
-                })
-            }, 2000) // Debounce sync
-            return () => clearTimeout(timer)
-        }
+        if (!user?.id) return undefined
+        const timer = setTimeout(() => {
+            supabase
+                .from('user_settings')
+                .upsert({
+                    user_id: user.id,
+                    settings_json: settings
+                }, { onConflict: 'user_id' })
+        }, 2000)
+        return () => clearTimeout(timer)
     }, [settings, user])
 
     const updateSettings = useCallback((updates) => {

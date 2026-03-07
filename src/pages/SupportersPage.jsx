@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+﻿import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import GlobalNav from '../components/GlobalNav'
-import { API_BASE } from '../services/api'
 import { getProfileIcon } from '../data/profileIcons'
+import { supabase } from '../infrastructure/supabaseClient'
 import './SupportersPage.css'
 
 const PINNED_CONTRIBUTORS = [
@@ -16,12 +16,11 @@ const PINNED_CONTRIBUTORS = [
 ]
 
 async function fetchContributors() {
-    const res = await fetch(`${API_BASE}/supporters.php?action=contributors&limit=160`)
-    const data = await res.json()
-    if (!res.ok || !data?.success) {
-        throw new Error(data?.error || 'Teşekkür listesi yüklenemedi.')
+    const { data, error } = await supabase.rpc('get_supporter_contributors', { p_limit: 160 })
+    if (error) {
+        throw new Error(error.message || 'Teşekkür listesi yüklenemedi.')
     }
-    return data.contributors || []
+    return data || []
 }
 
 export default function SupportersPage() {
@@ -40,7 +39,7 @@ export default function SupportersPage() {
         const source = [...PINNED_CONTRIBUTORS, ...contributors]
         const seen = new Set()
         return source.filter((row) => {
-            const key = Number(row.user_id || 0) || renderName(row).toLowerCase()
+            const key = String(row.user_id || '').trim() || renderName(row).toLowerCase()
             if (seen.has(key)) return false
             seen.add(key)
             return true

@@ -19,55 +19,55 @@
 
 @font-face {
   font-family: 'KFGQPCUthmanTN';
-  src: url('/api/font_proxy.php?font=KFGQPCUthmanTN') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCUthmanTNBold';
-  src: url('/api/font_proxy.php?font=KFGQPCUthmanTNBold') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCDotNaskh';
-  src: url('/api/font_proxy.php?font=KFGQPCDotNaskh') format('opentype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCKufi';
-  src: url('/api/font_proxy.php?font=KFGQPCKufi') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCKufiExtended';
-  src: url('/api/font_proxy.php?font=KFGQPCKufiExtended') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCAnRegular';
-  src: url('/api/font_proxy.php?font=KFGQPCAnRegular') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCAnBold';
-  src: url('/api/font_proxy.php?font=KFGQPCAnBold') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCKSARegular';
-  src: url('/api/font_proxy.php?font=KFGQPCKSARegular') format('truetype');
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'KFGQPCKingdom2';
-  src: url('/api/font_proxy.php?font=KFGQPCKingdom2') format('opentype');
+  src: url('/fonts/acikkuran-uthmanic.woff2') format('woff2');
   font-display: swap;
 }
 

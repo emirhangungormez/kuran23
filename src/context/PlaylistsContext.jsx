@@ -1,79 +1,107 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { API_BASE } from '../services/api';
+﻿import { createContext, useContext, useState, useEffect } from 'react'
+import { supabase } from '../infrastructure/supabaseClient'
 
-const PlaylistsContext = createContext();
+const PlaylistsContext = createContext()
 
 export function usePlaylists() {
-    return useContext(PlaylistsContext);
+    return useContext(PlaylistsContext)
 }
 
 export function PlaylistsProvider({ userId, children }) {
-    const [playlists, setPlaylists] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [activePlaylistId, setActivePlaylistId] = useState(null);
+    const [playlists, setPlaylists] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [activePlaylistId, setActivePlaylistId] = useState(null)
 
-    // Playlistleri API'den çek
     const fetchPlaylists = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(`${API_BASE}/playlists.php?user_id=${userId}&t=${Date.now()}`);
-            const data = await res.json();
-            if (!res.ok || data?.error) {
-                throw new Error(data?.error || 'Playlistler yüklenemedi.');
-            }
-            setPlaylists(data.playlists || []);
-        } catch (e) {
-            setPlaylists([]);
-        } finally {
-            setLoading(false);
+        if (!userId) {
+            setPlaylists([])
+            return
         }
-    };
+
+        setLoading(true)
+        try {
+            const { data, error } = await supabase
+                .from('user_playlists')
+                .select('id,user_id,name,items_json,created_at,updated_at')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: false })
+
+            if (error) throw error
+
+            setPlaylists((data || []).map((pl) => ({
+                ...pl,
+                items: Array.isArray(pl.items_json) ? pl.items_json : (pl.items_json || [])
+            })))
+        } catch {
+            setPlaylists([])
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
-        if (userId) fetchPlaylists();
-    }, [userId]);
+        if (userId) fetchPlaylists()
+        else setPlaylists([])
+    }, [userId])
 
-    // Playlist oluştur/güncelle
     const savePlaylist = async (playlist) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`${API_BASE}/playlists.php?user_id=${userId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(playlist),
-            });
-            const data = await res.json();
-            if (!res.ok || data?.error || data?.success === false) {
-                throw new Error(data?.error || 'Liste kaydedilemedi.');
-            }
-            await fetchPlaylists();
-            return data;
-        } catch (error) {
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
+        if (!userId) throw new Error('Giriş yapmanız gerekiyor.')
 
-    // Playlist sil
-    const deletePlaylist = async (id) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const res = await fetch(`${API_BASE}/playlists.php?user_id=${userId}&id=${id}`, {
-                method: 'DELETE',
-            });
-            const data = await res.json();
-            if (!res.ok || data?.error || data?.success === false) {
-                throw new Error(data?.error || 'Liste silinemedi.');
+            if (playlist?.id) {
+                const { error } = await supabase
+                    .from('user_playlists')
+                    .update({
+                        name: String(playlist.name || '').trim(),
+                        items_json: playlist.items || []
+                    })
+                    .eq('id', playlist.id)
+                    .eq('user_id', userId)
+
+                if (error) throw error
+            } else {
+                const { error } = await supabase
+                    .from('user_playlists')
+                    .insert({
+                        user_id: userId,
+                        name: String(playlist?.name || '').trim(),
+                        items_json: playlist?.items || []
+                    })
+
+                if (error) throw error
             }
-            await fetchPlaylists();
-            return data;
+
+            await fetchPlaylists()
+            return { success: true }
         } catch (error) {
-            throw error;
+            throw new Error(error?.message || 'Liste kaydedilemedi.')
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
+
+    const deletePlaylist = async (id) => {
+        if (!userId) throw new Error('Giriş yapmanız gerekiyor.')
+
+        setLoading(true)
+        try {
+            const { error } = await supabase
+                .from('user_playlists')
+                .delete()
+                .eq('id', id)
+                .eq('user_id', userId)
+
+            if (error) throw error
+
+            await fetchPlaylists()
+            return { success: true }
+        } catch (error) {
+            throw new Error(error?.message || 'Liste silinemedi.')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <PlaylistsContext.Provider value={{
@@ -87,5 +115,5 @@ export function PlaylistsProvider({ userId, children }) {
         }}>
             {children}
         </PlaylistsContext.Provider>
-    );
+    )
 }
