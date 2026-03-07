@@ -892,4 +892,87 @@
     }
 }
 
+/* Mobile-first visual polish */
+@media (max-width: 768px) {
+    .home {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .search-area {
+        padding: 28px 0 20px;
+    }
+
+    .search-header {
+        margin-bottom: 18px;
+    }
+
+    .search-main-logo {
+        height: 64px;
+        margin-bottom: 8px;
+    }
+
+    .search-subtitle {
+        font-size: 13px;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
+
+    .search-input {
+        min-height: 52px;
+        border-radius: 16px;
+        font-size: 16px;
+        padding-left: 46px;
+        padding-right: 82px;
+    }
+
+    .home-content {
+        width: 100%;
+    }
+
+    .home-sections-grid {
+        gap: 22px;
+    }
+
+    .popular-section {
+        margin-bottom: 30px;
+    }
+
+    .popular-grid {
+        gap: 10px;
+    }
+
+    .popular-card {
+        border-radius: 14px;
+        padding: 12px 13px;
+    }
+
+    .popular-name-ar {
+        font-size: 20px;
+    }
+
+    .horizontal-topics {
+        gap: 8px;
+        padding-bottom: 2px;
+    }
+}
+
+@media (max-width: 420px) {
+    .search-main-logo {
+        height: 58px;
+    }
+
+    .search-input {
+        min-height: 50px;
+        font-size: 15px;
+    }
+
+    .popular-card {
+        gap: 12px;
+        padding: 11px 12px;
+    }
+}
+
 

@@ -740,4 +740,88 @@
     }
 }
 
+@media (max-width: 768px) {
+    .verse-page-header {
+        padding: 16px 2px 10px;
+    }
+
+    .verse-page-ref {
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+
+    .verse-page-arabic {
+        font-size: 34px;
+        line-height: 2.1;
+        margin-bottom: 8px;
+    }
+
+    .verse-page-transcription {
+        font-size: 13px;
+    }
+
+    .verse-tabs,
+    .tafsir-subtabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        border-radius: 14px;
+        padding: 5px;
+    }
+
+    .verse-tabs::-webkit-scrollbar,
+    .tafsir-subtabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .verse-tab,
+    .tafsir-subtab {
+        flex: 0 0 auto;
+        min-width: max-content;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+
+    .verse-meal-card {
+        padding: 14px 0;
+    }
+
+    .verse-meal-text {
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .tafsir-card {
+        padding: 6px 2px 0;
+    }
+
+    .tafsir-html {
+        font-size: 15px;
+        line-height: 1.85;
+    }
+
+    .tafsir-html h2,
+    .tafsir-html h3,
+    .tafsir-html h4 {
+        margin-top: 22px;
+        margin-bottom: 10px;
+        font-size: 19px;
+    }
+
+    .tafsir-html h3 {
+        font-size: 17px;
+    }
+
+    .tafsir-html h4 {
+        font-size: 16px;
+    }
+
+    .tafsir-html p {
+        margin-bottom: 14px;
+        text-align: left;
+    }
+}
+
 

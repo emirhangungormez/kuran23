@@ -569,4 +569,73 @@
     }
 }
 
+@media (max-width: 768px) {
+    .surah-tabs,
+    .surah-info-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 5px;
+        border-radius: 14px;
+    }
+
+    .surah-tabs::-webkit-scrollbar,
+    .surah-info-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .surah-tab,
+    .surah-info-subtab {
+        flex: 0 0 auto;
+        min-width: max-content;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+
+    .surah-info-subtab {
+        font-size: 12px;
+    }
+
+    .verse-list-page {
+        gap: 10px;
+    }
+
+    .verse-row {
+        border: 1px solid var(--separator-light);
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--card-bg) 94%, transparent);
+    }
+
+    .surah-info-card {
+        padding: 6px 2px 2px;
+    }
+
+    .surah-info-html {
+        font-size: 15px;
+        line-height: 1.85;
+    }
+
+    .surah-info-html h2,
+    .surah-info-html h3 {
+        margin-top: 24px;
+        margin-bottom: 12px;
+        font-size: 19px;
+    }
+
+    .surah-info-html h3 {
+        font-size: 17px;
+    }
+
+    .surah-info-html p {
+        margin-bottom: 14px;
+        text-align: left;
+    }
+
+    .surah-info-html li {
+        margin-bottom: 10px;
+    }
+}
+
 

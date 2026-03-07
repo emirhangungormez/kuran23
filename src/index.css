@@ -1005,5 +1005,49 @@ button {
   color: var(--text-secondary);
 }
 
+/* Mobile design refresh */
+@media (max-width: 900px) {
+  :root {
+    --mobile-gutter: 14px;
+    --mobile-nav-height: 84px;
+  }
+
+  .app-layout.has-mobile-nav .content-area {
+    padding-bottom: calc(var(--mobile-nav-height) + 16px + env(safe-area-inset-bottom));
+  }
+
+  .app-layout.has-mobile-nav .site-footer {
+    padding-bottom: calc(var(--mobile-nav-height) + 20px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    background:
+      radial-gradient(circle at 50% -12%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+      var(--bg);
+  }
+
+  .page,
+  .home {
+    padding: calc(64px + env(safe-area-inset-top)) var(--mobile-gutter, 14px) 20px !important;
+  }
+
+  .page-content {
+    max-width: 100%;
+  }
+
+  .global-nav {
+    position: sticky;
+    top: 0;
+    height: 58px;
+    padding: 0 var(--mobile-gutter, 14px);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    border-bottom: 1px solid var(--separator-light);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  }
+}
+
 
 
