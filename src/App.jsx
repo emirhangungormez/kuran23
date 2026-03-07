@@ -25,6 +25,7 @@ import Footer from './components/Footer'
 import SupportAdPrompt from './components/SupportAdPrompt'
 import { SupporterProvider } from './contexts/SupporterContext'
 import { useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 
 function GlobalPlayerWrapper() {
@@ -155,6 +156,7 @@ function App() {
             <SettingsProvider>
               <BookmarksProvider>
                 <AppContent />
+                <Analytics />
               </BookmarksProvider>
             </SettingsProvider>
           </SupporterProvider>
