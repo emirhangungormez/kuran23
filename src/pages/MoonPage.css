@@ -1,0 +1,288 @@
+.moon-page-standard {
+    min-height: 100vh;
+    background: var(--bg);
+    transition: background 0.3s var(--ease);
+}
+
+/* Ensure pure black for Moon in Dark Mode */
+[data-theme='dark'] .moon-page-standard {
+    background: #000;
+}
+
+/* Global Nav Fixes */
+.moon-page-standard .global-nav {
+    background: transparent !important;
+    border-bottom: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+[data-theme='dark'] .moon-page-standard .global-nav {
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+.moon-page-standard .page-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-top: 0;
+}
+
+/* Hero Section */
+.moon-standard-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    margin: 40px 0 34px;
+    text-align: center;
+}
+
+.moon-visual-focus {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Moon Circle */
+.moon-nasa-wrapper {
+    width: 340px;
+    height: 340px;
+    position: relative;
+    transition: all 0.5s var(--ease);
+}
+
+.moon-mask-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #000;
+    box-shadow: none;
+    position: relative;
+    z-index: 2;
+}
+
+.moon-mask-circle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    /* Soften edge/rim coming from source frame */
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.85);
+    pointer-events: none;
+    z-index: 3;
+}
+
+.moon-mask-circle img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(1.12);
+    image-rendering: auto;
+}
+
+.moon-glow-aura {
+    position: absolute;
+    inset: -30px;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    opacity: 0.1;
+    z-index: 1;
+    animation: moonBreathe 5s infinite alternate ease-in-out;
+}
+
+@keyframes moonBreathe {
+    from {
+        transform: scale(0.9);
+        opacity: 0.05;
+    }
+
+    to {
+        transform: scale(1.1);
+        opacity: 0.15;
+    }
+}
+
+/* Date Navigator */
+.moon-date-navigator {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--fill);
+    padding: 10px 24px;
+    border-radius: 16px;
+    border: 1px solid var(--separator-light);
+    margin-top: 38px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    background: var(--fill-hover);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.nav-current {
+    text-align: center;
+    cursor: pointer;
+    min-width: 130px;
+    user-select: none;
+}
+
+.nav-date-text {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.nav-date-sub {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.nav-label-today {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+    display: block;
+}
+
+/* Title Block */
+.moon-title-block {
+    margin-top: -4px;
+    margin-bottom: -2px;
+}
+
+.moon-main-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-top: 12px;
+}
+
+.moon-page-standard .verse-page-header {
+    padding: 14px 0 10px;
+}
+
+.moon-page-standard .verse-page-arabic {
+    margin-bottom: 4px;
+}
+
+.moon-page-standard .section-divider {
+    margin: 12px 0;
+}
+
+.moon-page-standard .verse-meal-card {
+    padding: 12px 0 10px;
+}
+
+/* Stats Table */
+.moon-stats-table {
+    margin-top: 18px;
+    border: 1px solid var(--separator-light);
+    border-radius: 14px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--fill) 88%, transparent);
+}
+
+.moon-stats-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.moon-stats-row:last-child {
+    border-bottom: none;
+}
+
+.moon-stats-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.moon-stats-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.moon-audio-controls {
+    border-radius: 10px;
+}
+
+.moon-page-standard .surah-audio-btn {
+    border-radius: 8px;
+}
+
+.moon-page-standard .surah-audio-btn:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.moon-verse-link-btn {
+    text-decoration: none;
+}
+
+.moon-audio-notice {
+    margin: -8px 0 14px;
+    text-align: center;
+    color: #ffb4a8;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Keep black footer only in dark theme on Moon View */
+[data-theme='dark'] .app-layout:has(.is-moon-view) .site-footer {
+    background: #000 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme='dark'] .app-layout:has(.is-moon-view) .site-footer p,
+[data-theme='dark'] .app-layout:has(.is-moon-view) .site-footer .dev-link,
+[data-theme='dark'] .app-layout:has(.is-moon-view) .site-footer .footer-link {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+@media (max-width: 768px) {
+    .moon-nasa-wrapper {
+        width: 280px;
+        height: 280px;
+    }
+
+    .moon-main-title {
+        font-size: 26px;
+    }
+
+    .moon-stats-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .moon-stats-value {
+        text-align: left;
+    }
+}

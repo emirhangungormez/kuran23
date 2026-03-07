@@ -1,0 +1,175 @@
+﻿/* IOS-Style Recent Surahs Card */
+.surahs-section {
+    animation-delay: 0.1s;
+}
+
+/* Grid Layout */
+.surah-grid {
+    display: grid;
+    /* Two columns as shown in the image */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* Card Container */
+.rs-ios-card {
+    background: white;
+    border: 1px solid var(--separator);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    text-decoration: none;
+    animation: fadeUp 0.5s var(--ease) both;
+    min-height: 80px;
+}
+
+.rs-ios-card:hover {
+    border-color: rgba(60, 60, 67, 0.25);
+    /* Slightly darker border for contrast */
+    background: var(--fill);
+    transform: translateY(-1px);
+    box-shadow: none;
+    /* No shadow as requested */
+}
+
+/* Left Side: Number + Names */
+.rs-ios-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.rs-ios-number {
+    width: 44px;
+    height: 44px;
+    background: var(--fill);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+}
+
+.rs-ios-names {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rs-ios-name-ar {
+    font-size: 20px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.rs-ios-name-tr {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* Right Side: Ayah Count + Badge */
+.rs-ios-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 6px;
+    height: 100%;
+}
+
+.rs-ios-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.rs-ios-badges-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rs-ios-ayah-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+}
+
+.rs-ios-top-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rs-ios-time {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    opacity: 0.8;
+}
+
+.rs-ios-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 0 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    /* Minimum width for the text badge */
+}
+
+/* Mekki: Orange tint */
+.rs-ios-badge.mekki {
+    background: #fff7ed;
+    color: #f97316;
+}
+
+/* Medeni: Blue tint */
+.rs-ios-badge.medeni {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.saved-badge {
+    height: 24px;
+    width: 24px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.saved-badge.sm {
+    width: 20px;
+    height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .surah-grid {
+        grid-template-columns: 1fr;
+        /* Single column on mobile */
+    }
+
+    .rs-ios-card {
+        padding: 14px;
+    }
+}
+

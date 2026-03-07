@@ -1,0 +1,240 @@
+﻿.saved-items {
+    animation: fadeUp 0.3s var(--ease);
+}
+
+.saved-section {
+    margin-bottom: 32px;
+}
+
+.saved-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+}
+
+/* Saved surahs grid */
+.saved-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.rs-ios-card {
+    background: white;
+    border: 1px solid var(--separator);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    text-decoration: none;
+    animation: fadeUp 0.5s var(--ease) both;
+    min-height: 80px;
+}
+
+.rs-ios-card:hover {
+    border-color: rgba(60, 60, 67, 0.25);
+    background: var(--fill);
+    transform: translateY(-1px);
+}
+
+.rs-ios-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.rs-ios-number {
+    width: 44px;
+    height: 44px;
+    background: var(--fill);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+}
+
+.rs-ios-names {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rs-ios-name-ar {
+    font-size: 20px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.rs-ios-name-tr {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.rs-ios-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 6px;
+    height: 100%;
+}
+
+.rs-ios-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.rs-ios-ayah-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+}
+
+.rs-ios-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.rs-ios-badge.mekki {
+    background: #fff7ed;
+    color: #f97316;
+}
+
+.rs-ios-badge.medeni {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.saved-badge {
+    width: 24px;
+    height: 24px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.saved-badge.sm {
+    width: 20px;
+    height: 20px;
+}
+
+/* Saved verses */
+.saved-verse-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.saved-verse-card {
+    padding: 14px;
+    border: 1px solid var(--separator);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: all 0.2s;
+    background: white;
+}
+
+.saved-verse-card:hover {
+    border-color: var(--accent);
+    background: var(--fill);
+}
+
+.saved-verse-ref {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.saved-verse-surah-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.saved-verse-surah {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.saved-verse-no {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    padding: 2px 7px;
+    background: var(--accent-light);
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+.saved-verse-text {
+    font-size: 17px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.verse-date-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-left: 4px;
+    font-weight: 400;
+}
+
+/* Empty state */
+.saved-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 0;
+    animation: fadeUp 0.3s var(--ease);
+}
+
+.saved-empty-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 16px;
+    color: var(--text-tertiary);
+    opacity: 0.5;
+}
+
+.saved-empty h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.saved-empty p {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .saved-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+

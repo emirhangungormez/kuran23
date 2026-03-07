@@ -1,0 +1,30 @@
+# Enable CORS and PHP handling for API
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Clean endpoints for rewarded ads module
+    RewriteRule ^ads/status$ ads.php?action=status [L,QSA]
+    RewriteRule ^ads/grant-hourly-access$ ads.php?action=grant_hourly_access [L,QSA]
+    RewriteRule ^ads/rewarded-callback$ ads.php?action=rewarded_callback [L,QSA]
+    RewriteRule ^ads/mock-reward$ ads.php?action=mock_reward [L,QSA]
+</IfModule>
+
+# Disable directory listing
+Options -Indexes
+
+# Protect config and import
+<FilesMatch "^(config\.php)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+<Files "import">
+    Order deny,allow
+    Deny from all
+</Files>

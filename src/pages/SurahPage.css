@@ -1,0 +1,551 @@
+﻿.surah-page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 24px 0;
+    animation: fadeUp 0.4s var(--ease) both;
+}
+
+@media (max-width: 768px) {
+    .surah-page-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+        margin: 16px 0;
+    }
+}
+
+.surah-page-no {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: var(--fill);
+    border-radius: 12px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.surah-page-titles {
+    min-width: 0;
+}
+
+.surah-page-name-ar {
+    font-size: 28px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+@media (max-width: 768px) {
+    .surah-page-name-ar {
+        font-size: 24px;
+    }
+}
+
+.surah-page-name {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 2px;
+}
+
+.surah-page-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* surah-audio-btn moved to index.css */
+
+.section-divider {
+    height: 1px;
+    background: var(--separator-light);
+    margin: 16px 0;
+}
+
+/* Verse rows */
+.verse-list-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.verse-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 16px;
+    border-bottom: 1px solid var(--separator-light);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+    animation: fadeUp 0.3s var(--ease) both;
+}
+
+@media (max-width: 768px) {
+    .verse-row {
+        padding: 14px 10px;
+        gap: 12px;
+    }
+}
+
+.verse-row:hover {
+    background: var(--fill);
+}
+
+.verse-row:last-child {
+    border-bottom: none;
+}
+
+.verse-row-no {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: var(--fill);
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Surah Tabs */
+.surah-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--fill);
+    border-radius: 10px;
+    padding: 4px;
+    margin: 20px 0;
+    animation: fadeUp 0.4s var(--ease) 0.1s both;
+}
+
+.surah-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.surah-tab.active {
+    background: #fff;
+    color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] .surah-tab.active {
+    background: var(--fill-hover);
+    color: var(--accent);
+    box-shadow: none;
+    border: 1px solid rgba(29, 122, 95, 0.3);
+}
+
+/* Surah Info Content */
+.surah-info-content {
+    animation: fadeUp 0.3s var(--ease);
+    padding: 0;
+}
+
+.surah-info-tabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    background: var(--fill);
+    border-radius: 10px;
+    padding: 4px;
+    width: 100%;
+    margin: 0 0 18px;
+}
+
+.surah-info-subtab {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    white-space: nowrap;
+}
+
+.surah-info-subtab:hover {
+    background: var(--fill-hover);
+    color: var(--text-primary);
+}
+
+.surah-info-subtab.active {
+    background: #fff;
+    color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] .surah-info-subtab.active {
+    background: var(--fill-hover);
+    color: var(--accent);
+    box-shadow: none;
+    border: 1px solid rgba(29, 122, 95, 0.3);
+}
+
+@media (max-width: 768px) {
+    .surah-info-subtab {
+        flex: 1 1 calc(50% - 4px);
+        text-align: center;
+    }
+}
+
+.surah-info-card {
+    background: transparent;
+    border: none;
+    padding: 10px 4px;
+}
+
+.surah-info-html {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .surah-info-html {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+}
+
+/* Başlık stilleri - hem h2 hem h3 aynı sol çubuk tasarımı */
+.surah-info-html h2,
+.surah-info-html h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 40px 0 16px;
+    color: var(--text-primary);
+    position: relative;
+    padding-left: 16px;
+    letter-spacing: -0.02em;
+    display: block;
+    border: none;
+    border-bottom: none;
+    background: none;
+}
+
+.surah-info-html h3 {
+    font-size: 18px;
+    margin: 32px 0 14px;
+}
+
+.surah-info-html h2::before,
+.surah-info-html h3::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+.surah-info-html h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin: 6px 0 16px;
+    font-style: italic;
+    padding-left: 16px;
+}
+
+.verse-analysis {
+    margin-bottom: 32px;
+}
+
+.surah-info-html p {
+    margin-bottom: 18px;
+    text-align: justify;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    text-indent: 0 !important;
+}
+
+.surah-info-html ul {
+    margin-bottom: 24px;
+    padding-left: 20px;
+}
+
+.surah-info-html li {
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+}
+
+/* Diyanet küçük dipnot metinleri */
+.surah-info-html font[size="1"],
+.surah-info-html span[style*="font-size:5px"],
+.surah-info-html span[style*="font-size:1"] {
+    font-size: 11px !important;
+    color: var(--text-tertiary);
+    vertical-align: super;
+}
+
+.surah-info-html a[name] {
+    display: block;
+    margin-top: 20px;
+}
+
+.surah-info-html br+br {
+    display: none;
+}
+
+.surah-info-source {
+    padding: 14px 18px;
+    background: var(--fill);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+}
+
+/* Diyanet kaynak kartı (bibliyografya dahil) */
+.diyanet-source-card {
+    margin-top: 48px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.diyanet-source-card::before {
+    display: none;
+}
+
+.source-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.source-label {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.source-biblio {
+    font-size: 11px;
+    line-height: 1.75;
+    color: var(--text-tertiary);
+    padding-top: 10px;
+    border-top: 1px solid var(--separator-light);
+    opacity: 0.8;
+}
+
+.source-biblio p,
+.source-biblio br {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 2px;
+}
+
+/* Standart tefsir (Kuran23) kaynak alanı üst boşluğu */
+.surah-info-card>.surah-info-source {
+    margin-top: 48px;
+}
+
+
+/* Loading mini state */
+.loading-state-mini {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.loading-spinner-mini {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--separator-light);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 3-tab surah sekme genişliği */
+.surah-tabs .surah-tab {
+    flex: 1;
+}
+
+.verse-row-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.verse-row-ar {
+    font-size: 20px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    line-height: 1.8;
+    margin-bottom: 8px;
+    font-feature-settings: "rlig" 1, "liga" 1, "calt" 1;
+    font-variant-ligatures: common-ligatures contextual;
+    text-rendering: optimizeLegibility;
+}
+
+.verse-row-ar tajweed,
+.verse-row-ar .end {
+    font-family: inherit !important;
+}
+
+.verse-row-transcription {
+    margin: 0 0 8px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    line-height: 1.45;
+}
+
+.verse-row-tr-group {
+    margin-top: 12px;
+}
+
+.verse-row-tr {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2px;
+}
+
+.verse-row-author {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    font-weight: 500;
+}
+
+.verse-row-arrow {
+    width: 16px;
+    height: 16px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    margin-top: 8px;
+    opacity: 0.4;
+    transition: all 0.2s;
+}
+
+.verse-row:hover .verse-row-arrow {
+    opacity: 1;
+    color: var(--accent);
+    transform: translateX(2px);
+}
+
+/* Loading/Empty State removed as it's now global */
+
+/* Graph Toggle Button */
+.graph-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    background: var(--fill);
+    transition: all 0.2s;
+}
+
+.graph-toggle-btn:hover {
+    background: var(--fill-hover);
+    color: var(--text-primary);
+}
+
+.graph-toggle-btn.active {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.graph-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* 
+   ==========================================================================
+   GRAPH MODE OVERRIDES (ONLY APPLIED WHEN GRAPH IS OPEN)
+   ==========================================================================
+*/
+
+.graph-mode {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    cursor: default !important;
+}
+
+.graph-mode .page-content {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff !important;
+}
+
+.graph-mode .page-header-row {
+    padding: 16px 32px !important;
+    height: 72px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: #ffffff !important;
+}
+
+.graph-mode .graph-container {
+    flex: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: #ffffff !important;
+    position: relative !important;
+}
+
+

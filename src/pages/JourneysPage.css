@@ -1,0 +1,55 @@
+﻿.journeys-view {
+    min-height: 100vh;
+}
+
+.journeys-page-content {
+    margin-top: 20px;
+    max-width: 1000px;
+}
+
+.journeys-page-top {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.journeys-back-link {
+    margin-bottom: 0;
+}
+
+.journeys-page-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--separator);
+}
+
+.journeys-page-title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+}
+
+.journeys-page-desc {
+    margin: 10px 0 0;
+    max-width: 860px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .journeys-page-content {
+        margin-top: 10px;
+    }
+
+    .journeys-page-top {
+        margin-bottom: 8px;
+    }
+
+    .journeys-page-desc {
+        font-size: 13px;
+    }
+}

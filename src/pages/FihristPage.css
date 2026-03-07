@@ -1,0 +1,134 @@
+﻿.fihrist-page {
+    background: var(--bg-light);
+}
+
+.fihrist-hero {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-top: 16px;
+    animation: fadeUp 0.45s var(--ease) both;
+}
+
+.fihrist-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.fihrist-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.fihrist-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 100px;
+    animation: fadeIn 0.5s var(--ease) 0.08s both;
+}
+
+.fihrist-category-card {
+    background: var(--fill);
+    border: 1px solid var(--separator);
+    border-radius: 16px;
+    padding: 20px;
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.fihrist-category-card:hover {
+    border-color: var(--text-tertiary);
+    background: var(--card-bg);
+}
+
+.cat-header-wrap {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.cat-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+}
+
+.cat-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-left: 0;
+}
+
+.cat-subcategories {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.subcat-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.subcat-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fihrist-topic-tag {
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid var(--separator);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    text-decoration: none;
+}
+
+.fihrist-topic-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+@media (max-width: 900px) {
+    .fihrist-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .fihrist-title {
+        font-size: 28px;
+    }
+
+    .fihrist-subtitle {
+        font-size: 14px;
+    }
+
+    .fihrist-category-card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .cat-desc {
+        margin-left: 0;
+    }
+}

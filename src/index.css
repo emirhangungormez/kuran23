@@ -1,0 +1,960 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Lateef:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Alexandria:wght@400;700&family=Almarai:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Vazirmatn:wght@400;700&display=swap');
+
+@font-face {
+  font-family: 'DiyanetKuran';
+  src: url('/fonts/diyanet-kuran.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'QuranFoundationHafs';
+  src: url('/fonts/acikkuran-uthmanic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCUthmanTN';
+  src: url('/api/font_proxy.php?font=KFGQPCUthmanTN') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCUthmanTNBold';
+  src: url('/api/font_proxy.php?font=KFGQPCUthmanTNBold') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCDotNaskh';
+  src: url('/api/font_proxy.php?font=KFGQPCDotNaskh') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCKufi';
+  src: url('/api/font_proxy.php?font=KFGQPCKufi') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCKufiExtended';
+  src: url('/api/font_proxy.php?font=KFGQPCKufiExtended') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCAnRegular';
+  src: url('/api/font_proxy.php?font=KFGQPCAnRegular') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCAnBold';
+  src: url('/api/font_proxy.php?font=KFGQPCAnBold') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCKSARegular';
+  src: url('/api/font_proxy.php?font=KFGQPCKSARegular') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCKingdom2';
+  src: url('/api/font_proxy.php?font=KFGQPCKingdom2') format('opentype');
+  font-display: swap;
+}
+
+:root {
+  --ui-font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  --bg: #ffffff;
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #aeaeb2;
+  --separator: rgba(60, 60, 67, 0.1);
+  --separator-light: rgba(60, 60, 67, 0.05);
+  --fill: rgba(60, 60, 67, 0.03);
+  --fill-hover: rgba(60, 60, 67, 0.06);
+  --accent: #1d7a5f;
+  --accent-light: rgba(29, 122, 95, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --card-bg: #ffffff;
+  --arabic-font-family: "QuranFoundationHafs", "Noto Naskh Arabic", serif;
+}
+
+[data-theme='dark'] {
+  --bg: #121212;
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-tertiary: #6e6e73;
+  --separator: rgba(255, 255, 255, 0.12);
+  --separator-light: rgba(255, 255, 255, 0.08);
+  --fill: rgba(255, 255, 255, 0.05);
+  --fill-hover: rgba(255, 255, 255, 0.1);
+  --accent: #2ecc71;
+  --accent-light: rgba(46, 204, 113, 0.15);
+  --card-bg: #1c1c1e;
+}
+
+[data-theme='sepia'] {
+  --bg: #f4eee1;
+  --text-primary: #3f3529;
+  --text-secondary: #726657;
+  --text-tertiary: #9f9384;
+  --separator: rgba(92, 74, 57, 0.16);
+  --separator-light: rgba(92, 74, 57, 0.08);
+  --fill: rgba(92, 74, 57, 0.08);
+  --fill-hover: rgba(92, 74, 57, 0.14);
+  --accent: #8a6737;
+  --accent-light: rgba(138, 103, 55, 0.14);
+  --card-bg: #fbf6ea;
+}
+
+[data-theme='dark'] .daily-verse-card {
+  background: linear-gradient(145deg, #ffffff 0%, #e2e4e7 100%) !important;
+  color: #1d1d1f !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .search-main-logo {
+  filter: brightness(0) invert(1);
+}
+
+[data-theme='dark'] .daily-badge {
+  background: rgba(29, 122, 95, 0.1);
+  color: #1d7a5f;
+  border: 1px solid rgba(29, 122, 95, 0.2);
+}
+
+[data-theme='dark'] .daily-ref {
+  color: #8e8e93;
+  opacity: 1;
+}
+
+[data-theme='dark'] .daily-tr {
+  color: #3a3a3c;
+  opacity: 1;
+}
+
+/* Surah Badges Dark Mode */
+[data-theme='dark'] .surah-type-badge.mekki {
+  background: rgba(253, 126, 20, 0.15);
+  color: #ff922b;
+}
+
+[data-theme='dark'] .surah-type-badge.medeni {
+  background: rgba(34, 139, 230, 0.15);
+  color: #4dabf7;
+}
+
+[data-theme='dark'] .popular-card,
+[data-theme='dark'] .rs-ios-card,
+[data-theme='dark'] .journey-card,
+[data-theme='dark'] .word-detail,
+[data-theme='dark'] .surah-page-header,
+[data-theme='dark'] .verse-page-header,
+[data-theme='dark'] .saved-verse-card,
+[data-theme='dark'] .topics-container,
+[data-theme='dark'] .support-card {
+  background: var(--card-bg);
+  border-color: var(--separator);
+}
+
+[data-theme='dark'] .search-input {
+  border: none !important;
+}
+
+[data-theme='dark'] .topic-tag,
+[data-theme='dark'] .view-all-topics {
+  background: var(--fill);
+  color: var(--text-primary);
+  border-color: var(--separator);
+}
+
+[data-theme='dark'] .topic-tag:hover,
+[data-theme='dark'] .view-all-topics:hover {
+  background: var(--fill-hover);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+[data-theme='dark'] .rs-ios-badge.mekki {
+  background: rgba(253, 126, 20, 0.15);
+  color: #ff922b;
+}
+
+[data-theme='dark'] .rs-ios-badge.medeni {
+  background: rgba(34, 139, 230, 0.15);
+  color: #4dabf7;
+}
+
+[data-theme='dark'] .profile-tab.active {
+  background: var(--fill);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+[data-theme='dark'] .premium-support-view {
+  background: var(--bg);
+}
+
+[data-theme='dark'] .premium-ad-btn {
+  background: #f5f5f7;
+  color: #121212;
+}
+
+[data-theme='dark'] .premium-ad-btn:hover:not(:disabled) {
+  background: #ffffff;
+}
+
+[data-theme='dark'] .search-box.focused .search-input {
+  background: var(--fill);
+  border-color: transparent;
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+
+/* Fihrist Dark Mode */
+[data-theme='dark'] .fihrist-category-card {
+  background: var(--card-bg);
+  border-color: var(--separator);
+}
+
+[data-theme='dark'] .fihrist-category-card:hover {
+  background: var(--fill);
+}
+
+[data-theme='dark'] .fihrist-topic-tag {
+  background: var(--fill);
+  color: var(--text-primary);
+  border-color: var(--separator);
+}
+
+/* Profile & Settings Dark Mode removed */
+
+[data-theme='dark'] .comparison-card:hover {
+  background: var(--fill);
+}
+
+[data-theme='dark'] .journey-details,
+[data-theme='dark'] .journey-footer {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: var(--separator) !important;
+}
+
+[data-theme='dark'] .juz-btn {
+  background: var(--fill);
+  color: var(--text-primary);
+  border-color: var(--separator);
+}
+
+[data-theme='dark'] .juz-btn.completed {
+  background: var(--accent);
+  color: white;
+}
+
+[data-theme='dark'] .modern-slider::-webkit-slider-thumb {
+  background: #1c1c1e;
+}
+
+[data-theme='dark'] .form-input:focus {
+  background: var(--fill-hover);
+}
+
+[data-theme='dark'] .home-nav {
+  background: rgba(18, 18, 18, 0.85);
+}
+
+[data-theme='dark'] .surah-page-header,
+[data-theme='dark'] .verse-page-header,
+[data-theme='dark'] .surah-page-no,
+[data-theme='dark'] .verse-row-no,
+[data-theme='dark'] .verse-nav-btn {
+  background: transparent !important;
+}
+
+[data-theme='dark'] .graph-mode,
+[data-theme='dark'] .graph-mode .page-content,
+[data-theme='dark'] .graph-mode .page-header-row,
+[data-theme='dark'] .graph-mode .graph-container {
+  background: #121212 !important;
+}
+
+/* Custom Select Dark Mode */
+[data-theme='dark'] .custom-select-dropdown {
+  background: rgba(30, 30, 32, 0.95);
+  border-color: var(--separator);
+}
+
+[data-theme='dark'] .custom-select-container.is-open .custom-select-trigger {
+  background: var(--fill-hover);
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .dropdown-item:hover {
+  background: var(--fill);
+}
+
+[data-theme='dark'] .dropdown-item.selected {
+  background: rgba(29, 122, 95, 0.15);
+}
+
+/* Mealler Deaktif Dark Mode */
+[data-theme='dark'] .inactive-zone {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-color: var(--separator) !important;
+}
+
+[data-theme='dark'] .inactive-chip {
+  background: var(--card-bg) !important;
+  border-color: var(--separator) !important;
+}
+
+[data-theme='dark'] .chip-preview-text {
+  background: var(--fill) !important;
+  color: var(--text-secondary);
+}
+
+/* Kelime Analiz Arabic Text Dark Mode */
+[data-theme='dark'] .word-arabic,
+[data-theme='dark'] .word-detail-arabic,
+[data-theme='dark'] .word-root-arabic,
+[data-theme='dark'] .verse-row-ar,
+[data-theme='dark'] .verse-page-arabic,
+[data-theme='dark'] .verse-ar-text,
+[data-theme='dark'] .arabic-side {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .verse-num-badge {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+}
+
+/* Juz & Journey Dark Mode Refinements */
+[data-theme='dark'] .journey-body {
+  background: var(--card-bg) !important;
+  border-color: var(--separator) !important;
+}
+
+[data-theme='dark'] .juz-square {
+  background: var(--fill) !important;
+  border-color: var(--separator) !important;
+  color: var(--text-tertiary);
+}
+
+[data-theme='dark'] .juz-square:hover {
+  background: var(--fill-hover) !important;
+  color: var(--accent);
+}
+
+[data-theme='dark'] .juz-square.checked {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .journey-footer {
+  background: var(--card-bg) !important;
+  border-color: var(--separator) !important;
+}
+
+[data-theme='dark'] .reciter-info-badge {
+  background: var(--fill) !important;
+  border-color: var(--separator) !important;
+}
+
+[data-theme='dark'] .reading-surah-header {
+  background: var(--card-bg);
+}
+
+/* Close/Remove Buttons Dark Mode */
+[data-theme='dark'] .chip-remove {
+  background: rgba(231, 76, 60, 0.15) !important;
+  color: #ff6b6b !important;
+}
+
+[data-theme='dark'] .chip-remove:hover {
+  background: rgba(231, 76, 60, 0.25) !important;
+}
+
+[data-theme='dark'] .modal-close-btn,
+[data-theme='dark'] .icon-modal-close {
+  background: var(--fill) !important;
+  color: var(--text-secondary) !important;
+}
+
+[data-theme='dark'] .modal-close-btn:hover,
+[data-theme='dark'] .icon-modal-close:hover {
+  background: var(--fill-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--ui-font-family);
+  background: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-area {
+  flex: 1;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+::selection {
+  background: var(--accent-light);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Page utilities */
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 88px 32px 80px;
+  animation: fadeIn 0.35s var(--ease);
+  box-sizing: border-box;
+}
+
+.page-content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  animation: fadeUp 0.4s var(--ease) both;
+}
+
+/* Mobile adjustments for global containers */
+@media (max-width: 768px) {
+
+  .page,
+  .home {
+    padding: 72px 16px 80px !important;
+  }
+
+  .page-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  animation: fadeUp 0.3s var(--ease);
+}
+
+.global-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  padding: 0 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999998;
+  pointer-events: none;
+}
+
+.global-nav-left,
+.global-nav-right {
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.global-nav-right {
+  gap: 16px;
+}
+
+/* Default: Hide back link in header (Desktop) */
+.global-nav .back-link {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .global-nav {
+    padding: 0 16px;
+    height: 64px;
+  }
+
+  .global-nav-right {
+    gap: 12px;
+  }
+
+  /* Show back link in header only on mobile */
+  .global-nav .back-link {
+    display: flex !important;
+  }
+}
+
+.moon-phase-link {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.2s var(--ease);
+}
+
+.moon-phase-link:hover {
+  background: var(--fill);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+.nav-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.2s var(--ease);
+  cursor: pointer;
+}
+
+.nav-icon-btn:hover {
+  background: var(--fill);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+.nav-icon-btn.active {
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+@media (max-width: 768px) {
+  .global-nav {
+    padding: 12px 16px;
+  }
+}
+
+.global-nav-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  color: var(--accent);
+  font-weight: 500;
+  transition: opacity 0.2s var(--ease);
+  text-decoration: none;
+  margin-bottom: 24px;
+}
+
+.back-link svg {
+  margin-top: 0;
+  stroke-width: 2px !important;
+  transition: transform 0.2s var(--ease);
+  transform: translateY(1px);
+  /* Precise optical centering */
+}
+
+.back-link:hover {
+  opacity: 0.7;
+}
+
+.back-link:hover svg {
+  transform: translate(-3px, 1px);
+  /* Maintain Y offset while moving X */
+}
+
+.page-header-row .back-link {
+  margin-bottom: 0;
+}
+
+.section-divider {
+  height: 1px;
+  background: var(--separator-light);
+  margin: 24px 0;
+}
+
+/* Responsive Utilities */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tajweed Rule Colors */
+tajweed.ghunnah {
+  color: #ff7e00;
+}
+
+tajweed.ikhfa {
+  color: #9100ff;
+}
+
+tajweed.idgham_shafawi {
+  color: #0081ff;
+}
+
+tajweed.iqlab {
+  color: #00b4ff;
+}
+
+tajweed.idgham_with_ghunnah {
+  color: #169777;
+}
+
+tajweed.idgham_without_ghunnah {
+  color: #919191;
+}
+
+tajweed.madda_necessary {
+  color: #ff0000;
+}
+
+tajweed.madda_permissible {
+  color: #ff0000;
+}
+
+tajweed.madda_obligatory {
+  color: #ff0000;
+}
+
+tajweed.madda_normal {
+  color: #535353;
+}
+
+tajweed.qalaqalah {
+  color: #009000;
+}
+
+tajweed.ham_wasl {
+  color: #aaaaaa;
+}
+
+tajweed.laam_shamsiyah {
+  color: #aaaaaa;
+}
+
+tajweed.silent {
+  color: #aaaaaa;
+}
+
+.end {
+  display: none !important;
+}
+
+html {
+  font-family: var(--ui-font-family);
+}
+
+#root {
+  font-family: var(--ui-font-family);
+}
+
+:where(h1, h2, h3, h4, h5, h6, p, span, a, li, dt, dd, label, small, strong, em, b, i) {
+  font-family: var(--ui-font-family);
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: var(--ui-font-family);
+}
+
+.verse-num-badge {
+  display: none !important;
+}
+
+/* Surah Utilities */
+.surah-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.surah-type-badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.surah-type-badge.mekki {
+  background: #fff4e6;
+  color: #fd7e14;
+}
+
+.surah-type-badge.medeni {
+  background: #e7f5ff;
+  color: #228be6;
+}
+
+/* Surah & Verse Audio Utilities */
+.audio-control-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--fill);
+  padding: 4px;
+  border-radius: 12px;
+  height: 40px;
+  /* Standardize height */
+}
+
+.surah-audio-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 40px;
+  color: var(--text-primary);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s var(--ease);
+}
+
+.surah-audio-btn:hover {
+  background: var(--bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.surah-audio-btn.playing {
+  color: #e74c3c;
+}
+
+[data-theme='dark'] .surah-audio-btn:hover {
+  background: var(--card-bg);
+}
+
+.surah-audio-btn.arabic.playing,
+.surah-audio-btn.turkish.playing {
+  background: rgba(231, 76, 60, 0.08);
+  color: #e74c3c;
+}
+
+.surah-audio-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.surah-audio-btn.player-toggle {
+  background: var(--fill);
+  color: var(--text-secondary);
+}
+
+.surah-audio-btn.player-toggle:hover {
+  background: var(--fill-hover);
+  color: var(--text-primary);
+}
+
+.surah-audio-btn.player-toggle.bg-active {
+  background: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(46, 204, 113, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+  }
+}
+
+.speed-toggle {
+  height: 40px;
+  min-width: 44px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+
+.speed-toggle:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .speed-toggle:hover {
+  background: var(--card-bg);
+}
+
+.speed-toggle.active {
+  color: var(--accent);
+}
+
+/* Page header actions group adjustments */
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.audio-reciter-selects {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.audio-mini-select {
+  width: 132px;
+  min-width: 132px;
+  max-width: 132px;
+}
+
+.audio-mini-select .custom-select-trigger {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+}
+
+.audio-mini-select .trigger-label {
+  font-size: 12px;
+}
+
+@media (max-width: 1024px) {
+  .audio-reciter-selects {
+    width: 100%;
+    order: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .audio-mini-select {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 0;
+  }
+}
+
+/* Loading/Empty State */
+.loading-state {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--text-tertiary);
+  font-size: 15px;
+  animation: fadeIn 0.3s var(--ease);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 0;
+  animation: fadeUp 0.3s var(--ease);
+}
+
+.empty-state h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+
+

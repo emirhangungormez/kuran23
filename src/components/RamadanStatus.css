@@ -1,0 +1,280 @@
+﻿@keyframes rsPulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.ramadan-status {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--fill);
+    border: 1px solid var(--separator);
+    border-radius: 11px;
+    padding: 4px 10px;
+    height: 34px;
+    gap: 9px;
+    font-family: var(--ui-font-family);
+    user-select: none;
+    transition: all 0.3s var(--ease);
+}
+
+.ramadan-status:hover {
+    border-color: var(--text-tertiary);
+    background: var(--fill-hover);
+}
+
+.rs-clock-section {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.rs-hijri-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: all 0.5s var(--spring);
+}
+
+.rs-hijri-wrapper.open {
+    max-width: 200px;
+    opacity: 1;
+    margin-right: 8px;
+}
+
+.rs-hijri-date {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+}
+
+.rs-clock-divider {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+.rs-live-time {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.3px;
+}
+
+.rs-clock-chevron {
+    color: var(--text-tertiary);
+    transition: transform 0.4s var(--spring);
+    margin-left: 2px;
+}
+
+.rs-clock-chevron.open {
+    transform: rotate(180deg);
+}
+
+.rs-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--separator);
+}
+
+.rs-info-section {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.rs-city {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.rs-event {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+}
+
+.rs-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1px;
+}
+
+.rs-time {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.rs-chevron {
+    color: var(--text-tertiary);
+    transition: transform 0.3s var(--spring);
+}
+
+.rs-chevron.open {
+    transform: rotate(180deg);
+}
+
+/* Picker Dropdown */
+.rs-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 168px;
+    background: var(--bg);
+    border: 1px solid var(--separator);
+    border-radius: 14px;
+    z-index: 10002;
+    overflow: hidden;
+    animation: authModalAppear 0.3s var(--spring);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.rs-picker-header {
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.rs-picker-search-wrap {
+    padding: 8px 8px 4px;
+    position: relative;
+}
+
+.rs-picker-search {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--separator);
+    border-radius: 8px;
+    background: var(--fill);
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 0 30px 0 30px;
+    outline: none;
+}
+
+.rs-picker-search:focus {
+    border-color: var(--accent);
+}
+
+.rs-picker-search-icon {
+    position: absolute;
+    left: 17px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: var(--text-tertiary);
+    pointer-events: none;
+}
+
+.rs-picker-search-clear {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    color: var(--text-tertiary);
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rs-picker-search-clear:hover {
+    background: var(--fill);
+    color: var(--text-secondary);
+}
+
+.rs-picker-list {
+    max-height: 214px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.rs-picker-item {
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rs-picker-item:hover {
+    background: var(--fill);
+}
+
+.rs-picker-item.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 650;
+}
+
+.rs-picker-empty {
+    padding: 10px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+/* Dark Mode Overrides */
+[data-theme='dark'] .rs-picker-dropdown {
+    background: rgba(28, 28, 30, 0.95);
+}
+
+@media (max-width: 600px) {
+    .ramadan-status {
+        padding: 4px 8px;
+        gap: 6px;
+        height: 32px;
+    }
+
+    .rs-clock-section {
+        display: none;
+    }
+
+    .rs-divider {
+        display: none;
+    }
+}
+

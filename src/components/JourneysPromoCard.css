@@ -1,0 +1,94 @@
+.journeys-promo-card {
+    padding: 0;
+    min-height: 160px;
+    border-radius: var(--radius, 12px);
+    border: 1px solid var(--separator);
+    background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%);
+    color: #fff;
+}
+
+.journeys-promo-card::before {
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+}
+
+.journeys-promo-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(142, 68, 173, 0.45);
+    opacity: 0.96;
+}
+
+.journeys-promo-card:active {
+    transform: none;
+}
+
+.journeys-promo-overlay {
+    min-height: 160px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+}
+
+.journeys-promo-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: auto;
+    width: fit-content;
+}
+
+.journeys-promo-content h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+.journeys-promo-content p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    opacity: 0.85;
+    color: #fff;
+}
+
+.journeys-promo-action {
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.journeys-promo-action svg {
+    transition: transform 0.2s ease;
+}
+
+.journeys-promo-card:hover .journeys-promo-action svg {
+    transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+    .journeys-promo-card {
+        min-height: 150px;
+    }
+
+    .journeys-promo-overlay {
+        min-height: 150px;
+        padding: 20px;
+    }
+
+    .journeys-promo-content h3 {
+        font-size: 18px;
+    }
+}

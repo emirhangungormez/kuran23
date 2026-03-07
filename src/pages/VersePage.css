@@ -1,0 +1,742 @@
+﻿/* Verse page header */
+.verse-page-header {
+    text-align: center;
+    padding: 32px 0 24px;
+    animation: fadeUp 0.4s var(--ease) both;
+}
+
+@media (max-width: 768px) {
+    .verse-page-header {
+        padding: 24px 0 16px;
+    }
+}
+
+.verse-page-ref {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.verse-page-arabic {
+    font-size: 32px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    line-height: 2;
+    margin-bottom: 12px;
+    font-feature-settings: "rlig" 1, "liga" 1, "calt" 1;
+    font-variant-ligatures: common-ligatures contextual;
+    text-rendering: optimizeLegibility;
+}
+
+.verse-page-arabic tajweed,
+.verse-page-arabic .end {
+    font-family: inherit !important;
+}
+
+@media (max-width: 768px) {
+    .verse-page-arabic {
+        font-size: 26px;
+        line-height: 1.8;
+    }
+}
+
+.verse-page-transcription {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    font-style: italic;
+}
+
+/* Tabs */
+.verse-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--fill);
+    border-radius: 10px;
+    padding: 4px;
+    margin: 20px 0;
+    animation: fadeUp 0.4s var(--ease) 0.1s both;
+}
+
+.verse-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.verse-tab.active {
+    background: #fff;
+    color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] .verse-tab.active {
+    background: var(--fill-hover);
+    color: var(--accent);
+    box-shadow: none;
+    border: 1px solid rgba(29, 122, 95, 0.3);
+}
+
+/* Meal section */
+.verse-meal-section {
+    animation: fadeUp 0.3s var(--ease);
+}
+
+.verse-meal-card {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.verse-meal-card:last-child {
+    border-bottom: none;
+}
+
+.verse-meal-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+    .verse-meal-text {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+}
+
+.verse-meal-author {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/* Footnotes */
+.verse-footnotes {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--separator-light);
+}
+
+.verse-footnotes-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.verse-footnote {
+    display: flex;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.verse-footnote-no {
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+/* Tafsir section */
+.verse-tafsir-section {
+    animation: fadeUp 0.3s var(--ease);
+}
+
+.tafsir-subtabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    background: var(--fill);
+    border-radius: 10px;
+    padding: 4px;
+    width: 100%;
+    margin: 0 0 18px;
+}
+
+.tafsir-subtab {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    white-space: nowrap;
+}
+
+.tafsir-subtab:hover {
+    background: var(--fill-hover);
+    color: var(--text-primary);
+}
+
+.tafsir-subtab.active {
+    background: #fff;
+    color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] .tafsir-subtab.active {
+    background: var(--fill-hover);
+    color: var(--accent);
+    box-shadow: none;
+    border: 1px solid rgba(29, 122, 95, 0.3);
+}
+
+@media (max-width: 768px) {
+    .tafsir-subtab {
+        flex: 1 1 calc(50% - 4px);
+        text-align: center;
+    }
+}
+
+.tafsir-card {
+    background: transparent;
+    border: none;
+    padding: 10px 4px;
+}
+
+.tafsir-html {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .tafsir-html {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+}
+
+.tafsir-html h2,
+.tafsir-html h3,
+.tafsir-html h4 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 40px 0 16px;
+    color: var(--text-primary);
+    position: relative;
+    padding-left: 16px;
+    letter-spacing: -0.02em;
+    display: block;
+    border: none;
+    border-bottom: none;
+    background: none;
+}
+
+.tafsir-html h3 {
+    font-size: 18px;
+    margin: 32px 0 14px;
+}
+
+.tafsir-html h4 {
+    font-size: 17px;
+    margin: 28px 0 12px;
+    font-style: normal;
+    color: var(--text-primary);
+}
+
+.tafsir-html h2::before,
+.tafsir-html h3::before,
+.tafsir-html h4::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+.tafsir-html p {
+    margin-bottom: 18px;
+    text-align: justify;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    text-indent: 0 !important;
+}
+
+.tafsir-html ul {
+    margin-bottom: 24px;
+    padding-left: 20px;
+}
+
+.tafsir-html li {
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+}
+
+.tafsir-html br+br {
+    display: none;
+}
+
+.tafsir-html strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.tafsir-source {
+    margin-top: 48px;
+    padding: 14px 18px;
+    background: var(--fill);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    display: block;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+/* Word analysis */
+.verse-words-section {
+    animation: fadeUp 0.3s var(--ease);
+}
+
+.ebced-summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 14px;
+    border: 1px solid var(--separator-light);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--fill) 90%, var(--accent-light) 10%);
+}
+
+.ebced-summary-card-bottom {
+    margin: 4px auto 0;
+    max-width: 620px;
+}
+
+.ebced-summary-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.ebced-summary-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+}
+
+.ebced-summary-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.ebced-summary-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.ebced-summary-note {
+    margin: 8px 0 2px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.ebced-summary-note-bottom {
+    margin: 6px 0 2px;
+}
+
+@media (max-width: 640px) {
+    .ebced-summary-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+.words-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 0;
+    justify-content: center;
+}
+
+.word-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    border: 1px solid var(--separator-light);
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 70px;
+}
+
+@media (max-width: 480px) {
+    .word-card {
+        padding: 10px 12px;
+        min-width: 60px;
+    }
+
+    .word-arabic {
+        font-size: 18px !important;
+    }
+}
+
+.word-card:hover {
+    border-color: var(--accent);
+    background: rgba(29, 122, 95, 0.04);
+}
+
+.word-card.selected {
+    border-color: var(--accent);
+    background: rgba(29, 122, 95, 0.08);
+}
+
+.word-arabic {
+    font-size: 20px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+}
+
+.word-tr {
+    font-size: 11px;
+    color: var(--text-secondary);
+    direction: ltr;
+}
+
+.word-ebced-chip {
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    color: var(--accent);
+}
+
+/* Word detail panel */
+.word-detail {
+    margin-top: 16px;
+    padding: 20px;
+    background: var(--fill);
+    border-radius: 12px;
+    animation: fadeUp 0.2s var(--ease);
+}
+
+@media (max-width: 480px) {
+    .word-detail {
+        padding: 16px;
+    }
+}
+
+.word-detail-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.word-detail-arabic {
+    font-size: 28px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.word-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+@media (max-width: 480px) {
+    .word-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
+.word-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.word-detail-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+}
+
+.word-detail-value {
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+/* Root info */
+.word-root-info {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--separator-light);
+}
+
+.word-root-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-right: 6px;
+}
+
+.word-root-arabic {
+    font-size: 18px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    margin-right: 4px;
+}
+
+.word-root-latin {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.word-root-mean {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 6px;
+}
+
+.word-ebced-breakdown {
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--separator-light);
+}
+
+.word-ebced-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.word-ebced-letter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border: 1px solid var(--separator-light);
+    border-radius: 8px;
+    background: var(--card-bg);
+}
+
+.word-ebced-char {
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    font-size: 18px;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.word-ebced-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* All translations */
+.verse-translations-section {
+    animation: fadeUp 0.3s var(--ease);
+}
+
+.translation-card {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.translation-card:last-child {
+    border-bottom: none;
+}
+
+.translation-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.translation-author {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.translation-desc {
+    color: var(--text-tertiary);
+    font-weight: 400;
+}
+
+.translation-footnotes {
+    margin-top: 8px;
+}
+
+.translation-footnote {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 4px;
+}
+
+.translation-footnote span {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* Verse navigation */
+.verse-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0 32px;
+    gap: 12px;
+}
+
+@media (max-width: 480px) {
+    .verse-nav {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.verse-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    border-radius: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    background: transparent;
+    transition: opacity 0.2s var(--ease);
+}
+
+@media (max-width: 480px) {
+    .verse-nav-btn {
+        justify-content: center;
+        padding: 12px;
+        background: var(--fill);
+        border-radius: 12px;
+    }
+}
+
+.verse-nav-btn:hover {
+    background: transparent;
+    opacity: 0.7;
+}
+
+.verse-nav-btn svg {
+    margin-top: 0;
+    stroke-width: 2px !important;
+    transition: transform 0.2s var(--ease);
+    transform: translateY(1px);
+}
+
+.nav-prev:hover svg {
+    transform: translate(-3px, 1px);
+}
+
+.nav-next:hover svg {
+    transform: translateX(3px);
+}
+
+.verse-audio-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--fill);
+    color: var(--accent);
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--spring);
+    margin-right: 8px;
+}
+
+@media (max-width: 480px) {
+    .verse-audio-btn {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 8px;
+        justify-content: center;
+        padding: 12px;
+    }
+}
+
+.verse-audio-btn:hover {
+    background: var(--fill-hover);
+    transform: translateY(-2px);
+}
+
+.verse-audio-btn.playing {
+    background: var(--fill);
+    color: #e74c3c;
+}
+
+.loading-state-mini {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 0;
+    color: var(--text-tertiary);
+    font-size: 14px;
+}
+
+.loading-spinner-mini {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--separator-light);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
