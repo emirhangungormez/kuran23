@@ -1009,15 +1009,15 @@ button {
 @media (max-width: 900px) {
   :root {
     --mobile-gutter: 14px;
-    --mobile-nav-height: 84px;
+    --mobile-tabbar-height: 62px;
   }
 
   .app-layout.has-mobile-nav .content-area {
-    padding-bottom: calc(var(--mobile-nav-height) + 16px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--mobile-tabbar-height) + 18px + env(safe-area-inset-bottom));
   }
 
   .app-layout.has-mobile-nav .site-footer {
-    padding-bottom: calc(var(--mobile-nav-height) + 20px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--mobile-tabbar-height) + 22px + env(safe-area-inset-bottom));
   }
 }
 
