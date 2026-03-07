@@ -176,14 +176,14 @@
 
 [data-theme='dark'] .topic-tag,
 [data-theme='dark'] .view-all-topics {
-  background: var(--fill);
-  color: var(--text-primary);
-  border-color: var(--separator);
+  background: #ffffff;
+  color: #111111;
+  border-color: rgba(0, 0, 0, 0.14);
 }
 
 [data-theme='dark'] .topic-tag:hover,
 [data-theme='dark'] .view-all-topics:hover {
-  background: var(--fill-hover);
+  background: #ffffff;
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -407,6 +407,12 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
   font-family: var(--ui-font-family);
   background: var(--bg);
@@ -414,19 +420,62 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  min-height: 100dvh;
   font-size: 15px;
   line-height: 1.5;
   letter-spacing: -0.01em;
+  overscroll-behavior-y: contain;
 }
 
 .app-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .content-area {
   flex: 1;
+}
+
+@media (max-width: 900px) {
+  .app-layout.has-mobile-nav .content-area {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+
+  .app-layout.has-mobile-nav .site-footer {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .topic-tag-chip,
+  .fihrist-topic-tag,
+  .surah-tab,
+  .verse-tab,
+  .tafsir-subtab,
+  .surah-info-subtab,
+  .reading-nav-btn,
+  .verse-nav-btn,
+  .footer-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+[data-theme='dark'] .topic-tag-chip,
+[data-theme='dark'] .topic-tag-chip.all-topics,
+[data-theme='dark'] .fihrist-topic-tag {
+  background: #ffffff;
+  color: #111111;
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+[data-theme='dark'] .topic-tag-chip:hover,
+[data-theme='dark'] .topic-tag-chip.all-topics:hover,
+[data-theme='dark'] .fihrist-topic-tag:hover {
+  background: #ffffff;
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 a {

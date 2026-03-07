@@ -388,7 +388,7 @@
 @media (max-width: 768px) {
     .integrated-player {
         left: 12px;
-        bottom: 12px;
+        bottom: calc(78px + env(safe-area-inset-bottom));
         width: calc(100% - 24px);
         border-radius: 24px;
     }

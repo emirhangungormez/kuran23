@@ -23,6 +23,7 @@ import AuthModal from './components/AuthModal'
 import SignupPage from './pages/SignupPage'
 import Footer from './components/Footer'
 import SupportAdPrompt from './components/SupportAdPrompt'
+import BottomNav from './components/BottomNav'
 import { SupporterProvider } from './contexts/SupporterContext'
 import { useEffect } from 'react'
 import './index.css'
@@ -107,7 +108,7 @@ function AppContent() {
           </Routes>
         </main>
       ) : (
-        <div className="app-layout">
+        <div className="app-layout has-mobile-nav">
           <main className="content-area">
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -126,6 +127,7 @@ function AppContent() {
             </Routes>
           </main>
           <Footer />
+          <BottomNav />
         </div>
       )}
       {!isSignupPage && <SupportAdPrompt />}

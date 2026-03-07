@@ -212,8 +212,8 @@
 }
 
 .verse-play-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: var(--fill);
     color: var(--text-tertiary);
@@ -240,8 +240,8 @@
 }
 
 .verse-link-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: var(--fill);
     color: var(--text-tertiary);
@@ -487,6 +487,22 @@
 
     .meal-side {
         padding-right: 0;
+    }
+
+    .verse-ar-text {
+        font-size: 30px;
+        line-height: 2.25;
+    }
+
+    .verse-tr-text {
+        font-size: 17px;
+        line-height: 1.85;
+    }
+
+    .verse-play-btn,
+    .verse-link-btn {
+        width: 38px;
+        height: 38px;
     }
 
     .reading-footer {

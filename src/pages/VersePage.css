@@ -37,8 +37,8 @@
 
 @media (max-width: 768px) {
     .verse-page-arabic {
-        font-size: 26px;
-        line-height: 1.8;
+        font-size: 30px;
+        line-height: 2.05;
     }
 }
 
@@ -108,8 +108,8 @@
 
 @media (max-width: 768px) {
     .verse-meal-text {
-        font-size: 15px;
-        line-height: 1.7;
+        font-size: 16px;
+        line-height: 1.85;
     }
 }
 
@@ -692,6 +692,7 @@
     cursor: pointer;
     transition: all 0.2s var(--spring);
     margin-right: 8px;
+    min-height: 44px;
 }
 
 @media (max-width: 480px) {

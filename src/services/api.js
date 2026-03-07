@@ -4,6 +4,7 @@
 import { surahs as mockSurahs, verses as mockVerses, searchQuran as mockSearch } from '../data/quranData'
 import { getSurahAudioUrl, getVerseAudioUrl } from './audio'
 import { fetchSupabaseEndpoint } from './supabaseApiAdapter'
+import { sanitizeSearchInput } from '../utils/security'
 
 let diyanetTafsirCache = null
 let diyanetSurahInfoCache = null
@@ -626,10 +627,11 @@ export async function getVerseWords(surahId, ayahNo) {
 // Search
 // ========================
 export async function searchQuran(query, limit = 30, page = 1) {
-    if (!query || query.trim().length < 1) return null;
+    const safeQuery = sanitizeSearchInput(query)
+    if (!safeQuery || safeQuery.trim().length < 1) return null;
 
     // Normalize query: replace commas with spaces for better multi-word search
-    const normalizedQuery = query.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+    const normalizedQuery = safeQuery.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
     if (normalizedQuery.length < 1) return null;
 
     // Smart Address Detection: e.g., "2:255", "2 13", "2.186", "2/43"

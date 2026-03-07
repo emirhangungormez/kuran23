@@ -1,17 +1,15 @@
 ﻿import { useState, useRef, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { searchQuran as searchApi, getDailyVerse } from '../services/api'
 import { searchQuran as searchMock, surahs as allSurahs } from '../data/quranData'
 import SearchResults from '../components/SearchResults'
 import DailyVerse from '../components/DailyVerse'
 import { popularTopics } from '../data/topicsData'
+import { sanitizeSearchInput } from '../utils/security'
 import './HomePage.css'
 
 import { useBookmarks } from '../contexts/BookmarksContext'
-import UserAvatar from '../components/UserAvatar'
-import ThemeToggle from '../components/ThemeToggle'
-import RamadanStatus from '../components/RamadanStatus'
 import GlobalNav from '../components/GlobalNav'
 import ArabicKeyboard from '../components/ArabicKeyboard'
 
@@ -23,21 +21,20 @@ export default function HomePage() {
     const [isFocused, setIsFocused] = useState(false)
     const [useApi, setUseApi] = useState(true)
     const [dailyVerse, setDailyVerse] = useState(null)
-    const [page, setPage] = useState(1)
-    const [isLoadingMore, setIsLoadingMore] = useState(false)
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
     const inputRef = useRef(null)
-    const navigate = useNavigate()
     const location = useLocation()
 
     useEffect(() => {
         const params = new URLSearchParams(location.search)
-        const q = params.get('q')
+        const q = sanitizeSearchInput(params.get('q'))
         if (q) {
             setQuery(q)
             window.scrollTo(0, 0)
         }
     }, [location.search])
+
+    const sanitizedQuery = sanitizeSearchInput(query)
 
     const { data: dailyVerseData } = useQuery({
         queryKey: ['dailyVerse'],
@@ -57,13 +54,13 @@ export default function HomePage() {
         hasNextPage,
         isFetchingNextPage
     } = useInfiniteQuery({
-        queryKey: ['search', query, useApi],
+        queryKey: ['search', sanitizedQuery, useApi],
         queryFn: async ({ pageParam = 1 }) => {
-            if (!useApi || query.trim().length < 1) return null;
-            const res = await searchApi(query, 30, pageParam);
+            if (!useApi || sanitizedQuery.trim().length < 1) return null;
+            const res = await searchApi(sanitizedQuery, 30, pageParam);
             if (!res) {
                 setUseApi(false);
-                return searchMock(query);
+                return searchMock(sanitizedQuery);
             }
             return res;
         },
@@ -73,14 +70,14 @@ export default function HomePage() {
             const currentTotal = allPages.reduce((acc, curr) => acc + (curr?.verses?.length || 0), 0);
             return currentTotal < lastPage.total ? allPages.length + 1 : undefined;
         },
-        enabled: query.trim().length >= 1,
+        enabled: sanitizedQuery.trim().length >= 1,
         staleTime: 1000 * 60 * 5 // 5 minutes cache for searches
     });
 
     useEffect(() => {
-        if (query.trim().length >= 1) {
+        if (sanitizedQuery.trim().length >= 1) {
             if (!useApi) {
-                setResults(searchMock(query))
+                setResults(searchMock(sanitizedQuery))
             } else if (searchData) {
                 // Flatten pages for backward compatibility
                 const firstPage = searchData.pages[0];
@@ -103,7 +100,7 @@ export default function HomePage() {
             setResults(null)
             setUseApi(true) // reset api fallback on empty query
         }
-    }, [query, searchData, useApi])
+    }, [sanitizedQuery, searchData, useApi])
 
     const handleLoadMore = () => {
         if (hasNextPage && !isFetchingNextPage) {
@@ -135,12 +132,12 @@ export default function HomePage() {
                         type="text"
                         className="search-input"
                         placeholder="Sure adı, ayet metni veya numara ara..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        value={sanitizedQuery}
+                        onChange={(e) => setQuery(sanitizeSearchInput(e.target.value))}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                     />
-                    {query && (
+                    {sanitizedQuery && (
                         <button className="search-clear" onClick={() => { setQuery(''); inputRef.current?.focus() }}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                 <path d="M18 6L6 18M6 6l12 12" />
@@ -166,7 +163,7 @@ export default function HomePage() {
                     {isKeyboardOpen && (
                         <ArabicKeyboard
                             onKeyClick={(key) => {
-                                setQuery(prev => prev + key);
+                                setQuery(prev => sanitizeSearchInput(prev + key));
                                 inputRef.current?.focus();
                             }}
                             onBackspace={() => {
@@ -184,7 +181,7 @@ export default function HomePage() {
                 {results ? (
                     <SearchResults
                         results={results}
-                        query={query}
+                        query={sanitizedQuery}
                         onLoadMore={handleLoadMore}
                         isLoadingMore={isFetchingNextPage}
                     />
@@ -244,7 +241,7 @@ export default function HomePage() {
                             <div className="horizontal-topics">
                                 {popularTopics.map((topic) => {
                                     const label = typeof topic === 'string' ? topic : topic.label
-                                    const searchQuery = typeof topic === 'string' ? topic : (topic.query || topic.label)
+                                    const searchQuery = sanitizeSearchInput(typeof topic === 'string' ? topic : (topic.query || topic.label))
                                     const isArabic = typeof topic === 'object' && topic.lang === 'ar'
                                     return (
                                     <button

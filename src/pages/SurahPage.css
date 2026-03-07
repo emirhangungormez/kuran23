@@ -87,8 +87,8 @@
 
 @media (max-width: 768px) {
     .verse-row {
-        padding: 14px 10px;
-        gap: 12px;
+        padding: 16px 12px;
+        gap: 14px;
     }
 }
 
@@ -546,6 +546,27 @@
     border: none !important;
     background: #ffffff !important;
     position: relative !important;
+}
+
+@media (max-width: 768px) {
+    .verse-row-no {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+        border-radius: 9px;
+        margin-top: 2px;
+    }
+
+    .verse-row-ar {
+        font-size: 24px;
+        line-height: 2.05;
+        margin-bottom: 10px;
+    }
+
+    .verse-row-tr {
+        font-size: 15px;
+        line-height: 1.75;
+    }
 }
 
 

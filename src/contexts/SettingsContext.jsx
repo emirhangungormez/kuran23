@@ -94,6 +94,15 @@ export function SettingsProvider({ children }) {
         document.documentElement.setAttribute('data-theme', settings.theme)
         document.documentElement.style.setProperty('--arabic-font-family', getArabicFontFamily(settings.arabicFont))
         document.documentElement.setAttribute('data-arabic-font', settings.arabicFont)
+        const themeMeta = document.querySelector('meta[name="theme-color"]')
+        if (themeMeta) {
+            const themeColor = settings.theme === 'dark'
+                ? '#121212'
+                : settings.theme === 'sepia'
+                    ? '#f4eee1'
+                    : '#ffffff'
+            themeMeta.setAttribute('content', themeColor)
+        }
 
         if (document.fonts?.load) {
             const primaryFont = getArabicPrimaryFont(settings.arabicFont)
