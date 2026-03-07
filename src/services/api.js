@@ -141,6 +141,18 @@ function normalizeVerseItem(verse) {
 }
 
 let useOwnApi = true; // Will be set to false on first failure
+const OWN_API_TIMEOUT_MS = 6000
+
+function withTimeout(promise, timeoutMs, label = 'Request timed out') {
+    let timeoutId
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(label)), timeoutMs)
+    })
+
+    return Promise.race([promise, timeoutPromise]).finally(() => {
+        clearTimeout(timeoutId)
+    })
+}
 
 async function fetchJson(url, timeout = 8000) {
     const controller = new AbortController();
@@ -266,10 +278,10 @@ export async function getDailyVerse() {
 async function fetchOwnApi(endpoint) {
     if (!useOwnApi) return null
     try {
-        return await fetchSupabaseEndpoint(endpoint, {
+        return await withTimeout(fetchSupabaseEndpoint(endpoint, {
             mapIdForApi,
             defaultAuthor: DEFAULT_AUTHOR
-        })
+        }), OWN_API_TIMEOUT_MS, 'Supabase request timed out')
     } catch (e) {
         useOwnApi = false
         console.info('Supabase verisi okunamadı, AçıkKuran fallback moduna geçiliyor.')
