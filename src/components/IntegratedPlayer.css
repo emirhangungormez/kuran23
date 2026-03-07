@@ -12,7 +12,7 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(50px) saturate(210%);
     -webkit-backdrop-filter: blur(50px) saturate(210%);
-    z-index: 9997;
+    z-index: 9991;
     overflow: hidden;
     animation: slideUpPlayer 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -387,65 +387,19 @@
 
 @media (max-width: 768px) {
     .integrated-player {
-        left: 10px;
-        bottom: calc(var(--mobile-tabbar-height, 62px) + 14px + env(safe-area-inset-bottom));
-        width: calc(100% - 20px);
-        border-radius: 18px;
-        padding: 8px 10px;
-        border-color: var(--separator);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        background: color-mix(in srgb, var(--card-bg) 94%, transparent);
+        left: 12px;
+        bottom: calc(78px + env(safe-area-inset-bottom));
+        width: calc(100% - 24px);
+        border-radius: 24px;
     }
 
     .integrated-player.active {
-        width: calc(100% - 20px);
-        padding: 10px 12px;
+        width: calc(100% - 24px);
+        padding: 12px 14px;
     }
 
     .player-side-actions {
-        padding-left: 2px;
-    }
-
-    .player-main-row {
-        gap: 8px;
-    }
-
-    .player-surah-ar {
-        font-size: 14px;
-    }
-
-    .player-surah-tr {
-        font-size: 12.5px;
-    }
-
-    .player-surah-meta {
-        font-size: 10px;
-    }
-
-    .player-main-controls {
-        gap: 5px;
-        padding: 3px;
-        border-radius: 12px;
-    }
-
-    .player-main-controls .control-btn {
-        width: 30px;
-        height: 30px;
-    }
-
-    .player-main-controls .play-btn {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-    }
-
-    .player-main-controls .play-btn svg {
-        width: 24px;
-        height: 24px;
-    }
-
-    .player-mini-progress {
-        height: 2px;
+        padding-left: 6px;
     }
 }
 
