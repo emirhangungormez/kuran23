@@ -1009,15 +1009,17 @@ button {
 @media (max-width: 900px) {
   :root {
     --mobile-gutter: 14px;
-    --mobile-tabbar-height: 62px;
+    --mobile-tabbar-height: 56px;
+    --mobile-tabbar-offset: 10px;
+    --mobile-shell-max: 430px;
   }
 
   .app-layout.has-mobile-nav .content-area {
-    padding-bottom: calc(var(--mobile-tabbar-height) + 18px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--mobile-tabbar-height) + var(--mobile-tabbar-offset) + 24px + env(safe-area-inset-bottom));
   }
 
   .app-layout.has-mobile-nav .site-footer {
-    padding-bottom: calc(var(--mobile-tabbar-height) + 22px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--mobile-tabbar-height) + var(--mobile-tabbar-offset) + 28px + env(safe-area-inset-bottom));
   }
 }
 
@@ -1028,8 +1030,15 @@ button {
       var(--bg);
   }
 
+  .content-area {
+    display: flex;
+    justify-content: center;
+  }
+
   .page,
   .home {
+    width: min(100%, var(--mobile-shell-max, 430px));
+    margin-inline: auto;
     padding: calc(64px + env(safe-area-inset-top)) var(--mobile-gutter, 14px) 20px !important;
   }
 
