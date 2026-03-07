@@ -387,11 +387,9 @@
 
 @media (max-width: 768px) {
     .integrated-player {
-        left: 0;
-        right: 0;
-        margin: 0 auto;
-        bottom: calc(var(--mobile-tabbar-height, 56px) + var(--mobile-tabbar-offset, 10px) + 16px + env(safe-area-inset-bottom));
-        width: min(calc(100% - 20px), 430px);
+        left: 10px;
+        bottom: calc(var(--mobile-tabbar-height, 62px) + 14px + env(safe-area-inset-bottom));
+        width: calc(100% - 20px);
         border-radius: 18px;
         padding: 8px 10px;
         border-color: var(--separator);
@@ -400,7 +398,7 @@
     }
 
     .integrated-player.active {
-        width: min(calc(100% - 20px), 430px);
+        width: calc(100% - 20px);
         padding: 10px 12px;
     }
 
