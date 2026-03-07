@@ -176,14 +176,14 @@
 
 [data-theme='dark'] .topic-tag,
 [data-theme='dark'] .view-all-topics {
-  background: #ffffff;
-  color: #111111;
-  border-color: rgba(0, 0, 0, 0.14);
+  background: var(--fill);
+  color: var(--text-primary);
+  border-color: var(--separator);
 }
 
 [data-theme='dark'] .topic-tag:hover,
 [data-theme='dark'] .view-all-topics:hover {
-  background: #ffffff;
+  background: var(--fill-hover);
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -465,15 +465,15 @@ body {
 [data-theme='dark'] .topic-tag-chip,
 [data-theme='dark'] .topic-tag-chip.all-topics,
 [data-theme='dark'] .fihrist-topic-tag {
-  background: #ffffff;
-  color: #111111;
-  border-color: rgba(0, 0, 0, 0.14);
+  background: var(--fill);
+  color: var(--text-primary);
+  border-color: var(--separator);
 }
 
 [data-theme='dark'] .topic-tag-chip:hover,
 [data-theme='dark'] .topic-tag-chip.all-topics:hover,
 [data-theme='dark'] .fihrist-topic-tag:hover {
-  background: #ffffff;
+  background: var(--fill-hover);
   color: var(--accent);
   border-color: var(--accent);
 }

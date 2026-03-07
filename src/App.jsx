@@ -24,6 +24,7 @@ import SignupPage from './pages/SignupPage'
 import Footer from './components/Footer'
 import SupportAdPrompt from './components/SupportAdPrompt'
 import BottomNav from './components/BottomNav'
+import InstallAppBanner from './components/InstallAppBanner'
 import { SupporterProvider } from './contexts/SupporterContext'
 import { useEffect } from 'react'
 import './index.css'
@@ -128,6 +129,7 @@ function AppContent() {
           </main>
           <Footer />
           <BottomNav />
+          <InstallAppBanner />
         </div>
       )}
       {!isSignupPage && <SupportAdPrompt />}
