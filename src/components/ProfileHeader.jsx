@@ -96,7 +96,7 @@ export default function ProfileHeader({ onEditAvatar }) {
                         onBlur={() => handleBlur('userName', nameRef)}
                         onKeyDown={(e) => handleKeyDown(e, nameRef)}
                     >
-                        {settings.userName || 'Misafir Kullanıcı'}
+                        {settings.userName || user?.full_name || user?.username || 'Kullanıcı'}
                     </h1>
                     {isVip ? <span className="profile-vip-mark profile-vip-mark-name" title="VIP">📿</span> : null}
                     <PencilIcon size={14} />

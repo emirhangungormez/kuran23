@@ -5,8 +5,8 @@ import { supabase } from '../infrastructure/supabaseClient'
 
 const SettingsContext = createContext()
 const GUEST_PROFILE_DEFAULTS = {
-    userName: 'Misafir Kullanıcı',
-    userBio: 'Kuran-ı Kerim okuyucusu',
+    userName: '',
+    userBio: '',
     profileIcon: 'muessis',
     hatimCount: 0
 }
@@ -30,8 +30,8 @@ export function SettingsProvider({ children }) {
             tafsirSource: 'manual', // manual or diyanet
             profileIcon: 'muessis',
             theme: 'light',
-            userName: 'Misafir Kullanıcı',
-            userBio: 'Kuran-ı Kerim okuyucusu',
+            userName: '',
+            userBio: '',
             hatimCount: 0,
             readingJourneys: [],
             isPlayerVisible: false,

@@ -34,7 +34,7 @@ export default function SupportPage() {
     } = useSupporter()
     const icon = getProfileIcon(settings.profileIcon)
     const hasKron23Pro = isSupporter || membershipType === 'quick-pro'
-    const displayName = settings.userName || user?.full_name || user?.username || 'Misafir Kullanıcı'
+    const displayName = settings.userName || user?.full_name || user?.username || 'Kullanıcı'
     const displayBio = settings.userBio || 'Kuran-ı Kerim okuyucusu'
 
     const [isQuickProLoading, setIsQuickProLoading] = useState(false)
@@ -275,7 +275,7 @@ export default function SupportPage() {
                                 </div>
                                 {toggleLoading && <p className="support-mode-loading">Durum güncelleniyor...</p>}
                                 {!isLoggedIn && (
-                                    <p className="support-mode-loading">Misafir modda reklam desteğini açabilirsiniz. Pro üyelik için giriş yapmalısınız.</p>
+                                    <p className="support-mode-loading">Reklam desteğini giriş yapmadan açabilirsiniz. Pro üyelik için giriş yapmalısınız.</p>
                                 )}
                             </div>
 
