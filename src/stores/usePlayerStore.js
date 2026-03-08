@@ -150,7 +150,10 @@ const usePlayerStore = create((set, get) => ({
             globalAudio.src = track.audio
             globalAudio.load()
             globalAudio.playbackRate = get().playbackSpeed
-            globalAudio.play().catch(e => console.error("Playlist play error:", e))
+            globalAudio.play().catch(e => {
+                console.error("Playlist play error:", e)
+                set({ isPlaying: false })
+            })
             document.dispatchEvent(new CustomEvent('playerVisible'))
         }
     },

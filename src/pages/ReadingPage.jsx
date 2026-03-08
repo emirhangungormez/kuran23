@@ -99,6 +99,10 @@ export default function ReadingPage() {
         const filtered = verses.filter(v => parseInt(v?.page) === currentPage)
         return filtered.length > 0 ? filtered : verses
     }, [verses, currentPage])
+    const playablePageTracks = useMemo(
+        () => pageVerses.filter(v => Number(v?.verse_number) > 0 && !!v?.audio),
+        [pageVerses]
+    )
     const error = queryError ? "Sayfa yüklenirken bir hata oluştu." : null
 
     const arabicFontFamily = getArabicFontFamily(settings.arabicFont)
@@ -129,7 +133,7 @@ export default function ReadingPage() {
 
         if (!isPlaying && !isCorrectPage && pageVerses.length > 0) {
             const firstVerse = pageVerses[0]
-            const trackList = pageVerses.filter(v => v.audio)
+            const trackList = playablePageTracks
             const sData = allSurahs.find(s => s.no === parseInt(firstVerse.surah?.id))
             const metaData = {
                 surahNameAr: sData?.nameAr || firstVerse.surah?.name_original,
@@ -151,14 +155,14 @@ export default function ReadingPage() {
                 setMeta(metaData)
             }
         }
-    }, [pageVerses, isPlaying, meta.pageNumber, meta.context, currentPage, loadPlaylist, setMeta])
+    }, [pageVerses, playablePageTracks, isPlaying, meta.pageNumber, meta.context, currentPage, loadPlaylist, setMeta])
 
     // Removed local audio effects
 
     const togglePlayPage = (targetType) => {
         const type = targetType || 'arabic'
 
-        if (isPagePlaying && isPlaying && meta.playingType === type) {
+        if (isPagePlaying && meta.playingType === type) {
             togglePlay()
         } else {
             if (type === 'turkish') {
@@ -218,7 +222,7 @@ export default function ReadingPage() {
                     ayahNo: 0,
                     context: 'page'
                 }
-                const trackList = pageVerses.filter(v => v.audio)
+                const trackList = playablePageTracks
                 if (trackList.length > 0) {
                     playPlaylist(trackList, 0, metaData)
                 }
@@ -245,7 +249,7 @@ export default function ReadingPage() {
         }
 
         if (type === 'arabic') {
-            const trackList = pageVerses.filter(v => v.audio)
+            const trackList = playablePageTracks
             const idx = trackList.findIndex(t => t.audio === audioSrc)
             if (idx !== -1) {
                 playPlaylist(trackList, idx, metaData)
