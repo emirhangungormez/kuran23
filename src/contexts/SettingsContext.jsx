@@ -4,6 +4,12 @@ import { getArabicFontFamily, getArabicPrimaryFont } from '../utils/typography'
 import { supabase } from '../infrastructure/supabaseClient'
 
 const SettingsContext = createContext()
+const GUEST_PROFILE_DEFAULTS = {
+    userName: 'Misafir Kullanıcı',
+    userBio: 'Kuran-ı Kerim okuyucusu',
+    profileIcon: 'muessis',
+    hatimCount: 0
+}
 
 export function SettingsProvider({ children }) {
     const { user } = useAuth()
@@ -60,7 +66,13 @@ export function SettingsProvider({ children }) {
         let active = true
 
         const hydrate = async () => {
-            if (!user?.id) return
+            if (!user?.id) {
+                setSettings(prev => ({
+                    ...prev,
+                    ...GUEST_PROFILE_DEFAULTS
+                }))
+                return
+            }
 
             const { data } = await supabase
                 .from('user_settings')

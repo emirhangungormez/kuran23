@@ -1,4 +1,4 @@
-﻿import { createContext, useContext, useEffect, useState } from 'react'
+﻿import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { supabase } from '../infrastructure/supabaseClient'
 
 const AuthContext = createContext()
@@ -6,6 +6,7 @@ const AuthContext = createContext()
 const USER_STORAGE_KEY = 'quran_user'
 const TOKEN_STORAGE_KEY = 'quran_token'
 const USERNAME_EMAIL_DOMAIN = 'kuran23.local'
+const FORCED_LOGOUT_KEY = 'quran_forced_logout'
 
 function safeParse(raw) {
   try {
@@ -36,6 +37,66 @@ function normalizeRedirectPath(path) {
   const raw = String(path || '').trim()
   if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/'
   return raw
+}
+
+function markForcedLogout(value) {
+  try {
+    if (value) {
+      localStorage.setItem(FORCED_LOGOUT_KEY, '1')
+    } else {
+      localStorage.removeItem(FORCED_LOGOUT_KEY)
+    }
+  } catch {
+    // noop
+  }
+}
+
+function isForcedLogout() {
+  try {
+    return localStorage.getItem(FORCED_LOGOUT_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function clearSupabaseAuthStorage(storage) {
+  if (!storage) return
+
+  const keysToRemove = []
+  for (let i = 0; i < storage.length; i += 1) {
+    const key = storage.key(i)
+    if (!key) continue
+
+    const lowerKey = key.toLowerCase()
+    const isSupabaseAuthKey =
+      key.startsWith('sb-') &&
+      (
+        lowerKey.includes('-auth-token') ||
+        lowerKey.includes('-code-verifier') ||
+        lowerKey.includes('pkce')
+      )
+    const isLegacySupabaseAuthKey = lowerKey.startsWith('supabase.auth.')
+
+    if (isSupabaseAuthKey || isLegacySupabaseAuthKey) {
+      keysToRemove.push(key)
+    }
+  }
+
+  keysToRemove.forEach((key) => storage.removeItem(key))
+}
+
+function purgeAuthStorage() {
+  try {
+    clearSupabaseAuthStorage(localStorage)
+  } catch {
+    // noop
+  }
+
+  try {
+    clearSupabaseAuthStorage(window.sessionStorage)
+  } catch {
+    // noop
+  }
 }
 
 function mapProfileRow(row, authUser) {
@@ -84,6 +145,14 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => safeParse(localStorage.getItem(USER_STORAGE_KEY)))
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_STORAGE_KEY) || '')
   const [isAuthOpen, setIsAuthOpen] = useState(false)
+  const forcedLogoutRef = useRef(isForcedLogout())
+
+  const setForcedLogout = (value) => {
+    forcedLogoutRef.current = !!value
+    markForcedLogout(value)
+  }
+
+  const shouldForceGuestMode = () => forcedLogoutRef.current || isForcedLogout()
 
   const persistAuth = (nextUser, nextToken) => {
     setUser(nextUser)
@@ -106,6 +175,17 @@ export function AuthProvider({ children }) {
     let mounted = true
 
     const bootstrap = async () => {
+      if (shouldForceGuestMode()) {
+        persistAuth(null, '')
+        purgeAuthStorage()
+        try {
+          await supabase.auth.signOut({ scope: 'local' })
+        } catch {
+          // Local guest mode already applied.
+        }
+        return
+      }
+
       const { data } = await supabase.auth.getSession()
       const session = data?.session
       if (!mounted) return
@@ -124,6 +204,10 @@ export function AuthProvider({ children }) {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return
+      if (shouldForceGuestMode()) {
+        persistAuth(null, '')
+        return
+      }
       if (!session?.user) {
         persistAuth(null, '')
         return
@@ -146,6 +230,7 @@ export function AuthProvider({ children }) {
     }
 
     const email = raw.includes('@') ? raw.toLowerCase() : usernameToEmail(raw)
+    setForcedLogout(false)
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -172,6 +257,7 @@ export function AuthProvider({ children }) {
     }
 
     const signUpEmail = cleanEmail && isValidEmail(cleanEmail) ? cleanEmail : usernameToEmail(cleanUsername)
+    setForcedLogout(false)
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -217,6 +303,7 @@ export function AuthProvider({ children }) {
   const loginWithGoogle = async (redirectPath = '/') => {
     const safePath = normalizeRedirectPath(redirectPath)
     const redirectTo = `${window.location.origin}${safePath}`
+    setForcedLogout(false)
 
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -275,14 +362,22 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
+    setForcedLogout(true)
+    purgeAuthStorage()
+
     // Clear UI/session state immediately so logout never blocks the interface.
     persistAuth(null, '')
     setIsAuthOpen(false)
 
     try {
-      await supabase.auth.signOut({ scope: 'local' })
+      await Promise.race([
+        supabase.auth.signOut({ scope: 'local' }),
+        new Promise((resolve) => setTimeout(resolve, 1200))
+      ])
     } catch {
       // Ignore network/auth revocation errors; local logout already completed.
+    } finally {
+      purgeAuthStorage()
     }
   }
 
