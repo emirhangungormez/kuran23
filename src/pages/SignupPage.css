@@ -532,6 +532,8 @@
         min-height: calc(100dvh - 20px);
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
+        overflow: visible;
+        border-radius: 14px;
     }
 
     .signup-visual-inner {
@@ -546,6 +548,7 @@
 
     .signup-form-panel {
         padding: 18px 14px 16px;
+        overflow: visible;
     }
 }
 

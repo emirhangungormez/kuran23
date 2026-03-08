@@ -130,6 +130,7 @@ export default function SurahPage() {
     const { data: diyanetInfo, isLoading: isDiyanetInfoLoading, isError: isDiyanetInfoError } = useQuery({
         queryKey: ['diyanetSurahInfo', id],
         queryFn: () => getDiyanetSurahInfo(id),
+        enabled: activeTab === 'tefsir' && tefsirTab === 'diyanet',
         staleTime: 1000 * 60 * 60 * 24
     })
 

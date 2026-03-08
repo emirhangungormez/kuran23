@@ -164,6 +164,7 @@ export default function VersePage() {
     const { data: diyanetTafsirData, isLoading: isDiyanetTafsirLoading, isError: isDiyanetTafsirError } = useQuery({
         queryKey: ['diyanetTafsir', surahId, ayahNo],
         queryFn: () => getDiyanetTafsir(surahId, ayahNo),
+        enabled: activeTab === 'tefsir' && tefsirTab === 'diyanet',
         staleTime: 1000 * 60 * 60 * 24
     })
 
