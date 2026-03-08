@@ -41,6 +41,27 @@ const BOOKS = [
     sourceLabel: 'Tefsir Kütüphanesi - Kurtubi Tefsiri (Kitap 04)'
   },
   {
+    id: '05',
+    sourceId: 'ibn_cevzi',
+    shortLabel: "İbnü'l-Cevzi",
+    tabLabel: "Zadü'l-Mesir (İbnü'l-Cevzi)",
+    sourceLabel: "Tefsir Kütüphanesi - Zadü'l-Mesir (İbnü'l-Cevzi, Kitap 05)"
+  },
+  {
+    id: '06',
+    sourceId: 'suyuti_durrul_mensur',
+    shortLabel: 'Suyuti',
+    tabLabel: "ed-Dürrü'l-Me'sur (Suyuti)",
+    sourceLabel: "Tefsir Kütüphanesi - ed-Dürrü'l-Me'sur (Suyuti, Kitap 06)"
+  },
+  {
+    id: '07',
+    sourceId: 'ebussuud',
+    shortLabel: "Ebu's-Suud",
+    tabLabel: "Ebu's-Suud Tefsiri",
+    sourceLabel: "Tefsir Kütüphanesi - Ebu's-Suud Tefsiri (Kitap 07)"
+  },
+  {
     id: '08',
     sourceId: 'razi',
     shortLabel: 'Razi',
