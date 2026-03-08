@@ -84,10 +84,45 @@ const BOOKS = [
   },
   {
     id: '12',
-    sourceId: 'elmalili_klasik',
-    shortLabel: 'Elmalili (Klasik)',
-    tabLabel: 'Elmalili Tefsiri (Klasik)',
+    sourceId: 'elmalili_orijinal',
+    shortLabel: 'Elmalili (Orijinal)',
+    tabLabel: 'Elmalili Tefsiri (Orijinal)',
     sourceLabel: 'Tefsir Kütüphanesi - Elmalili Tefsiri (Kitap 12)'
+  },
+  {
+    id: '13',
+    sourceId: 'elmalili_sadelestirilmis',
+    shortLabel: 'Elmalili (Sade)',
+    tabLabel: 'Elmalili Tefsiri (Sadeleştirilmiş)',
+    sourceLabel: 'Tefsir Kütüphanesi - Elmalili Tefsiri (Sadeleştirilmiş, Kitap 13)'
+  },
+  {
+    id: '14',
+    sourceId: 'besairul_kuran',
+    shortLabel: "Besairu'l Kur'an",
+    tabLabel: "Besairu'l Kur'an",
+    sourceLabel: "Tefsir Kütüphanesi - Besairu'l Kur'an (Kitap 14)"
+  },
+  {
+    id: '15',
+    sourceId: 'ibn_kesir',
+    shortLabel: 'İbn Kesir',
+    tabLabel: "İbn Kesir Tefsiri",
+    sourceLabel: 'Tefsir Kütüphanesi - İbn Kesir Tefsiri (Kitap 15)'
+  },
+  {
+    id: '16',
+    sourceId: 'fizilalil_kuran',
+    shortLabel: "Fizilal'il Kur'an",
+    tabLabel: "Seyyid Kutub - Fizilal'il Kur'an",
+    sourceLabel: "Tefsir Kütüphanesi - Seyyid Kutub, Fizilal'il Kur'an (Kitap 16)"
+  },
+  {
+    id: '17',
+    sourceId: 'tefhimul_kuran',
+    shortLabel: "Tefhimu'l Kur'an",
+    tabLabel: "Tefhimu'l Kur'an - Mevdudi",
+    sourceLabel: "Tefsir Kütüphanesi - Tefhimu'l Kur'an (Mevdudi, Kitap 17)"
   }
 ]
 
