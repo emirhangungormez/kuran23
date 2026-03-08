@@ -1,3 +1,5 @@
+import { stripArabicDiacritics } from './textEncoding'
+
 export const TEXT_MODE_OPTIONS = [
   { value: 'uthmani', label: 'Harekeli' },
   { value: 'plain', label: 'Harekesiz' },
@@ -44,5 +46,8 @@ export function buildTextModesFromVerse(verse = {}) {
 export function getVerseTextByMode(verse = {}, requestedMode = 'uthmani') {
   const textModes = buildTextModesFromVerse(verse)
   const mode = normalizeTextMode(requestedMode, false)
+  if (mode === 'plain') {
+    return stripArabicDiacritics(textModes.plain || textModes.uthmani || '')
+  }
   return textModes[mode] || textModes.uthmani || ''
 }

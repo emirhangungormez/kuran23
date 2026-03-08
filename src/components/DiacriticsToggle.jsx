@@ -1,4 +1,4 @@
-import './DiacriticsToggle.css'
+﻿import './DiacriticsToggle.css'
 
 export default function DiacriticsToggle({ enabled, onToggle, className = '' }) {
   const label = enabled ? 'Harekeleri gizle' : 'Harekeleri göster'
@@ -12,7 +12,7 @@ export default function DiacriticsToggle({ enabled, onToggle, className = '' }) 
       aria-label={label}
       title={label}
     >
-      <span className="diacritics-toggle-mark-only" aria-hidden="true">ُ</span>
+      <span className="diacritics-toggle-mark-only" aria-hidden="true">ۥ</span>
     </button>
   )
 }

@@ -110,6 +110,17 @@ export function normalizeTafsirText(value) {
 const INVISIBLE_ARABIC_MARKS_REGEX = /[\u200c\u200d\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g
 const QURANIC_ANNOTATIONS_REGEX = /[\u0610-\u061a\u06d6-\u06ed]/g
 const ARABIC_VERSE_ORNAMENTS_REGEX = /[\u06dd\u06de\u06e9]/g
+const ARABIC_DIACRITICS_REGEX = /[\u0640\u064b-\u065f\u0670]/g
+
+export function stripArabicDiacritics(value) {
+  if (typeof value !== 'string' || !value) return value || ''
+  return value
+    .normalize('NFKC')
+    .replace(INVISIBLE_ARABIC_MARKS_REGEX, '')
+    .replace(QURANIC_ANNOTATIONS_REGEX, '')
+    .replace(ARABIC_VERSE_ORNAMENTS_REGEX, '')
+    .replace(ARABIC_DIACRITICS_REGEX, '')
+}
 
 export function normalizeArabicDisplayText(value, options = {}) {
   if (typeof value !== 'string' || !value) return value || ''
