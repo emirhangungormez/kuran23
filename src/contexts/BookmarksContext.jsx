@@ -1,8 +1,12 @@
 ﻿import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useAuth } from './AuthContext'
+import { useSettings } from './SettingsContext'
 import { supabase } from '../infrastructure/supabaseClient'
 
 const BookmarksContext = createContext()
+const BOOKMARKS_STORAGE_KEY_BASE = 'quran_bookmarks'
+const HISTORY_LIMIT = 20
+const EMPTY_HISTORY = { surahs: [], verses: [] }
 
 function normalizeMeta(value) {
     if (!value) return null
@@ -11,6 +15,35 @@ function normalizeMeta(value) {
         return JSON.parse(value)
     } catch {
         return null
+    }
+}
+
+function normalizeHistory(value) {
+    const history = value && typeof value === 'object' ? value : EMPTY_HISTORY
+    const surahs = Array.isArray(history.surahs) ? history.surahs.slice(0, HISTORY_LIMIT) : []
+    const verses = Array.isArray(history.verses) ? history.verses.slice(0, HISTORY_LIMIT) : []
+    return { surahs, verses }
+}
+
+function getBookmarksStorageKey(userId) {
+    return userId ? `${BOOKMARKS_STORAGE_KEY_BASE}_${userId}` : `${BOOKMARKS_STORAGE_KEY_BASE}_guest`
+}
+
+function safeParse(raw) {
+    try {
+        return raw ? JSON.parse(raw) : null
+    } catch {
+        return null
+    }
+}
+
+function createDefaultBookmarks(history = EMPTY_HISTORY) {
+    return {
+        surahs: [],
+        verses: [],
+        lastPage: null,
+        stringBookmark: null,
+        history: normalizeHistory(history)
     }
 }
 
@@ -64,82 +97,113 @@ async function removeRemoteBookmark(userId, itemId, itemType) {
 
 export function BookmarksProvider({ children }) {
     const { user, setIsAuthOpen } = useAuth()
-    const [bookmarks, setBookmarks] = useState(() => {
-        const defaults = {
-            surahs: [],
-            verses: [],
-            lastPage: null,
-            stringBookmark: null,
-            history: { surahs: [], verses: [] }
+    const { settings, updateSettings } = useSettings()
+    const userId = user?.id || ''
+    const storageKey = getBookmarksStorageKey(userId)
+
+    const [bookmarks, setBookmarks] = useState(() => createDefaultBookmarks(settings?.recentHistory))
+
+    // Load local cache when account changes to prevent history bleed between users.
+    useEffect(() => {
+        const defaults = createDefaultBookmarks(settings?.recentHistory)
+        const parsed = safeParse(localStorage.getItem(storageKey))
+
+        if (!parsed || typeof parsed !== 'object') {
+            setBookmarks(defaults)
+            return
         }
 
-        try {
-            const saved = localStorage.getItem('quran_bookmarks')
-            if (!saved) return defaults
-            const parsed = JSON.parse(saved)
-            return {
-                ...defaults,
-                ...parsed,
-                history: parsed.history || defaults.history
-            }
-        } catch {
-            return defaults
-        }
-    })
+        setBookmarks({
+            ...defaults,
+            surahs: Array.isArray(parsed.surahs) ? parsed.surahs : [],
+            verses: Array.isArray(parsed.verses) ? parsed.verses : [],
+            lastPage: parsed.lastPage || null,
+            stringBookmark: parsed.stringBookmark || null
+        })
+    }, [storageKey])
 
-    // Fetch bookmarks from Supabase on login
+    // Keep history source of truth in settings.recentHistory (synced to Supabase via SettingsContext).
+    useEffect(() => {
+        const normalized = normalizeHistory(settings?.recentHistory)
+        setBookmarks(prev => {
+            const currentSerialized = JSON.stringify(normalizeHistory(prev.history))
+            const nextSerialized = JSON.stringify(normalized)
+            if (currentSerialized === nextSerialized) return prev
+            return { ...prev, history: normalized }
+        })
+    }, [settings?.recentHistory])
+
+    // Fetch bookmarks and remote history from Supabase on login.
     useEffect(() => {
         let active = true
 
         const loadBookmarks = async () => {
-            if (!user?.id) return
+            if (!userId) return
 
-            const { data } = await supabase
-                .from('user_bookmarks')
-                .select('item_id,item_type,metadata,surah_id,verse_number')
-                .eq('user_id', user.id)
+            const [{ data: bookmarkRows }, { data: settingsRow }] = await Promise.all([
+                supabase
+                    .from('user_bookmarks')
+                    .select('item_id,item_type,metadata,surah_id,verse_number')
+                    .eq('user_id', userId),
+                supabase
+                    .from('user_settings')
+                    .select('settings_json')
+                    .eq('user_id', userId)
+                    .maybeSingle()
+            ])
 
             if (!active) return
 
-            const mapped = toRemoteBookmarks(data || [])
-            setBookmarks(prev => ({
+            const mapped = toRemoteBookmarks(bookmarkRows || [])
+            const remoteHistory = normalizeHistory(settingsRow?.settings_json?.recentHistory)
+
+            setBookmarks({
+                ...createDefaultBookmarks(remoteHistory),
                 ...mapped,
-                history: prev.history // Keep local history for now
-            }))
+                history: remoteHistory
+            })
+
+            updateSettings({ recentHistory: remoteHistory })
         }
 
         loadBookmarks()
         return () => { active = false }
-    }, [user])
+    }, [userId, updateSettings])
 
+    // Persist bookmark core data with user-specific local key.
     useEffect(() => {
-        localStorage.setItem('quran_bookmarks', JSON.stringify(bookmarks))
-    }, [bookmarks])
+        localStorage.setItem(storageKey, JSON.stringify({
+            surahs: bookmarks.surahs,
+            verses: bookmarks.verses,
+            lastPage: bookmarks.lastPage,
+            stringBookmark: bookmarks.stringBookmark
+        }))
+    }, [bookmarks.surahs, bookmarks.verses, bookmarks.lastPage, bookmarks.stringBookmark, storageKey])
 
     const saveLastPage = useCallback((pageInfo) => {
         const meta = { ...pageInfo, savedAt: new Date().toISOString() }
         setBookmarks(prev => ({ ...prev, lastPage: meta }))
 
-        if (user?.id) {
-            upsertRemoteBookmark(user.id, 'last_read', 'last_read', meta)
+        if (userId) {
+            upsertRemoteBookmark(userId, 'last_read', 'last_read', meta)
         }
-    }, [user])
+    }, [userId])
 
     const setStringBookmark = useCallback((pageInfo) => {
         const meta = pageInfo ? { ...pageInfo, savedAt: new Date().toISOString() } : null
         setBookmarks(prev => ({ ...prev, stringBookmark: meta }))
 
-        if (!user?.id) return
+        if (!userId) return
 
         if (meta) {
-            upsertRemoteBookmark(user.id, 'string_bookmark', 'string_bookmark', meta)
+            upsertRemoteBookmark(userId, 'string_bookmark', 'string_bookmark', meta)
         } else {
-            removeRemoteBookmark(user.id, 'string_bookmark', 'string_bookmark')
+            removeRemoteBookmark(userId, 'string_bookmark', 'string_bookmark')
         }
-    }, [user])
+    }, [userId])
 
     const toggleSurah = useCallback((surah) => {
-        if (!user) {
+        if (!userId) {
             setIsAuthOpen(true)
             return
         }
@@ -163,22 +227,22 @@ export function BookmarksProvider({ children }) {
         }))
 
         if (exists) {
-            removeRemoteBookmark(user.id, `surah-${surah.id}`, 'surah')
+            removeRemoteBookmark(userId, `surah-${surah.id}`, 'surah')
         } else {
-            upsertRemoteBookmark(user.id, `surah-${surah.id}`, 'surah', meta)
+            upsertRemoteBookmark(userId, `surah-${surah.id}`, 'surah', meta)
         }
-    }, [bookmarks.surahs, user, setIsAuthOpen])
+    }, [bookmarks.surahs, userId, setIsAuthOpen])
 
     const toggleVerse = useCallback((verse, surahId, surahName) => {
-        if (!user) {
+        if (!userId) {
             setIsAuthOpen(true)
             return
         }
 
         const verseToStore = {
             ...verse,
-            surah_id: parseInt(surahId),
-            verse_number: parseInt(verse.verse_number || verse.ayah)
+            surah_id: parseInt(surahId, 10),
+            verse_number: parseInt(verse.verse_number || verse.ayah, 10)
         }
         const currentVerseId = verseToStore.id || `${verseToStore.surah_id}-${verseToStore.verse_number}`
 
@@ -199,43 +263,66 @@ export function BookmarksProvider({ children }) {
         }))
 
         if (exists) {
-            removeRemoteBookmark(user.id, currentVerseId, 'verse')
+            removeRemoteBookmark(userId, currentVerseId, 'verse')
         } else {
-            upsertRemoteBookmark(user.id, currentVerseId, 'verse', meta)
+            upsertRemoteBookmark(userId, currentVerseId, 'verse', meta)
         }
-    }, [bookmarks.verses, user, setIsAuthOpen])
+    }, [bookmarks.verses, userId, setIsAuthOpen])
 
     const addToHistory = useCallback((item, type) => {
+        if (type !== 'surahs' && type !== 'verses') return
+
+        let nextHistory = null
+
         setBookmarks(prev => {
-            const currentHistory = prev.history || { surahs: [], verses: [] }
+            const currentHistory = normalizeHistory(prev.history)
             const list = currentHistory[type] || []
-            const filtered = list.filter(i => {
+            const filtered = list.filter((i) => {
                 if (type === 'surahs') return i.no !== item.no
                 return i.id !== (item.id || `${item.surahId || item.surah_id}-${item.ayah || item.verse_number}`)
             })
+
             const newItem = {
                 ...item,
                 id: item.id || (type === 'verses' ? `${item.surahId || item.surah_id}-${item.ayah || item.verse_number}` : item.no),
                 visitedAt: new Date().toISOString()
             }
-            const newList = [newItem, ...filtered].slice(0, 20)
-            return { ...prev, history: { ...currentHistory, [type]: newList } }
+
+            nextHistory = {
+                ...currentHistory,
+                [type]: [newItem, ...filtered].slice(0, HISTORY_LIMIT)
+            }
+
+            return { ...prev, history: nextHistory }
         })
-    }, [])
+
+        if (nextHistory) {
+            updateSettings({ recentHistory: nextHistory })
+        }
+    }, [updateSettings])
 
     const clearHistory = useCallback((type) => {
-        setBookmarks(prev => ({
-            ...prev,
-            history: { ...prev.history, [type]: [] }
-        }))
-    }, [])
+        if (type !== 'surahs' && type !== 'verses') return
 
-    const isSurahBookmarked = useCallback((id) => bookmarks.surahs.some(s => parseInt(s.id) === parseInt(id)), [bookmarks.surahs])
+        let nextHistory = null
+
+        setBookmarks(prev => {
+            const currentHistory = normalizeHistory(prev.history)
+            nextHistory = { ...currentHistory, [type]: [] }
+            return { ...prev, history: nextHistory }
+        })
+
+        if (nextHistory) {
+            updateSettings({ recentHistory: nextHistory })
+        }
+    }, [updateSettings])
+
+    const isSurahBookmarked = useCallback((id) => bookmarks.surahs.some(s => parseInt(s.id, 10) === parseInt(id, 10)), [bookmarks.surahs])
 
     const isVerseBookmarked = useCallback((surahId, verseNumber) => {
         return bookmarks.verses.some(v =>
             v.id === `${surahId}-${verseNumber}` ||
-            (parseInt(v.surah_id) === parseInt(surahId) && parseInt(v.verse_number) === parseInt(verseNumber))
+            (parseInt(v.surah_id, 10) === parseInt(surahId, 10) && parseInt(v.verse_number, 10) === parseInt(verseNumber, 10))
         )
     }, [bookmarks.verses])
 
