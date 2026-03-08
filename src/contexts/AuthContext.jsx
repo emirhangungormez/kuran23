@@ -1,6 +1,6 @@
 ﻿import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { supabase } from '../infrastructure/supabaseClient'
-import { getRandomOrangeProfileIconId } from '../data/profileIcons'
+import { ORANGE_PROFILE_ICON_IDS, getRandomOrangeProfileIconId, isBuiltInProfileIconId } from '../data/profileIcons'
 
 const AuthContext = createContext()
 
@@ -46,6 +46,25 @@ function isGoogleAuthUser(authUser) {
     ? authUser.app_metadata.providers.map((item) => String(item || '').toLowerCase())
     : []
   return provider === 'google' || providers.includes('google')
+}
+
+function getGoogleAvatarUrl(authUser) {
+  const avatarCandidate = String(
+    authUser?.user_metadata?.avatar_url ||
+    authUser?.user_metadata?.picture ||
+    ''
+  ).trim()
+
+  if (!avatarCandidate) return ''
+  if (!/^https?:\/\//i.test(avatarCandidate)) return ''
+  return avatarCandidate
+}
+
+function canAutoReplaceWithGoogleAvatar(existingIcon) {
+  const icon = String(existingIcon || '').trim()
+  if (!icon) return true
+  if (icon === 'muessis') return true
+  return ORANGE_PROFILE_ICON_IDS.includes(icon)
 }
 
 function markForcedLogout(value) {
@@ -132,8 +151,11 @@ async function ensureProfile(authUser, overrides = {}) {
     .eq('id', authUser.id)
     .maybeSingle()
 
-  const defaultProfileIcon = isGoogleAuthUser(authUser)
-    ? getRandomOrangeProfileIconId()
+  const googleAuthUser = isGoogleAuthUser(authUser)
+  const googleAvatarUrl = googleAuthUser ? getGoogleAvatarUrl(authUser) : ''
+
+  const defaultProfileIcon = googleAuthUser
+    ? (googleAvatarUrl || getRandomOrangeProfileIconId())
     : 'muessis'
 
   const username = normalizeUsername(
@@ -151,10 +173,18 @@ async function ensureProfile(authUser, overrides = {}) {
     ''
   ).trim()
 
+  const existingProfileIcon = String(existingProfile?.profile_icon || '').trim()
+  const shouldUseGoogleAvatar =
+    googleAuthUser &&
+    !!googleAvatarUrl &&
+    !overrides.profileIcon &&
+    canAutoReplaceWithGoogleAvatar(existingProfileIcon)
+
   const profileIcon = String(
     overrides.profileIcon ||
+    (shouldUseGoogleAvatar ? googleAvatarUrl : '') ||
     existingProfile?.profile_icon ||
-    authUser?.user_metadata?.profile_icon ||
+    (isBuiltInProfileIconId(authUser?.user_metadata?.profile_icon) ? authUser?.user_metadata?.profile_icon : '') ||
     defaultProfileIcon
   ).trim() || defaultProfileIcon
 

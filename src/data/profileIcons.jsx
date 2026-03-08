@@ -150,4 +150,39 @@ export function getRandomOrangeProfileIconId() {
     return ORANGE_PROFILE_ICON_IDS[randomIndex]
 }
 
-export const getProfileIcon = (id) => profileIcons.find(icon => icon.id === id) || profileIcons[0];
+function isRemoteAvatarUrl(value) {
+    const raw = String(value || '').trim()
+    return /^https?:\/\//i.test(raw)
+}
+
+export function isBuiltInProfileIconId(id) {
+    return profileIcons.some((icon) => icon.id === id)
+}
+
+export const getProfileIcon = (id) => {
+    const normalizedId = String(id || '').trim()
+
+    if (isRemoteAvatarUrl(normalizedId)) {
+        return {
+            id: normalizedId,
+            name: 'Google Avatar',
+            desc: 'Google profil resmi',
+            component: (props) => (
+                <img
+                    src={normalizedId}
+                    alt="Profil"
+                    referrerPolicy="no-referrer"
+                    style={{
+                        width: props.size || 24,
+                        height: props.size || 24,
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        display: 'block'
+                    }}
+                />
+            )
+        }
+    }
+
+    return profileIcons.find(icon => icon.id === normalizedId) || profileIcons[0]
+};
