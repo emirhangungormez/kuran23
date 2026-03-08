@@ -17,7 +17,7 @@ const items = [
   },
   {
     key: 'reading',
-    to: '/oku',
+    to: '/oku/1',
     label: 'Oku',
     isActive: (pathname) => pathname.startsWith('/oku'),
     icon: (

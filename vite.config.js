@@ -68,12 +68,17 @@ export default defineConfig(({ mode }) => {
             },
             {
               urlPattern: /^https:\/\/.*\.(?:mp3|wav|ogg)$/i,
-              handler: 'CacheFirst',
+              handler: 'NetworkFirst',
               options: {
-                cacheName: 'audio-assets',
+                cacheName: 'audio-stream',
+                networkTimeoutSeconds: 8,
+                rangeRequests: true,
+                cacheableResponse: {
+                  statuses: [0, 200, 206]
+                },
                 expiration: {
-                  maxEntries: 80,
-                  maxAgeSeconds: 60 * 60 * 24 * 14
+                  maxEntries: 60,
+                  maxAgeSeconds: 60 * 60 * 24 * 7
                 }
               }
             },

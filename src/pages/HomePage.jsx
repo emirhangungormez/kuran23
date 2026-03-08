@@ -222,7 +222,7 @@ export default function HomePage() {
                                     </div>
                                 </Link>
 
-                                <Link to="/oku" className="quran-promo-card">
+                                <Link to="/oku/1" className="quran-promo-card">
                                     <div className="quran-promo-overlay">
                                         <span className="quran-promo-badge">MUSHAF</span>
                                             <div className="quran-promo-content">

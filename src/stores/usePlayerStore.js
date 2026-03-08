@@ -50,7 +50,6 @@ function resolveActiveTrackIndex(state) {
 // Global Audio Element Instance
 const globalAudio = new Audio()
 globalAudio.preload = 'auto'
-globalAudio.crossOrigin = 'anonymous'
 let lastPageAudioRecoveryKey = ''
 
 function safePlayAudio(onFail) {

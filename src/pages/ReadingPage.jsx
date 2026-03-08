@@ -30,7 +30,7 @@ import { normalizeArabicDisplayText } from '../utils/textEncoding'
 import './ReadingPage.css'
 
 const JUZ_START_PAGES = [
-    0, 22, 42, 62, 82, 102, 122, 142, 162, 182,
+    1, 22, 42, 62, 82, 102, 122, 142, 162, 182,
     202, 222, 242, 262, 282, 302, 322, 342, 362, 382,
     402, 422, 442, 462, 482, 502, 522, 542, 562, 582
 ];
@@ -41,7 +41,10 @@ export default function ReadingPage() {
     const { saveLastPage, bookmarks, setStringBookmark, toggleVerse, isVerseBookmarked } = useBookmarks()
     const { settings, updateSettings } = useSettings()
     const { isLoggedIn, setIsAuthOpen } = useAuth()
-    const currentPage = page !== undefined ? parseInt(page) : 0
+    const parsedPage = Number.parseInt(page || '', 10)
+    const lastSavedPage = Number.parseInt(bookmarks?.lastPage?.pageNumber || '', 10)
+    const fallbackPage = Number.isInteger(lastSavedPage) && lastSavedPage >= 1 && lastSavedPage <= 604 ? lastSavedPage : 1
+    const currentPage = Number.isInteger(parsedPage) && parsedPage >= 1 && parsedPage <= 604 ? parsedPage : fallbackPage
     const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
     const [copiedVerseKey, setCopiedVerseKey] = useState('')
 
@@ -92,6 +95,7 @@ export default function ReadingPage() {
     } = useQuery({
         queryKey: ['page', currentPage, primaryAuthorId, settings.defaultReciterId, settings.showTajweed],
         queryFn: () => getPage(currentPage, primaryAuthorId, settings.defaultReciterId, settings.showTajweed),
+        enabled: currentPage >= 1 && currentPage <= 604,
         staleTime: 1000 * 60 * 60 * 24 // 24 hours
     })
     const pageVerses = useMemo(() => {
@@ -109,6 +113,12 @@ export default function ReadingPage() {
     const arabicFontSize = getArabicFontSize(settings)
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
+
+    useEffect(() => {
+        if (String(currentPage) !== String(page || '')) {
+            navigate(`/oku/${currentPage}`, { replace: true })
+        }
+    }, [page, currentPage, navigate])
 
     useEffect(() => {
         if (pageVerses.length > 0) {
@@ -322,7 +332,7 @@ export default function ReadingPage() {
     const currentJuz = pageVerses.length > 0 ? pageVerses[0].juz_number : Math.floor((currentPage - 2) / 20) + 2
 
     const handlePageChange = (p) => {
-        if (p < 0 || p > 604) return
+        if (p < 1 || p > 604) return
         navigate(`/oku/${p}`)
     }
 
@@ -353,9 +363,9 @@ export default function ReadingPage() {
         label: `${i + 1}. Cüz`
     }))
 
-    const pageOptions = Array.from({ length: 605 }, (_, i) => ({
-        value: i,
-        label: i === 0 ? 'Fatiha (Başlangıç)' : `${i}. Sayfa`
+    const pageOptions = Array.from({ length: 604 }, (_, i) => ({
+        value: i + 1,
+        label: `${i + 1}. Sayfa`
     }))
 
     const reciterOptions = availableReciters
@@ -671,7 +681,7 @@ export default function ReadingPage() {
                     <button
                         className="reading-nav-btn"
                         onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 0}
+                        disabled={currentPage === 1}
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
                         Önceki Sayfa

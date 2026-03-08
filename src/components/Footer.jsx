@@ -24,7 +24,7 @@ export default function Footer() {
                             <h4>Uygulama</h4>
                             <a href="/ay-evresi" className="footer-link">Ay Bölümü</a>
                             <a href="/profil" className="footer-link">Profil</a>
-                            <a href="/oku" className="footer-link">Kuran Oku</a>
+                            <a href="/oku/1" className="footer-link">Kuran Oku</a>
                         </div>
 
                         <div className="footer-col footer-cta">

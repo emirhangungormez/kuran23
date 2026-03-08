@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BookmarksProvider } from './contexts/BookmarksContext'
 import { SettingsProvider, useSettings } from './contexts/SettingsContext'
@@ -118,7 +118,7 @@ function AppContent() {
               <Route path="/seruvenler" element={<JourneysPage />} />
               <Route path="/sure/:id" element={<SurahPage />} />
               <Route path="/sure/:surahId/:ayahNo" element={<VersePage />} />
-              <Route path="/oku" element={<ReadingPage />} />
+              <Route path="/oku" element={<Navigate to="/oku/1" replace />} />
               <Route path="/oku/:page" element={<ReadingPage />} />
               <Route path="/fihrist" element={<FihristPage />} />
               <Route path="/hakkimizda" element={<AboutPage />} />
