@@ -98,7 +98,11 @@ function normalizeAudioUrl(url) {
     if (!url || typeof url !== 'string') return ''
     const value = url.trim()
     if (!value) return ''
-    return value.replace(/^http:\/\//i, 'https://')
+    const secure = value.replace(/^http:\/\//i, 'https://')
+    if (secure.includes('://verses.quran.com/')) {
+        return secure.replace('://verses.quran.com/', '://everyayah.com/data/')
+    }
+    return secure
 }
 
 function normalizeTranslationName(name) {

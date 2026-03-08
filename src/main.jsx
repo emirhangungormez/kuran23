@@ -13,7 +13,18 @@ if (import.meta.env.PROD) {
   console.debug = noop
 }
 
-registerSW({ immediate: true })
+const updateSW = registerSW({ immediate: true })
+
+if ('caches' in window) {
+  caches.delete('audio-assets').catch(() => {})
+  caches.delete('audio-stream').catch(() => {})
+}
+
+if (typeof updateSW === 'function') {
+  window.addEventListener('focus', () => {
+    updateSW(true)
+  })
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

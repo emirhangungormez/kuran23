@@ -67,22 +67,6 @@ export default defineConfig(({ mode }) => {
               }
             },
             {
-              urlPattern: /^https:\/\/.*\.(?:mp3|wav|ogg)$/i,
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'audio-stream',
-                networkTimeoutSeconds: 8,
-                rangeRequests: true,
-                cacheableResponse: {
-                  statuses: [0, 200, 206]
-                },
-                expiration: {
-                  maxEntries: 60,
-                  maxAgeSeconds: 60 * 60 * 24 * 7
-                }
-              }
-            },
-            {
               urlPattern: /^https:\/\/(api\.quran\.com|api\.acikkuran\.com|.*\.supabase\.co)\/.*/i,
               handler: 'NetworkFirst',
               options: {

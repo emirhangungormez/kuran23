@@ -77,7 +77,11 @@ function normalizeAudioUrl(url) {
     if (!url || typeof url !== 'string') return ''
     const trimmed = url.trim()
     if (!trimmed) return ''
-    return trimmed.replace(/^http:\/\//i, 'https://')
+    const secure = trimmed.replace(/^http:\/\//i, 'https://')
+    if (secure.includes('://verses.quran.com/')) {
+        return secure.replace('://verses.quran.com/', '://everyayah.com/data/')
+    }
+    return secure
 }
 
 const usePlayerStore = create((set, get) => ({
