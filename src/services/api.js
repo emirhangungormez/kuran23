@@ -1,18 +1,10 @@
 ﻿// API Service â€” Connects React frontend to PHP backend
 // Falls back to acikkuran-api directly when our backend is unavailable (local dev)
 
-import { surahs as mockSurahs, verses as mockVerses, searchQuran as mockSearch } from '../data/quranData'
-import {
-    applyQulFatihaToSurah,
-    applyQulFatihaToSurahListItem,
-    applyQulFatihaToVerse,
-    applyQulFatihaToVerseList,
-    getQulFatihaWords
-} from '../data/qulFatihaPilot'
+import { surahs as mockSurahs, searchQuran as mockSearch } from '../data/quranData'
 import { getSurahAudioUrl, getVerseAudioUrl } from './audio'
-import { fetchSupabaseEndpoint } from './supabaseApiAdapter'
 import { sanitizeSearchInput } from '../utils/security'
-import { buildTextModesFromVerse, getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
+import { buildTextModesFromVerse, getVerseTextByMode } from '../utils/textMode'
 
 let diyanetTafsirCache = null
 let diyanetSurahInfoCache = null
@@ -102,17 +94,6 @@ function stripHtmlTags(text) {
     return String(text).replace(/<[^>]+>/g, '');
 }
 
-function normalizeAudioUrl(url) {
-    if (!url || typeof url !== 'string') return ''
-    const value = url.trim()
-    if (!value) return ''
-    const secure = value.replace(/^http:\/\//i, 'https://')
-    if (secure.includes('://verses.quran.com/')) {
-        return secure.replace('://verses.quran.com/', '://everyayah.com/data/')
-    }
-    return secure
-}
-
 function normalizeTranslationName(name) {
     const raw = String(name || '').trim();
     const lower = raw.toLocaleLowerCase('tr-TR');
@@ -161,10 +142,14 @@ function normalizeVerseItem(verse) {
 
 function normalizeWordItem(word) {
     if (!word) return word;
+    const source = String(word.source || 'acikkuran')
+    const isFallback = typeof word.isFallback === 'boolean'
+        ? word.isFallback
+        : source.startsWith('fallback:')
     return {
         ...word,
-        source: String(word.source || 'legacy'),
-        isFallback: typeof word.isFallback === 'boolean' ? word.isFallback : (String(word.source || 'legacy') !== 'qul'),
+        source,
+        isFallback,
         morphology: {
             pos: word.morphology?.pos || '',
             pos_ar: word.morphology?.pos_ar || '',
@@ -189,10 +174,10 @@ function normalizeWordItem(word) {
 }
 
 function hydrateVerseSourceMeta(verse) {
-    const normalizedSource = String(verse?.source || '').trim() || 'legacy';
+    const normalizedSource = String(verse?.source || '').trim() || 'acikkuran';
     const normalizedFallback = typeof verse?.isFallback === 'boolean'
         ? verse.isFallback
-        : normalizedSource !== 'qul';
+        : normalizedSource.startsWith('fallback:');
     const text_modes = buildTextModesFromVerse(verse || {});
 
     return {
@@ -203,31 +188,8 @@ function hydrateVerseSourceMeta(verse) {
     };
 }
 
-function toTajweedParam(textMode) {
-    return normalizeTextMode(textMode) === 'tajweed';
-}
-
-function toTextModeQuery(textMode) {
-    return `&text_mode=${encodeURIComponent(normalizeTextMode(textMode))}`
-}
-
 export function resolveVerseTextForMode(verse, textMode) {
     return getVerseTextByMode(verse, textMode);
-}
-
-const ENABLE_SUPABASE_QURAN = String(import.meta.env.VITE_ENABLE_SUPABASE_QURAN || '').toLowerCase() === 'true'
-let useOwnApi = ENABLE_SUPABASE_QURAN; // Will be set to false on first failure
-const OWN_API_TIMEOUT_MS = 6000
-
-function withTimeout(promise, timeoutMs, label = 'Request timed out') {
-    let timeoutId
-    const timeoutPromise = new Promise((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error(label)), timeoutMs)
-    })
-
-    return Promise.race([promise, timeoutPromise]).finally(() => {
-        clearTimeout(timeoutId)
-    })
 }
 
 async function fetchJson(url, timeout = 8000) {
@@ -350,39 +312,20 @@ export async function getDailyVerse() {
     }
 }
 
-// Try Supabase first, fall back to acikkuran-api
-async function fetchOwnApi(endpoint) {
-    if (!ENABLE_SUPABASE_QURAN) return null
-    if (!useOwnApi) return null
-    try {
-        return await withTimeout(fetchSupabaseEndpoint(endpoint, {
-            mapIdForApi,
-            defaultAuthor: DEFAULT_AUTHOR
-        }), OWN_API_TIMEOUT_MS, 'Supabase request timed out')
-    } catch (e) {
-        useOwnApi = false
-        console.info('Supabase verisi okunamadı, AçıkKuran fallback moduna geçiliyor.')
-    }
-    return null
-}
-
 // ========================
 // Surahs
 // ========================
 export async function getSurahs() {
-    const own = await fetchOwnApi('/surahs.php');
-    if (own) return (own || []).map(applyQulFatihaToSurahListItem);
-
-    // Fallback: acikkuran
+    // Primary: acikkuran
     try {
         const data = await fetchJson(`${ACIKKURAN_API}/surahs`);
         return data.data.map(s => ({
             id: s.id, name: s.name, name_en: s.name_en, name_original: s.name_original,
             slug: s.slug, verse_count: s.verse_count, page_number: s.page_number,
             audio_mp3: s.audio?.mp3, audio_duration: s.audio?.duration,
-            source: 'fallback:acikkuran',
-            isFallback: true
-        })).map(applyQulFatihaToSurahListItem);
+            source: 'acikkuran',
+            isFallback: false
+        }));
     } catch {
         // Final fallback: mock
         return mockSurahs.map(s => ({
@@ -390,7 +333,7 @@ export async function getSurahs() {
             slug: s.nameTr.toLowerCase(), verse_count: s.ayahCount,
             source: 'fallback:mock',
             isFallback: true
-        })).map(applyQulFatihaToSurahListItem);
+        }));
     }
 }
 
@@ -398,34 +341,22 @@ export async function getSurahs() {
 // Surah detail with verses
 // ========================
 export async function getSurah(id, authorId, textMode = 'uthmani') {
-    const normalizedMode = normalizeTextMode(textMode)
-    const tajweedParam = toTajweedParam(normalizedMode) ? '&tajweed=1' : ''
-    const own = await fetchOwnApi(`/surah.php?id=${id}${authorId ? '&author=' + authorId : ''}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
-    if (own) {
-        if (Array.isArray(own)) return own.map(normalizeVerseItem)
-        const normalized = {
-            ...normalizeVerseItem(own),
-            verses: Array.isArray(own.verses) ? own.verses.map(normalizeVerseItem) : own.verses
-        }
-        return applyQulFatihaToSurah(normalized)
-    }
-
-    // Fallback: acikkuran
+    // Primary: acikkuran
     try {
         const mappedAuthor = mapIdForApi(authorId || DEFAULT_AUTHOR);
         const surahId = parseInt(id);
         const data = await fetchJson(`${ACIKKURAN_API}/surah/${surahId}?author=${mappedAuthor}`);
         const d = data.data;
         if (!d) return null;
-        return applyQulFatihaToSurah({
+        return {
             id: d.id, name: d.name, name_en: d.name_en, name_original: d.name_original,
             slug: d.slug, verse_count: d.verse_count, page_number: d.page_number,
             audio_mp3: d.audio?.mp3,
-            source: 'fallback:acikkuran',
-            isFallback: true,
+            source: 'acikkuran',
+            isFallback: false,
             verses: (d.verses || []).map(v => ({
-                source: 'fallback:acikkuran',
-                isFallback: true,
+                source: 'acikkuran',
+                isFallback: false,
                 id: v.id,
                 verse_number: v.verse_number,
                 verse: v.verse,
@@ -446,7 +377,7 @@ export async function getSurah(id, authorId, textMode = 'uthmani') {
                     author_id: v.translation.author?.id,
                 } : null,
             })).map(normalizeVerseItem),
-        });
+        };
     } catch (e) {
         console.warn('getSurah failed:', e);
         return null;
@@ -549,22 +480,7 @@ export async function getSurahInfo(id) {
 // Verse detail
 // ========================
 export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') {
-    const normalizedMode = normalizeTextMode(textMode)
-    const tajweedParam = toTajweedParam(normalizedMode) ? '&tajweed=1' : ''
-    const own = await fetchOwnApi(`/verse.php?surah=${surahId}&ayah=${ayahNo}${authorId ? '&author=' + authorId : ''}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
-    if (own) {
-        if (!Array.isArray(own)) {
-            const normalized = normalizeVerseItem(own)
-            const enriched = applyQulFatihaToVerse(normalized)
-            return {
-                ...enriched,
-                words: Array.isArray(enriched.words) ? enriched.words.map(normalizeWordItem) : []
-            }
-        }
-        return own.map(normalizeVerseItem);
-    }
-
-    // Fallback: acikkuran
+    // Primary: acikkuran
     try {
         const mappedAuthor = mapIdForApi(authorId || DEFAULT_AUTHOR);
         const sId = parseInt(surahId);
@@ -579,8 +495,8 @@ export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') 
                 name_original: d.surah.name_original, slug: d.surah.slug,
             } : { id: parseInt(surahId), name: `Sure ${surahId}` },
             verse_number: d.verse_number,
-            source: 'fallback:acikkuran',
-            isFallback: true,
+            source: 'acikkuran',
+            isFallback: false,
             verse: d.verse,
             verse_simplified: d.verse_simplified,
             verse_without_vowel: d.verse_without_vowel,
@@ -601,7 +517,7 @@ export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') 
             } : null,
             words: [], // Will be fetched separately
         })
-        return applyQulFatihaToVerse(normalized)
+        return normalized
     } catch (e) {
         console.warn('getVerse failed:', e);
         return null;
@@ -694,10 +610,7 @@ export async function getTafsir(surahId, ayahNo) {
 // All translations
 // ========================
 export async function getTranslations(surahId, ayahNo) {
-    const own = await fetchOwnApi(`/translations.php?surah=${surahId}&ayah=${ayahNo}`);
-    if (own) return own;
-
-    // Fallback: acikkuran
+    // Primary: acikkuran
     try {
         const data = await fetchJson(`${ACIKKURAN_API}/surah/${surahId}/verse/${ayahNo}/translations`);
         const allTranslations = data.data || [];
@@ -724,18 +637,7 @@ export async function getTranslations(surahId, ayahNo) {
 // Word-by-word analysis
 // ========================
 export async function getVerseWords(surahId, ayahNo) {
-    if (Number(surahId) === 1) {
-        const words = getQulFatihaWords(Number(ayahNo))
-        if (words.length > 0) return words
-    }
-
-    const own = await fetchOwnApi(`/verse_words.php?surah=${surahId}&ayah=${ayahNo}`);
-    if (own) {
-        const list = Array.isArray(own) ? own : (Array.isArray(own.data) ? own.data : []);
-        return list.map(normalizeWordItem);
-    }
-
-    // Fallback: acikkuran verseparts
+    // Primary: acikkuran verseparts
     try {
         const data = await fetchJson(`${ACIKKURAN_API}/surah/${surahId}/verse/${ayahNo}/verseparts`);
         return (data.data || []).map(w => ({
@@ -746,8 +648,8 @@ export async function getVerseWords(surahId, ayahNo) {
             transcription_en: w.transcription_en,
             translation_tr: w.translation_tr,
             translation_en: w.translation_en,
-            source: 'fallback:acikkuran',
-            isFallback: true,
+            source: 'acikkuran',
+            isFallback: false,
             morphology: {
                 pos: '',
                 pos_ar: '',
@@ -841,37 +743,8 @@ export async function searchQuran(query, limit = 30, page = 1) {
         }
     }
 
-    const mappedPrimary = mapIdForApi(DEFAULT_AUTHOR);
-    const own = await fetchOwnApi(
-        `/search.php?q=${encodeURIComponent(normalizedQuery)}&limit=${limit}&page=${page}&primary_author_id=${mappedPrimary}`
-    );
     const terms = normalizedQuery.toLowerCase().split(/\s+/);
-
-    if (own && own.total > 0) {
-        return {
-            surahs: (own.surahs || []).map(s => ({
-                no: s.id,
-                nameAr: s.name_original,
-                nameTr: s.name,
-                nameEn: s.name_en,
-                ayahCount: s.verse_count,
-                slug: s.slug,
-            })),
-            verses: (own.verses || []).map(v => ({
-                surahNo: v.surah_id,
-                ayah: v.verse_number,
-                textAr: v.verse_text,
-                textTr: v.translation_text || '',
-                translationLang: v.translation_language || 'tr',
-                translationAuthor: normalizeTranslationName(v.translation_author || ''),
-                surahTr: v.surah_name,
-                surahSlug: v.surah_slug,
-            })),
-            total: (own.surahs?.length || 0) + (own.verses?.length || 0)
-        };
-    }
-
-    // Fallback: acikkuran-api live search
+    // Primary: acikkuran-api live search
     try {
         const fetchLimit = terms.length > 1 ? 200 : limit;
         const [data, enData] = await Promise.all([
@@ -949,22 +822,7 @@ export async function searchQuran(query, limit = 30, page = 1) {
 // Page view
 // ========================
 export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthmani') {
-    const normalizedMode = normalizeTextMode(textMode)
-    const tajweedParam = toTajweedParam(normalizedMode) ? '&tajweed=1' : '';
-    const reciterParam = reciterId ? '&reciter=' + reciterId : '';
-    const own = await fetchOwnApi(`/page.php?page=${pageNumber}${authorId ? '&author=' + authorId : ''}${reciterParam}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
-    if (own) {
-        const pNum = parseInt(pageNumber);
-        const ownVerses = Array.isArray(own) ? own : [];
-        const filteredOwnVerses = ownVerses.filter(v => parseInt(v?.page) === pNum);
-        const normalized = (filteredOwnVerses.length > 0 ? filteredOwnVerses : ownVerses).map(v => ({
-            ...normalizeVerseItem(v),
-            audio: normalizeAudioUrl(v.audio) || getVerseAudioUrl(reciterId || 7, v?.surah?.id || 1, v?.verse_number || 1)
-        }))
-        return applyQulFatihaToVerseList(normalized)
-    }
-
-    // Fallback: acikkuran
+    // Primary: acikkuran
     try {
         const mappedAuthor = mapIdForApi(authorId || DEFAULT_AUTHOR);
         const data = await fetchJson(`${ACIKKURAN_API}/page/${pageNumber}?author=${mappedAuthor}`);
@@ -981,8 +839,8 @@ export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthma
                 id: v.surah.id, name: v.surah.name, name_en: v.surah.name_en,
                 name_original: v.surah.name_original, slug: v.surah.slug,
             } : null,
-            source: 'fallback:acikkuran',
-            isFallback: true,
+            source: 'acikkuran',
+            isFallback: false,
             verse_number: v.verse_number,
             verse: v.verse,
             verse_simplified: v.verse_simplified,
@@ -1003,7 +861,7 @@ export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthma
             } : null,
             audio: getVerseAudioUrl(reciterId || 7, v.surah?.id || 1, v.verse_number)
         }))
-        return applyQulFatihaToVerseList(normalized)
+        return normalized
     } catch (e) {
         console.warn('getPage failed:', e);
         return [];
@@ -1012,17 +870,11 @@ export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthma
 
 export async function getRoot(latinOrId) {
     if (typeof latinOrId === 'number') {
-        const own = await fetchOwnApi(`/root.php?id=${latinOrId}`);
-        if (own) return own;
-
         try {
             const data = await fetchJson(`${ACIKKURAN_API}/root/${latinOrId}`);
             return data.data;
         } catch { return null; }
     }
-
-    const own = await fetchOwnApi(`/root.php?latin=${encodeURIComponent(latinOrId)}`);
-    if (own) return own;
 
     try {
         const data = await fetchJson(`${ACIKKURAN_API}/root/latin/${encodeURIComponent(latinOrId)}`);

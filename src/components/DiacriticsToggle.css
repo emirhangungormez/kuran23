@@ -4,6 +4,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   border-radius: 7px;
   border: 1px solid var(--separator);
   background: var(--fill);
@@ -23,7 +24,15 @@
   color: var(--accent);
 }
 
-.diacritics-toggle-glyph {
-  font-size: 12px;
+.diacritics-toggle-letter {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.diacritics-toggle-mark {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 10px;
   line-height: 1;
 }

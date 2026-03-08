@@ -84,14 +84,13 @@ export default function AboutPage() {
                             <div className="about-tech-row"><strong>Frontend:</strong> React + Vite</div>
                             <div className="about-tech-row"><strong>Backend:</strong> PHP</div>
                             <div className="about-tech-row"><strong>Veritabanı:</strong> MySQL</div>
-                            <div className="about-tech-row"><strong>Veri Kaynağı:</strong> QUL export + AçıkKuran API + Diyanet açık kaynak çalışmaları</div>
+                            <div className="about-tech-row"><strong>Veri Kaynağı:</strong> AçıkKuran API + Diyanet açık kaynak çalışmaları</div>
                         </div>
                     </article>
 
                     <article className="about-card">
                         <h2>Kaynaklar ve Lisans</h2>
                         <div className="about-tech-list">
-                            <div className="about-tech-row"><strong>QUL (Tarteel):</strong> Public API yoktur; entegrasyon yalnızca export dosyalarıyla yapılır.</div>
                             <div className="about-tech-row"><strong>Kullanım Notu:</strong> Ticari kullanım kaynak lisanslarına göre değerlendirilir, atıf kontrolü zorunludur.</div>
                             <div className="about-tech-row"><strong>Görünürlük:</strong> Lisans/atıf detayları yalnızca bu sayfada merkezi olarak tutulur.</div>
                         </div>
@@ -181,15 +180,9 @@ export default function AboutPage() {
 
                 <section className="about-source-note">
                     <p>
-                        Açık veri ekosistemine katkıları için <strong>QUL</strong>, <strong>AçıkKuran</strong> ve <strong>Diyanet</strong> ekiplerine teşekkür ederiz.
+                        Açık veri ekosistemine katkıları için <strong>AçıkKuran</strong> ve <strong>Diyanet</strong> ekiplerine teşekkür ederiz.
                     </p>
                     <div className="about-source-actions">
-                        <a href="https://qul.tarteel.ai/resources" target="_blank" rel="noopener noreferrer" className="about-source-btn">
-                            QUL Kaynaklar
-                        </a>
-                        <a href="https://qul.tarteel.ai/faq" target="_blank" rel="noopener noreferrer" className="about-source-btn">
-                            QUL Lisans/SSS
-                        </a>
                         <a href="https://github.com/acikkuran" target="_blank" rel="noopener noreferrer" className="about-source-btn">
                             AçıkKuran GitHub
                         </a>
