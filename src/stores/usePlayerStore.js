@@ -414,10 +414,8 @@ const usePlayerStore = create((set, get) => ({
 
                 if (newTracks.length > 0) {
                     state.playPlaylist(newTracks, 0, newMeta)
-                    document.dispatchEvent(new CustomEvent('playerPageNavigated', { detail: { pageNumber: nextPage } }))
                 } else if (playingType === 'turkish' && singleUrl) {
                     state.playSingle(singleUrl, newMeta)
-                    document.dispatchEvent(new CustomEvent('playerPageNavigated', { detail: { pageNumber: nextPage } }))
                 } else {
                     set({ isPlaying: false })
                 }
@@ -708,6 +706,13 @@ export const initAudioListeners = (settingsFunction) => {
         const state = usePlayerStore.getState()
         const settings = settingsFunction ? settingsFunction() : null
         console.error("Audio Global Error:", e)
+        // In page-reading mode, skipping on error causes silent rapid page jumps on some mobile devices.
+        // Stop playback and wait for explicit user action instead.
+        if (state.meta?.context === 'page') {
+            state.setIsPlaying(false)
+            return
+        }
+
         if (state.mode === 'playlist') {
             state.playNext(settings)
         } else {
