@@ -106,7 +106,7 @@
 .verse-meal-text {
     font-size: 16px;
     line-height: 1.8;
-    color: var(--text-primary);
+    color: #1d1d1f;
     margin-bottom: 12px;
 }
 
@@ -698,8 +698,13 @@
 .translation-text {
     font-size: 15px;
     line-height: 1.7;
-    color: var(--text-primary);
+    color: #1d1d1f;
     margin-bottom: 8px;
+}
+
+[data-theme='dark'] .verse-meal-text,
+[data-theme='dark'] .translation-text {
+    color: var(--text-primary);
 }
 
 .translation-author {

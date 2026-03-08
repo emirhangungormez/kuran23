@@ -490,9 +490,13 @@
 
 .verse-row-tr {
     font-size: 14px;
-    color: var(--text-secondary);
+    color: #1d1d1f;
     line-height: 1.6;
     margin-bottom: 2px;
+}
+
+[data-theme='dark'] .verse-row-tr {
+    color: var(--text-primary);
 }
 
 .verse-row-content .fallback-chip {
