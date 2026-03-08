@@ -123,28 +123,6 @@ export default function ReadingPage() {
         return () => clearTimeout(timer)
     }, [copiedVerseKey])
 
-    useEffect(() => {
-        const handlePlayerPageNavigated = (event) => {
-            const nextPage = Number(event?.detail?.pageNumber)
-            if (!Number.isFinite(nextPage)) return
-            if (nextPage < 0 || nextPage > 604) return
-            if (nextPage === currentPage) return
-            navigate(`/oku/${nextPage}`)
-        }
-
-        document.addEventListener('playerPageNavigated', handlePlayerPageNavigated)
-        return () => document.removeEventListener('playerPageNavigated', handlePlayerPageNavigated)
-    }, [currentPage, navigate])
-
-    useEffect(() => {
-        const playerPage = Number(meta?.pageNumber)
-        if (meta?.context !== 'page') return
-        if (!Number.isFinite(playerPage)) return
-        if (playerPage < 0 || playerPage > 604) return
-        if (playerPage === currentPage) return
-        navigate(`/oku/${playerPage}`)
-    }, [meta?.context, meta?.pageNumber, currentPage, navigate])
-
     // Isolated Idle Prep
     useEffect(() => {
         const isCorrectPage = meta.pageNumber === currentPage && meta.context === 'page'
