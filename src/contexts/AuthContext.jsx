@@ -1,5 +1,6 @@
 ﻿import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { supabase } from '../infrastructure/supabaseClient'
+import { getRandomOrangeProfileIconId } from '../data/profileIcons'
 
 const AuthContext = createContext()
 
@@ -37,6 +38,14 @@ function normalizeRedirectPath(path) {
   const raw = String(path || '').trim()
   if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/'
   return raw
+}
+
+function isGoogleAuthUser(authUser) {
+  const provider = String(authUser?.app_metadata?.provider || '').toLowerCase()
+  const providers = Array.isArray(authUser?.app_metadata?.providers)
+    ? authUser.app_metadata.providers.map((item) => String(item || '').toLowerCase())
+    : []
+  return provider === 'google' || providers.includes('google')
 }
 
 function markForcedLogout(value) {
@@ -117,9 +126,37 @@ function mapProfileRow(row, authUser) {
 async function ensureProfile(authUser, overrides = {}) {
   if (!authUser?.id) return null
 
-  const username = normalizeUsername(overrides.username || authUser?.user_metadata?.username || deriveUsernameFromEmail(authUser?.email))
-  const fullName = String(overrides.fullName || authUser?.user_metadata?.full_name || authUser?.user_metadata?.fullName || '').trim()
-  const profileIcon = String(overrides.profileIcon || authUser?.user_metadata?.profile_icon || 'muessis').trim() || 'muessis'
+  const { data: existingProfile } = await supabase
+    .from('users')
+    .select('id,username,full_name,email,profile_icon,bio,hatim_count,is_super_admin,pro_expires_at')
+    .eq('id', authUser.id)
+    .maybeSingle()
+
+  const defaultProfileIcon = isGoogleAuthUser(authUser)
+    ? getRandomOrangeProfileIconId()
+    : 'muessis'
+
+  const username = normalizeUsername(
+    overrides.username ||
+    existingProfile?.username ||
+    authUser?.user_metadata?.username ||
+    deriveUsernameFromEmail(authUser?.email)
+  )
+
+  const fullName = String(
+    overrides.fullName ||
+    existingProfile?.full_name ||
+    authUser?.user_metadata?.full_name ||
+    authUser?.user_metadata?.fullName ||
+    ''
+  ).trim()
+
+  const profileIcon = String(
+    overrides.profileIcon ||
+    existingProfile?.profile_icon ||
+    authUser?.user_metadata?.profile_icon ||
+    defaultProfileIcon
+  ).trim() || defaultProfileIcon
 
   const payload = {
     id: authUser.id,

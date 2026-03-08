@@ -142,4 +142,12 @@ export const profileIcons = [
     }
 ];
 
+export const ORANGE_PROFILE_ICON_IDS = ['beam8', 'beam16', 'beam19', 'beam20']
+
+export function getRandomOrangeProfileIconId() {
+    if (!ORANGE_PROFILE_ICON_IDS.length) return 'muessis'
+    const randomIndex = Math.floor(Math.random() * ORANGE_PROFILE_ICON_IDS.length)
+    return ORANGE_PROFILE_ICON_IDS[randomIndex]
+}
+
 export const getProfileIcon = (id) => profileIcons.find(icon => icon.id === id) || profileIcons[0];

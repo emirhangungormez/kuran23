@@ -99,12 +99,6 @@ function AppContent() {
   const location = useLocation()
   const isSignupPage = location.pathname === '/kaydol' || location.pathname === '/giris'
 
-  useEffect(() => {
-    if (!isLoggedIn && location.pathname === '/profil') {
-      setIsAuthOpen(true)
-    }
-  }, [isLoggedIn, location.pathname, setIsAuthOpen])
-
   return (
     <>
       {!isSignupPage && <GlobalPlayerWrapper />}
