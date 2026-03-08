@@ -186,6 +186,11 @@
     box-shadow: none;
 }
 
+.profile-logout-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 [data-theme='dark'] .profile-name.editable:hover,
 [data-theme='dark'] .profile-bio.editable:hover {
     background: rgba(255, 255, 255, 0.05);

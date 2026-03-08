@@ -22,6 +22,7 @@ export default function ProfileHeader({ onEditAvatar }) {
     const navigate = useNavigate()
     const icon = getProfileIcon(settings.profileIcon)
     const [isHovering, setIsHovering] = useState(false)
+    const [isLoggingOut, setIsLoggingOut] = useState(false)
     const nameRef = useRef(null)
     const bioRef = useRef(null)
 
@@ -39,9 +40,15 @@ export default function ProfileHeader({ onEditAvatar }) {
         }
     }, [])
 
-    const handleLogout = () => {
-        logout()
-        navigate('/')
+    const handleLogout = async () => {
+        if (isLoggingOut) return
+        setIsLoggingOut(true)
+        try {
+            await logout()
+            navigate('/', { replace: true })
+        } finally {
+            setIsLoggingOut(false)
+        }
     }
 
     return (
@@ -108,11 +115,16 @@ export default function ProfileHeader({ onEditAvatar }) {
                 </div>
 
                 {isLoggedIn && (
-                    <button className="profile-logout-btn" onClick={handleLogout}>
+                    <button
+                        type="button"
+                        className="profile-logout-btn"
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                    >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                         </svg>
-                        Çıkış Yap
+                        {isLoggingOut ? 'Çıkış...' : 'Çıkış Yap'}
                     </button>
                 )}
             </div>

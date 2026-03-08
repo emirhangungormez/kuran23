@@ -275,8 +275,13 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
-    await supabase.auth.signOut()
-    persistAuth(null, '')
+    try {
+      await supabase.auth.signOut()
+    } finally {
+      // Always clear local auth state, even if remote sign-out fails.
+      persistAuth(null, '')
+      setIsAuthOpen(false)
+    }
   }
 
   const authFetch = async (url, options = {}) => {
