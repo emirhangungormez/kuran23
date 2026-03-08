@@ -182,6 +182,38 @@
     transform: none;
 }
 
+.auth-google-btn {
+    width: 100%;
+    margin-top: 12px;
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid var(--separator);
+    background: var(--fill);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.auth-google-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.auth-google-btn:hover:not(:disabled) {
+    background: var(--fill-hover);
+}
+
+.auth-google-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .auth-modal-footer {
     margin-top: 24px;
     text-align: center;
@@ -271,6 +303,12 @@
         padding: 14px;
         font-size: 14px;
         margin-top: 4px;
+    }
+
+    .auth-google-btn {
+        height: 42px;
+        font-size: 13px;
+        margin-top: 10px;
     }
 
     .auth-modal-close {

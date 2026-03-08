@@ -169,6 +169,39 @@
     font-size: 12px;
 }
 
+.signup-google-btn {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #2a313b;
+    border-radius: 8px;
+    background: #0d1014;
+    color: #f5f7fb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    transition: border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.signup-google-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.signup-google-btn:hover:not(:disabled) {
+    border-color: #3a4452;
+    background: #12161d;
+}
+
+.signup-google-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .signup-form {
     display: flex;
     flex-direction: column;

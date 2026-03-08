@@ -32,6 +32,12 @@ function deriveUsernameFromEmail(email) {
   return normalizeUsername(local) || `user_${Date.now()}`
 }
 
+function normalizeRedirectPath(path) {
+  const raw = String(path || '').trim()
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/'
+  return raw
+}
+
 function mapProfileRow(row, authUser) {
   if (!row && !authUser) return null
   return {
@@ -208,6 +214,36 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const loginWithGoogle = async (redirectPath = '/') => {
+    const safePath = normalizeRedirectPath(redirectPath)
+    const redirectTo = `${window.location.origin}${safePath}`
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo,
+          skipBrowserRedirect: true,
+          queryParams: {
+            prompt: 'select_account'
+          }
+        }
+      })
+
+      if (error) {
+        return { success: false, error: error.message || 'Google ile giriş başlatılamadı.' }
+      }
+
+      if (data?.url) {
+        window.location.assign(data.url)
+      }
+
+      return { success: true }
+    } catch {
+      return { success: false, error: 'Google ile giriş başlatılırken bağlantı hatası oluştu.' }
+    }
+  }
+
   const changePassword = async (oldPassword, newPassword) => {
     if (!oldPassword || !newPassword) {
       return { success: false, error: 'Tüm alanlar gereklidir.' }
@@ -259,6 +295,7 @@ export function AuthProvider({ children }) {
         user,
         token,
         login,
+        loginWithGoogle,
         register,
         changePassword,
         logout,
