@@ -6,7 +6,7 @@ import { useBookmarks } from '../contexts/BookmarksContext'
 import { useSettings } from '../contexts/SettingsContext'
 import BookmarkButton from '../components/BookmarkButton'
 import CustomSelect from '../components/CustomSelect'
-import TextModeToggle from '../components/TextModeToggle'
+import DiacriticsToggle from '../components/DiacriticsToggle'
 import UserAvatar from '../components/UserAvatar'
 import ThemeToggle from '../components/ThemeToggle'
 import RamadanStatus from '../components/RamadanStatus'
@@ -116,6 +116,7 @@ export default function SurahPage() {
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
     const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
+    const showDiacritics = textMode !== 'plain'
 
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
 
@@ -339,6 +340,10 @@ export default function SurahPage() {
         setPlaybackSpeed(speeds[nextIndex])
     }
 
+    const toggleDiacritics = () => {
+        updateSettings({ textMode: showDiacritics ? 'plain' : 'uthmani' })
+    }
+
     if (loading && !surah) {
         return (
             <div className="page surah-page">
@@ -395,11 +400,6 @@ export default function SurahPage() {
                                 className="audio-mini-select"
                             />
                         </div>
-                        <TextModeToggle
-                            value={textMode}
-                            onChange={(mode) => updateSettings({ textMode: mode })}
-                            className="surah-text-mode-toggle"
-                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -504,6 +504,7 @@ export default function SurahPage() {
                                     {surahMeta.type}
                                 </span>
                             )}
+                            <DiacriticsToggle enabled={showDiacritics} onToggle={toggleDiacritics} />
                         </div>
                         <p className="surah-page-meta">{surah.name_en} · {surah.verse_count} ayet</p>
                     </div>

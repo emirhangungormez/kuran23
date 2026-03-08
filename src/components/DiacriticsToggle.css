@@ -1,0 +1,29 @@
+.diacritics-toggle {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  border: 1px solid var(--separator);
+  background: var(--fill);
+  color: var(--text-secondary);
+  transition: all 0.2s var(--ease);
+  flex-shrink: 0;
+}
+
+.diacritics-toggle:hover {
+  background: var(--fill-hover);
+  color: var(--text-primary);
+}
+
+.diacritics-toggle.active {
+  background: var(--accent-light);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent);
+}
+
+.diacritics-toggle-glyph {
+  font-size: 12px;
+  line-height: 1;
+}

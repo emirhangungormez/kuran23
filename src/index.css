@@ -17,6 +17,110 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'QPCHafsUthmanic';
+  src: url('/fonts/qpc_hafs_font__uthmanic_.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MEQuranMadani';
+  src: url('/fonts/me_quran_font__madani_.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DigitalKhattV2';
+  src: url('/fonts/digital_khatt_v2_font.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DigitalKhattV1';
+  src: url('/fonts/digital_khatt_v1_font.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DigitalKhattIndopak';
+  src: url('/fonts/digital_khatt_indopak.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KFGQPCNastaleeq';
+  src: url('/fonts/kfgqpc_nastaleeq.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IndopakNastaleeq';
+  src: url('/fonts/indopak_nastaleeq.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SurahHeaderFont';
+  src: url('/fonts/surah_header_font.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SurahNameV1';
+  src: url('/fonts/surah_name_font_v1.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SurahNameV2';
+  src: url('/fonts/surah_name_font_v2.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SurahNameV4';
+  src: url('/fonts/surah_name_font_v4.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'V4SurahNameColor';
+  src: url('/fonts/v4_surah_name_color_font.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JuzNameCommon';
+  src: url('/fonts/juz_name_font__common_.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --ui-font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
   --bg: #ffffff;

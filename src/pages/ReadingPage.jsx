@@ -8,7 +8,7 @@ import { useBookmarks } from '../contexts/BookmarksContext'
 import { useSettings } from '../contexts/SettingsContext'
 import { useAuth } from '../contexts/AuthContext'
 import CustomSelect from '../components/CustomSelect'
-import TextModeToggle from '../components/TextModeToggle'
+import DiacriticsToggle from '../components/DiacriticsToggle'
 import RamadanStatus from '../components/RamadanStatus'
 import GlobalNav from '../components/GlobalNav'
 import usePlayerStore from '../stores/usePlayerStore'
@@ -116,6 +116,7 @@ export default function ReadingPage() {
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
     const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
+    const showDiacritics = textMode !== 'plain'
 
     useEffect(() => {
         if (String(currentPage) !== String(page || '')) {
@@ -344,6 +345,10 @@ export default function ReadingPage() {
         navigate(`/oku/${p}`)
     }
 
+    const toggleDiacritics = () => {
+        updateSettings({ textMode: showDiacritics ? 'plain' : 'uthmani' })
+    }
+
     const sections = useMemo(() => {
         const groups = []
         let currentGroup = null
@@ -431,12 +436,6 @@ export default function ReadingPage() {
                                 prefix="Türkçe: "
                             />
                         </div>
-                        <TextModeToggle
-                            value={textMode}
-                            onChange={(mode) => updateSettings({ textMode: mode })}
-                            className="reading-text-mode-toggle"
-                        />
-
                         <div className="reading-actions">
                             <button
                                 className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
@@ -531,6 +530,7 @@ export default function ReadingPage() {
                                                             {allSurahs.find(s => s.no === parseInt(section.surah.id)).type}
                                                         </span>
                                                     )}
+                                                    <DiacriticsToggle enabled={showDiacritics} onToggle={toggleDiacritics} />
                                                 </div>
                                             </div>
                                         </div>

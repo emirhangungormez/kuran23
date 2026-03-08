@@ -7,7 +7,7 @@ import { useSettings } from '../contexts/SettingsContext'
 import usePlayerStore from '../stores/usePlayerStore'
 import BookmarkButton from '../components/BookmarkButton'
 import CustomSelect from '../components/CustomSelect'
-import TextModeToggle from '../components/TextModeToggle'
+import DiacriticsToggle from '../components/DiacriticsToggle'
 import UserAvatar from '../components/UserAvatar'
 import ThemeToggle from '../components/ThemeToggle'
 import RamadanStatus from '../components/RamadanStatus'
@@ -148,6 +148,7 @@ export default function VersePage() {
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
     const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
+    const showDiacritics = textMode !== 'plain'
     const verseArabicHtml = normalizeArabicDisplayText(getVerseTextByMode(verse, textMode))
 
     const primaryTranslationText = useMemo(() => {
@@ -346,6 +347,10 @@ export default function VersePage() {
         handleShareToX()
     }
 
+    const toggleDiacritics = () => {
+        updateSettings({ textMode: showDiacritics ? 'plain' : 'uthmani' })
+    }
+
     if (loading && !verse) {
         return (
             <div className="page verse-page">
@@ -401,11 +406,6 @@ export default function VersePage() {
                                 className="audio-mini-select"
                             />
                         </div>
-                        <TextModeToggle
-                            value={textMode}
-                            onChange={(mode) => updateSettings({ textMode: mode })}
-                            className="verse-text-mode-toggle"
-                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -509,6 +509,7 @@ export default function VersePage() {
                                 {surahMeta.type}
                             </span>
                         )}
+                        <DiacriticsToggle enabled={showDiacritics} onToggle={toggleDiacritics} />
                         {verse?.isFallback && <span className="fallback-chip">fallback</span>}
                     </div>
                     <div
