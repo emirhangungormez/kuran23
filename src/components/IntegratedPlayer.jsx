@@ -1,4 +1,4 @@
-import React, { useMemo, useState, memo } from 'react'
+import React, { useState, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../contexts/SettingsContext'
@@ -74,10 +74,7 @@ export default function IntegratedPlayer({
             value: r.id,
             label: `${r.name} (${r.style || 'Standart'})`
         }))
-    const turkishReciterOptions = useMemo(
-        () => getTurkishReciters().map(r => ({ value: r.id, label: r.name })),
-        []
-    )
+    const turkishReciterOptions = getTurkishReciters().map(r => ({ value: r.id, label: r.name }))
 
     // Safeguard progress bar width calculation against NaN/Infinity
     const progressBarWidth = duration && !isNaN(currentTime) && isFinite(duration) ? (currentTime / duration) * 100 : 0;
