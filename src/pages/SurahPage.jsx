@@ -21,6 +21,7 @@ import usePlayerStore from '../stores/usePlayerStore'
 import { useShallow } from 'zustand/react/shallow'
 import useUsageTracker from '../hooks/useUsageTracker'
 import { normalizeArabicDisplayText, normalizeTafsirText } from '../utils/textEncoding'
+import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import {
     buildSurahShareText,
     copyToClipboard,
@@ -595,7 +596,7 @@ export default function SurahPage() {
                                     <div className="surah-info-card animate-fade-up">
                                         <div
                                             className="surah-info-html"
-                                            dangerouslySetInnerHTML={{ __html: normalizeTafsirText(surahInfo.text) }}
+                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(surahInfo.text) }}
                                         />
                                         <div className="surah-info-source">
                                             {normalizeTafsirText(surahInfo.source)}
@@ -645,14 +646,14 @@ export default function SurahPage() {
                                         <div className="surah-info-card animate-fade-up">
                                             <div
                                                 className="surah-info-html"
-                                                dangerouslySetInnerHTML={{ __html: normalizeTafsirText(mainText) }}
+                                                dangerouslySetInnerHTML={{ __html: formatTafsirRichText(mainText) }}
                                             />
                                             <div className="surah-info-source diyanet-source-card">
                                                 <div className="source-content">
                                                     {biblioHTML && (
                                                         <div
                                                             className="source-biblio"
-                                                            dangerouslySetInnerHTML={{ __html: normalizeTafsirText(biblioHTML) }}
+                                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(biblioHTML) }}
                                                         />
                                                     )}
                                                 </div>
@@ -673,7 +674,7 @@ export default function SurahPage() {
                                     <div className="surah-info-card animate-fade-up">
                                         <div
                                             className="surah-info-html"
-                                            dangerouslySetInnerHTML={{ __html: normalizeTafsirText(sourceFocusedSurahInfo) }}
+                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(sourceFocusedSurahInfo) }}
                                         />
                                         <div className="surah-info-source">
                                             {normalizeTafsirText(selectedTafsirSource.sourceLabel)}

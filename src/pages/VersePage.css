@@ -294,6 +294,53 @@
     font-weight: 600;
 }
 
+.tafsir-html .tafsir-auto-heading {
+    font-family: "Playfair Display", "Georgia", serif;
+    letter-spacing: 0.01em;
+}
+
+.tafsir-html .tafsir-arabic {
+    font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+    direction: rtl;
+    unicode-bidi: isolate;
+    font-size: 1.15em;
+    line-height: 1.95;
+    color: var(--text-primary);
+}
+
+.tafsir-html .tafsir-quote {
+    font-family: "Merriweather", "Georgia", serif;
+    font-style: italic;
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--fill) 82%, var(--accent) 18%);
+    border-radius: 6px;
+    padding: 1px 6px;
+}
+
+.tafsir-html .tafsir-reference {
+    color: var(--accent);
+    text-decoration: underline dotted color-mix(in srgb, var(--accent) 70%, transparent);
+    text-underline-offset: 3px;
+    font-size: 0.88em;
+    font-weight: 600;
+}
+
+.tafsir-html .tafsir-lead {
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 4px;
+}
+
+.tafsir-html .tafsir-note {
+    border-left: 3px solid var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, var(--fill) 90%);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 16px 0;
+}
+
 .tafsir-source {
     margin-top: 48px;
     padding: 14px 18px;

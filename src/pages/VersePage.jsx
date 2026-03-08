@@ -21,6 +21,7 @@ import {
 import { useShallow } from 'zustand/react/shallow'
 import { calculateWordEbced, calculateVerseEbced } from '../utils/ebced'
 import { normalizeArabicDisplayText, normalizeTafsirText } from '../utils/textEncoding'
+import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import useUsageTracker from '../hooks/useUsageTracker'
 import {
     buildVerseShareText,
@@ -585,7 +586,7 @@ export default function VersePage() {
                                 <div className="verse-tafsir-section">
                                     {diyanetTafsir && diyanetTafsir.text ? (
                                         <div className="tafsir-card">
-                                            <div className="tafsir-html" dangerouslySetInnerHTML={{ __html: normalizeTafsirText(diyanetTafsir.text) }} />
+                                            <div className="tafsir-html" dangerouslySetInnerHTML={{ __html: formatTafsirRichText(diyanetTafsir.text) }} />
                                             <div className="tafsir-source">
                                                 {normalizeTafsirText(diyanetTafsir.source)}
                                             </div>
@@ -602,7 +603,7 @@ export default function VersePage() {
                                 <div
                                     className="tafsir-html"
                                     dangerouslySetInnerHTML={{
-                                        __html: normalizeTafsirText(tefsirTab === 'kuran23' ? tafsir.text : sourceFocusedVerseTafsir)
+                                        __html: formatTafsirRichText(tefsirTab === 'kuran23' ? tafsir.text : sourceFocusedVerseTafsir)
                                     }}
                                 />
                                 <div className="tafsir-source">
