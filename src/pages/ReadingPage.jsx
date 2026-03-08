@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getPage, getReciters } from '../services/api'
+import { getPage } from '../services/api'
 import { surahs as allSurahs } from '../data/quranData'
 import RealRopeBookmark from '../components/RealRopeBookmark'
 import { useBookmarks } from '../contexts/BookmarksContext'
@@ -13,7 +13,7 @@ import RamadanStatus from '../components/RamadanStatus'
 import GlobalNav from '../components/GlobalNav'
 import usePlayerStore from '../stores/usePlayerStore'
 import { useShallow } from 'zustand/react/shallow'
-import { isReciterSupported, getSurahAudioUrl, getTurkishAudioUrl, getTurkishReciters, isTurkishPlaylistSupported } from '../services/audio'
+import { getSurahAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 import {
     buildVerseShareText,
     copyToClipboard,
@@ -82,12 +82,6 @@ export default function ReadingPage() {
     const isPagePlaying = (mode === 'playlist' || mode === 'single') && meta.pageNumber === currentPage && meta.context === 'page'
     const currentVerseAudio = isPagePlaying && playlist[currentTrackIndex] ? playlist[currentTrackIndex].audio : null
 
-
-    const { data: availableReciters = [] } = useQuery({
-        queryKey: ['reciters'],
-        queryFn: getReciters,
-        staleTime: 1000 * 60 * 60 * 24 // 24 hours
-    })
 
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
     const {
@@ -376,18 +370,6 @@ export default function ReadingPage() {
         label: `${i + 1}. Sayfa`
     }))
 
-    const reciterOptions = availableReciters
-        .filter(r => isReciterSupported(r.id))
-        .map(r => ({
-            value: r.id,
-            label: `${r.name} (${r.style || 'Standart'})`
-        }))
-
-    const turkishReciterOptions = getTurkishReciters().map(r => ({
-        value: r.id,
-        label: r.name
-    }))
-
     const isStringBookmarked = bookmarks?.stringBookmark?.pageNumber === currentPage
 
     const toggleStringBookmark = () => {
@@ -423,18 +405,6 @@ export default function ReadingPage() {
                         <div className="reading-selectors">
                             <CustomSelect value={currentJuz} onChange={handleJuzChange} options={juzOptions} />
                             <CustomSelect value={currentPage} onChange={handlePageChange} options={pageOptions} />
-                            <CustomSelect
-                                value={settings.defaultReciterId}
-                                onChange={(val) => updateSettings({ defaultReciterId: val })}
-                                options={reciterOptions}
-                                prefix="Arapça: "
-                            />
-                            <CustomSelect
-                                value={settings.defaultTurkishReciterId || 1015}
-                                onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
-                                options={turkishReciterOptions}
-                                prefix="Türkçe: "
-                            />
                         </div>
                         <div className="reading-actions">
                             <DiacriticsToggle

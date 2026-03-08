@@ -299,6 +299,22 @@
     animation: RevealGlass 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.player-reciter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.player-reciter-select .custom-select-trigger {
+    height: 34px;
+    border-radius: 10px;
+}
+
+.player-reciter-select .trigger-label {
+    font-size: 11px;
+}
+
 @keyframes RevealGlass {
     from {
         opacity: 0;
@@ -400,6 +416,11 @@
 
     .player-side-actions {
         padding-left: 6px;
+    }
+
+    .player-reciter-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
     }
 }
 

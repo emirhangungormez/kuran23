@@ -1,12 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getVerse, getTranslations, getVerseWords, getTafsir, getDiyanetTafsir, getReciters } from '../services/api'
+import { getVerse, getTranslations, getVerseWords, getTafsir, getDiyanetTafsir } from '../services/api'
 import { useBookmarks } from '../contexts/BookmarksContext'
 import { useSettings } from '../contexts/SettingsContext'
 import usePlayerStore from '../stores/usePlayerStore'
 import BookmarkButton from '../components/BookmarkButton'
-import CustomSelect from '../components/CustomSelect'
 import DiacriticsToggle from '../components/DiacriticsToggle'
 import UserAvatar from '../components/UserAvatar'
 import ThemeToggle from '../components/ThemeToggle'
@@ -40,7 +39,7 @@ import {
 } from '../utils/typography'
 import './VersePage.css'
 
-import { getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported, isReciterSupported, getTurkishReciters } from '../services/audio'
+import { getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 
 export default function VersePage() {
     const { surahId, ayahNo } = useParams()
@@ -87,23 +86,6 @@ export default function VersePage() {
     const playingType = isVersePlaying ? meta.playingType : null
 
     const surahMeta = surahs.find(s => s.no === parseInt(surahId))
-    const { data: availableReciters = [] } = useQuery({
-        queryKey: ['reciters'],
-        queryFn: getReciters,
-        staleTime: 1000 * 60 * 60 * 24
-    })
-
-    const reciterOptions = availableReciters
-        .filter(r => isReciterSupported(r.id))
-        .map(r => ({
-            value: r.id,
-            label: `${r.name} (${r.style || 'Standart'})`
-        }))
-
-    const turkishReciterOptions = getTurkishReciters().map(r => ({
-        value: r.id,
-        label: r.name
-    }))
 
     const { data: verse, isLoading: loadingVerse } = useQuery({
         queryKey: ['verse', surahId, ayahNo, settings.defaultAuthorId, settings.textMode],
@@ -390,22 +372,6 @@ export default function VersePage() {
                         <span>{verse.surah?.name || `Sure ${surahId}`}</span>
                     </Link>
                     <div className="page-header-actions">
-                        <div className="audio-reciter-selects">
-                            <CustomSelect
-                                value={settings.defaultReciterId}
-                                onChange={(val) => updateSettings({ defaultReciterId: val })}
-                                options={reciterOptions}
-                                prefix="Arapça: "
-                                className="audio-mini-select"
-                            />
-                            <CustomSelect
-                                value={settings.defaultTurkishReciterId || 1015}
-                                onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
-                                options={turkishReciterOptions}
-                                prefix="Türkçe: "
-                                className="audio-mini-select"
-                            />
-                        </div>
                         <DiacriticsToggle
                             enabled={showDiacritics}
                             onToggle={toggleDiacritics}

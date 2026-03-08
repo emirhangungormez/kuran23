@@ -1,11 +1,10 @@
 ﻿import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getSurah, getSurahInfo, getDiyanetSurahInfo, getReciters } from '../services/api'
+import { getSurah, getSurahInfo, getDiyanetSurahInfo } from '../services/api'
 import { useBookmarks } from '../contexts/BookmarksContext'
 import { useSettings } from '../contexts/SettingsContext'
 import BookmarkButton from '../components/BookmarkButton'
-import CustomSelect from '../components/CustomSelect'
 import DiacriticsToggle from '../components/DiacriticsToggle'
 import UserAvatar from '../components/UserAvatar'
 import ThemeToggle from '../components/ThemeToggle'
@@ -39,7 +38,7 @@ import {
 } from '../utils/typography'
 import './SurahPage.css'
 
-import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported, RECITER_MAP, isReciterSupported, getTurkishReciters } from '../services/audio'
+import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported, RECITER_MAP } from '../services/audio'
 
 export default function SurahPage() {
     const { id } = useParams()
@@ -93,24 +92,6 @@ export default function SurahPage() {
     const playingType = isSurahPlaying ? meta.playingType : null
 
     const surahMeta = surahs.find(s => s.no === parseInt(id))
-    const { data: availableReciters = [] } = useQuery({
-        queryKey: ['reciters'],
-        queryFn: getReciters,
-        staleTime: 1000 * 60 * 60 * 24
-    })
-
-    const reciterOptions = availableReciters
-        .filter(r => isReciterSupported(r.id))
-        .map(r => ({
-            value: r.id,
-            label: `${r.name} (${r.style || 'Standart'})`
-        }))
-
-    const turkishReciterOptions = getTurkishReciters().map(r => ({
-        value: r.id,
-        label: r.name
-    }))
-
     const arabicFontFamily = getArabicFontFamily(settings.arabicFont)
     const arabicFontSize = getArabicFontSize(settings)
     const translationFontSize = getTranslationFontSize(settings)
@@ -384,22 +365,6 @@ export default function SurahPage() {
                         <span>Ana Sayfa</span>
                     </Link>
                     <div className="page-header-actions">
-                        <div className="audio-reciter-selects">
-                            <CustomSelect
-                                value={settings.defaultReciterId}
-                                onChange={(val) => updateSettings({ defaultReciterId: val })}
-                                options={reciterOptions}
-                                prefix="Arapça: "
-                                className="audio-mini-select"
-                            />
-                            <CustomSelect
-                                value={settings.defaultTurkishReciterId || 1015}
-                                onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
-                                options={turkishReciterOptions}
-                                prefix="Türkçe: "
-                                className="audio-mini-select"
-                            />
-                        </div>
                         <DiacriticsToggle
                             enabled={showDiacritics}
                             onToggle={toggleDiacritics}

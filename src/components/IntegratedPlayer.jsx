@@ -1,5 +1,10 @@
-import React, { useState, memo } from 'react'
+import React, { useMemo, useState, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { useSettings } from '../contexts/SettingsContext'
+import CustomSelect from './CustomSelect'
+import { getReciters } from '../services/api'
+import { isReciterSupported, getTurkishReciters } from '../services/audio'
 import './IntegratedPlayer.css'
 
 // Helper component for individual verse segments to optimize performance
@@ -45,6 +50,12 @@ export default function IntegratedPlayer({
 }) {
     const [isExpanded, setIsExpanded] = useState(false)
     const navigate = useNavigate()
+    const { settings, updateSettings } = useSettings()
+    const { data: availableReciters = [] } = useQuery({
+        queryKey: ['reciters'],
+        queryFn: getReciters,
+        staleTime: 1000 * 60 * 60 * 24
+    })
 
     if (!isVisible) return null;
 
@@ -57,6 +68,16 @@ export default function IntegratedPlayer({
 
     const remainingTime = duration - currentTime
     const isVeryLongSurah = verses.length > 50
+    const reciterOptions = availableReciters
+        .filter(r => isReciterSupported(r.id))
+        .map(r => ({
+            value: r.id,
+            label: `${r.name} (${r.style || 'Standart'})`
+        }))
+    const turkishReciterOptions = useMemo(
+        () => getTurkishReciters().map(r => ({ value: r.id, label: r.name })),
+        []
+    )
 
     // Safeguard progress bar width calculation against NaN/Infinity
     const progressBarWidth = duration && !isNaN(currentTime) && isFinite(duration) ? (currentTime / duration) * 100 : 0;
@@ -149,6 +170,22 @@ export default function IntegratedPlayer({
             </div>
 
             <div className="player-expanded-content">
+                <div className="player-reciter-row">
+                    <CustomSelect
+                        value={settings.defaultReciterId}
+                        onChange={(val) => updateSettings({ defaultReciterId: val })}
+                        options={reciterOptions}
+                        prefix="Arapça: "
+                        className="player-reciter-select"
+                    />
+                    <CustomSelect
+                        value={settings.defaultTurkishReciterId || 1015}
+                        onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
+                        options={turkishReciterOptions}
+                        prefix="Türkçe: "
+                        className="player-reciter-select"
+                    />
+                </div>
                 <div className="player-top-controls">
                     <div className="player-volume-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
