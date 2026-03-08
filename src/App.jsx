@@ -95,9 +95,16 @@ function GlobalPlayerWrapper() {
 }
 
 function AppContent() {
-  const { isAuthOpen, setIsAuthOpen } = useAuth()
+  const { isAuthOpen, setIsAuthOpen, isLoggedIn } = useAuth()
   const location = useLocation()
   const isSignupPage = location.pathname === '/kaydol' || location.pathname === '/giris'
+
+  useEffect(() => {
+    if (!isLoggedIn && location.pathname === '/profil') {
+      setIsAuthOpen(true)
+    }
+  }, [isLoggedIn, location.pathname, setIsAuthOpen])
+
   return (
     <>
       {!isSignupPage && <GlobalPlayerWrapper />}
@@ -114,7 +121,7 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/ay-evresi" element={<MoonPage />} />
-              <Route path="/profil" element={<ProfilePage />} />
+              <Route path="/profil" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/" replace />} />
               <Route path="/seruvenler" element={<JourneysPage />} />
               <Route path="/sure/:id" element={<SurahPage />} />
               <Route path="/sure/:surahId/:ayahNo" element={<VersePage />} />
