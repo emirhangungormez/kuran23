@@ -275,12 +275,14 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
+    // Clear UI/session state immediately so logout never blocks the interface.
+    persistAuth(null, '')
+    setIsAuthOpen(false)
+
     try {
-      await supabase.auth.signOut()
-    } finally {
-      // Always clear local auth state, even if remote sign-out fails.
-      persistAuth(null, '')
-      setIsAuthOpen(false)
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch {
+      // Ignore network/auth revocation errors; local logout already completed.
     }
   }
 

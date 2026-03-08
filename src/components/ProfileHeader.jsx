@@ -44,7 +44,10 @@ export default function ProfileHeader({ onEditAvatar }) {
         if (isLoggingOut) return
         setIsLoggingOut(true)
         try {
-            await logout()
+            await Promise.race([
+                logout(),
+                new Promise((resolve) => setTimeout(resolve, 1200))
+            ])
             navigate('/', { replace: true })
         } finally {
             setIsLoggingOut(false)
