@@ -49,6 +49,9 @@ function resolveActiveTrackIndex(state) {
 
 // Global Audio Element Instance
 const globalAudio = new Audio()
+globalAudio.preload = 'auto'
+globalAudio.crossOrigin = 'anonymous'
+let lastPageAudioRecoveryKey = ''
 
 function safePlayAudio(onFail) {
     globalAudio.muted = false
@@ -69,6 +72,13 @@ function safePlayAudio(onFail) {
             if (typeof onFail === 'function') onFail(unlockErr || err)
         }
     })
+}
+
+function normalizeAudioUrl(url) {
+    if (!url || typeof url !== 'string') return ''
+    const trimmed = url.trim()
+    if (!trimmed) return ''
+    return trimmed.replace(/^http:\/\//i, 'https://')
 }
 
 const usePlayerStore = create((set, get) => ({
@@ -148,7 +158,7 @@ const usePlayerStore = create((set, get) => ({
             isPlaying: true
         })
 
-        globalAudio.src = url
+        globalAudio.src = normalizeAudioUrl(url)
         globalAudio.load()
         globalAudio.playbackRate = get().playbackSpeed
         safePlayAudio((e) => {
@@ -171,7 +181,7 @@ const usePlayerStore = create((set, get) => ({
 
         const track = tracks[startIndex]
         if (track && track.audio) {
-            globalAudio.src = track.audio
+            globalAudio.src = normalizeAudioUrl(track.audio)
             globalAudio.load()
             globalAudio.playbackRate = get().playbackSpeed
             safePlayAudio((e) => {
@@ -193,7 +203,7 @@ const usePlayerStore = create((set, get) => ({
 
         const track = tracks[startIndex]
         if (track && track.audio) {
-            globalAudio.src = track.audio
+            globalAudio.src = normalizeAudioUrl(track.audio)
             globalAudio.load()
             globalAudio.playbackRate = get().playbackSpeed
         }
@@ -213,12 +223,12 @@ const usePlayerStore = create((set, get) => ({
             } else if (state.mode === 'playlist' && state.playlist.length > 0) {
                 const track = state.playlist[state.currentTrackIndex]
                 if (track && track.audio) {
-                    globalAudio.src = track.audio
+                    globalAudio.src = normalizeAudioUrl(track.audio)
                     safePlayAudio(() => set({ isPlaying: false }))
                     set({ isPlaying: true })
                 }
             } else if (state.mode === 'single' && state.singleSource) {
-                globalAudio.src = state.singleSource
+                globalAudio.src = normalizeAudioUrl(state.singleSource)
                 safePlayAudio(() => set({ isPlaying: false }))
                 set({ isPlaying: true })
             }
@@ -236,7 +246,7 @@ const usePlayerStore = create((set, get) => ({
             set({ currentTrackIndex: idx, isPlaying: true })
             const track = state.playlist[idx]
             if (track && track.audio) {
-                globalAudio.src = track.audio
+                globalAudio.src = normalizeAudioUrl(track.audio)
                 globalAudio.playbackRate = state.playbackSpeed
                 safePlayAudio(() => set({ isPlaying: false }))
             }
@@ -284,7 +294,7 @@ const usePlayerStore = create((set, get) => ({
             set({ currentTrackIndex: prevIdx, isPlaying: true })
             const track = state.playlist[prevIdx]
             if (track && track.audio) {
-                globalAudio.src = track.audio
+                globalAudio.src = normalizeAudioUrl(track.audio)
                 safePlayAudio(() => set({ isPlaying: false }))
             }
         }
@@ -736,6 +746,29 @@ export const initAudioListeners = (settingsFunction) => {
         // In page-reading mode, skipping on error causes silent rapid page jumps on some mobile devices.
         // Stop playback and wait for explicit user action instead.
         if (state.meta?.context === 'page') {
+            const track = state.mode === 'playlist' ? state.playlist[state.currentTrackIndex] : null
+            const surahId = track?.surah?.id || track?.surahId || state.meta?.surahId
+            const ayahNo = track?.verse_number || track?.ayah
+            const playingType = state.meta?.playingType || 'arabic'
+            const recoveryKey = `${playingType}:${surahId || 0}:${ayahNo || 0}`
+
+            // Try one deterministic fallback per ayah to recover from bad/blocked URLs on mobile.
+            if (surahId && ayahNo && lastPageAudioRecoveryKey !== recoveryKey) {
+                lastPageAudioRecoveryKey = recoveryKey
+                const fallback = playingType === 'turkish'
+                    ? getTurkishAudioUrl(settings?.defaultTurkishReciterId || 1015, surahId, ayahNo)
+                    : getVerseAudioUrl(settings?.defaultReciterId || 7, surahId, ayahNo)
+                const normalizedFallback = normalizeAudioUrl(fallback)
+                const currentSrc = normalizeAudioUrl(globalAudio.currentSrc || globalAudio.src || '')
+
+                if (normalizedFallback && normalizedFallback !== currentSrc) {
+                    globalAudio.src = normalizedFallback
+                    globalAudio.load()
+                    safePlayAudio(() => state.setIsPlaying(false))
+                    return
+                }
+            }
+
             state.setIsPlaying(false)
             return
         }
@@ -752,6 +785,7 @@ export const initAudioListeners = (settingsFunction) => {
         if (audio.playbackRate !== state.playbackSpeed) {
             audio.playbackRate = state.playbackSpeed
         }
+        lastPageAudioRecoveryKey = ''
     })
 }
 

@@ -94,6 +94,13 @@ function stripHtmlTags(text) {
     return String(text).replace(/<[^>]+>/g, '');
 }
 
+function normalizeAudioUrl(url) {
+    if (!url || typeof url !== 'string') return ''
+    const value = url.trim()
+    if (!value) return ''
+    return value.replace(/^http:\/\//i, 'https://')
+}
+
 function normalizeTranslationName(name) {
     const raw = String(name || '').trim();
     const lower = raw.toLocaleLowerCase('tr-TR');
@@ -813,7 +820,7 @@ export async function getPage(pageNumber, authorId, reciterId, tajweed) {
         const filteredOwnVerses = ownVerses.filter(v => parseInt(v?.page) === pNum);
         return (filteredOwnVerses.length > 0 ? filteredOwnVerses : ownVerses).map(v => ({
             ...v,
-            audio: v.audio || getVerseAudioUrl(reciterId || 7, v?.surah?.id || 1, v?.verse_number || 1)
+            audio: normalizeAudioUrl(v.audio) || getVerseAudioUrl(reciterId || 7, v?.surah?.id || 1, v?.verse_number || 1)
         }));
     }
 
