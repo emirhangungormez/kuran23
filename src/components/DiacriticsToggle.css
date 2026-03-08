@@ -1,10 +1,9 @@
 .diacritics-toggle {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   border-radius: 7px;
   border: 1px solid var(--separator);
   background: var(--fill);
@@ -24,15 +23,15 @@
   color: var(--accent);
 }
 
-.diacritics-toggle-letter {
-  font-size: 13px;
+.diacritics-toggle-mark-only {
+  font-family: "Noto Naskh Arabic", "Scheherazade New", serif;
+  font-size: 17px;
   line-height: 1;
+  transform: translateY(-1px);
 }
 
-.diacritics-toggle-mark {
-  position: absolute;
-  top: 2px;
-  right: 4px;
-  font-size: 10px;
-  line-height: 1;
+.diacritics-toggle.diacritics-header-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
 }

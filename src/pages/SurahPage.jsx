@@ -400,6 +400,11 @@ export default function SurahPage() {
                                 className="audio-mini-select"
                             />
                         </div>
+                        <DiacriticsToggle
+                            enabled={showDiacritics}
+                            onToggle={toggleDiacritics}
+                            className="diacritics-header-btn"
+                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -504,7 +509,6 @@ export default function SurahPage() {
                                     {surahMeta.type}
                                 </span>
                             )}
-                            <DiacriticsToggle enabled={showDiacritics} onToggle={toggleDiacritics} />
                         </div>
                         <p className="surah-page-meta">{surah.name_en} · {surah.verse_count} ayet</p>
                     </div>

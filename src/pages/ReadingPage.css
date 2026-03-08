@@ -460,11 +460,12 @@
     .reading-actions {
         width: 100%;
         display: grid;
-        grid-template-columns: 40px minmax(0, 1fr);
+        grid-template-columns: 40px 40px minmax(0, 1fr);
         align-items: center;
         gap: 6px;
     }
 
+    .reading-actions>.diacritics-header-btn,
     .reading-actions>.surah-audio-btn.player-toggle {
         width: 40px !important;
         min-width: 40px !important;

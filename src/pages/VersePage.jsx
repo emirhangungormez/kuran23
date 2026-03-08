@@ -406,6 +406,11 @@ export default function VersePage() {
                                 className="audio-mini-select"
                             />
                         </div>
+                        <DiacriticsToggle
+                            enabled={showDiacritics}
+                            onToggle={toggleDiacritics}
+                            className="diacritics-header-btn"
+                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -509,7 +514,6 @@ export default function VersePage() {
                                 {surahMeta.type}
                             </span>
                         )}
-                        <DiacriticsToggle enabled={showDiacritics} onToggle={toggleDiacritics} />
                         {verse?.isFallback && <span className="fallback-chip">fallback</span>}
                     </div>
                     <div
@@ -639,18 +643,6 @@ export default function VersePage() {
                     <div className="verse-words-section">
                         {wordsWithEbced.length > 0 ? (
                             <>
-                                <div className="word-inline-ayah" dir="rtl">
-                                    {wordsWithEbced.map((w) => (
-                                        <button
-                                            key={`inline-${w.id}`}
-                                            className={`inline-word-chip ${selectedWord?.id === w.id ? 'selected' : ''}`}
-                                            onClick={() => setSelectedWord(selectedWord?.id === w.id ? null : w)}
-                                        >
-                                            {w.arabic}
-                                        </button>
-                                    ))}
-                                </div>
-
                                 <div className="words-grid" dir="rtl">
                                     {wordsWithEbced.map(w => (
                                         <button

@@ -437,6 +437,11 @@ export default function ReadingPage() {
                             />
                         </div>
                         <div className="reading-actions">
+                            <DiacriticsToggle
+                                enabled={showDiacritics}
+                                onToggle={toggleDiacritics}
+                                className="diacritics-header-btn"
+                            />
                             <button
                                 className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                                 onClick={() => {
@@ -530,7 +535,6 @@ export default function ReadingPage() {
                                                             {allSurahs.find(s => s.no === parseInt(section.surah.id)).type}
                                                         </span>
                                                     )}
-                                                    <DiacriticsToggle enabled={showDiacritics} onToggle={toggleDiacritics} />
                                                 </div>
                                             </div>
                                         </div>
