@@ -8,6 +8,7 @@ import { useBookmarks } from '../contexts/BookmarksContext'
 import { useSettings } from '../contexts/SettingsContext'
 import { useAuth } from '../contexts/AuthContext'
 import CustomSelect from '../components/CustomSelect'
+import TextModeToggle from '../components/TextModeToggle'
 import RamadanStatus from '../components/RamadanStatus'
 import GlobalNav from '../components/GlobalNav'
 import usePlayerStore from '../stores/usePlayerStore'
@@ -27,6 +28,7 @@ import {
     getTranscriptionFontSize
 } from '../utils/typography'
 import { normalizeArabicDisplayText } from '../utils/textEncoding'
+import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import './ReadingPage.css'
 
 const JUZ_START_PAGES = [
@@ -93,8 +95,8 @@ export default function ReadingPage() {
         isLoading: loading,
         error: queryError
     } = useQuery({
-        queryKey: ['page', currentPage, primaryAuthorId, settings.defaultReciterId, settings.showTajweed],
-        queryFn: () => getPage(currentPage, primaryAuthorId, settings.defaultReciterId, settings.showTajweed),
+        queryKey: ['page', currentPage, primaryAuthorId, settings.defaultReciterId, settings.textMode],
+        queryFn: () => getPage(currentPage, primaryAuthorId, settings.defaultReciterId, settings.textMode),
         enabled: currentPage >= 1 && currentPage <= 604,
         staleTime: 1000 * 60 * 60 * 24 // 24 hours
     })
@@ -113,6 +115,7 @@ export default function ReadingPage() {
     const arabicFontSize = getArabicFontSize(settings)
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
+    const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
 
     useEffect(() => {
         if (String(currentPage) !== String(page || '')) {
@@ -428,6 +431,11 @@ export default function ReadingPage() {
                                 prefix="Türkçe: "
                             />
                         </div>
+                        <TextModeToggle
+                            value={textMode}
+                            onChange={(mode) => updateSettings({ textMode: mode })}
+                            className="reading-text-mode-toggle"
+                        />
 
                         <div className="reading-actions">
                             <button
@@ -534,15 +542,14 @@ export default function ReadingPage() {
 
                                     {section.verses.map((v, i) => {
                                         const trAudioUrl = getTurkishAudioUrl(settings.defaultTurkishReciterId, v.surah.id, v.verse_number)
-                                        const verseDisplayHtml = settings.showTajweed
-                                            ? normalizeArabicDisplayText(v.verse || '')
-                                            : normalizeArabicDisplayText(v.verse_simplified || v.verse || '')
+                                        const verseDisplayHtml = normalizeArabicDisplayText(getVerseTextByMode(v, textMode))
                                         const isActiveAr = meta?.playingType === 'arabic' && v.audio && v.audio === currentVerseAudio
                                         const isActiveTr = meta?.playingType === 'turkish' && currentVerseAudio === trAudioUrl
                                         const isActiveRow = (isActiveAr || isActiveTr)
                                         const verseKey = `${v.surah.id}-${v.verse_number}`
                                         const isCopied = copiedVerseKey === verseKey
                                         const isSaved = isVerseBookmarked(v.surah.id, v.verse_number)
+                                        const isFallback = Boolean(v.isFallback)
                                         const verseTranscription = (v.transcription || v.transcription_en || '').trim()
 
                                         return (
@@ -595,7 +602,10 @@ export default function ReadingPage() {
 
                                                 <div className="meal-side hover-action-side">
                                                     <div className="meal-side-header flex items-center justify-between pointer-events-none">
-                                                        <span className="meta-info">{section.surah.name}, {v.verse_number}. Ayet • {v.translation?.author?.name || v.translation?.author || 'Meal'}</span>
+                                                        <span className="meta-info">
+                                                            {section.surah.name}, {v.verse_number}. Ayet • {v.translation?.author?.name || v.translation?.author || 'Meal'}
+                                                            {isFallback && <span className="fallback-chip">fallback</span>}
+                                                        </span>
                                                         <div className="meal-actions pointer-events-auto display-flex gap-2">
                                                             <button
                                                                 className={`verse-play-btn ${isActiveTr && isPlaying ? 'playing' : ''}`}

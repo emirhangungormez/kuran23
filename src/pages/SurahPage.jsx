@@ -6,6 +6,7 @@ import { useBookmarks } from '../contexts/BookmarksContext'
 import { useSettings } from '../contexts/SettingsContext'
 import BookmarkButton from '../components/BookmarkButton'
 import CustomSelect from '../components/CustomSelect'
+import TextModeToggle from '../components/TextModeToggle'
 import UserAvatar from '../components/UserAvatar'
 import ThemeToggle from '../components/ThemeToggle'
 import RamadanStatus from '../components/RamadanStatus'
@@ -21,6 +22,7 @@ import usePlayerStore from '../stores/usePlayerStore'
 import { useShallow } from 'zustand/react/shallow'
 import useUsageTracker from '../hooks/useUsageTracker'
 import { normalizeArabicDisplayText, normalizeTafsirText } from '../utils/textEncoding'
+import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import {
     buildSurahShareText,
@@ -113,12 +115,13 @@ export default function SurahPage() {
     const arabicFontSize = getArabicFontSize(settings)
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
+    const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
 
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
 
     const { data: surah, isLoading: loading } = useQuery({
-        queryKey: ['surah', id, primaryAuthorId, settings.showTajweed],
-        queryFn: () => getSurah(id, primaryAuthorId, settings.showTajweed),
+        queryKey: ['surah', id, primaryAuthorId, settings.textMode],
+        queryFn: () => getSurah(id, primaryAuthorId, settings.textMode),
         staleTime: 1000 * 60 * 60 * 24 // Cache for 24 hours
     })
 
@@ -392,6 +395,11 @@ export default function SurahPage() {
                                 className="audio-mini-select"
                             />
                         </div>
+                        <TextModeToggle
+                            value={textMode}
+                            onChange={(mode) => updateSettings({ textMode: mode })}
+                            className="surah-text-mode-toggle"
+                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -523,9 +531,7 @@ export default function SurahPage() {
                 {activeTab === 'ayetler' && (
                     <div className="verse-list-page">
                         {surah.verses && surah.verses.map((v, i) => {
-                            const verseArabicHtml = settings.showTajweed
-                                ? normalizeArabicDisplayText(v.verse || '')
-                                : normalizeArabicDisplayText(v.verse_simplified || v.verse || '')
+                            const verseArabicHtml = normalizeArabicDisplayText(getVerseTextByMode(v, textMode))
                             const isActiveVerse = isSurahPlaying && playingType && (
                                 mode === 'playlist'
                                     ? playlist[currentTrackIndex]?.ayah === v.verse_number
@@ -564,6 +570,9 @@ export default function SurahPage() {
                                             >
                                                 {v.translation.text}
                                             </p>
+                                        )}
+                                        {v.isFallback && (
+                                            <span className="fallback-chip">fallback</span>
                                         )}
                                     </div>
                                     <svg className="verse-row-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

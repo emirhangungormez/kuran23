@@ -8,6 +8,7 @@ import usePlayerStore from '../stores/usePlayerStore';
 import GlobalNav from '../components/GlobalNav';
 import { getArabicFontFamily, getArabicFontSize, getTranslationFontSize } from '../utils/typography';
 import { normalizeArabicDisplayText } from '../utils/textEncoding';
+import { getVerseTextByMode } from '../utils/textMode';
 import './MoonPage.css';
 
 const MOON_VERSE_IDS = [
@@ -97,9 +98,7 @@ export default function MoonPage() {
     const [coordLoading, setCoordLoading] = useState(true);
     const audioRef = useRef(new Audio());
     const triedGpsRef = useRef(false);
-    const moonVerseArabic = settings.showTajweed
-        ? normalizeArabicDisplayText(verseData?.verse || '')
-        : normalizeArabicDisplayText(verseData?.verse_simplified || verseData?.verse || '');
+    const moonVerseArabic = normalizeArabicDisplayText(getVerseTextByMode(verseData, settings.textMode));
 
     const globalIsPlaying = usePlayerStore((state) => state.isPlaying);
 
@@ -121,13 +120,13 @@ export default function MoonPage() {
     useEffect(() => {
         let active = true;
         (async () => {
-            const verse = await getVerse(verseRef.surah, verseRef.ayah, settings.defaultAuthorId);
+            const verse = await getVerse(verseRef.surah, verseRef.ayah, settings.defaultAuthorId, settings.textMode);
             if (active) setVerseData(verse);
         })();
         return () => {
             active = false;
         };
-    }, [verseRef, settings.defaultAuthorId]);
+    }, [verseRef, settings.defaultAuthorId, settings.textMode]);
 
     useEffect(() => {
         let active = true;

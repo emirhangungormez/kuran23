@@ -1,17 +1,9 @@
-﻿export const ARABIC_FONT_OPTIONS = [
-    // Diyanet / AcikKuran related sources (priority)
+export const ARABIC_FONT_OPTIONS = [
+    { value: 'QuranFoundationHafs', label: 'AçıkKuran Uthmani' },
     { value: 'DiyanetKuran', label: 'Diyanet Mushaf' },
-    { value: 'QuranFoundationHafs', label: 'AcikKuran Uthmanic' },
-    // Professional, readable extras
-    { value: 'ScheherazadeNew', label: 'Scheherazade New' },
     { value: 'NotoNaskhArabic', label: 'Noto Naskh Arabic' },
-    { value: 'ArefRuqaa', label: 'Aref Ruqaa' },
-    { value: 'Lateef', label: 'Lateef' },
-    // Additional distinct styles (already loaded in CSS)
-    { value: 'Cairo', label: 'Cairo' },
-    { value: 'Alexandria', label: 'Alexandria' },
-    { value: 'IBMplexSansArabic', label: 'IBM Plex Sans Arabic' },
-    { value: 'Vazirmatn', label: 'Vazirmatn' }
+    { value: 'ScheherazadeNew', label: 'Scheherazade New' },
+    { value: 'Lateef', label: 'Lateef' }
 ]
 
 const QURAN_SAFE_FALLBACK = '"Noto Naskh Arabic", serif'
@@ -19,25 +11,27 @@ const QURAN_SAFE_FALLBACK = '"Noto Naskh Arabic", serif'
 const ARABIC_FONT_FAMILY_MAP = {
     QuranFoundationHafs: `"QuranFoundationHafs", ${QURAN_SAFE_FALLBACK}`,
     DiyanetKuran: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCUthmanTN: `"KFGQPCUthmanTN", "QuranFoundationHafs", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCUthmanTNBold: `"KFGQPCUthmanTNBold", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCDotNaskh: `"KFGQPCDotNaskh", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCKufi: `"KFGQPCKufi", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCKufiExtended: `"KFGQPCKufiExtended", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCAnRegular: `"KFGQPCAnRegular", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCAnBold: `"KFGQPCAnBold", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCKSARegular: `"KFGQPCKSARegular", ${QURAN_SAFE_FALLBACK}`,
-    KFGQPCKingdom2: `"KFGQPCKingdom2", ${QURAN_SAFE_FALLBACK}`,
-    ScheherazadeNew: `"Scheherazade New", ${QURAN_SAFE_FALLBACK}`,
     NotoNaskhArabic: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`,
+    ScheherazadeNew: `"Scheherazade New", ${QURAN_SAFE_FALLBACK}`,
     Lateef: `"Lateef", ${QURAN_SAFE_FALLBACK}`,
-    ArefRuqaa: `"Aref Ruqaa", ${QURAN_SAFE_FALLBACK}`,
-    Cairo: `"Cairo", ${QURAN_SAFE_FALLBACK}`,
-    Tajawal: `"Tajawal", ${QURAN_SAFE_FALLBACK}`,
-    Alexandria: `"Alexandria", ${QURAN_SAFE_FALLBACK}`,
-    Almarai: `"Almarai", ${QURAN_SAFE_FALLBACK}`,
-    IBMplexSansArabic: `"IBM Plex Sans Arabic", ${QURAN_SAFE_FALLBACK}`,
-    Vazirmatn: `"Vazirmatn", ${QURAN_SAFE_FALLBACK}`
+
+    // Legacy keys kept for backward compatibility with old settings payloads.
+    KFGQPCUthmanTN: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCUthmanTNBold: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCDotNaskh: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCKufi: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCKufiExtended: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCAnRegular: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCAnBold: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCKSARegular: `"DiyanetKuran", ${QURAN_SAFE_FALLBACK}`,
+    KFGQPCKingdom2: `"QuranFoundationHafs", ${QURAN_SAFE_FALLBACK}`,
+    ArefRuqaa: `"Scheherazade New", ${QURAN_SAFE_FALLBACK}`,
+    Cairo: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`,
+    Tajawal: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`,
+    Alexandria: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`,
+    Almarai: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`,
+    IBMplexSansArabic: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`,
+    Vazirmatn: `"Noto Naskh Arabic", ${QURAN_SAFE_FALLBACK}`
 }
 
 export function getArabicFontFamily(fontKey) {
@@ -77,5 +71,3 @@ export function getTranslationFontSize(settings) {
 export function getTranscriptionFontSize(settings) {
     return getSettingNumber(settings?.fontSize, 18) * getTranscriptionScale(settings)
 }
-
-

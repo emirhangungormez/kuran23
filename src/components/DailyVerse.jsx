@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useSettings } from '../contexts/SettingsContext'
 import { getArabicFontFamily, getArabicFontSize, getTranslationFontSize } from '../utils/typography'
 import { normalizeArabicDisplayText } from '../utils/textEncoding'
+import { getVerseTextByMode } from '../utils/textMode'
 import './DailyVerse.css'
 
 export default function DailyVerse({ verse }) {
@@ -10,9 +11,7 @@ export default function DailyVerse({ verse }) {
 
     const arabicFontSize = getArabicFontSize(settings) * 0.95
     const translationFontSize = getTranslationFontSize(settings) * 0.9
-    const dailyArabicHtml = settings.showTajweed
-        ? normalizeArabicDisplayText(verse.verse || '')
-        : normalizeArabicDisplayText(verse.verse_simplified || verse.verse || '')
+    const dailyArabicHtml = normalizeArabicDisplayText(getVerseTextByMode(verse, settings.textMode))
 
     return (
         <Link to={`/sure/${verse.surah.id}/${verse.verse_number}`} className="daily-verse-card">

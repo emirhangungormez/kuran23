@@ -2,25 +2,38 @@ import { create } from 'zustand'
 import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
+import { normalizeTextMode } from '../utils/textMode'
 
 const DEFAULT_PLAYBACK_SETTINGS = {
     coreAuthorIds: [77],
     defaultAuthorId: 77,
     defaultReciterId: 7,
     defaultTurkishReciterId: 1015,
+    textMode: 'uthmani',
     showTajweed: false
 }
 
 function resolvePlaybackSettings(settings) {
+    const withDefaults = (value) => ({ ...DEFAULT_PLAYBACK_SETTINGS, ...value })
+    const normalizePayload = (value) => {
+        const base = withDefaults(value)
+        const textMode = normalizeTextMode(base.textMode, Boolean(base.showTajweed))
+        return {
+            ...base,
+            textMode,
+            showTajweed: textMode === 'tajweed'
+        }
+    }
+
     if (settings && typeof settings === 'object') {
-        return { ...DEFAULT_PLAYBACK_SETTINGS, ...settings }
+        return normalizePayload(settings)
     }
 
     try {
         const raw = localStorage.getItem('quran_settings')
         if (!raw) return DEFAULT_PLAYBACK_SETTINGS
         const parsed = JSON.parse(raw)
-        return { ...DEFAULT_PLAYBACK_SETTINGS, ...parsed }
+        return normalizePayload(parsed)
     } catch (_e) {
         return DEFAULT_PLAYBACK_SETTINGS
     }
@@ -413,7 +426,7 @@ const usePlayerStore = create((set, get) => ({
         try {
             const nextPage = startPage + 1
             const primaryAuthorId = resolvedSettings.coreAuthorIds[0] || resolvedSettings.defaultAuthorId
-            const nextVerses = await getPage(nextPage, primaryAuthorId, resolvedSettings.defaultReciterId, resolvedSettings.showTajweed)
+            const nextVerses = await getPage(nextPage, primaryAuthorId, resolvedSettings.defaultReciterId, resolvedSettings.textMode)
 
             if (nextVerses && nextVerses.length > 0) {
                 const playingType = meta.playingType || 'arabic'
@@ -479,7 +492,7 @@ const usePlayerStore = create((set, get) => ({
         try {
             const prevPage = startPage - 1
             const primaryAuthorId = resolvedSettings.coreAuthorIds[0] || resolvedSettings.defaultAuthorId
-            const prevVerses = await getPage(prevPage, primaryAuthorId, resolvedSettings.defaultReciterId, resolvedSettings.showTajweed)
+            const prevVerses = await getPage(prevPage, primaryAuthorId, resolvedSettings.defaultReciterId, resolvedSettings.textMode)
 
             if (prevVerses && prevVerses.length > 0) {
                 const playingType = meta.playingType || 'arabic'

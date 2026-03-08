@@ -22,13 +22,85 @@ function hasArabic(text) {
   return /\p{Script=Arabic}/u.test(String(text || ''))
 }
 
+function asBool(value, fallback = false) {
+  if (typeof value === 'boolean') return value
+  if (value === null || value === undefined) return fallback
+  if (typeof value === 'number') return value > 0
+  const normalized = String(value).trim().toLowerCase()
+  if (!normalized) return fallback
+  return ['1', 'true', 'yes', 'on'].includes(normalized)
+}
+
+function buildTextModes(verse = {}) {
+  const uthmani = verse.verse_text_uthmani || verse.verse_text || verse.verse_simplified || ''
+  const plain = verse.verse_text_plain || verse.verse_without_vowel || verse.verse_simplified || uthmani
+  const tajweed = verse.verse_text_tajweed || verse.verse_text || uthmani
+  return { uthmani, plain, tajweed }
+}
+
+function withSourceMeta(data, sourceField = 'source', fallbackField = 'is_fallback') {
+  const source = String(data?.[sourceField] || '').trim() || 'legacy'
+  const isFallback = asBool(data?.[fallbackField], source !== 'qul')
+  return { source, isFallback }
+}
+
+function mapWordRow(w) {
+  const meta = withSourceMeta(w)
+  return {
+    id: w.id,
+    sort_number: w.sort_number,
+    arabic: w.arabic,
+    transcription_tr: w.transcription_tr,
+    transcription_en: w.transcription_en,
+    translation_tr: w.translation_tr,
+    translation_en: w.translation_en,
+    source: meta.source,
+    isFallback: meta.isFallback,
+    root: w.root ? {
+      id: w.root.id,
+      latin: w.root.latin,
+      arabic: w.root.arabic,
+      transcription: w.root.transcription,
+      mean_tr: w.root.mean_tr,
+      mean_en: w.root.mean_en
+    } : null,
+    morphology: {
+      pos: w.grammar_pos || '',
+      pos_ar: w.grammar_pos_ar || '',
+      lemma: w.grammar_lemma || '',
+      lemma_ar: w.grammar_lemma_ar || '',
+      stem: w.grammar_stem || '',
+      root: w.grammar_root || '',
+      pattern: w.grammar_pattern || '',
+      person: w.grammar_person || '',
+      gender: w.grammar_gender || '',
+      number: w.grammar_number || '',
+      case: w.grammar_case || '',
+      mood: w.grammar_mood || '',
+      voice: w.grammar_voice || '',
+      aspect: w.grammar_aspect || '',
+      state: w.grammar_state || '',
+      form: w.grammar_form || '',
+      i3rab: w.grammar_i3rab || '',
+      details: w.grammar_details || null
+    }
+  }
+}
+
 async function fetchSurahs() {
   const { data, error } = await supabase
     .from('surahs')
-    .select('id,name,name_en,name_original,slug,verse_count,page_number,audio_mp3,audio_duration')
+    .select('id,name,name_en,name_original,slug,verse_count,page_number,audio_mp3,audio_duration,transliteration_tr,transliteration_en,source,is_fallback')
     .order('id')
   if (error) throw error
-  return data || []
+  return (data || []).map((item) => {
+    const meta = withSourceMeta(item)
+    return {
+      ...item,
+      source: meta.source,
+      isFallback: meta.isFallback
+    }
+  })
 }
 
 async function fetchSurah(params, mapIdForApi, defaultAuthor) {
@@ -46,7 +118,7 @@ async function fetchSurah(params, mapIdForApi, defaultAuthor) {
 
   const { data: verses, error: versesError } = await supabase
     .from('verses')
-    .select('id,verse_number,verse_text,verse_simplified,transcription,transcription_en,page,juz_number')
+    .select('id,verse_number,verse_text,verse_simplified,verse_without_vowel,verse_text_uthmani,verse_text_plain,verse_text_tajweed,text_source,text_is_fallback,transcription,transcription_en,page,juz_number')
     .eq('surah_id', surahId)
     .order('verse_number')
   if (versesError) throw versesError
@@ -69,13 +141,19 @@ async function fetchSurah(params, mapIdForApi, defaultAuthor) {
     }
   }
 
+  const surahMeta = withSourceMeta(surah)
   return {
     ...surah,
+    source: surahMeta.source,
+    isFallback: surahMeta.isFallback,
     verses: (verses || []).map((v) => ({
+      ...withSourceMeta(v, 'text_source', 'text_is_fallback'),
       id: v.id,
       verse_number: v.verse_number,
       verse: v.verse_text,
       verse_simplified: v.verse_simplified,
+      verse_without_vowel: v.verse_without_vowel,
+      text_modes: buildTextModes(v),
       transcription: v.transcription,
       transcription_en: v.transcription_en,
       page: v.page,
@@ -93,7 +171,7 @@ async function fetchVerse(params, mapIdForApi, defaultAuthor) {
 
   const { data: verse, error: verseError } = await supabase
     .from('verses')
-    .select('id,surah_id,verse_number,verse_text,verse_simplified,verse_without_vowel,transcription,transcription_en,audio_mp3,audio_duration,page,juz_number')
+    .select('id,surah_id,verse_number,verse_text,verse_simplified,verse_without_vowel,verse_text_uthmani,verse_text_plain,verse_text_tajweed,text_source,text_is_fallback,transcription,transcription_en,audio_mp3,audio_duration,page,juz_number')
     .eq('surah_id', surahId)
     .eq('verse_number', ayahNo)
     .maybeSingle()
@@ -130,10 +208,12 @@ async function fetchVerse(params, mapIdForApi, defaultAuthor) {
 
   const { data: wordsData, error: wordsError } = await supabase
     .from('verse_words')
-    .select('id,sort_number,arabic,transcription_tr,transcription_en,translation_tr,translation_en,root:roots(id,latin,arabic,transcription,mean_tr,mean_en)')
+    .select('id,sort_number,arabic,transcription_tr,transcription_en,translation_tr,translation_en,source,is_fallback,grammar_pos,grammar_pos_ar,grammar_lemma,grammar_lemma_ar,grammar_stem,grammar_root,grammar_pattern,grammar_case,grammar_mood,grammar_person,grammar_gender,grammar_number,grammar_voice,grammar_aspect,grammar_state,grammar_form,grammar_i3rab,grammar_details,root:roots(id,latin,arabic,transcription,mean_tr,mean_en)')
     .eq('verse_id', verse.id)
     .order('sort_number')
   if (wordsError) throw wordsError
+
+  const verseMeta = withSourceMeta(verse, 'text_source', 'text_is_fallback')
 
   return {
     id: verse.id,
@@ -145,9 +225,12 @@ async function fetchVerse(params, mapIdForApi, defaultAuthor) {
       slug: surah.slug,
     } : { id: surahId, name: `Sure ${surahId}` },
     verse_number: verse.verse_number,
+    source: verseMeta.source,
+    isFallback: verseMeta.isFallback,
     verse: verse.verse_text,
     verse_simplified: verse.verse_simplified,
     verse_without_vowel: verse.verse_without_vowel,
+    text_modes: buildTextModes(verse),
     transcription: verse.transcription,
     transcription_en: verse.transcription_en,
     page: verse.page,
@@ -162,23 +245,7 @@ async function fetchVerse(params, mapIdForApi, defaultAuthor) {
       } : { id: authorId, name: 'Diyanet İşleri', description: '' },
       footnotes
     } : null,
-    words: (wordsData || []).map((w) => ({
-      id: w.id,
-      sort_number: w.sort_number,
-      arabic: w.arabic,
-      transcription_tr: w.transcription_tr,
-      transcription_en: w.transcription_en,
-      translation_tr: w.translation_tr,
-      translation_en: w.translation_en,
-      root: w.root ? {
-        id: w.root.id,
-        latin: w.root.latin,
-        arabic: w.root.arabic,
-        transcription: w.root.transcription,
-        mean_tr: w.root.mean_tr,
-        mean_en: w.root.mean_en
-      } : null
-    }))
+    words: (wordsData || []).map(mapWordRow)
   }
 }
 
@@ -268,28 +335,12 @@ async function fetchVerseWords(params) {
 
   const { data, error } = await supabase
     .from('verse_words')
-    .select('id,sort_number,arabic,transcription_tr,transcription_en,translation_tr,translation_en,root:roots(id,latin,arabic,transcription,mean_tr,mean_en)')
+    .select('id,sort_number,arabic,transcription_tr,transcription_en,translation_tr,translation_en,source,is_fallback,grammar_pos,grammar_pos_ar,grammar_lemma,grammar_lemma_ar,grammar_stem,grammar_root,grammar_pattern,grammar_case,grammar_mood,grammar_person,grammar_gender,grammar_number,grammar_voice,grammar_aspect,grammar_state,grammar_form,grammar_i3rab,grammar_details,root:roots(id,latin,arabic,transcription,mean_tr,mean_en)')
     .eq('verse_id', verse.id)
     .order('sort_number')
   if (error) throw error
 
-  return (data || []).map((w) => ({
-    id: w.id,
-    sort_number: w.sort_number,
-    arabic: w.arabic,
-    transcription_tr: w.transcription_tr,
-    transcription_en: w.transcription_en,
-    translation_tr: w.translation_tr,
-    translation_en: w.translation_en,
-    root: w.root ? {
-      id: w.root.id,
-      latin: w.root.latin,
-      arabic: w.root.arabic,
-      transcription: w.root.transcription,
-      mean_tr: w.root.mean_tr,
-      mean_en: w.root.mean_en
-    } : null
-  }))
+  return (data || []).map(mapWordRow)
 }
 
 async function fetchSearch(params, mapIdForApi, defaultAuthor) {
@@ -326,8 +377,8 @@ async function fetchSearch(params, mapIdForApi, defaultAuthor) {
   if (isArabicQuery) {
     const { data: verseRows, error: verseRowsError } = await supabase
       .from('verses')
-      .select('id,surah_id,verse_number,verse_text,verse_simplified,verse_without_vowel,transcription,page,juz_number')
-      .or(`verse_text.ilike.%${query}%,verse_simplified.ilike.%${normalizedQuery}%,verse_without_vowel.ilike.%${normalizedQuery}%`)
+      .select('id,surah_id,verse_number,verse_text,verse_simplified,verse_without_vowel,verse_text_plain,transcription,page,juz_number')
+      .or(`verse_text.ilike.%${query}%,verse_simplified.ilike.%${normalizedQuery}%,verse_without_vowel.ilike.%${normalizedQuery}%,verse_text_plain.ilike.%${normalizedQuery}%`)
       .order('surah_id')
       .order('verse_number')
       .limit(limit)
@@ -442,7 +493,7 @@ async function fetchPage(params, mapIdForApi, defaultAuthor) {
 
   const { data: verseRows, error: verseRowsError } = await supabase
     .from('verses')
-    .select('id,surah_id,verse_number,verse_text,verse_simplified,transcription,transcription_en,page,juz_number,surah:surahs(id,name,name_en,name_original,slug)')
+    .select('id,surah_id,verse_number,verse_text,verse_simplified,verse_without_vowel,verse_text_uthmani,verse_text_plain,verse_text_tajweed,text_source,text_is_fallback,transcription,transcription_en,page,juz_number,surah:surahs(id,name,name_en,name_original,slug)')
     .eq('page', pageNumber)
     .order('surah_id')
     .order('verse_number')
@@ -461,6 +512,7 @@ async function fetchPage(params, mapIdForApi, defaultAuthor) {
 
   return (verseRows || []).map((v) => ({
     id: v.id,
+    ...withSourceMeta(v, 'text_source', 'text_is_fallback'),
     surah: v.surah ? {
       id: v.surah.id,
       name: v.surah.name,
@@ -471,6 +523,8 @@ async function fetchPage(params, mapIdForApi, defaultAuthor) {
     verse_number: v.verse_number,
     verse: v.verse_text,
     verse_simplified: v.verse_simplified,
+    verse_without_vowel: v.verse_without_vowel,
+    text_modes: buildTextModes(v),
     transcription: v.transcription,
     transcription_en: v.transcription_en,
     page: v.page,

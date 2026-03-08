@@ -20,6 +20,10 @@
     font-weight: 500;
 }
 
+.verse-page-header .fallback-chip {
+    margin-left: 6px;
+}
+
 .verse-page-arabic {
     font-size: 32px;
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
@@ -359,6 +363,37 @@
     animation: fadeUp 0.3s var(--ease);
 }
 
+.verse-text-mode-toggle {
+    flex-shrink: 0;
+}
+
+.word-inline-ayah {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.inline-word-chip {
+    min-height: 38px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--separator-light);
+    background: var(--card-bg);
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--text-primary);
+    transition: all 0.2s var(--ease);
+}
+
+.inline-word-chip:hover,
+.inline-word-chip.selected {
+    border-color: var(--accent);
+    background: rgba(29, 122, 95, 0.08);
+}
+
 .ebced-summary-card {
     display: flex;
     align-items: center;
@@ -516,6 +551,28 @@
     margin-bottom: 16px;
 }
 
+.word-detail-meta-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.word-source-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--card-bg);
+    border: 1px solid var(--separator);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+}
+
 .word-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -547,6 +604,38 @@
 .word-detail-value {
     font-size: 14px;
     color: var(--text-primary);
+}
+
+.word-technical-toggle {
+    width: 100%;
+    min-height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--separator);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    transition: all 0.2s var(--ease);
+}
+
+.word-technical-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.word-technical-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 480px) {
+    .word-technical-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
 }
 
 /* Root info */

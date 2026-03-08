@@ -1,7 +1,8 @@
-﻿import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useAuth } from './AuthContext'
 import { getArabicFontFamily, getArabicPrimaryFont } from '../utils/typography'
 import { supabase } from '../infrastructure/supabaseClient'
+import { modeToLegacyTajweed, normalizeTextMode } from '../utils/textMode'
 
 const SettingsContext = createContext()
 const SETTINGS_STORAGE_KEY_BASE = 'quran_settings'
@@ -20,6 +21,7 @@ function createDefaultSettings() {
         selectedAuthorIds: DEFAULT_ACTIVE_IDS, // Diger aktif mealler
         defaultReciterId: 7, // Mishari Rashid al-`Afasy
         defaultTurkishReciterId: 1015, // Seyfullah Kartal (Meali)
+        textMode: 'uthmani',
         showTajweed: false,
         fontSize: 18,
         arabicFont: 'QuranFoundationHafs',
@@ -36,6 +38,16 @@ function createDefaultSettings() {
         recentHistory: { surahs: [], verses: [] },
         isPlayerVisible: false,
         isPlayerMinimized: false
+    }
+}
+
+function normalizeSettingsPayload(defaults, payload = {}) {
+    const merged = { ...defaults, ...(payload && typeof payload === 'object' ? payload : {}) }
+    const resolvedTextMode = normalizeTextMode(merged.textMode, Boolean(merged.showTajweed))
+    return {
+        ...merged,
+        textMode: resolvedTextMode,
+        showTajweed: modeToLegacyTajweed(resolvedTextMode)
     }
 }
 
@@ -78,9 +90,7 @@ export function SettingsProvider({ children }) {
         const hydrate = async () => {
             const defaults = createDefaultSettings()
             const localParsed = safeParse(localStorage.getItem(storageKey))
-            const localSettings = localParsed && typeof localParsed === 'object'
-                ? { ...defaults, ...localParsed }
-                : defaults
+            const localSettings = normalizeSettingsPayload(defaults, localParsed)
 
             if (!userId) {
                 setSettings({
@@ -112,8 +122,8 @@ export function SettingsProvider({ children }) {
                 : {}
 
             setSettings({
-                ...localSettings,
-                ...remoteSettings,
+                ...normalizeSettingsPayload(defaults, localSettings),
+                ...normalizeSettingsPayload(defaults, remoteSettings),
                 userName: user.full_name || user.username || localSettings.userName || '',
                 userBio: user.bio || localSettings.userBio || '',
                 profileIcon: user.profile_icon || localSettings.profileIcon || 'muessis',
@@ -165,10 +175,19 @@ export function SettingsProvider({ children }) {
     }, [settings, userId])
 
     const updateSettings = useCallback((updates) => {
-        setSettings(prev => ({
-            ...prev,
-            ...updates
-        }))
+        setSettings(prev => {
+            const nextUpdates = typeof updates === 'function' ? updates(prev) : updates
+            const merged = { ...prev, ...(nextUpdates || {}) }
+            const textMode = normalizeTextMode(
+                merged.textMode,
+                typeof nextUpdates?.showTajweed === 'boolean' ? nextUpdates.showTajweed : merged.showTajweed
+            )
+            return {
+                ...merged,
+                textMode,
+                showTajweed: modeToLegacyTajweed(textMode)
+            }
+        })
     }, [])
 
     const toggleTheme = () => {

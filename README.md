@@ -60,3 +60,19 @@ npm run migrate:supabase
 $env:MIGRATION_CREATE_MISSING_AUTH='true'; npm run migrate:supabase
 ```
 5. Migration report is written to: `supabase/migrations/reports/*.json`
+
+## QUL Pilot Import (Fatiha)
+1. Apply new schema migration:
+```bash
+psql "$env:SUPABASE_DB_URL" -f supabase/migrations/20260309_qul_fatiha_pilot.sql
+```
+2. Set `.env` vars:
+`SUPABASE_DB_URL`, `QUL_SQLITE_PATH` (and optional `QUL_BATCH_TAG`).
+3. Run dry-run:
+```bash
+npm run import:qul -- --sqlite \"C:\\path\\to\\qul-export.sqlite\" --surah 1 --dry-run
+```
+4. Run import:
+```bash
+npm run import:qul -- --sqlite \"C:\\path\\to\\qul-export.sqlite\" --surah 1
+```

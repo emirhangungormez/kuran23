@@ -7,6 +7,7 @@ import { useSettings } from '../contexts/SettingsContext'
 import usePlayerStore from '../stores/usePlayerStore'
 import BookmarkButton from '../components/BookmarkButton'
 import CustomSelect from '../components/CustomSelect'
+import TextModeToggle from '../components/TextModeToggle'
 import UserAvatar from '../components/UserAvatar'
 import ThemeToggle from '../components/ThemeToggle'
 import RamadanStatus from '../components/RamadanStatus'
@@ -21,6 +22,7 @@ import {
 import { useShallow } from 'zustand/react/shallow'
 import { calculateWordEbced, calculateVerseEbced } from '../utils/ebced'
 import { normalizeArabicDisplayText, normalizeTafsirText } from '../utils/textEncoding'
+import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import useUsageTracker from '../hooks/useUsageTracker'
 import {
@@ -47,6 +49,7 @@ export default function VersePage() {
     const [diyanetTafsir, setDiyanetTafsir] = useState(null)
     const [diyanetTafsirErrorMessage, setDiyanetTafsirErrorMessage] = useState('')
     const [selectedWord, setSelectedWord] = useState(null)
+    const [showTechnicalMorphology, setShowTechnicalMorphology] = useState(false)
     const [copyStatus, setCopyStatus] = useState('idle')
     const { bookmarks, isVerseBookmarked, toggleVerse, addToHistory } = useBookmarks()
     const { settings, updateSettings } = useSettings()
@@ -103,8 +106,8 @@ export default function VersePage() {
     }))
 
     const { data: verse, isLoading: loadingVerse } = useQuery({
-        queryKey: ['verse', surahId, ayahNo, settings.defaultAuthorId, settings.showTajweed],
-        queryFn: () => getVerse(surahId, ayahNo, settings.defaultAuthorId, settings.showTajweed),
+        queryKey: ['verse', surahId, ayahNo, settings.defaultAuthorId, settings.textMode],
+        queryFn: () => getVerse(surahId, ayahNo, settings.defaultAuthorId, settings.textMode),
         staleTime: 1000 * 60 * 60 * 24
     })
 
@@ -144,9 +147,8 @@ export default function VersePage() {
     const arabicFontSize = getArabicFontSize(settings)
     const translationFontSize = getTranslationFontSize(settings)
     const transcriptionFontSize = getTranscriptionFontSize(settings)
-    const verseArabicHtml = settings.showTajweed
-        ? normalizeArabicDisplayText(verse?.verse || '')
-        : normalizeArabicDisplayText(verse?.verse_simplified || verse?.verse || '')
+    const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
+    const verseArabicHtml = normalizeArabicDisplayText(getVerseTextByMode(verse, textMode))
 
     const primaryTranslationText = useMemo(() => {
         if (Array.isArray(allTranslations)) {
@@ -212,6 +214,7 @@ export default function VersePage() {
     useEffect(() => {
         // Reset selected word on verse change
         setSelectedWord(null)
+        setShowTechnicalMorphology(false)
 
         if (verse) {
             const sData = surahs.find(s => s.no === parseInt(surahId))
@@ -398,6 +401,11 @@ export default function VersePage() {
                                 className="audio-mini-select"
                             />
                         </div>
+                        <TextModeToggle
+                            value={textMode}
+                            onChange={(mode) => updateSettings({ textMode: mode })}
+                            className="verse-text-mode-toggle"
+                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -501,6 +509,7 @@ export default function VersePage() {
                                 {surahMeta.type}
                             </span>
                         )}
+                        {verse?.isFallback && <span className="fallback-chip">fallback</span>}
                     </div>
                     <div
                         className="verse-page-arabic"
@@ -629,6 +638,18 @@ export default function VersePage() {
                     <div className="verse-words-section">
                         {wordsWithEbced.length > 0 ? (
                             <>
+                                <div className="word-inline-ayah" dir="rtl">
+                                    {wordsWithEbced.map((w) => (
+                                        <button
+                                            key={`inline-${w.id}`}
+                                            className={`inline-word-chip ${selectedWord?.id === w.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedWord(selectedWord?.id === w.id ? null : w)}
+                                        >
+                                            {w.arabic}
+                                        </button>
+                                    ))}
+                                </div>
+
                                 <div className="words-grid" dir="rtl">
                                     {wordsWithEbced.map(w => (
                                         <button
@@ -661,6 +682,10 @@ export default function VersePage() {
                                     <div className="word-detail" dir="ltr">
                                         <h4 className="word-detail-title">Kelime Detayi</h4>
                                         <div className="word-detail-arabic" dir="rtl">{selectedWord.arabic}</div>
+                                        <div className="word-detail-meta-row">
+                                            <span className="word-source-chip">{selectedWord.source || 'legacy'}</span>
+                                            {selectedWord.isFallback && <span className="fallback-chip">fallback</span>}
+                                        </div>
                                         <div className="word-detail-grid">
                                             <div className="word-detail-item">
                                                 <span className="word-detail-label">Okunus (TR)</span>
@@ -686,7 +711,60 @@ export default function VersePage() {
                                                 <span className="word-detail-label">Harf Sayisi</span>
                                                 <span className="word-detail-value">{selectedWord.ebcedLetterCount}</span>
                                             </div>
+                                            <div className="word-detail-item">
+                                                <span className="word-detail-label">Turkce Kategori</span>
+                                                <span className="word-detail-value">{selectedWord.morphology?.pos || '-'}</span>
+                                            </div>
+                                            <div className="word-detail-item">
+                                                <span className="word-detail-label">Kok / Lemma</span>
+                                                <span className="word-detail-value">{selectedWord.morphology?.lemma || selectedWord.morphology?.root || '-'}</span>
+                                            </div>
+                                            <div className="word-detail-item">
+                                                <span className="word-detail-label">Kisi - Cinsiyet - Sayi</span>
+                                                <span className="word-detail-value">
+                                                    {[selectedWord.morphology?.person, selectedWord.morphology?.gender, selectedWord.morphology?.number].filter(Boolean).join(' / ') || '-'}
+                                                </span>
+                                            </div>
+                                            <div className="word-detail-item">
+                                                <span className="word-detail-label">I'rab (Case / Mood)</span>
+                                                <span className="word-detail-value">
+                                                    {[selectedWord.morphology?.case, selectedWord.morphology?.mood, selectedWord.morphology?.i3rab].filter(Boolean).join(' / ') || '-'}
+                                                </span>
+                                            </div>
                                         </div>
+
+                                        <button
+                                            type="button"
+                                            className="word-technical-toggle"
+                                            onClick={() => setShowTechnicalMorphology(prev => !prev)}
+                                        >
+                                            {showTechnicalMorphology ? 'Teknik Alanlari Gizle' : 'Teknik EN/AR Alanlarini Goster'}
+                                        </button>
+
+                                        {showTechnicalMorphology && (
+                                            <div className="word-technical-grid">
+                                                <div className="word-detail-item">
+                                                    <span className="word-detail-label">POS (AR)</span>
+                                                    <span className="word-detail-value">{selectedWord.morphology?.pos_ar || '-'}</span>
+                                                </div>
+                                                <div className="word-detail-item">
+                                                    <span className="word-detail-label">Lemma (AR)</span>
+                                                    <span className="word-detail-value">{selectedWord.morphology?.lemma_ar || '-'}</span>
+                                                </div>
+                                                <div className="word-detail-item">
+                                                    <span className="word-detail-label">Stem / Pattern / Form</span>
+                                                    <span className="word-detail-value">
+                                                        {[selectedWord.morphology?.stem, selectedWord.morphology?.pattern, selectedWord.morphology?.form].filter(Boolean).join(' / ') || '-'}
+                                                    </span>
+                                                </div>
+                                                <div className="word-detail-item">
+                                                    <span className="word-detail-label">Voice / Aspect / State</span>
+                                                    <span className="word-detail-value">
+                                                        {[selectedWord.morphology?.voice, selectedWord.morphology?.aspect, selectedWord.morphology?.state].filter(Boolean).join(' / ') || '-'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {Array.isArray(selectedWord.ebcedLetters) && selectedWord.ebcedLetters.length > 0 && (
                                             <div className="word-ebced-breakdown">

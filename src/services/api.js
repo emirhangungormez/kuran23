@@ -5,6 +5,7 @@ import { surahs as mockSurahs, verses as mockVerses, searchQuran as mockSearch }
 import { getSurahAudioUrl, getVerseAudioUrl } from './audio'
 import { fetchSupabaseEndpoint } from './supabaseApiAdapter'
 import { sanitizeSearchInput } from '../utils/security'
+import { buildTextModesFromVerse, getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 
 let diyanetTafsirCache = null
 let diyanetSurahInfoCache = null
@@ -144,11 +145,67 @@ function normalizeTranslationItem(item) {
 }
 
 function normalizeVerseItem(verse) {
-    if (!verse || !verse.translation) return verse;
+    if (!verse) return verse;
+    return hydrateVerseSourceMeta({
+        ...verse,
+        translation: verse.translation ? normalizeTranslationItem(verse.translation) : verse.translation
+    });
+}
+
+function normalizeWordItem(word) {
+    if (!word) return word;
+    return {
+        ...word,
+        source: String(word.source || 'legacy'),
+        isFallback: typeof word.isFallback === 'boolean' ? word.isFallback : (String(word.source || 'legacy') !== 'qul'),
+        morphology: {
+            pos: word.morphology?.pos || '',
+            pos_ar: word.morphology?.pos_ar || '',
+            lemma: word.morphology?.lemma || '',
+            lemma_ar: word.morphology?.lemma_ar || '',
+            stem: word.morphology?.stem || '',
+            root: word.morphology?.root || '',
+            pattern: word.morphology?.pattern || '',
+            person: word.morphology?.person || '',
+            gender: word.morphology?.gender || '',
+            number: word.morphology?.number || '',
+            case: word.morphology?.case || '',
+            mood: word.morphology?.mood || '',
+            voice: word.morphology?.voice || '',
+            aspect: word.morphology?.aspect || '',
+            state: word.morphology?.state || '',
+            form: word.morphology?.form || '',
+            i3rab: word.morphology?.i3rab || '',
+            details: word.morphology?.details || null
+        }
+    };
+}
+
+function hydrateVerseSourceMeta(verse) {
+    const normalizedSource = String(verse?.source || '').trim() || 'legacy';
+    const normalizedFallback = typeof verse?.isFallback === 'boolean'
+        ? verse.isFallback
+        : normalizedSource !== 'qul';
+    const text_modes = buildTextModesFromVerse(verse || {});
+
     return {
         ...verse,
-        translation: normalizeTranslationItem(verse.translation)
+        source: normalizedSource,
+        isFallback: normalizedFallback,
+        text_modes
     };
+}
+
+function toTajweedParam(textMode) {
+    return normalizeTextMode(textMode) === 'tajweed';
+}
+
+function toTextModeQuery(textMode) {
+    return `&text_mode=${encodeURIComponent(normalizeTextMode(textMode))}`
+}
+
+export function resolveVerseTextForMode(verse, textMode) {
+    return getVerseTextByMode(verse, textMode);
 }
 
 let useOwnApi = true; // Will be set to false on first failure
@@ -305,7 +362,7 @@ async function fetchOwnApi(endpoint) {
 // ========================
 export async function getSurahs() {
     const own = await fetchOwnApi('/surahs.php');
-    if (own) return normalizeVerseItem(own);
+    if (own) return own;
 
     // Fallback: acikkuran
     try {
@@ -314,12 +371,16 @@ export async function getSurahs() {
             id: s.id, name: s.name, name_en: s.name_en, name_original: s.name_original,
             slug: s.slug, verse_count: s.verse_count, page_number: s.page_number,
             audio_mp3: s.audio?.mp3, audio_duration: s.audio?.duration,
+            source: 'fallback:acikkuran',
+            isFallback: true
         }));
     } catch {
         // Final fallback: mock
         return mockSurahs.map(s => ({
             id: s.no, name: s.nameTr, name_en: s.nameEn, name_original: s.nameAr,
             slug: s.nameTr.toLowerCase(), verse_count: s.ayahCount,
+            source: 'fallback:mock',
+            isFallback: true
         }));
     }
 }
@@ -327,10 +388,17 @@ export async function getSurahs() {
 // ========================
 // Surah detail with verses
 // ========================
-export async function getSurah(id, authorId, tajweed) {
-    const tajweedParam = tajweed ? '&tajweed=1' : '';
-    const own = await fetchOwnApi(`/surah.php?id=${id}${authorId ? '&author=' + authorId : ''}${tajweedParam}`);
-    if (own) return Array.isArray(own) ? own.map(normalizeTranslationItem) : own;
+export async function getSurah(id, authorId, textMode = 'uthmani') {
+    const normalizedMode = normalizeTextMode(textMode)
+    const tajweedParam = toTajweedParam(normalizedMode) ? '&tajweed=1' : ''
+    const own = await fetchOwnApi(`/surah.php?id=${id}${authorId ? '&author=' + authorId : ''}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
+    if (own) {
+        if (Array.isArray(own)) return own.map(normalizeVerseItem)
+        return {
+            ...normalizeVerseItem(own),
+            verses: Array.isArray(own.verses) ? own.verses.map(normalizeVerseItem) : own.verses
+        }
+    }
 
     // Fallback: acikkuran
     try {
@@ -343,11 +411,21 @@ export async function getSurah(id, authorId, tajweed) {
             id: d.id, name: d.name, name_en: d.name_en, name_original: d.name_original,
             slug: d.slug, verse_count: d.verse_count, page_number: d.page_number,
             audio_mp3: d.audio?.mp3,
+            source: 'fallback:acikkuran',
+            isFallback: true,
             verses: (d.verses || []).map(v => ({
+                source: 'fallback:acikkuran',
+                isFallback: true,
                 id: v.id,
                 verse_number: v.verse_number,
                 verse: v.verse,
                 verse_simplified: v.verse_simplified,
+                verse_without_vowel: v.verse_without_vowel,
+                text_modes: {
+                    uthmani: v.verse || '',
+                    plain: v.verse_without_vowel || v.verse_simplified || v.verse || '',
+                    tajweed: v.verse || ''
+                },
                 transcription: v.transcription,
                 transcription_en: v.transcription_en,
                 page: v.page,
@@ -357,7 +435,7 @@ export async function getSurah(id, authorId, tajweed) {
                     text: v.translation.text,
                     author_id: v.translation.author?.id,
                 } : null,
-            })),
+            })).map(normalizeVerseItem),
         };
     } catch (e) {
         console.warn('getSurah failed:', e);
@@ -460,11 +538,18 @@ export async function getSurahInfo(id) {
 // ========================
 // Verse detail
 // ========================
-export async function getVerse(surahId, ayahNo, authorId, tajweed) {
-    const tajweedParam = tajweed ? '&tajweed=1' : '';
-    const own = await fetchOwnApi(`/verse.php?surah=${surahId}&ayah=${ayahNo}${authorId ? '&author=' + authorId : ''}${tajweedParam}`);
+export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') {
+    const normalizedMode = normalizeTextMode(textMode)
+    const tajweedParam = toTajweedParam(normalizedMode) ? '&tajweed=1' : ''
+    const own = await fetchOwnApi(`/verse.php?surah=${surahId}&ayah=${ayahNo}${authorId ? '&author=' + authorId : ''}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
     if (own) {
-        if (!Array.isArray(own)) return own;
+        if (!Array.isArray(own)) {
+            const normalized = normalizeVerseItem(own)
+            return {
+                ...normalized,
+                words: Array.isArray(normalized.words) ? normalized.words.map(normalizeWordItem) : []
+            }
+        }
         return own.map(normalizeVerseItem);
     }
 
@@ -476,16 +561,23 @@ export async function getVerse(surahId, ayahNo, authorId, tajweed) {
         const data = await fetchJson(`${ACIKKURAN_API}/surah/${sId}/verse/${aNo}?author=${mappedAuthor}`);
         const d = data.data;
         if (!d) return null;
-        return {
+        return hydrateVerseSourceMeta({
             id: d.id,
             surah: d.surah ? {
                 id: d.surah.id, name: d.surah.name, name_en: d.surah.name_en,
                 name_original: d.surah.name_original, slug: d.surah.slug,
             } : { id: parseInt(surahId), name: `Sure ${surahId}` },
             verse_number: d.verse_number,
+            source: 'fallback:acikkuran',
+            isFallback: true,
             verse: d.verse,
             verse_simplified: d.verse_simplified,
             verse_without_vowel: d.verse_without_vowel,
+            text_modes: {
+                uthmani: d.verse || '',
+                plain: d.verse_without_vowel || d.verse_simplified || d.verse || '',
+                tajweed: d.verse || ''
+            },
             transcription: d.transcription,
             transcription_en: d.transcription_en,
             page: d.page,
@@ -497,7 +589,7 @@ export async function getVerse(surahId, ayahNo, authorId, tajweed) {
                 footnotes: d.translation.footnotes || [],
             } : null,
             words: [], // Will be fetched separately
-        };
+        });
     } catch (e) {
         console.warn('getVerse failed:', e);
         return null;
@@ -621,7 +713,10 @@ export async function getTranslations(surahId, ayahNo) {
 // ========================
 export async function getVerseWords(surahId, ayahNo) {
     const own = await fetchOwnApi(`/verse_words.php?surah=${surahId}&ayah=${ayahNo}`);
-    if (own) return own;
+    if (own) {
+        const list = Array.isArray(own) ? own : (Array.isArray(own.data) ? own.data : []);
+        return list.map(normalizeWordItem);
+    }
 
     // Fallback: acikkuran verseparts
     try {
@@ -634,12 +729,34 @@ export async function getVerseWords(surahId, ayahNo) {
             transcription_en: w.transcription_en,
             translation_tr: w.translation_tr,
             translation_en: w.translation_en,
+            source: 'fallback:acikkuran',
+            isFallback: true,
+            morphology: {
+                pos: '',
+                pos_ar: '',
+                lemma: '',
+                lemma_ar: '',
+                stem: '',
+                root: '',
+                pattern: '',
+                person: '',
+                gender: '',
+                number: '',
+                case: '',
+                mood: '',
+                voice: '',
+                aspect: '',
+                state: '',
+                form: '',
+                i3rab: '',
+                details: null
+            },
             root: w.root ? {
                 id: w.root.id,
                 latin: w.root.latin,
                 arabic: w.root.arabic,
             } : null,
-        }));
+        })).map(normalizeWordItem);
     } catch (e) {
         console.warn('getVerseWords failed:', e);
         return [];
@@ -814,16 +931,17 @@ export async function searchQuran(query, limit = 30, page = 1) {
 // ========================
 // Page view
 // ========================
-export async function getPage(pageNumber, authorId, reciterId, tajweed) {
-    const tajweedParam = tajweed ? '&tajweed=1' : '';
+export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthmani') {
+    const normalizedMode = normalizeTextMode(textMode)
+    const tajweedParam = toTajweedParam(normalizedMode) ? '&tajweed=1' : '';
     const reciterParam = reciterId ? '&reciter=' + reciterId : '';
-    const own = await fetchOwnApi(`/page.php?page=${pageNumber}${authorId ? '&author=' + authorId : ''}${reciterParam}${tajweedParam}`);
+    const own = await fetchOwnApi(`/page.php?page=${pageNumber}${authorId ? '&author=' + authorId : ''}${reciterParam}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
     if (own) {
         const pNum = parseInt(pageNumber);
         const ownVerses = Array.isArray(own) ? own : [];
         const filteredOwnVerses = ownVerses.filter(v => parseInt(v?.page) === pNum);
         return (filteredOwnVerses.length > 0 ? filteredOwnVerses : ownVerses).map(v => ({
-            ...v,
+            ...normalizeVerseItem(v),
             audio: normalizeAudioUrl(v.audio) || getVerseAudioUrl(reciterId || 7, v?.surah?.id || 1, v?.verse_number || 1)
         }));
     }
@@ -839,15 +957,23 @@ export async function getPage(pageNumber, authorId, reciterId, tajweed) {
         const filteredVerses = verses.filter(v => v.page === pNum);
         const finalVerses = filteredVerses.length > 0 ? filteredVerses : verses;
 
-        return finalVerses.map(v => ({
+        return finalVerses.map(v => normalizeVerseItem({
             id: v.id,
             surah: v.surah ? {
                 id: v.surah.id, name: v.surah.name, name_en: v.surah.name_en,
                 name_original: v.surah.name_original, slug: v.surah.slug,
             } : null,
+            source: 'fallback:acikkuran',
+            isFallback: true,
             verse_number: v.verse_number,
             verse: v.verse,
             verse_simplified: v.verse_simplified,
+            verse_without_vowel: v.verse_without_vowel,
+            text_modes: {
+                uthmani: v.verse || '',
+                plain: v.verse_without_vowel || v.verse_simplified || v.verse || '',
+                tajweed: v.verse || ''
+            },
             transcription: v.transcription,
             transcription_en: v.transcription_en,
             page: v.page,
