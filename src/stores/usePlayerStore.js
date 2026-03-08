@@ -50,6 +50,27 @@ function resolveActiveTrackIndex(state) {
 // Global Audio Element Instance
 const globalAudio = new Audio()
 
+function safePlayAudio(onFail) {
+    globalAudio.muted = false
+    const playPromise = globalAudio.play()
+
+    if (!playPromise || typeof playPromise.catch !== 'function') return
+
+    playPromise.catch(async (err) => {
+        // iOS/PWA unlock fallback: try muted start once, then retry normal playback.
+        try {
+            globalAudio.muted = true
+            await globalAudio.play()
+            globalAudio.pause()
+            globalAudio.muted = false
+            await globalAudio.play()
+        } catch (unlockErr) {
+            globalAudio.muted = false
+            if (typeof onFail === 'function') onFail(unlockErr || err)
+        }
+    })
+}
+
 const usePlayerStore = create((set, get) => ({
     audioRef: { current: globalAudio },
 
@@ -130,7 +151,10 @@ const usePlayerStore = create((set, get) => ({
         globalAudio.src = url
         globalAudio.load()
         globalAudio.playbackRate = get().playbackSpeed
-        globalAudio.play().catch(e => console.error("Play error:", e))
+        safePlayAudio((e) => {
+            console.error("Play error:", e)
+            set({ isPlaying: false })
+        })
 
         // Settings context update usually handled inside component, but we'll emit a custom event or let components subscribe
         document.dispatchEvent(new CustomEvent('playerVisible'))
@@ -150,7 +174,7 @@ const usePlayerStore = create((set, get) => ({
             globalAudio.src = track.audio
             globalAudio.load()
             globalAudio.playbackRate = get().playbackSpeed
-            globalAudio.play().catch(e => {
+            safePlayAudio((e) => {
                 console.error("Playlist play error:", e)
                 set({ isPlaying: false })
             })
@@ -184,18 +208,18 @@ const usePlayerStore = create((set, get) => ({
             const hasSource = globalAudio.src && globalAudio.src !== window.location.href && globalAudio.src !== '';
 
             if (hasSource) {
-                globalAudio.play().catch(console.error)
+                safePlayAudio(() => set({ isPlaying: false }))
                 set({ isPlaying: true })
             } else if (state.mode === 'playlist' && state.playlist.length > 0) {
                 const track = state.playlist[state.currentTrackIndex]
                 if (track && track.audio) {
                     globalAudio.src = track.audio
-                    globalAudio.play().catch(console.error)
+                    safePlayAudio(() => set({ isPlaying: false }))
                     set({ isPlaying: true })
                 }
             } else if (state.mode === 'single' && state.singleSource) {
                 globalAudio.src = state.singleSource
-                globalAudio.play().catch(console.error)
+                safePlayAudio(() => set({ isPlaying: false }))
                 set({ isPlaying: true })
             }
         }
@@ -214,7 +238,7 @@ const usePlayerStore = create((set, get) => ({
             if (track && track.audio) {
                 globalAudio.src = track.audio
                 globalAudio.playbackRate = state.playbackSpeed
-                globalAudio.play().catch(console.error)
+                safePlayAudio(() => set({ isPlaying: false }))
             }
         }
     },
@@ -261,7 +285,7 @@ const usePlayerStore = create((set, get) => ({
             const track = state.playlist[prevIdx]
             if (track && track.audio) {
                 globalAudio.src = track.audio
-                globalAudio.play().catch(console.error)
+                safePlayAudio(() => set({ isPlaying: false }))
             }
         }
     },
