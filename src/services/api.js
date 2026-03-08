@@ -2,6 +2,13 @@
 // Falls back to acikkuran-api directly when our backend is unavailable (local dev)
 
 import { surahs as mockSurahs, verses as mockVerses, searchQuran as mockSearch } from '../data/quranData'
+import {
+    applyQulFatihaToSurah,
+    applyQulFatihaToSurahListItem,
+    applyQulFatihaToVerse,
+    applyQulFatihaToVerseList,
+    getQulFatihaWords
+} from '../data/qulFatihaPilot'
 import { getSurahAudioUrl, getVerseAudioUrl } from './audio'
 import { fetchSupabaseEndpoint } from './supabaseApiAdapter'
 import { sanitizeSearchInput } from '../utils/security'
@@ -208,7 +215,8 @@ export function resolveVerseTextForMode(verse, textMode) {
     return getVerseTextByMode(verse, textMode);
 }
 
-let useOwnApi = true; // Will be set to false on first failure
+const ENABLE_SUPABASE_QURAN = String(import.meta.env.VITE_ENABLE_SUPABASE_QURAN || '').toLowerCase() === 'true'
+let useOwnApi = ENABLE_SUPABASE_QURAN; // Will be set to false on first failure
 const OWN_API_TIMEOUT_MS = 6000
 
 function withTimeout(promise, timeoutMs, label = 'Request timed out') {
@@ -344,6 +352,7 @@ export async function getDailyVerse() {
 
 // Try Supabase first, fall back to acikkuran-api
 async function fetchOwnApi(endpoint) {
+    if (!ENABLE_SUPABASE_QURAN) return null
     if (!useOwnApi) return null
     try {
         return await withTimeout(fetchSupabaseEndpoint(endpoint, {
@@ -362,7 +371,7 @@ async function fetchOwnApi(endpoint) {
 // ========================
 export async function getSurahs() {
     const own = await fetchOwnApi('/surahs.php');
-    if (own) return own;
+    if (own) return (own || []).map(applyQulFatihaToSurahListItem);
 
     // Fallback: acikkuran
     try {
@@ -373,7 +382,7 @@ export async function getSurahs() {
             audio_mp3: s.audio?.mp3, audio_duration: s.audio?.duration,
             source: 'fallback:acikkuran',
             isFallback: true
-        }));
+        })).map(applyQulFatihaToSurahListItem);
     } catch {
         // Final fallback: mock
         return mockSurahs.map(s => ({
@@ -381,7 +390,7 @@ export async function getSurahs() {
             slug: s.nameTr.toLowerCase(), verse_count: s.ayahCount,
             source: 'fallback:mock',
             isFallback: true
-        }));
+        })).map(applyQulFatihaToSurahListItem);
     }
 }
 
@@ -394,10 +403,11 @@ export async function getSurah(id, authorId, textMode = 'uthmani') {
     const own = await fetchOwnApi(`/surah.php?id=${id}${authorId ? '&author=' + authorId : ''}${toTextModeQuery(normalizedMode)}${tajweedParam}`);
     if (own) {
         if (Array.isArray(own)) return own.map(normalizeVerseItem)
-        return {
+        const normalized = {
             ...normalizeVerseItem(own),
             verses: Array.isArray(own.verses) ? own.verses.map(normalizeVerseItem) : own.verses
         }
+        return applyQulFatihaToSurah(normalized)
     }
 
     // Fallback: acikkuran
@@ -407,7 +417,7 @@ export async function getSurah(id, authorId, textMode = 'uthmani') {
         const data = await fetchJson(`${ACIKKURAN_API}/surah/${surahId}?author=${mappedAuthor}`);
         const d = data.data;
         if (!d) return null;
-        return {
+        return applyQulFatihaToSurah({
             id: d.id, name: d.name, name_en: d.name_en, name_original: d.name_original,
             slug: d.slug, verse_count: d.verse_count, page_number: d.page_number,
             audio_mp3: d.audio?.mp3,
@@ -436,7 +446,7 @@ export async function getSurah(id, authorId, textMode = 'uthmani') {
                     author_id: v.translation.author?.id,
                 } : null,
             })).map(normalizeVerseItem),
-        };
+        });
     } catch (e) {
         console.warn('getSurah failed:', e);
         return null;
@@ -545,9 +555,10 @@ export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') 
     if (own) {
         if (!Array.isArray(own)) {
             const normalized = normalizeVerseItem(own)
+            const enriched = applyQulFatihaToVerse(normalized)
             return {
-                ...normalized,
-                words: Array.isArray(normalized.words) ? normalized.words.map(normalizeWordItem) : []
+                ...enriched,
+                words: Array.isArray(enriched.words) ? enriched.words.map(normalizeWordItem) : []
             }
         }
         return own.map(normalizeVerseItem);
@@ -561,7 +572,7 @@ export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') 
         const data = await fetchJson(`${ACIKKURAN_API}/surah/${sId}/verse/${aNo}?author=${mappedAuthor}`);
         const d = data.data;
         if (!d) return null;
-        return hydrateVerseSourceMeta({
+        const normalized = hydrateVerseSourceMeta({
             id: d.id,
             surah: d.surah ? {
                 id: d.surah.id, name: d.surah.name, name_en: d.surah.name_en,
@@ -589,7 +600,8 @@ export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') 
                 footnotes: d.translation.footnotes || [],
             } : null,
             words: [], // Will be fetched separately
-        });
+        })
+        return applyQulFatihaToVerse(normalized)
     } catch (e) {
         console.warn('getVerse failed:', e);
         return null;
@@ -712,6 +724,11 @@ export async function getTranslations(surahId, ayahNo) {
 // Word-by-word analysis
 // ========================
 export async function getVerseWords(surahId, ayahNo) {
+    if (Number(surahId) === 1) {
+        const words = getQulFatihaWords(Number(ayahNo))
+        if (words.length > 0) return words
+    }
+
     const own = await fetchOwnApi(`/verse_words.php?surah=${surahId}&ayah=${ayahNo}`);
     if (own) {
         const list = Array.isArray(own) ? own : (Array.isArray(own.data) ? own.data : []);
@@ -940,10 +957,11 @@ export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthma
         const pNum = parseInt(pageNumber);
         const ownVerses = Array.isArray(own) ? own : [];
         const filteredOwnVerses = ownVerses.filter(v => parseInt(v?.page) === pNum);
-        return (filteredOwnVerses.length > 0 ? filteredOwnVerses : ownVerses).map(v => ({
+        const normalized = (filteredOwnVerses.length > 0 ? filteredOwnVerses : ownVerses).map(v => ({
             ...normalizeVerseItem(v),
             audio: normalizeAudioUrl(v.audio) || getVerseAudioUrl(reciterId || 7, v?.surah?.id || 1, v?.verse_number || 1)
-        }));
+        }))
+        return applyQulFatihaToVerseList(normalized)
     }
 
     // Fallback: acikkuran
@@ -957,7 +975,7 @@ export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthma
         const filteredVerses = verses.filter(v => v.page === pNum);
         const finalVerses = filteredVerses.length > 0 ? filteredVerses : verses;
 
-        return finalVerses.map(v => normalizeVerseItem({
+        const normalized = finalVerses.map(v => normalizeVerseItem({
             id: v.id,
             surah: v.surah ? {
                 id: v.surah.id, name: v.surah.name, name_en: v.surah.name_en,
@@ -984,7 +1002,8 @@ export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthma
                 author: normalizeTranslationAuthor(v.translation.author),
             } : null,
             audio: getVerseAudioUrl(reciterId || 7, v.surah?.id || 1, v.verse_number)
-        }));
+        }))
+        return applyQulFatihaToVerseList(normalized)
     } catch (e) {
         console.warn('getPage failed:', e);
         return [];

@@ -61,6 +61,13 @@ $env:MIGRATION_CREATE_MISSING_AUTH='true'; npm run migrate:supabase
 ```
 5. Migration report is written to: `supabase/migrations/reports/*.json`
 
+## Quran Data Mode
+- Default runtime mode keeps Quran content on public APIs/local pilot data and uses Supabase for user domain only.
+- Toggle with:
+```bash
+VITE_ENABLE_SUPABASE_QURAN=false
+```
+
 ## QUL Pilot Import (Fatiha)
 1. Apply new schema migration:
 ```bash
