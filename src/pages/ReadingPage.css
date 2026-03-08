@@ -406,36 +406,33 @@
     }
 
     .reading-header-center {
-        flex-direction: row;
-        align-items: center;
+        flex-direction: column;
+        align-items: stretch;
         width: 100%;
-        gap: 6px;
-        /* Tight gap for row layout */
+        gap: 8px;
     }
 
     .reading-selectors {
-        display: flex;
-        flex: 1;
-        gap: 4px;
-        min-width: 0;
-        /* Critical for ellipsis */
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        gap: 6px;
     }
 
-    .reading-selectors .custom-select {
-        flex: 1;
-        min-width: 0;
-        /* Critical for ellipsis */
+    .reading-selectors .custom-select-container {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
     }
 
     .reading-selectors .custom-select-trigger {
-        padding: 8px 6px;
-        /* Compact padding */
+        padding: 8px 10px;
+        height: 40px;
         gap: 4px;
     }
 
     .reading-selectors .trigger-label {
-        font-size: 11px;
-        /* Smaller font for row fit */
+        font-size: 12px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -449,16 +446,39 @@
     }
 
     .reading-actions {
-        width: auto;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        align-items: center;
+        gap: 6px;
     }
 
-    .audio-control-group {
+    .reading-actions>.surah-audio-btn.player-toggle {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        padding: 0 !important;
+    }
+
+    .reading-actions .audio-control-group {
+        min-width: 0;
+        width: 100%;
         gap: 4px;
+        height: 40px;
+        padding: 4px;
     }
 
-    .surah-audio-btn {
-        padding: 8px 10px;
+    .reading-actions .audio-control-group .surah-audio-btn,
+    .reading-actions .audio-control-group .speed-toggle {
+        height: 32px;
+        min-width: 0;
+        justify-content: center;
+        padding: 0 8px;
         font-size: 11px;
+    }
+
+    .reading-actions .audio-control-group .surah-audio-btn {
+        flex: 1 1 0;
     }
 
     .surah-audio-btn svg {
@@ -466,10 +486,8 @@
         height: 12px;
     }
 
-    .speed-toggle {
-        padding: 8px 8px;
-        font-size: 11px;
-        min-width: 34px;
+    .reading-actions .audio-control-group .speed-toggle {
+        min-width: 42px;
     }
 }
 
@@ -541,12 +559,7 @@
 
 @media (max-width: 768px) {
     .rope-bookmark-wrapper {
-        right: 150px;
-        /* Fine-tuned to 150px per user request */
-        transform: scale(0.8);
-        top: -10px;
-        z-index: 999999;
-        /* Maintain top priority on mobile */
+        display: none;
     }
 }
 

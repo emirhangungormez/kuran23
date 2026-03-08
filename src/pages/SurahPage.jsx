@@ -336,7 +336,7 @@ export default function SurahPage() {
 
     if (loading && !surah) {
         return (
-            <div className="page">
+            <div className="page surah-page">
                 <div className="page-content">
                     <div className="loading-state">
                         <p>Yükleniyor...</p>
@@ -348,7 +348,7 @@ export default function SurahPage() {
 
     if (!surah) {
         return (
-            <div className="page">
+            <div className="page surah-page">
                 <div className="page-content">
                     <Link to="/" className="back-link">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
@@ -364,7 +364,7 @@ export default function SurahPage() {
     }
 
     return (
-        <div className="page">
+        <div className="page surah-page">
             <GlobalNav />
             <div className="page-content">
 

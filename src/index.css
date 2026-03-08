@@ -977,6 +977,70 @@ button {
     max-width: none;
     flex: 1 1 0;
   }
+
+  .surah-page .page-header-row,
+  .verse-page .page-header-row {
+    align-items: stretch;
+  }
+
+  .surah-page .page-header-actions,
+  .verse-page .page-header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: center;
+    gap: 8px;
+  }
+
+  .surah-page .audio-reciter-selects,
+  .verse-page .audio-reciter-selects {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    order: 0;
+  }
+
+  .surah-page .audio-mini-select,
+  .verse-page .audio-mini-select {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .surah-page .audio-control-group,
+  .verse-page .audio-control-group {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 4px;
+    padding: 4px;
+    height: 40px;
+  }
+
+  .surah-page .audio-control-group .surah-audio-btn,
+  .verse-page .audio-control-group .surah-audio-btn,
+  .surah-page .audio-control-group .speed-toggle,
+  .verse-page .audio-control-group .speed-toggle {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 0 8px;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .surah-page .page-header-actions>.surah-audio-btn.player-toggle,
+  .verse-page .page-header-actions>.surah-audio-btn.player-toggle,
+  .surah-page .page-header-actions>.bookmark-btn,
+  .verse-page .page-header-actions>.bookmark-btn {
+    width: 100% !important;
+    min-width: 0;
+  }
 }
 
 /* Loading/Empty State */

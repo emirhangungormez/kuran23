@@ -518,32 +518,74 @@
 @media (max-width: 980px) {
     .signup-page {
         padding: 10px;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        align-items: flex-start;
+        overflow-y: auto;
     }
 
     .signup-shell {
         width: calc(100vw - 20px);
-        height: calc(100vh - 20px);
+        height: auto;
+        min-height: calc(100vh - 20px);
+        min-height: calc(100dvh - 20px);
         grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
     }
 
     .signup-visual-inner {
-        min-height: 300px;
-        padding: 28px 20px 18px;
+        min-height: 180px;
+        padding: 20px 16px 14px;
     }
 
     .signup-copy h1 {
-        font-size: 38px;
+        font-size: 32px;
         white-space: normal;
     }
 
     .signup-form-panel {
-        padding: 24px 16px 18px;
+        padding: 18px 14px 16px;
     }
 }
 
 @media (max-width: 560px) {
     .signup-steps {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .signup-step {
+        min-height: 72px;
+        padding: 8px 8px 7px;
+        gap: 6px;
+    }
+
+    .signup-step span {
+        width: 18px;
+        height: 18px;
+        font-size: 9px;
+    }
+
+    .signup-step strong {
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .signup-login-note {
+        min-height: 72px;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    .signup-copy h1 {
+        font-size: 28px;
+        line-height: 1.04;
+    }
+
+    .signup-copy p {
+        font-size: 12px;
+        line-height: 1.4;
     }
 
     .signup-icon-grid {

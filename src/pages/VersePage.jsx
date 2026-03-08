@@ -343,7 +343,7 @@ export default function VersePage() {
 
     if (loading && !verse) {
         return (
-            <div className="page">
+            <div className="page verse-page">
                 <div className="page-content">
                     <div className="loading-state">
                         <p>Yükleniyor...</p>
@@ -355,7 +355,7 @@ export default function VersePage() {
 
     if (!verse) {
         return (
-            <div className="page"><div className="page-content">
+            <div className="page verse-page"><div className="page-content">
                 <Link to="/" className="back-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
                     <span>Ana Sayfa</span>
@@ -370,7 +370,7 @@ export default function VersePage() {
     const nextAyah = parseInt(ayahNo) < totalVerses ? parseInt(ayahNo) + 1 : null
 
     return (
-        <div className="page">
+        <div className="page verse-page">
             <GlobalNav backTo={`/sure/${surahId}`} backLabel={verse.surah?.name || `Sure ${surahId}`} />
             <div className="page-content">
 
