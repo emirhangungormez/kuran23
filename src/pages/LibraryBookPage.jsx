@@ -1,14 +1,14 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import {
+  getAyahNumbers,
   getBookById,
   getBookSourceData,
   getSurahIds,
-  getAyahNumbers,
-  splitIntoSections,
-  getSurahTitle
+  getSurahTitle,
+  splitIntoSections
 } from '../data/libraryBooks'
 import './TefsirlerPage.css'
 
@@ -19,6 +19,7 @@ export default function LibraryBookPage() {
   const [activeSurahId, setActiveSurahId] = useState(1)
   const [activeAyahNo, setActiveAyahNo] = useState(1)
   const [pageIndex, setPageIndex] = useState(0)
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0)
   const [dragStartX, setDragStartX] = useState(null)
   const [dragOffset, setDragOffset] = useState(0)
 
@@ -30,7 +31,7 @@ export default function LibraryBookPage() {
   useEffect(() => {
     if (!availableSurahIds.length) return
     if (!availableSurahIds.includes(Number(activeSurahId))) setActiveSurahId(availableSurahIds[0])
-  }, [availableSurahIds, activeSurahId])
+  }, [activeSurahId, availableSurahIds])
 
   useEffect(() => {
     if (!availableAyahs.length) {
@@ -38,21 +39,17 @@ export default function LibraryBookPage() {
       return
     }
     if (!availableAyahs.includes(Number(activeAyahNo))) setActiveAyahNo(availableAyahs[0])
-  }, [availableAyahs, activeAyahNo])
-
-  useEffect(() => {
-    setPageIndex(0)
-  }, [bookId, activeDesign, activeScope, activeSurahId, activeAyahNo])
+  }, [activeAyahNo, availableAyahs])
 
   const rawTafsirHtml = useMemo(() => {
     if (!book || book.category !== 'tefsir') return ''
     if (activeScope === 'surah') return sourceData?.surah?.[activeSurahId] || ''
     return sourceData?.verse?.[`${activeSurahId}:${activeAyahNo}`] || ''
-  }, [book, activeScope, sourceData, activeSurahId, activeAyahNo])
+  }, [activeAyahNo, activeScope, activeSurahId, book, sourceData])
 
   const formattedHtml = useMemo(
     () => formatTafsirRichText(rawTafsirHtml, { context: activeScope, surahId: activeSurahId, ayahNo: activeAyahNo }),
-    [rawTafsirHtml, activeScope, activeSurahId, activeAyahNo]
+    [activeAyahNo, activeScope, activeSurahId, rawTafsirHtml]
   )
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
@@ -60,17 +57,57 @@ export default function LibraryBookPage() {
     () => (sections.length ? sections : [{ title: '1. Bölüm', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
     [sections]
   )
-
   const sidebarItems = useMemo(
     () => pages.map((page, index) => ({ id: `bolum-${index + 1}`, label: page.title, index })),
     [pages]
   )
+  const currentReferenceLabel = useMemo(() => {
+    if (activeScope === 'surah') return getSurahTitle(activeSurahId)
+    return `${getSurahTitle(activeSurahId)} · ${activeAyahNo}. ayet`
+  }, [activeAyahNo, activeScope, activeSurahId])
 
   const boundedPageIndex = Math.max(0, Math.min(pageIndex, pages.length - 1))
   const currentPage = pages[boundedPageIndex]
   const prevPage = pages[boundedPageIndex - 1] || null
   const canGoPrev = boundedPageIndex > 0
   const canGoNext = boundedPageIndex < pages.length - 1
+
+  useEffect(() => {
+    setPageIndex(0)
+    setActiveSectionIndex(0)
+  }, [activeAyahNo, activeDesign, activeScope, activeSurahId, bookId])
+
+  useEffect(() => {
+    if (activeDesign !== 'sectioned') {
+      setActiveSectionIndex(boundedPageIndex)
+      return
+    }
+
+    if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return
+
+    const sectionNodes = Array.from(document.querySelectorAll('.tefsir-section-card[data-section-index]'))
+    if (!sectionNodes.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+
+        if (!visibleEntries.length) return
+
+        const index = Number(visibleEntries[0].target.getAttribute('data-section-index') || 0)
+        if (Number.isFinite(index)) setActiveSectionIndex(index)
+      },
+      {
+        rootMargin: '-12% 0px -70% 0px',
+        threshold: [0.15, 0.35, 0.6]
+      }
+    )
+
+    sectionNodes.forEach((node) => observer.observe(node))
+    return () => observer.disconnect()
+  }, [activeDesign, boundedPageIndex, pages])
 
   const handlePointerDown = (event) => {
     setDragStartX(event.clientX)
@@ -94,10 +131,13 @@ export default function LibraryBookPage() {
   }
 
   const handleSidebarItemClick = (index) => {
+    setActiveSectionIndex(index)
+
     if (activeDesign === 'flip') {
       setPageIndex(index)
       return
     }
+
     const sectionElement = document.getElementById(`bolum-${index + 1}`)
     sectionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -107,7 +147,7 @@ export default function LibraryBookPage() {
 
   if (!book) {
     return (
-      <div className="page kutuphane-page">
+      <div className="page kutuphane-page book-detail-page">
         <GlobalNav />
         <div className="page-content">
           <div className="empty-state">
@@ -121,7 +161,7 @@ export default function LibraryBookPage() {
   }
 
   return (
-    <div className="page kutuphane-page">
+    <div className="page kutuphane-page book-detail-page">
       <GlobalNav />
       <div className="page-content">
         <div className="page-header-row">
@@ -134,12 +174,11 @@ export default function LibraryBookPage() {
         <section className="reader-panel">
           <div className="reader-head">
             <div>
+              <small className="reader-overline">{book.authorTr}</small>
               <h2>{book.titleTr}</h2>
               <p>{book.titleAr}</p>
             </div>
-            <small className="reader-kicker">
-              Türkçe çeviri · {book.category === 'meal' ? 'Meal' : 'Tefsir'}
-            </small>
+            <small className="reader-kicker">{currentReferenceLabel}</small>
           </div>
 
           {book.category === 'meal' ? (
@@ -156,13 +195,55 @@ export default function LibraryBookPage() {
           ) : (
             <div className="book-reader-layout">
               <aside className="reader-sidebar hidden-mobile">
+                <div className="reader-sidebar-intro">
+                  <span className="reader-sidebar-brand">Kütüphane</span>
+                  <strong>{book.titleTr}</strong>
+                  <p>{book.authorTr}</p>
+                  <small>{currentReferenceLabel}</small>
+                </div>
+
+                <div className="reader-sidebar-block reader-sidebar-controls">
+                  <label>
+                    Mod
+                    <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
+                      <option value="sectioned">Bölüm bölüm</option>
+                      <option value="flip">Sayfa çevirme</option>
+                    </select>
+                  </label>
+                  <label>
+                    Görünüm
+                    <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
+                      <option value="verse">Ayet bazlı</option>
+                      <option value="surah">Sûre bazlı</option>
+                    </select>
+                  </label>
+                  <label>
+                    Sûre
+                    <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
+                      {availableSurahIds.map((surahId) => (
+                        <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
+                      ))}
+                    </select>
+                  </label>
+                  {activeScope === 'verse' && (
+                    <label>
+                      Ayet
+                      <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
+                        {availableAyahs.map((ayah) => (
+                          <option key={ayah} value={ayah}>{ayah}. ayet</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </div>
+
                 <div className="reader-sidebar-block">
                   <p className="reader-sidebar-title">İçindekiler</p>
                   <div className="reader-sidebar-sections">
                     {sidebarItems.map((item) => (
                       <button
                         key={item.id}
-                        className={activeDesign === 'flip' && boundedPageIndex === item.index ? 'active' : ''}
+                        className={activeSectionIndex === item.index ? 'active' : ''}
                         onClick={() => handleSidebarItemClick(item.index)}
                       >
                         {item.index + 1}. {item.label}
@@ -181,7 +262,6 @@ export default function LibraryBookPage() {
                       <option value="flip">Sayfa çevirme</option>
                     </select>
                   </label>
-
                   <label>
                     Görünüm
                     <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
@@ -189,7 +269,6 @@ export default function LibraryBookPage() {
                       <option value="surah">Sûre bazlı</option>
                     </select>
                   </label>
-
                   <label>
                     Sûre
                     <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
@@ -198,7 +277,6 @@ export default function LibraryBookPage() {
                       ))}
                     </select>
                   </label>
-
                   {activeScope === 'verse' && (
                     <label>
                       Ayet
@@ -214,7 +292,13 @@ export default function LibraryBookPage() {
                 {activeDesign === 'sectioned' ? (
                   <section className="tefsir-sections">
                     {sections.map((section, index) => (
-                      <article key={`${section.title}-${index}`} id={`bolum-${index + 1}`} className="tefsir-section-card">
+                      <article
+                        key={`${section.title}-${index}`}
+                        id={`bolum-${index + 1}`}
+                        data-section-index={index}
+                        className="tefsir-section-card"
+                      >
+                        <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>
                         <h3>{section.title}</h3>
                         <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
                       </article>
