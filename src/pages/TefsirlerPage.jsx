@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react'
+﻿import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
 import { ALL_BOOKS } from '../data/libraryBooks'
@@ -6,6 +6,8 @@ import './TefsirlerPage.css'
 
 export default function TefsirlerPage() {
   const [activeFilter, setActiveFilter] = useState('all')
+  const tefsirSectionRef = useRef(null)
+  const mealSectionRef = useRef(null)
 
   const filteredBooks = useMemo(() => {
     if (activeFilter === 'all') return ALL_BOOKS
@@ -14,6 +16,14 @@ export default function TefsirlerPage() {
 
   const tefsirBooks = filteredBooks.filter((book) => book.category === 'tefsir')
   const mealBooks = filteredBooks.filter((book) => book.category === 'meal')
+
+  const scrollToSection = (target) => {
+    const map = {
+      tefsir: tefsirSectionRef.current,
+      meal: mealSectionRef.current
+    }
+    map[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const renderCard = (book) => (
     <Link key={book.id} to={`/kutuphane/${book.id}`} className={`library-book-card ${book.category}`}>
@@ -46,40 +56,69 @@ export default function TefsirlerPage() {
         <section className="kutuphane-hero">
           <h1>Kur’an Kütüphanesi</h1>
           <p>Tefsir ve meal kitaplarını filtreleyin. Her kitap kendi özel sayfasında açılır.</p>
-          <div className="kutuphane-filters">
+          <div className="kutuphane-filters mobile-only-filters">
             <button className={activeFilter === 'all' ? 'active' : ''} onClick={() => setActiveFilter('all')}>Tümü</button>
             <button className={activeFilter === 'tefsir' ? 'active' : ''} onClick={() => setActiveFilter('tefsir')}>Tefsir</button>
             <button className={activeFilter === 'meal' ? 'active' : ''} onClick={() => setActiveFilter('meal')}>Meal</button>
           </div>
         </section>
 
-        {tefsirBooks.length > 0 && (
-          <section className="library-section">
-            <div className="library-section-head">
-              <div>
-                <h2>Tefsir Kitapları</h2>
-                <p>"Kur’an’ı hiç düşünmüyorlar mı?"</p>
-              </div>
-            </div>
-            <div className="library-books-grid compact-grid">
-              {tefsirBooks.map(renderCard)}
-            </div>
-          </section>
-        )}
+        <div className="kutuphane-layout">
+          <aside className="kutuphane-sidebar hidden-mobile">
+            <p className="sidebar-title">Bölümler</p>
+            <button className={activeFilter === 'all' ? 'active' : ''} onClick={() => setActiveFilter('all')}>
+              Tüm Kitaplar
+            </button>
+            <button
+              className={activeFilter === 'tefsir' ? 'active' : ''}
+              onClick={() => {
+                setActiveFilter('tefsir')
+                scrollToSection('tefsir')
+              }}
+            >
+              Tefsir Kitapları
+            </button>
+            <button
+              className={activeFilter === 'meal' ? 'active' : ''}
+              onClick={() => {
+                setActiveFilter('meal')
+                scrollToSection('meal')
+              }}
+            >
+              Meal Kitapları
+            </button>
+          </aside>
 
-        {mealBooks.length > 0 && (
-          <section className="library-section">
-            <div className="library-section-head">
-              <div>
-                <h2>Meal Kitapları</h2>
-                <p>"Allah’ın sözünü anlayarak oku"</p>
-              </div>
-            </div>
-            <div className="library-books-grid compact-grid">
-              {mealBooks.map(renderCard)}
-            </div>
-          </section>
-        )}
+          <div className="kutuphane-main">
+            {tefsirBooks.length > 0 && (
+              <section className="library-section" ref={tefsirSectionRef}>
+                <div className="library-section-head">
+                  <div>
+                    <h2>Tefsir Kitapları</h2>
+                    <p>"Kur’an’ı hiç düşünmüyorlar mı?"</p>
+                  </div>
+                </div>
+                <div className="library-books-grid compact-grid">
+                  {tefsirBooks.map(renderCard)}
+                </div>
+              </section>
+            )}
+
+            {mealBooks.length > 0 && (
+              <section className="library-section" ref={mealSectionRef}>
+                <div className="library-section-head">
+                  <div>
+                    <h2>Meal Kitapları</h2>
+                    <p>"Allah’ın sözünü anlayarak oku"</p>
+                  </div>
+                </div>
+                <div className="library-books-grid compact-grid">
+                  {mealBooks.map(renderCard)}
+                </div>
+              </section>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
