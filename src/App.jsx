@@ -16,6 +16,7 @@ import AboutPage from './pages/AboutPage'
 import SupportPage from './pages/SupportPage'
 import SupportersPage from './pages/SupportersPage'
 import TefsirlerPage from './pages/TefsirlerPage'
+import LibraryBookPage from './pages/LibraryBookPage'
 import ScrollToTop from './components/ScrollToTop'
 import MoonPage from './pages/MoonPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -127,6 +128,7 @@ function AppContent() {
               <Route path="/destek" element={<SupportPage />} />
               <Route path="/ayakta-tutanlar" element={<SupportersPage />} />
               <Route path="/kutuphane" element={<TefsirlerPage />} />
+              <Route path="/kutuphane/:bookId" element={<LibraryBookPage />} />
               <Route path="/tefsirler" element={<Navigate to="/kutuphane" replace />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

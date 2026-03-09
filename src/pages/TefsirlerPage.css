@@ -81,37 +81,35 @@
 
 .library-books-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 148px));
+    gap: 14px;
+    justify-content: start;
 }
 
 .library-book-card {
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     border: none;
     background: transparent;
+    text-decoration: none;
 }
 
 .book-cover {
-    min-height: 244px;
-    border-radius: 14px;
-    padding: 16px 14px;
+    min-height: 202px;
+    border-radius: 10px;
+    padding: 12px 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     border: 1px solid rgba(0, 0, 0, 0.12);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
-    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
-}
-
-.library-book-card:hover .book-cover {
-    transform: translateY(-2px);
+    box-shadow: none;
+    transition: none;
 }
 
 .library-book-card.active .book-cover {
-    transform: translateY(-3px) scale(1.01);
+    transform: none;
 }
 
 .tefsir-cover {
@@ -123,7 +121,6 @@
 }
 
 .library-book-card.active .tefsir-cover {
-    box-shadow: 0 10px 22px rgba(73, 45, 25, 0.42);
     border-color: rgba(245, 216, 178, 0.46);
 }
 
@@ -136,13 +133,12 @@
 }
 
 .library-book-card.active .meal-cover {
-    box-shadow: 0 10px 22px rgba(8, 102, 87, 0.36);
     border-color: rgba(182, 255, 236, 0.48);
 }
 
 .book-cover-ar {
     font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
-    font-size: 26px;
+    font-size: 20px;
     line-height: 1.4;
     direction: rtl;
     unicode-bidi: isolate;
@@ -153,7 +149,7 @@
 
 .book-cover-tr {
     display: block;
-    font-size: 26px;
+    font-size: 18px;
     line-height: 1.2;
     letter-spacing: -0.01em;
     text-wrap: balance;
@@ -162,7 +158,7 @@
 
 .book-cover-author {
     display: block;
-    font-size: 17px;
+    font-size: 13px;
     line-height: 1.3;
     text-align: center;
     opacity: 0.95;
@@ -173,11 +169,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 24px;
-    padding: 0 10px;
+    min-height: 22px;
+    padding: 0 8px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.16);
-    font-size: 10px;
+    font-size: 9px;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -185,7 +181,7 @@
 
 .book-caption strong {
     display: block;
-    font-size: 17px;
+    font-size: 14px;
     line-height: 1.3;
     letter-spacing: -0.01em;
     color: var(--text-primary);
@@ -193,7 +189,7 @@
 
 .book-caption p {
     margin-top: 2px;
-    font-size: 15px;
+    font-size: 12px;
     color: var(--text-secondary);
 }
 
@@ -465,7 +461,7 @@
 
 @media (max-width: 1100px) {
     .library-books-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 140px));
     }
 
     .reader-toolbar {
@@ -475,7 +471,7 @@
 
 @media (max-width: 900px) {
     .library-books-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(136px, 136px));
     }
 
     .flipbook {
@@ -505,23 +501,24 @@
     }
 
     .library-books-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
     }
 
     .book-cover {
-        min-height: 236px;
+        min-height: 180px;
     }
 
     .book-cover-ar {
-        font-size: 28px;
+        font-size: 18px;
     }
 
     .book-cover-tr {
-        font-size: 24px;
+        font-size: 16px;
     }
 
     .book-cover-author {
-        font-size: 16px;
+        font-size: 12px;
     }
 
     .reader-head {
