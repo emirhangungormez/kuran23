@@ -98,7 +98,6 @@ export default function SurahPage() {
     const transcriptionFontSize = getTranscriptionFontSize(settings)
     const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
     const showDiacritics = textMode !== 'plain'
-    const displaySurahNameAr = resolveArabicTextVisibility(surah?.name_original || '', showDiacritics)
 
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
 
@@ -120,6 +119,7 @@ export default function SurahPage() {
         enabled: activeTab === 'tefsir' && tefsirTab === 'diyanet',
         staleTime: 1000 * 60 * 60 * 24
     })
+    const displaySurahNameAr = resolveArabicTextVisibility(surah?.name_original || '', showDiacritics)
 
     const selectedTafsirSource = useMemo(
         () => TAFSIR_SOURCE_MAP[tefsirTab] || TAFSIR_SOURCE_MAP.kuran23,
