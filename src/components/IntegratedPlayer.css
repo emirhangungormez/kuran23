@@ -13,7 +13,7 @@
     backdrop-filter: blur(50px) saturate(210%);
     -webkit-backdrop-filter: blur(50px) saturate(210%);
     z-index: 9991;
-    overflow: hidden;
+    overflow: visible;
     animation: slideUpPlayer 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -292,6 +292,7 @@
     padding-top: 18px;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     display: none;
+    overflow: visible;
 }
 
 .integrated-player.active .player-expanded-content {
@@ -318,6 +319,7 @@
 .player-reciter-select .custom-select-dropdown {
     top: auto;
     bottom: calc(100% + 6px);
+    z-index: 12000;
 }
 
 .player-reciter-select .custom-select-dropdown {

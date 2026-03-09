@@ -222,9 +222,9 @@ export async function getReciters() {
         // Provide a curated list of reciters in the requested order
         const stableOptions = [
             { id: 7, name: "Mishari Rashid Alafasy", style: "Modern & Net" },
-            { id: 4, name: "Abu Bakr al-Shatri", style: "AkÄ±cÄ± & Derin" },
-            { id: 2, name: "AbdulBaset AbdulSamad", style: "HÄ±zlÄ± / Murattal" },
-            { id: 10, name: "Sa'ud ash-Shuraym", style: "HÄ±zlÄ± & Net" }
+            { id: 4, name: "Abu Bakr al-Shatri", style: "Akıcı & Derin" },
+            { id: 2, name: "AbdulBaset AbdulSamad", style: "Hızlı / Murattal" },
+            { id: 10, name: "Sa'ud ash-Shuraym", style: "Hızlı & Net" }
         ];
 
         // Combine stable options at the top
