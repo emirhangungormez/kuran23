@@ -75,8 +75,6 @@ export default function ProfilePage() {
     const settingsVerseArabic = normalizeArabicDisplayText(
         String(settingsVerse?.verse || settingsVerse?.verse_simplified || 'قُلْ هُوَ اللَّهُ أَحَدٌ').replace(/<[^>]+>/g, '')
     )
-    const settingsVerseTranscription = 'Font testi: kisa onizleme ayeti'
-    const settingsVerseTranslation = 'Referans: Enbiya 21:47'
     const settingsVerseRef = `${String(settingsVerse?.surah?.name || 'Enbiya').toLocaleUpperCase('tr-TR')} · ${settingsVerse?.verse_number || 47}. AYET`
     const getTranslationLangBadge = (translation) => {
         const lang = String(translation?.language || '').toLowerCase()
@@ -294,18 +292,6 @@ export default function ProfilePage() {
                                         >
                                             {settingsVerseArabic}
                                         </div>
-                                        <p
-                                            className="font-preview-transcription"
-                                            style={{ fontSize: `${Math.max(12, settings.fontSize * transcriptionScale * 0.9)}px` }}
-                                        >
-                                            {settingsVerseTranscription}
-                                        </p>
-                                        <p
-                                            className="font-preview-translation"
-                                            style={{ fontSize: `${Math.max(14, settings.fontSize * translationScale * 0.86)}px` }}
-                                        >
-                                            {settingsVerseTranslation}
-                                        </p>
                                     </div>
 
                                     <div className="font-chip-grid">
