@@ -22,7 +22,7 @@ import { normalizeArabicDisplayText } from '../utils/textEncoding'
 
 
 export default function ProfilePage() {
-    const fontPreviewSample = 'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ'
+    const fontPreviewSample = 'وَنَضَعُ الْمَوَازِينَ الْقِسْطَ'
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('son')
     const { settings, updateSettings, toggleAuthor } = useSettings();
@@ -51,8 +51,8 @@ export default function ProfilePage() {
         }
         getTranslationsList().then(setAvailableTranslations)
 
-        // Fetch settings showcase verse (Ihlas 112:1)
-        getVerse(112, 1, settings.defaultAuthorId).then(v => {
+        // Fetch typography showcase verse (shortest verse with all 28 Arabic letters in our scan: Fath 48:29)
+        getVerse(48, 29, settings.defaultAuthorId).then(v => {
             if (v) setSettingsVerse(v)
         })
 
@@ -75,9 +75,9 @@ export default function ProfilePage() {
     const settingsVerseArabic = normalizeArabicDisplayText(
         String(settingsVerse?.verse || settingsVerse?.verse_simplified || 'قُلْ هُوَ اللَّهُ أَحَدٌ').replace(/<[^>]+>/g, '')
     )
-    const settingsVerseTranscription = settingsVerse?.transcription || 'Kul huvallahu ehad.'
-    const settingsVerseTranslation = settingsVerse?.translation?.text || 'De ki: O Allah birdir.'
-    const settingsVerseRef = `${String(settingsVerse?.surah?.name || 'İhlas').toLocaleUpperCase('tr-TR')} · ${settingsVerse?.verse_number || 1}. AYET`
+    const settingsVerseTranscription = 'Font testi: tum Arapca harfleri kapsayan ayet'
+    const settingsVerseTranslation = 'Referans: Fetih 48:29 (kapsam testi)'
+    const settingsVerseRef = `${String(settingsVerse?.surah?.name || 'Fetih').toLocaleUpperCase('tr-TR')} · ${settingsVerse?.verse_number || 29}. AYET`
     const getTranslationLangBadge = (translation) => {
         const lang = String(translation?.language || '').toLowerCase()
         return lang.includes('en') || lang.includes('ingiliz') || lang.includes('english') ? 'ENG' : 'TR'
