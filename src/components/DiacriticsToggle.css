@@ -34,8 +34,9 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-62%, 12%);
-  font-family: "Noto Naskh Arabic", "Scheherazade New", serif;
+  transform: translate(-66%, 12%);
+  font-family: "Lateef", "Scheherazade New", "Noto Naskh Arabic", serif;
+  font-weight: 400;
   font-size: 82px;
   line-height: 1;
   color: currentColor;
