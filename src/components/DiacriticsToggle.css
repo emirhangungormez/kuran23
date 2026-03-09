@@ -24,9 +24,12 @@
 
 .diacritics-toggle-mark-only {
   font-family: "Noto Naskh Arabic", "Scheherazade New", serif;
-  font-size: 24px;
+  font-size: 30px;
   line-height: 1;
-  transform: translateY(-1px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: none;
 }
 
 .diacritics-toggle.diacritics-header-btn {
