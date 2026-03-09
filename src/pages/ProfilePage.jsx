@@ -51,8 +51,8 @@ export default function ProfilePage() {
         }
         getTranslationsList().then(setAvailableTranslations)
 
-        // Fetch typography showcase verse (shortest verse with all 28 Arabic letters in our scan: Fath 48:29)
-        getVerse(48, 29, settings.defaultAuthorId).then(v => {
+        // Fetch shorter typography showcase verse for faster visual comparison (Anbiya 21:47)
+        getVerse(21, 47, settings.defaultAuthorId).then(v => {
             if (v) setSettingsVerse(v)
         })
 
@@ -75,9 +75,9 @@ export default function ProfilePage() {
     const settingsVerseArabic = normalizeArabicDisplayText(
         String(settingsVerse?.verse || settingsVerse?.verse_simplified || 'قُلْ هُوَ اللَّهُ أَحَدٌ').replace(/<[^>]+>/g, '')
     )
-    const settingsVerseTranscription = 'Font testi: tum Arapca harfleri kapsayan ayet'
-    const settingsVerseTranslation = 'Referans: Fetih 48:29 (kapsam testi)'
-    const settingsVerseRef = `${String(settingsVerse?.surah?.name || 'Fetih').toLocaleUpperCase('tr-TR')} · ${settingsVerse?.verse_number || 29}. AYET`
+    const settingsVerseTranscription = 'Font testi: kisa onizleme ayeti'
+    const settingsVerseTranslation = 'Referans: Enbiya 21:47'
+    const settingsVerseRef = `${String(settingsVerse?.surah?.name || 'Enbiya').toLocaleUpperCase('tr-TR')} · ${settingsVerse?.verse_number || 47}. AYET`
     const getTranslationLangBadge = (translation) => {
         const lang = String(translation?.language || '').toLowerCase()
         return lang.includes('en') || lang.includes('ingiliz') || lang.includes('english') ? 'ENG' : 'TR'
