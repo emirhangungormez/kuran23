@@ -126,7 +126,8 @@ function AppContent() {
               <Route path="/hakkimizda" element={<AboutPage />} />
               <Route path="/destek" element={<SupportPage />} />
               <Route path="/ayakta-tutanlar" element={<SupportersPage />} />
-              <Route path="/tefsirler" element={<TefsirlerPage />} />
+              <Route path="/kutuphane" element={<TefsirlerPage />} />
+              <Route path="/tefsirler" element={<Navigate to="/kutuphane" replace />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

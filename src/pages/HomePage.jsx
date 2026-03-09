@@ -232,12 +232,12 @@ export default function HomePage() {
                                         </div>
                                     </Link>
 
-                                <Link to="/tefsirler" className="tafsir-promo-card">
+                                <Link to="/kutuphane" className="tafsir-promo-card">
                                     <div className="tafsir-promo-overlay">
                                         <span className="tafsir-promo-badge">KÜTÜPHANE</span>
                                         <div className="tafsir-promo-content">
-                                            <h3>Tefsirler</h3>
-                                            <p>Kitap düzeninde kaynak tefsirleri okuyun.</p>
+                                            <h3>Kütüphane</h3>
+                                            <p>Tefsir ve meal kitaplarını kitap rafından seçin.</p>
                                         </div>
                                     </div>
                                 </Link>
