@@ -34,9 +34,9 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -8%);
+  transform: translate(-58%, 8%);
   font-family: "Noto Naskh Arabic", "Scheherazade New", serif;
-  font-size: 30px;
+  font-size: 90px;
   line-height: 1;
   color: currentColor;
 }
