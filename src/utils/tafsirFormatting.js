@@ -77,6 +77,41 @@ function processParagraph(doc, paragraph) {
   }
 }
 
+function normalizeHeadingLabel(text, options = {}) {
+  let value = normalizeTafsirText(text || '').replace(/\s+/g, ' ').trim()
+  if (!value) return ''
+
+  value = value.replace(/^[\-–—:;,.()[\]\s]+/, '').replace(/[\-–—:;,.()[\]\s]+$/, '').trim()
+
+  if (options.context === 'verse') {
+    value = value
+      .replace(/\b\d+\s*[.)-]?\s*ayet(\s*tefsiri)?\b/gi, '')
+      .replace(/\bayet(\s*tefsiri)?\b/gi, '')
+      .replace(/\bsure(si)?\b/gi, '')
+      .replace(/\btefsir(i)?\b/gi, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+  }
+
+  value = value.replace(/^(\d+\s*[.)\-:])\s*/, '').trim()
+  if (!value || /^\d+([\-–]\d+)?$/.test(value)) return ''
+  return value
+}
+
+function applyHeadingNormalization(root, options = {}) {
+  const headings = Array.from(root.querySelectorAll('h1, h2, h3, h4, .tafsir-auto-heading'))
+  let order = 1
+
+  for (const heading of headings) {
+    const cleaned = normalizeHeadingLabel(heading.textContent || '', options)
+    const label = cleaned || 'Bölüm'
+    heading.textContent = `${order}. ${label}`
+    heading.classList.add('tafsir-numbered-heading')
+    heading.setAttribute('data-tafsir-order', String(order))
+    order += 1
+  }
+}
+
 function decorateTextNodes(doc, root) {
   const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   const nodes = []
@@ -114,7 +149,7 @@ function decorateTextNodes(doc, root) {
   }
 }
 
-export function formatTafsirRichText(inputHtml) {
+export function formatTafsirRichText(inputHtml, options = {}) {
   const normalized = normalizeTafsirText(inputHtml || '')
   if (!normalized || typeof window === 'undefined') return normalized
 
@@ -126,10 +161,10 @@ export function formatTafsirRichText(inputHtml) {
 
     root.querySelectorAll('p').forEach((paragraph) => processParagraph(doc, paragraph))
     decorateTextNodes(doc, root)
+    applyHeadingNormalization(root, options)
 
     return root.innerHTML
   } catch {
     return normalized
   }
 }
-

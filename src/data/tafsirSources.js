@@ -19,7 +19,8 @@ const KUTUPHANE_SOURCES = (TEFSIRKUTUPHANESI_FATIHA_DATA?.sources || []).map((so
   id: source.id,
   shortLabel: source.shortLabel,
   tabLabel: source.tabLabel,
-  sourceLabel: source.sourceLabel
+  sourceLabel: source.sourceLabel,
+  bookId: source.bookId || ''
 }))
 
 export const TAFSIR_SOURCES = [...CORE_TAFSIR_SOURCES, ...KUTUPHANE_SOURCES]

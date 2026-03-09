@@ -220,21 +220,22 @@
 }
 
 .surah-info-html {
-    font-size: 16px;
-    line-height: 1.9;
+    font-size: 17px;
+    line-height: 1.92;
     color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
     .surah-info-html {
-        font-size: 15px;
-        line-height: 1.7;
+        font-size: 16px;
+        line-height: 1.84;
     }
 }
 
 /* Başlık stilleri - hem h2 hem h3 aynı sol çubuk tasarımı */
 .surah-info-html h2,
-.surah-info-html h3 {
+.surah-info-html h3,
+.surah-info-html h4 {
     font-size: 20px;
     font-weight: 700;
     margin: 40px 0 16px;
@@ -254,7 +255,8 @@
 }
 
 .surah-info-html h2::before,
-.surah-info-html h3::before {
+.surah-info-html h3::before,
+.surah-info-html h4::before {
     content: '';
     position: absolute;
     left: 0;
@@ -266,12 +268,17 @@
     border-radius: 10px;
 }
 
+.surah-info-html .tafsir-numbered-heading {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
 .surah-info-html h4 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-tertiary);
-    margin: 6px 0 16px;
-    font-style: italic;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 28px 0 12px;
+    font-style: normal;
     padding-left: 16px;
 }
 
@@ -282,7 +289,7 @@
 .surah-info-html p {
     margin-bottom: 18px;
     text-align: justify;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     line-height: 1.85;
     text-indent: 0 !important;
 }
@@ -294,7 +301,7 @@
 
 .surah-info-html li {
     margin-bottom: 12px;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     line-height: 1.75;
 }
 
@@ -343,8 +350,8 @@
     color: var(--accent);
     text-decoration: underline dotted color-mix(in srgb, var(--accent) 70%, transparent);
     text-underline-offset: 3px;
-    font-size: 0.88em;
-    font-weight: 600;
+    font-size: 0.92em;
+    font-weight: 700;
 }
 
 .surah-info-html .tafsir-lead {
@@ -409,7 +416,7 @@
     color: var(--text-tertiary);
     padding-top: 10px;
     border-top: 1px solid var(--separator-light);
-    opacity: 0.8;
+    opacity: 1;
 }
 
 .source-biblio p,
@@ -627,5 +634,7 @@
         line-height: 1.75;
     }
 }
+
+
 
 

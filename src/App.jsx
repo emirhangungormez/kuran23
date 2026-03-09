@@ -15,6 +15,7 @@ import FihristPage from './pages/FihristPage'
 import AboutPage from './pages/AboutPage'
 import SupportPage from './pages/SupportPage'
 import SupportersPage from './pages/SupportersPage'
+import TefsirlerPage from './pages/TefsirlerPage'
 import ScrollToTop from './components/ScrollToTop'
 import MoonPage from './pages/MoonPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -125,6 +126,7 @@ function AppContent() {
               <Route path="/hakkimizda" element={<AboutPage />} />
               <Route path="/destek" element={<SupportPage />} />
               <Route path="/ayakta-tutanlar" element={<SupportersPage />} />
+              <Route path="/tefsirler" element={<TefsirlerPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

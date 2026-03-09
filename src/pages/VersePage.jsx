@@ -88,8 +88,8 @@ export default function VersePage() {
     const surahMeta = surahs.find(s => s.no === parseInt(surahId))
 
     const { data: verse, isLoading: loadingVerse } = useQuery({
-        queryKey: ['verse', surahId, ayahNo, settings.defaultAuthorId, settings.textMode],
-        queryFn: () => getVerse(surahId, ayahNo, settings.defaultAuthorId, settings.textMode),
+        queryKey: ['verse', surahId, ayahNo, settings.defaultAuthorId],
+        queryFn: () => getVerse(surahId, ayahNo, settings.defaultAuthorId),
         staleTime: 1000 * 60 * 60 * 24
     })
 
@@ -566,7 +566,7 @@ export default function VersePage() {
                                 <div className="verse-tafsir-section">
                                     {diyanetTafsir && diyanetTafsir.text ? (
                                         <div className="tafsir-card">
-                                            <div className="tafsir-html" dangerouslySetInnerHTML={{ __html: formatTafsirRichText(diyanetTafsir.text) }} />
+                                            <div className="tafsir-html" dangerouslySetInnerHTML={{ __html: formatTafsirRichText(diyanetTafsir.text, { context: 'verse', surahId, ayahNo }) }} />
                                             <div className="tafsir-source">
                                                 {normalizeTafsirText(diyanetTafsir.source)}
                                             </div>
@@ -583,7 +583,10 @@ export default function VersePage() {
                                 <div
                                     className="tafsir-html"
                                     dangerouslySetInnerHTML={{
-                                        __html: formatTafsirRichText(tefsirTab === 'kuran23' ? tafsir.text : sourceFocusedVerseTafsir)
+                                        __html: formatTafsirRichText(
+                                            tefsirTab === 'kuran23' ? tafsir.text : sourceFocusedVerseTafsir,
+                                            { context: 'verse', surahId, ayahNo }
+                                        )
                                     }}
                                 />
                                 <div className="tafsir-source">

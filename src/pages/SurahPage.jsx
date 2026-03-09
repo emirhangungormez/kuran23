@@ -102,8 +102,8 @@ export default function SurahPage() {
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
 
     const { data: surah, isLoading: loading } = useQuery({
-        queryKey: ['surah', id, primaryAuthorId, settings.textMode],
-        queryFn: () => getSurah(id, primaryAuthorId, settings.textMode),
+        queryKey: ['surah', id, primaryAuthorId],
+        queryFn: () => getSurah(id, primaryAuthorId),
         staleTime: 1000 * 60 * 60 * 24 // Cache for 24 hours
     })
 
@@ -576,7 +576,7 @@ export default function SurahPage() {
                                     <div className="surah-info-card animate-fade-up">
                                         <div
                                             className="surah-info-html"
-                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(surahInfo.text) }}
+                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(surahInfo.text, { context: 'surah', surahId: id }) }}
                                         />
                                         <div className="surah-info-source">
                                             {normalizeTafsirText(surahInfo.source)}
@@ -626,14 +626,14 @@ export default function SurahPage() {
                                         <div className="surah-info-card animate-fade-up">
                                             <div
                                                 className="surah-info-html"
-                                                dangerouslySetInnerHTML={{ __html: formatTafsirRichText(mainText) }}
+                                                dangerouslySetInnerHTML={{ __html: formatTafsirRichText(mainText, { context: 'surah', surahId: id }) }}
                                             />
                                             <div className="surah-info-source diyanet-source-card">
                                                 <div className="source-content">
                                                     {biblioHTML && (
                                                         <div
                                                             className="source-biblio"
-                                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(biblioHTML) }}
+                                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(biblioHTML, { context: 'surah', surahId: id }) }}
                                                         />
                                                     )}
                                                 </div>
@@ -654,7 +654,7 @@ export default function SurahPage() {
                                     <div className="surah-info-card animate-fade-up">
                                         <div
                                             className="surah-info-html"
-                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(sourceFocusedSurahInfo) }}
+                                            dangerouslySetInnerHTML={{ __html: formatTafsirRichText(sourceFocusedSurahInfo, { context: 'surah', surahId: id }) }}
                                         />
                                         <div className="surah-info-source">
                                             {normalizeTafsirText(selectedTafsirSource.sourceLabel)}
