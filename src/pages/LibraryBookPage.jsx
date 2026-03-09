@@ -155,6 +155,7 @@ export default function LibraryBookPage() {
 
   const dragRatio = Math.max(-1, Math.min(1, dragOffset / 220))
   const rightPageTransform = `translateX(${dragOffset}px) rotateY(${dragRatio * -52}deg)`
+  const isTafsirBook = book?.category === 'tefsir'
 
   if (!book) {
     return (
@@ -183,27 +184,7 @@ export default function LibraryBookPage() {
         </div>
 
         <section className="reader-panel">
-          <div className="reader-head">
-            <div>
-              <small className="reader-overline">{book.authorTr}</small>
-              <h2>{book.titleTr}</h2>
-              <p>{book.titleAr}</p>
-            </div>
-            <small className="reader-kicker">{currentReferenceLabel}</small>
-          </div>
-
-          {book.category === 'meal' ? (
-            <div className="meal-reader-placeholder">
-              <p><strong>{book.titleTr}</strong> için meal odaklı kitap sayfası sonraki adımda genişletilecek.</p>
-              <p>Şu an meal okumaya ayet ekranından devam edebilirsin.</p>
-              <Link to="/sure/1/1" className="meal-quick-link">Örnek Meal Sayfası</Link>
-            </div>
-          ) : !rawTafsirHtml ? (
-            <div className="empty-state">
-              <h2>İçerik bulunamadı</h2>
-              <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
-            </div>
-          ) : (
+          {isTafsirBook ? (
             <div className="book-reader-layout">
               <aside className="reader-sidebar hidden-mobile">
                 <div className="reader-sidebar-intro">
@@ -265,6 +246,15 @@ export default function LibraryBookPage() {
               </aside>
 
               <div className="reader-main">
+                <div className="reader-head">
+                  <div>
+                    <small className="reader-overline">{book.authorTr}</small>
+                    <h2>{book.titleTr}</h2>
+                    <p>{book.titleAr}</p>
+                  </div>
+                  <small className="reader-kicker">{currentReferenceLabel}</small>
+                </div>
+
                 <div className="reader-toolbar">
                   <label>
                     Okuma Modu
@@ -300,7 +290,12 @@ export default function LibraryBookPage() {
                   )}
                 </div>
 
-                {activeDesign === 'sectioned' ? (
+                {!rawTafsirHtml ? (
+                  <div className="empty-state">
+                    <h2>İçerik bulunamadı</h2>
+                    <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
+                  </div>
+                ) : activeDesign === 'sectioned' ? (
                   <section className="tefsir-sections">
                     {sections.map((section, index) => (
                       <article
@@ -358,6 +353,23 @@ export default function LibraryBookPage() {
                 )}
               </div>
             </div>
+          ) : (
+            <>
+              <div className="reader-head">
+                <div>
+                  <small className="reader-overline">{book.authorTr}</small>
+                  <h2>{book.titleTr}</h2>
+                  <p>{book.titleAr}</p>
+                </div>
+                <small className="reader-kicker">{currentReferenceLabel}</small>
+              </div>
+
+              <div className="meal-reader-placeholder">
+                <p><strong>{book.titleTr}</strong> için meal odaklı kitap sayfası sonraki adımda genişletilecek.</p>
+                <p>Şu an meal okumaya ayet ekranından devam edebilirsin.</p>
+                <Link to="/sure/1/1" className="meal-quick-link">Örnek Meal Sayfası</Link>
+              </div>
+            </>
           )}
         </section>
       </div>
