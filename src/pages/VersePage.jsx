@@ -20,7 +20,7 @@ import {
 } from '../data/tafsirSources'
 import { useShallow } from 'zustand/react/shallow'
 import { calculateWordEbced, calculateVerseEbced } from '../utils/ebced'
-import { normalizeArabicDisplayText, normalizeTafsirText } from '../utils/textEncoding'
+import { normalizeArabicDisplayText, normalizeTafsirText, resolveArabicTextVisibility } from '../utils/textEncoding'
 import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import useUsageTracker from '../hooks/useUsageTracker'
@@ -616,7 +616,7 @@ export default function VersePage() {
                                             className={`word-card ${selectedWord?.id === w.id ? 'selected' : ''}`}
                                             onClick={() => setSelectedWord(selectedWord?.id === w.id ? null : w)}
                                         >
-                                            <span className="word-arabic">{w.arabic}</span>
+                                            <span className="word-arabic">{resolveArabicTextVisibility(w.arabic || '', showDiacritics)}</span>
                                             <span className="word-tr">{w.translation_tr}</span>
                                             <span className="word-ebced-chip">Ebced {w.ebcedTotal}</span>
                                         </button>
@@ -640,7 +640,7 @@ export default function VersePage() {
                                 {selectedWord && (
                                     <div className="word-detail" dir="ltr">
                                         <h4 className="word-detail-title">Kelime Detayi</h4>
-                                        <div className="word-detail-arabic" dir="rtl">{selectedWord.arabic}</div>
+                                        <div className="word-detail-arabic" dir="rtl">{resolveArabicTextVisibility(selectedWord.arabic || '', showDiacritics)}</div>
                                         <div className="word-detail-meta-row">
                                             <span className="word-source-chip">{selectedWord.source || 'legacy'}</span>
                                             {selectedWord.isFallback && <span className="fallback-chip">fallback</span>}
@@ -731,7 +731,7 @@ export default function VersePage() {
                                                 <div className="word-ebced-letters" dir="rtl">
                                                     {selectedWord.ebcedLetters.map((item, index) => (
                                                         <span key={`${selectedWord.id}-${index}`} className="word-ebced-letter">
-                                                            <span className="word-ebced-char">{item.char}</span>
+                                                            <span className="word-ebced-char">{resolveArabicTextVisibility(item.char || '', showDiacritics)}</span>
                                                             <span className="word-ebced-value">{item.value}</span>
                                                         </span>
                                                     ))}
@@ -742,7 +742,7 @@ export default function VersePage() {
                                         {selectedWord.root && (
                                             <div className="word-root-info">
                                                 <span className="word-root-label">Kok:</span>
-                                                <span className="word-root-arabic" dir="rtl">{selectedWord.root.arabic}</span>
+                                                <span className="word-root-arabic" dir="rtl">{resolveArabicTextVisibility(selectedWord.root.arabic || '', showDiacritics)}</span>
                                                 <span className="word-root-latin">({selectedWord.root.latin})</span>
                                                 {selectedWord.root.mean_tr && (
                                                     <p className="word-root-mean">{selectedWord.root.mean_tr}</p>

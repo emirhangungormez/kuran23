@@ -27,7 +27,7 @@ import {
     getTranslationFontSize,
     getTranscriptionFontSize
 } from '../utils/typography'
-import { normalizeArabicDisplayText } from '../utils/textEncoding'
+import { normalizeArabicDisplayText, resolveArabicTextVisibility } from '../utils/textEncoding'
 import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import './ReadingPage.css'
 
@@ -497,7 +497,7 @@ export default function ReadingPage() {
                                         <div className="surah-page-header reading-surah-header">
                                             <span className="surah-page-no">{section.surah.id}</span>
                                             <div className="surah-page-titles">
-                                                <h1 className="surah-page-name-ar" dir="rtl">{section.surah.name_original}</h1>
+                                                <h1 className="surah-page-name-ar" dir="rtl">{resolveArabicTextVisibility(section.surah.name_original || '', showDiacritics)}</h1>
                                                 <div className="surah-title-row">
                                                     <h2 className="surah-page-name">{section.surah.name}</h2>
                                                     {allSurahs.find(s => s.no === parseInt(section.surah.id))?.type && (

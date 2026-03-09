@@ -5,6 +5,8 @@ import { useSettings } from '../contexts/SettingsContext'
 import CustomSelect from './CustomSelect'
 import { getReciters } from '../services/api'
 import { isReciterSupported, getTurkishReciters } from '../services/audio'
+import { resolveArabicTextVisibility } from '../utils/textEncoding'
+import { normalizeTextMode } from '../utils/textMode'
 import './IntegratedPlayer.css'
 
 // Helper component for individual verse segments to optimize performance
@@ -68,6 +70,8 @@ export default function IntegratedPlayer({
 
     const remainingTime = duration - currentTime
     const isVeryLongSurah = verses.length > 50
+    const showDiacritics = normalizeTextMode(settings.textMode, settings.showTajweed) !== 'plain'
+    const displaySurahNameAr = resolveArabicTextVisibility(surahNameAr, showDiacritics)
     const reciterOptions = availableReciters
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
@@ -85,7 +89,7 @@ export default function IntegratedPlayer({
                 {/* The original play button is replaced by the new center controls */}
                 <div className="player-rich-info">
                     <div className="player-row-top">
-                        <span className="player-surah-ar" dir="rtl">{surahNameAr}</span>
+                        <span className="player-surah-ar" dir="rtl">{displaySurahNameAr}</span>
                     </div>
                     <div className="player-row-mid">
                         <span className="player-surah-tr">

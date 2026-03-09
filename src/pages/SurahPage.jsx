@@ -20,7 +20,7 @@ import {
 import usePlayerStore from '../stores/usePlayerStore'
 import { useShallow } from 'zustand/react/shallow'
 import useUsageTracker from '../hooks/useUsageTracker'
-import { normalizeArabicDisplayText, normalizeTafsirText } from '../utils/textEncoding'
+import { normalizeArabicDisplayText, normalizeTafsirText, resolveArabicTextVisibility } from '../utils/textEncoding'
 import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import {
@@ -98,6 +98,7 @@ export default function SurahPage() {
     const transcriptionFontSize = getTranscriptionFontSize(settings)
     const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
     const showDiacritics = textMode !== 'plain'
+    const displaySurahNameAr = resolveArabicTextVisibility(surah?.name_original || '', showDiacritics)
 
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
 
@@ -466,7 +467,7 @@ export default function SurahPage() {
                 <div className="surah-page-header">
                     <span className="surah-page-no">{surah.id}</span>
                     <div className="surah-page-titles">
-                        <h1 className="surah-page-name-ar" dir="rtl">{surah.name_original}</h1>
+                        <h1 className="surah-page-name-ar" dir="rtl">{displaySurahNameAr}</h1>
                         <div className="surah-title-row">
                             <h2 className="surah-page-name">{surah.name}</h2>
                             {surahMeta?.type && (

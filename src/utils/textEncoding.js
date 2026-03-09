@@ -122,6 +122,11 @@ export function stripArabicDiacritics(value) {
     .replace(ARABIC_DIACRITICS_REGEX, '')
 }
 
+export function resolveArabicTextVisibility(value, showDiacritics = true, options = {}) {
+  const normalized = normalizeArabicDisplayText(value, options)
+  return showDiacritics ? normalized : stripArabicDiacritics(normalized)
+}
+
 export function normalizeArabicDisplayText(value, options = {}) {
   if (typeof value !== 'string' || !value) return value || ''
 
