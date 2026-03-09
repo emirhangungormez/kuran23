@@ -19,9 +19,11 @@ export default function TefsirlerPage() {
     <Link key={book.id} to={`/kutuphane/${book.id}`} className={`library-book-card ${book.category}`}>
       <div className={`book-cover ${book.category === 'meal' ? 'meal-cover' : 'tefsir-cover'}`}>
         <span className="book-cover-ar">{book.titleAr}</span>
-        <strong className="book-cover-tr">{book.titleTr}</strong>
-        <small className="book-cover-author">{book.authorTr}</small>
-        {book.hasTrTranslation && <em className="book-cover-badge">TR CEVIRI VAR</em>}
+        <div className="book-cover-meta">
+          <strong className="book-cover-tr">{book.titleTr}</strong>
+          <small className="book-cover-author">{book.authorTr}</small>
+        </div>
+        {book.hasTrTranslation && <em className="book-cover-badge">TR ÇEVİRİ</em>}
       </div>
       <div className="book-caption">
         <strong>{book.titleTr}</strong>
@@ -42,10 +44,10 @@ export default function TefsirlerPage() {
         </div>
 
         <section className="kutuphane-hero">
-          <h1>Kur'an Kutuphanesi</h1>
-          <p>Tefsir ve meal kitaplarini filtreleyin. Her kitap kendi ozel sayfasinda acilir.</p>
+          <h1>Kur’an Kütüphanesi</h1>
+          <p>Tefsir ve meal kitaplarını filtreleyin. Her kitap kendi özel sayfasında açılır.</p>
           <div className="kutuphane-filters">
-            <button className={activeFilter === 'all' ? 'active' : ''} onClick={() => setActiveFilter('all')}>Tumu</button>
+            <button className={activeFilter === 'all' ? 'active' : ''} onClick={() => setActiveFilter('all')}>Tümü</button>
             <button className={activeFilter === 'tefsir' ? 'active' : ''} onClick={() => setActiveFilter('tefsir')}>Tefsir</button>
             <button className={activeFilter === 'meal' ? 'active' : ''} onClick={() => setActiveFilter('meal')}>Meal</button>
           </div>
@@ -55,8 +57,8 @@ export default function TefsirlerPage() {
           <section className="library-section">
             <div className="library-section-head">
               <div>
-                <h2>Tefsir Kitaplari</h2>
-                <p>"Kur'ani hic dusunmuyorlar mi?"</p>
+                <h2>Tefsir Kitapları</h2>
+                <p>"Kur’an’ı hiç düşünmüyorlar mı?"</p>
               </div>
             </div>
             <div className="library-books-grid compact-grid">
@@ -69,8 +71,8 @@ export default function TefsirlerPage() {
           <section className="library-section">
             <div className="library-section-head">
               <div>
-                <h2>Meal Kitaplari</h2>
-                <p>"Allah'in sozunu anlayarak oku"</p>
+                <h2>Meal Kitapları</h2>
+                <p>"Allah’ın sözünü anlayarak oku"</p>
               </div>
             </div>
             <div className="library-books-grid compact-grid">

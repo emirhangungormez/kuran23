@@ -56,7 +56,7 @@ export default function LibraryBookPage() {
   )
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
   const pages = useMemo(
-    () => (sections.length ? sections : [{ title: '1. Bolum', bodyHtml: '<p>Bu secim icin tefsir bulunamadi.</p>' }]),
+    () => (sections.length ? sections : [{ title: '1. Bölüm', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
     [sections]
   )
 
@@ -96,9 +96,9 @@ export default function LibraryBookPage() {
         <GlobalNav />
         <div className="page-content">
           <div className="empty-state">
-            <h2>Kitap bulunamadi</h2>
-            <p>Secilen kitap kaydi sistemde yok.</p>
-            <Link to="/kutuphane" className="meal-quick-link">Kutuphaneye Don</Link>
+            <h2>Kitap bulunamadı</h2>
+            <p>Seçilen kitap kaydı sistemde yok.</p>
+            <Link to="/kutuphane" className="meal-quick-link">Kütüphaneye Dön</Link>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function LibraryBookPage() {
         <div className="page-header-row">
           <Link to="/kutuphane" className="back-link hidden-mobile">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-            <span>Kutuphane</span>
+            <span>Kütüphane</span>
           </Link>
         </div>
 
@@ -123,21 +123,21 @@ export default function LibraryBookPage() {
               <p>{book.titleAr}</p>
             </div>
             <div className="reader-badges">
-              <span className="badge-translation">TR CEVIRI MEVCUT</span>
-              <span className={`badge-category ${book.category}`}>{book.category === 'meal' ? 'MEAL' : 'TEFSIR'}</span>
+              <span className="badge-translation">TR ÇEVİRİ MEVCUT</span>
+              <span className={`badge-category ${book.category}`}>{book.category === 'meal' ? 'MEAL' : 'TEFSİR'}</span>
             </div>
           </div>
 
           {book.category === 'meal' ? (
             <div className="meal-reader-placeholder">
-              <p><strong>{book.titleTr}</strong> icin meal odakli kitap sayfasi sonraki adimda genisletilecek.</p>
-              <p>Su an meal okumaya ayet ekranindan devam edebilirsin.</p>
-              <Link to="/sure/1/1" className="meal-quick-link">Ornek Meal Sayfasi</Link>
+              <p><strong>{book.titleTr}</strong> için meal odaklı kitap sayfası sonraki adımda genişletilecek.</p>
+              <p>Şu an meal okumaya ayet ekranından devam edebilirsin.</p>
+              <Link to="/sure/1/1" className="meal-quick-link">Örnek Meal Sayfası</Link>
             </div>
           ) : !rawTafsirHtml ? (
             <div className="empty-state">
-              <h2>Icerik bulunamadi</h2>
-              <p>Secilen sure/ayet icin bu kitapta veri yok.</p>
+              <h2>İçerik bulunamadı</h2>
+              <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
             </div>
           ) : (
             <>
@@ -145,21 +145,21 @@ export default function LibraryBookPage() {
                 <label>
                   Okuma Modu
                   <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
-                    <option value="sectioned">Bolum Bolum</option>
-                    <option value="flip">Sayfa Cevirme</option>
+                    <option value="sectioned">Bölüm bölüm</option>
+                    <option value="flip">Sayfa çevirme</option>
                   </select>
                 </label>
 
                 <label>
-                  Gorunum
+                  Görünüm
                   <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
-                    <option value="verse">Ayet Bazli</option>
-                    <option value="surah">Sure Bazli</option>
+                    <option value="verse">Ayet bazlı</option>
+                    <option value="surah">Sûre bazlı</option>
                   </select>
                 </label>
 
                 <label>
-                  Sure
+                  Sûre
                   <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
                     {availableSurahIds.map((surahId) => (
                       <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
@@ -205,7 +205,7 @@ export default function LibraryBookPage() {
                             <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: prevPage.bodyHtml }} />
                           </>
                         ) : (
-                          <div className="flipbook-placeholder">On sayfa yok</div>
+                          <div className="flipbook-placeholder">Ön sayfa yok</div>
                         )}
                       </article>
 
@@ -223,7 +223,7 @@ export default function LibraryBookPage() {
                   </div>
 
                   <div className="flipbook-actions">
-                    <button disabled={!canGoPrev} onClick={() => setPageIndex((value) => Math.max(value - 1, 0))}>Onceki</button>
+                    <button disabled={!canGoPrev} onClick={() => setPageIndex((value) => Math.max(value - 1, 0))}>Önceki</button>
                     <span>{boundedPageIndex + 1} / {pages.length}</span>
                     <button disabled={!canGoNext} onClick={() => setPageIndex((value) => Math.min(value + 1, pages.length - 1))}>Sonraki</button>
                   </div>
@@ -236,4 +236,3 @@ export default function LibraryBookPage() {
     </div>
   )
 }
-

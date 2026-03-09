@@ -3,22 +3,102 @@ import { TEFSIRKUTUPHANESI_FATIHA_DATA } from './tefsirkutuphanesiFatihaData'
 import { surahs as allSurahs } from './quranData'
 
 const TEFSIR_BOOK_META = {
-  celaleyn: { titleAr: 'تفسير الجلالين', authorAr: 'جلال الدين المحلي - جلال الدين السيوطي' },
-  beydavi: { titleAr: 'أنوار التنزيل', authorAr: 'البيضاوي' },
-  nesefi: { titleAr: 'مدارك التنزيل', authorAr: 'النسفي' },
-  kurtubi: { titleAr: 'الجامع لاحكام القرآن', authorAr: 'القرطبي' },
-  ibn_cevzi: { titleAr: 'زاد المسير', authorAr: 'ابن الجوزي' },
-  suyuti_durrul_mensur: { titleAr: 'الدر المنثور', authorAr: 'جلال الدين السيوطي' },
-  ebussuud: { titleAr: 'إرشاد العقل السليم', authorAr: 'أبو السعود' },
-  razi: { titleAr: 'مفاتيح الغيب', authorAr: 'فخر الدين الرازي' },
-  taberi: { titleAr: 'جامع البيان', authorAr: 'الطبري' },
-  ruhulbeyan: { titleAr: 'روح البيان', authorAr: 'إسماعيل حقي' },
-  elmalili_orijinal: { titleAr: 'حق ديني قرآن ديلي', authorAr: 'محمد حمدي يازر' },
-  elmalili_sadelestirilmis: { titleAr: 'حق ديني قرآن ديلي', authorAr: 'محمد حمدي يازر' },
-  besairul_kuran: { titleAr: 'بصائر القرآن', authorAr: 'مؤلف معاصر' },
-  ibn_kesir: { titleAr: 'تفسير ابن كثير', authorAr: 'ابن كثير' },
-  fizilalil_kuran: { titleAr: 'في ظلال القرآن', authorAr: 'سيد قطب' },
-  tefhimul_kuran: { titleAr: 'تفهيم القرآن', authorAr: 'أبو الأعلى المودودي' }
+  celaleyn: {
+    titleTr: 'Celâleyn Tefsiri',
+    authorTr: 'Mahallî - Süyûtî',
+    titleAr: 'تفسير الجلالين',
+    authorAr: 'جلال الدين المحلي - جلال الدين السيوطي'
+  },
+  beydavi: {
+    titleTr: 'Envârü’t-Tenzîl',
+    authorTr: 'Beydâvî',
+    titleAr: 'أنوار التنزيل',
+    authorAr: 'البيضاوي'
+  },
+  nesefi: {
+    titleTr: 'Medârikü’t-Tenzîl',
+    authorTr: 'Nesefî',
+    titleAr: 'مدارك التنزيل',
+    authorAr: 'النسفي'
+  },
+  kurtubi: {
+    titleTr: 'Kurtubî Tefsiri',
+    authorTr: 'Kurtubî',
+    titleAr: 'الجامع لأحكام القرآن',
+    authorAr: 'القرطبي'
+  },
+  ibn_cevzi: {
+    titleTr: 'Zâdü’l-Mesîr',
+    authorTr: 'İbnü’l-Cevzî',
+    titleAr: 'زاد المسير',
+    authorAr: 'ابن الجوزي'
+  },
+  suyuti_durrul_mensur: {
+    titleTr: 'ed-Dürrü’l-Mensûr',
+    authorTr: 'Süyûtî',
+    titleAr: 'الدر المنثور',
+    authorAr: 'جلال الدين السيوطي'
+  },
+  ebussuud: {
+    titleTr: 'İrşâdü’l-Aklis-Selîm',
+    authorTr: 'Ebussuûd Efendi',
+    titleAr: 'إرشاد العقل السليم',
+    authorAr: 'أبو السعود'
+  },
+  razi: {
+    titleTr: 'Mefâtîhu’l-Gayb',
+    authorTr: 'Fahreddîn er-Râzî',
+    titleAr: 'مفاتيح الغيب',
+    authorAr: 'فخر الدين الرازي'
+  },
+  taberi: {
+    titleTr: 'Câmiu’l-Beyân',
+    authorTr: 'Taberî',
+    titleAr: 'جامع البيان',
+    authorAr: 'الطبري'
+  },
+  ruhulbeyan: {
+    titleTr: 'Rûhu’l-Beyân',
+    authorTr: 'İsmail Hakkı Bursevî',
+    titleAr: 'روح البيان',
+    authorAr: 'إسماعيل حقي'
+  },
+  elmalili_orijinal: {
+    titleTr: 'Hak Dini Kur’an Dili',
+    authorTr: 'Elmalılı Hamdi Yazır',
+    titleAr: 'حق ديني قرآن ديلي',
+    authorAr: 'محمد حمدي يازر'
+  },
+  elmalili_sadelestirilmis: {
+    titleTr: 'Hak Dini Kur’an Dili (Sade)',
+    authorTr: 'Elmalılı Hamdi Yazır',
+    titleAr: 'حق ديني قرآن ديلي',
+    authorAr: 'محمد حمدي يازر'
+  },
+  besairul_kuran: {
+    titleTr: 'Beşâirü’l-Kur’ân',
+    authorTr: 'Çağdaş Derleme',
+    titleAr: 'بصائر القرآن',
+    authorAr: 'مؤلف معاصر'
+  },
+  ibn_kesir: {
+    titleTr: 'İbn Kesîr Tefsiri',
+    authorTr: 'İbn Kesîr',
+    titleAr: 'تفسير ابن كثير',
+    authorAr: 'ابن كثير'
+  },
+  fizilalil_kuran: {
+    titleTr: 'Fî Zılâli’l-Kur’ân',
+    authorTr: 'Seyyid Kutub',
+    titleAr: 'في ظلال القرآن',
+    authorAr: 'سيد قطب'
+  },
+  tefhimul_kuran: {
+    titleTr: 'Tefhîmu’l-Kur’ân',
+    authorTr: 'Mevdûdî',
+    titleAr: 'تفهيم القرآن',
+    authorAr: 'أبو الأعلى المودودي'
+  }
 }
 
 const LIBRARY_SOURCES = TAFSIR_SOURCES.filter((source) => source.id !== 'kuran23' && source.id !== 'diyanet')
@@ -29,32 +109,32 @@ export const MEAL_BOOKS = [
   {
     id: 'meal-diyanet',
     category: 'meal',
-    titleTr: 'Kurani Kerim ve Turkce Meali',
+    titleTr: 'Kur’an-ı Kerim ve Türkçe Meâli',
     titleAr: 'القرآن الكريم',
-    authorTr: 'Diyanet Isleri Baskanligi',
+    authorTr: 'Diyanet İşleri Başkanlığı',
     authorAr: 'رئاسة الشؤون الدينية',
     hasTrTranslation: true,
-    description: 'Modern Turkce meal yaklasimi'
+    description: 'Güncel Türkçe meal yaklaşımı'
   },
   {
     id: 'meal-elmalili',
     category: 'meal',
-    titleTr: 'Hak Dini Kuran Dili (Meal)',
+    titleTr: 'Hak Dini Kur’an Dili (Meal)',
     titleAr: 'حق ديني قرآن ديلي',
-    authorTr: 'Elmalili Hamdi Yazir',
-    authorAr: 'ألماليلي حمدي يازر',
+    authorTr: 'Elmalılı Hamdi Yazır',
+    authorAr: 'ألماليللي حمدي يازر',
     hasTrTranslation: true,
-    description: 'Klasik Osmanli-Turkce dilin modern aktarimi'
+    description: 'Klasik Osmanlıca üslubun modern aktarımı'
   },
   {
     id: 'meal-uzlasimli',
     category: 'meal',
-    titleTr: 'Karsilastirmali Turkce Mealler',
+    titleTr: 'Karşılaştırmalı Türkçe Mealler',
     titleAr: 'ترجمات تركية مقارنة',
-    authorTr: 'Coklu meal seckisi',
+    authorTr: 'Çoklu meal seçkisi',
     authorAr: 'اختيار متعدد',
     hasTrTranslation: true,
-    description: 'Ayni ayet icin birden fazla meal okuma'
+    description: 'Aynı ayet için birden fazla meal okuma'
   }
 ]
 
@@ -64,12 +144,12 @@ export const TEFSIR_BOOKS = LIBRARY_SOURCES.map((source) => {
     id: source.id,
     sourceId: source.id,
     category: 'tefsir',
-    titleTr: source.tabLabel,
+    titleTr: meta.titleTr || source.tabLabel,
     titleAr: meta.titleAr || 'كتاب التفسير',
-    authorTr: source.shortLabel,
+    authorTr: meta.authorTr || source.shortLabel,
     authorAr: meta.authorAr || 'مفسر',
     hasTrTranslation: true,
-    description: 'TR ceviri ile okunabilir tefsir metni'
+    description: 'TR çeviri ile okunabilir tefsir metni'
   }
 })
 
@@ -113,13 +193,13 @@ export function getAyahNumbers(sourceData, surahId) {
 
 export function splitIntoSections(formattedHtml) {
   if (!formattedHtml) return []
-  if (typeof window === 'undefined') return [{ title: '1. Bolum', bodyHtml: formattedHtml }]
+  if (typeof window === 'undefined') return [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
 
   try {
     const parser = new DOMParser()
     const doc = parser.parseFromString(`<div id="root">${formattedHtml}</div>`, 'text/html')
     const root = doc.querySelector('#root')
-    if (!root) return [{ title: '1. Bolum', bodyHtml: formattedHtml }]
+    if (!root) return [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
 
     const sections = []
     let current = null
@@ -129,7 +209,7 @@ export function splitIntoSections(formattedHtml) {
       const normalized = (current.bodyHtml || '').trim()
       if (!normalized) return
       sections.push({
-        title: current.title || `${sections.length + 1}. Bolum`,
+        title: current.title || `${sections.length + 1}. Bölüm`,
         bodyHtml: normalized
       })
     }
@@ -141,14 +221,14 @@ export function splitIntoSections(formattedHtml) {
       if (isHeading) {
         pushCurrent()
         current = {
-          title: (node.textContent || '').trim() || `${sections.length + 1}. Bolum`,
+          title: (node.textContent || '').trim() || `${sections.length + 1}. Bölüm`,
           bodyHtml: ''
         }
         return
       }
 
       if (!current) {
-        current = { title: '1. Bolum', bodyHtml: '' }
+        current = { title: '1. Bölüm', bodyHtml: '' }
       }
 
       if (node.nodeType === Node.ELEMENT_NODE) {
@@ -159,15 +239,14 @@ export function splitIntoSections(formattedHtml) {
     })
 
     pushCurrent()
-    return sections.length ? sections : [{ title: '1. Bolum', bodyHtml: formattedHtml }]
+    return sections.length ? sections : [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
   } catch {
-    return [{ title: '1. Bolum', bodyHtml: formattedHtml }]
+    return [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
   }
 }
 
 export function getSurahTitle(surahId) {
   const match = allSurahs.find((surah) => Number(surah.no) === Number(surahId))
-  if (!match) return `Sure ${surahId}`
+  if (!match) return `Sûre ${surahId}`
   return `${match.nameTr} (${match.no})`
 }
-
