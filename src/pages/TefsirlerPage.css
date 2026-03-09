@@ -243,72 +243,37 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 14px;
-    padding-bottom: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
     border-bottom: 1px solid var(--separator-light);
 }
 
 .reader-head h2 {
-    font-size: 22px;
+    font-size: 34px;
     letter-spacing: -0.01em;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .reader-head p {
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 17px;
 }
 
-.reader-badges {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-.reader-badges span {
-    min-height: 26px;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.badge-translation {
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    color: var(--accent);
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-}
-
-.badge-category {
-    border: 1px solid var(--separator);
-    color: var(--text-secondary);
-}
-
-.badge-category.tefsir {
-    background: rgba(116, 81, 50, 0.12);
-    color: #6b4023;
-    border-color: rgba(116, 81, 50, 0.36);
-}
-
-.badge-category.meal {
-    background: rgba(19, 133, 116, 0.12);
-    color: #0a6557;
-    border-color: rgba(19, 133, 116, 0.36);
+.reader-kicker {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    margin-top: 10px;
 }
 
 .reader-toolbar {
-    display: none;
+    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
-    margin-bottom: 14px;
-    background: var(--fill);
-    border-radius: 10px;
-    padding: 8px;
+    margin-bottom: 20px;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
 }
 
 .reader-toolbar label {
@@ -322,7 +287,7 @@
 
 .reader-toolbar select {
     width: 100%;
-    height: 36px;
+    height: 34px;
     border-radius: 8px;
     border: 1px solid var(--separator);
     background: var(--bg);
@@ -335,20 +300,22 @@
 .tefsir-sections {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 16px;
 }
 
 .tefsir-section-card {
     border: none;
     border-radius: 0;
-    padding: 12px 2px;
+    padding: 0 0 18px;
     background: transparent;
     border-bottom: 1px solid var(--separator-light);
 }
 
 .tefsir-section-card h3 {
-    font-size: 16px;
-    margin-bottom: 6px;
+    font-size: 28px;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
 }
 
 .tefsirler-rich {
@@ -382,16 +349,15 @@
 
 .book-reader-layout {
     display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 28px;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 36px;
 }
 
 .reader-sidebar {
     position: sticky;
     top: 92px;
     align-self: start;
-    border-right: 1px solid var(--separator-light);
-    padding-right: 12px;
+    padding-right: 6px;
 }
 
 .reader-sidebar-block {
@@ -402,10 +368,10 @@
 }
 
 .reader-sidebar-title {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-tertiary);
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     margin-bottom: 2px;
 }
 
@@ -432,34 +398,34 @@
 .reader-sidebar-sections {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     max-height: 340px;
     overflow: auto;
     padding-right: 4px;
 }
 
 .reader-sidebar-sections button {
-    min-height: 30px;
-    padding: 0 8px;
-    border-radius: 6px;
-    border: 1px solid transparent;
+    min-height: 26px;
+    padding: 0;
+    border-radius: 0;
+    border: none;
     text-align: left;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--text-secondary);
     background: transparent;
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.35;
 }
 
 .reader-sidebar-sections button.active {
-    border-color: var(--separator);
-    background: var(--fill);
     color: var(--text-primary);
+    font-weight: 700;
 }
 
 .reader-main {
     min-width: 0;
+    max-width: 760px;
 }
 
 .flipbook-stage {
@@ -595,15 +561,6 @@
 }
 
 @media (max-width: 900px) {
-    .mobile-only-filters,
-    .reader-toolbar {
-        display: inline-flex;
-    }
-
-    .reader-toolbar {
-        display: grid;
-    }
-
     .minimal-hero {
         display: block;
     }
@@ -623,6 +580,14 @@
 
     .reader-sidebar {
         display: none;
+    }
+
+    .reader-head h2 {
+        font-size: 28px;
+    }
+
+    .reader-head p {
+        font-size: 15px;
     }
 
     .flipbook {

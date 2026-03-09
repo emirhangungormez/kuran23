@@ -137,10 +137,9 @@ export default function LibraryBookPage() {
               <h2>{book.titleTr}</h2>
               <p>{book.titleAr}</p>
             </div>
-            <div className="reader-badges">
-              <span className="badge-translation">TR ÇEVİRİ MEVCUT</span>
-              <span className={`badge-category ${book.category}`}>{book.category === 'meal' ? 'MEAL' : 'TEFSİR'}</span>
-            </div>
+            <small className="reader-kicker">
+              Türkçe çeviri · {book.category === 'meal' ? 'Meal' : 'Tefsir'}
+            </small>
           </div>
 
           {book.category === 'meal' ? (
@@ -158,43 +157,7 @@ export default function LibraryBookPage() {
             <div className="book-reader-layout">
               <aside className="reader-sidebar hidden-mobile">
                 <div className="reader-sidebar-block">
-                  <p className="reader-sidebar-title">Okuma</p>
-                  <label>
-                    Mod
-                    <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
-                      <option value="sectioned">Bölüm bölüm</option>
-                      <option value="flip">Sayfa çevirme</option>
-                    </select>
-                  </label>
-                  <label>
-                    Görünüm
-                    <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
-                      <option value="verse">Ayet bazlı</option>
-                      <option value="surah">Sûre bazlı</option>
-                    </select>
-                  </label>
-                  <label>
-                    Sûre
-                    <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
-                      {availableSurahIds.map((surahId) => (
-                        <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
-                      ))}
-                    </select>
-                  </label>
-                  {activeScope === 'verse' && (
-                    <label>
-                      Ayet
-                      <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
-                        {availableAyahs.map((ayah) => (
-                          <option key={ayah} value={ayah}>{ayah}. ayet</option>
-                        ))}
-                      </select>
-                    </label>
-                  )}
-                </div>
-
-                <div className="reader-sidebar-block">
-                  <p className="reader-sidebar-title">Bölümler</p>
+                  <p className="reader-sidebar-title">İçindekiler</p>
                   <div className="reader-sidebar-sections">
                     {sidebarItems.map((item) => (
                       <button
