@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
@@ -54,10 +54,16 @@ export default function LibraryBookPage() {
     () => formatTafsirRichText(rawTafsirHtml, { context: activeScope, surahId: activeSurahId, ayahNo: activeAyahNo }),
     [rawTafsirHtml, activeScope, activeSurahId, activeAyahNo]
   )
+
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
   const pages = useMemo(
     () => (sections.length ? sections : [{ title: '1. Bölüm', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
     [sections]
+  )
+
+  const sidebarItems = useMemo(
+    () => pages.map((page, index) => ({ id: `bolum-${index + 1}`, label: page.title, index })),
+    [pages]
   )
 
   const boundedPageIndex = Math.max(0, Math.min(pageIndex, pages.length - 1))
@@ -85,6 +91,15 @@ export default function LibraryBookPage() {
     setDragStartX(null)
     setDragOffset(0)
     event.currentTarget.releasePointerCapture?.(event.pointerId)
+  }
+
+  const handleSidebarItemClick = (index) => {
+    if (activeDesign === 'flip') {
+      setPageIndex(index)
+      return
+    }
+    const sectionElement = document.getElementById(`bolum-${index + 1}`)
+    sectionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const dragRatio = Math.max(-1, Math.min(1, dragOffset / 220))
@@ -140,96 +155,151 @@ export default function LibraryBookPage() {
               <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
             </div>
           ) : (
-            <>
-              <div className="reader-toolbar">
-                <label>
-                  Okuma Modu
-                  <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
-                    <option value="sectioned">Bölüm bölüm</option>
-                    <option value="flip">Sayfa çevirme</option>
-                  </select>
-                </label>
-
-                <label>
-                  Görünüm
-                  <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
-                    <option value="verse">Ayet bazlı</option>
-                    <option value="surah">Sûre bazlı</option>
-                  </select>
-                </label>
-
-                <label>
-                  Sûre
-                  <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
-                    {availableSurahIds.map((surahId) => (
-                      <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
-                    ))}
-                  </select>
-                </label>
-
-                {activeScope === 'verse' && (
+            <div className="book-reader-layout">
+              <aside className="reader-sidebar hidden-mobile">
+                <div className="reader-sidebar-block">
+                  <p className="reader-sidebar-title">Okuma</p>
                   <label>
-                    Ayet
-                    <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
-                      {availableAyahs.map((ayah) => (
-                        <option key={ayah} value={ayah}>{ayah}. ayet</option>
+                    Mod
+                    <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
+                      <option value="sectioned">Bölüm bölüm</option>
+                      <option value="flip">Sayfa çevirme</option>
+                    </select>
+                  </label>
+                  <label>
+                    Görünüm
+                    <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
+                      <option value="verse">Ayet bazlı</option>
+                      <option value="surah">Sûre bazlı</option>
+                    </select>
+                  </label>
+                  <label>
+                    Sûre
+                    <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
+                      {availableSurahIds.map((surahId) => (
+                        <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
                       ))}
                     </select>
                   </label>
+                  {activeScope === 'verse' && (
+                    <label>
+                      Ayet
+                      <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
+                        {availableAyahs.map((ayah) => (
+                          <option key={ayah} value={ayah}>{ayah}. ayet</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </div>
+
+                <div className="reader-sidebar-block">
+                  <p className="reader-sidebar-title">Bölümler</p>
+                  <div className="reader-sidebar-sections">
+                    {sidebarItems.map((item) => (
+                      <button
+                        key={item.id}
+                        className={activeDesign === 'flip' && boundedPageIndex === item.index ? 'active' : ''}
+                        onClick={() => handleSidebarItemClick(item.index)}
+                      >
+                        {item.index + 1}. {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+
+              <div className="reader-main">
+                <div className="reader-toolbar">
+                  <label>
+                    Okuma Modu
+                    <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
+                      <option value="sectioned">Bölüm bölüm</option>
+                      <option value="flip">Sayfa çevirme</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Görünüm
+                    <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
+                      <option value="verse">Ayet bazlı</option>
+                      <option value="surah">Sûre bazlı</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Sûre
+                    <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
+                      {availableSurahIds.map((surahId) => (
+                        <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  {activeScope === 'verse' && (
+                    <label>
+                      Ayet
+                      <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
+                        {availableAyahs.map((ayah) => (
+                          <option key={ayah} value={ayah}>{ayah}. ayet</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </div>
+
+                {activeDesign === 'sectioned' ? (
+                  <section className="tefsir-sections">
+                    {sections.map((section, index) => (
+                      <article key={`${section.title}-${index}`} id={`bolum-${index + 1}`} className="tefsir-section-card">
+                        <h3>{section.title}</h3>
+                        <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
+                      </article>
+                    ))}
+                  </section>
+                ) : (
+                  <section className="tefsir-flip-wrapper">
+                    <div className="flipbook-stage">
+                      <div
+                        className="flipbook"
+                        onPointerDown={handlePointerDown}
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={handlePointerUp}
+                        onPointerCancel={handlePointerUp}
+                      >
+                        <article className="flipbook-page flipbook-left">
+                          {prevPage ? (
+                            <>
+                              <h3>{prevPage.title}</h3>
+                              <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: prevPage.bodyHtml }} />
+                            </>
+                          ) : (
+                            <div className="flipbook-placeholder">Ön sayfa yok</div>
+                          )}
+                        </article>
+
+                        <article
+                          className={`flipbook-page flipbook-right ${dragStartX !== null ? 'dragging' : ''}`}
+                          style={{
+                            transform: rightPageTransform,
+                            transformOrigin: dragOffset < 0 ? 'left center' : 'right center'
+                          }}
+                        >
+                          <h3>{currentPage?.title}</h3>
+                          <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: currentPage?.bodyHtml || '' }} />
+                        </article>
+                      </div>
+                    </div>
+
+                    <div className="flipbook-actions">
+                      <button disabled={!canGoPrev} onClick={() => setPageIndex((value) => Math.max(value - 1, 0))}>Önceki</button>
+                      <span>{boundedPageIndex + 1} / {pages.length}</span>
+                      <button disabled={!canGoNext} onClick={() => setPageIndex((value) => Math.min(value + 1, pages.length - 1))}>Sonraki</button>
+                    </div>
+                  </section>
                 )}
               </div>
-
-              {activeDesign === 'sectioned' ? (
-                <section className="tefsir-sections">
-                  {sections.map((section, index) => (
-                    <article key={`${section.title}-${index}`} className="tefsir-section-card">
-                      <h3>{section.title}</h3>
-                      <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
-                    </article>
-                  ))}
-                </section>
-              ) : (
-                <section className="tefsir-flip-wrapper">
-                  <div className="flipbook-stage">
-                    <div
-                      className="flipbook"
-                      onPointerDown={handlePointerDown}
-                      onPointerMove={handlePointerMove}
-                      onPointerUp={handlePointerUp}
-                      onPointerCancel={handlePointerUp}
-                    >
-                      <article className="flipbook-page flipbook-left">
-                        {prevPage ? (
-                          <>
-                            <h3>{prevPage.title}</h3>
-                            <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: prevPage.bodyHtml }} />
-                          </>
-                        ) : (
-                          <div className="flipbook-placeholder">Ön sayfa yok</div>
-                        )}
-                      </article>
-
-                      <article
-                        className={`flipbook-page flipbook-right ${dragStartX !== null ? 'dragging' : ''}`}
-                        style={{
-                          transform: rightPageTransform,
-                          transformOrigin: dragOffset < 0 ? 'left center' : 'right center'
-                        }}
-                      >
-                        <h3>{currentPage?.title}</h3>
-                        <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: currentPage?.bodyHtml || '' }} />
-                      </article>
-                    </div>
-                  </div>
-
-                  <div className="flipbook-actions">
-                    <button disabled={!canGoPrev} onClick={() => setPageIndex((value) => Math.max(value - 1, 0))}>Önceki</button>
-                    <span>{boundedPageIndex + 1} / {pages.length}</span>
-                    <button disabled={!canGoNext} onClick={() => setPageIndex((value) => Math.min(value + 1, pages.length - 1))}>Sonraki</button>
-                  </div>
-                </section>
-              )}
-            </>
+            </div>
           )}
         </section>
       </div>
