@@ -23,14 +23,22 @@
 }
 
 .diacritics-toggle-mark-only {
-  width: 22px;
-  height: 22px;
-  stroke: currentColor;
-  stroke-width: 2.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  display: block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.diacritics-toggle-mark-only::before {
+  content: '\0651';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -8%);
+  font-family: "Noto Naskh Arabic", "Scheherazade New", serif;
+  font-size: 30px;
+  line-height: 1;
+  color: currentColor;
 }
 
 .diacritics-toggle.diacritics-header-btn {

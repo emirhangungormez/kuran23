@@ -12,9 +12,7 @@ export default function DiacriticsToggle({ enabled, onToggle, className = '' }) 
       aria-label={label}
       title={label}
     >
-      <svg className="diacritics-toggle-mark-only" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3.8 15.4c1.3-3.8 3-3.8 4.3 0 1.2 3.5 2.9 3.5 4.1 0 1.3-3.8 3-3.8 4.3 0 1.2 3.5 2.9 3.5 4.1 0" />
-      </svg>
+      <span className="diacritics-toggle-mark-only" aria-hidden="true" />
     </button>
   )
 }
