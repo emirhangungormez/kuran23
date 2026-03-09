@@ -1,15 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
 import {
-  getAyahNumbers,
   getBookById,
-  getBookSourceData,
-  getSurahIds,
   getSurahTitle,
   splitIntoSections
 } from '../data/libraryBooks'
+import {
+  getAyahNumbersFromManifest,
+  getRawTafsirHtml,
+  getSurahIdsFromManifest,
+  loadLibraryManifest,
+  loadLibrarySurah
+} from '../services/libraryContent'
 import './TefsirlerPage.css'
 
 export default function LibraryBookPage() {
@@ -24,27 +29,61 @@ export default function LibraryBookPage() {
   const [dragOffset, setDragOffset] = useState(0)
 
   const book = useMemo(() => getBookById(bookId), [bookId])
-  const sourceData = useMemo(() => getBookSourceData(book), [book])
-  const availableSurahIds = useMemo(() => getSurahIds(sourceData), [sourceData])
+  const isTafsirBook = book?.category === 'tefsir'
+
+  const {
+    data: manifest,
+    isLoading: isManifestLoading,
+    error: manifestError
+  } = useQuery({
+    queryKey: ['library-manifest'],
+    queryFn: loadLibraryManifest,
+    staleTime: 1000 * 60 * 60 * 12
+  })
+
+  const availableSurahIds = useMemo(
+    () => (isTafsirBook ? getSurahIdsFromManifest(manifest, book?.sourceId || book?.id) : []),
+    [book?.id, book?.sourceId, isTafsirBook, manifest]
+  )
   const resolvedSurahId = useMemo(() => {
     if (!availableSurahIds.length) return 1
     return availableSurahIds.includes(Number(activeSurahId)) ? Number(activeSurahId) : availableSurahIds[0]
   }, [activeSurahId, availableSurahIds])
-  const availableAyahs = useMemo(() => getAyahNumbers(sourceData, resolvedSurahId), [resolvedSurahId, sourceData])
+  const availableAyahs = useMemo(
+    () => (isTafsirBook ? getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, resolvedSurahId) : []),
+    [book?.id, book?.sourceId, isTafsirBook, manifest, resolvedSurahId]
+  )
+  const canUseVerseScope = availableAyahs.length > 0
+  const effectiveScope = canUseVerseScope ? activeScope : 'surah'
   const resolvedAyahNo = useMemo(() => {
     if (!availableAyahs.length) return 1
     return availableAyahs.includes(Number(activeAyahNo)) ? Number(activeAyahNo) : availableAyahs[0]
   }, [activeAyahNo, availableAyahs])
 
+  const {
+    data: surahData,
+    isLoading: isSurahLoading,
+    error: surahError
+  } = useQuery({
+    queryKey: ['library-surah', book?.sourceId || book?.id, resolvedSurahId],
+    queryFn: () => loadLibrarySurah({ bookId: book?.sourceId || book?.id, surahId: resolvedSurahId }),
+    enabled: Boolean(isTafsirBook && (book?.sourceId || book?.id) && resolvedSurahId && availableSurahIds.length),
+    staleTime: 1000 * 60 * 60 * 12
+  })
+
   const rawTafsirHtml = useMemo(() => {
     if (!book || book.category !== 'tefsir') return ''
-    if (activeScope === 'surah') return sourceData?.surah?.[resolvedSurahId] || ''
-    return sourceData?.verse?.[`${resolvedSurahId}:${resolvedAyahNo}`] || ''
-  }, [activeScope, book, resolvedAyahNo, resolvedSurahId, sourceData])
+    return getRawTafsirHtml({
+      scope: effectiveScope,
+      surahData,
+      surahId: resolvedSurahId,
+      ayahNo: resolvedAyahNo
+    })
+  }, [book, effectiveScope, resolvedAyahNo, resolvedSurahId, surahData])
 
   const formattedHtml = useMemo(
-    () => formatTafsirRichText(rawTafsirHtml, { context: activeScope, surahId: resolvedSurahId, ayahNo: resolvedAyahNo }),
-    [activeScope, rawTafsirHtml, resolvedAyahNo, resolvedSurahId]
+    () => formatTafsirRichText(rawTafsirHtml, { context: effectiveScope, surahId: resolvedSurahId, ayahNo: resolvedAyahNo }),
+    [effectiveScope, rawTafsirHtml, resolvedAyahNo, resolvedSurahId]
   )
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
@@ -155,7 +194,12 @@ export default function LibraryBookPage() {
 
   const dragRatio = Math.max(-1, Math.min(1, dragOffset / 220))
   const rightPageTransform = `translateX(${dragOffset}px) rotateY(${dragRatio * -52}deg)`
-  const isTafsirBook = book?.category === 'tefsir'
+  const isReaderLoading = isManifestLoading || isSurahLoading
+  const readerErrorMessage = manifestError
+    ? 'Kütüphane manifesti yüklenemedi.'
+    : surahError
+      ? 'Seçilen sûre içeriği yüklenemedi.'
+      : ''
 
   if (!book) {
     return (
@@ -197,7 +241,7 @@ export default function LibraryBookPage() {
                   </label>
                   <label>
                     Görünüm
-                    <select value={activeScope} onChange={handleScopeChange}>
+                    <select value={effectiveScope} onChange={handleScopeChange}>
                       <option value="verse">Ayet bazlı</option>
                       <option value="surah">Sûre bazlı</option>
                     </select>
@@ -210,7 +254,7 @@ export default function LibraryBookPage() {
                       ))}
                     </select>
                   </label>
-                  {activeScope === 'verse' && (
+                  {effectiveScope === 'verse' && (
                     <label>
                       Ayet
                       <select value={resolvedAyahNo} onChange={handleAyahChange}>
@@ -265,7 +309,7 @@ export default function LibraryBookPage() {
                   </label>
                   <label>
                     Görünüm
-                    <select value={activeScope} onChange={handleScopeChange}>
+                    <select value={effectiveScope} onChange={handleScopeChange}>
                       <option value="verse">Ayet bazlı</option>
                       <option value="surah">Sûre bazlı</option>
                     </select>
@@ -278,7 +322,7 @@ export default function LibraryBookPage() {
                       ))}
                     </select>
                   </label>
-                  {activeScope === 'verse' && (
+                  {effectiveScope === 'verse' && (
                     <label>
                       Ayet
                       <select value={resolvedAyahNo} onChange={handleAyahChange}>
@@ -290,7 +334,22 @@ export default function LibraryBookPage() {
                   )}
                 </div>
 
-                {!rawTafsirHtml ? (
+                {readerErrorMessage ? (
+                  <div className="empty-state">
+                    <h2>Yükleme hatası</h2>
+                    <p>{readerErrorMessage}</p>
+                  </div>
+                ) : isReaderLoading ? (
+                  <div className="empty-state">
+                    <h2>İçerik yükleniyor</h2>
+                    <p>Seçilen kitap ve sûre için tefsir getiriliyor.</p>
+                  </div>
+                ) : !availableSurahIds.length ? (
+                  <div className="empty-state">
+                    <h2>Veri bulunamadı</h2>
+                    <p>Bu kitap için henüz kullanılabilir sûre verisi yok.</p>
+                  </div>
+                ) : !rawTafsirHtml ? (
                   <div className="empty-state">
                     <h2>İçerik bulunamadı</h2>
                     <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>

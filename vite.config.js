@@ -56,6 +56,17 @@ export default defineConfig(({ mode }) => {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ttf}'],
           runtimeCaching: [
             {
+              urlPattern: /\/tafsir-library\/.*\.json$/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'tafsir-library-json',
+                expiration: {
+                  maxEntries: 2500,
+                  maxAgeSeconds: 60 * 60 * 24 * 30
+                }
+              }
+            },
+            {
               urlPattern: /\/diyanet_.*\.json$/i,
               handler: 'StaleWhileRevalidate',
               options: {

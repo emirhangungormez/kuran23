@@ -1,109 +1,5 @@
-import { TAFSIR_SOURCES } from './tafsirSources'
-import { TEFSIRKUTUPHANESI_FATIHA_DATA } from './tefsirkutuphanesiFatihaData'
 import { surahs as allSurahs } from './quranData'
-
-const TEFSIR_BOOK_META = {
-  celaleyn: {
-    titleTr: 'Celâleyn Tefsiri',
-    authorTr: 'Mahallî - Süyûtî',
-    titleAr: 'تفسير الجلالين',
-    authorAr: 'جلال الدين المحلي - جلال الدين السيوطي'
-  },
-  beydavi: {
-    titleTr: 'Envârü’t-Tenzîl',
-    authorTr: 'Beydâvî',
-    titleAr: 'أنوار التنزيل',
-    authorAr: 'البيضاوي'
-  },
-  nesefi: {
-    titleTr: 'Medârikü’t-Tenzîl',
-    authorTr: 'Nesefî',
-    titleAr: 'مدارك التنزيل',
-    authorAr: 'النسفي'
-  },
-  kurtubi: {
-    titleTr: 'Kurtubî Tefsiri',
-    authorTr: 'Kurtubî',
-    titleAr: 'الجامع لأحكام القرآن',
-    authorAr: 'القرطبي'
-  },
-  ibn_cevzi: {
-    titleTr: 'Zâdü’l-Mesîr',
-    authorTr: 'İbnü’l-Cevzî',
-    titleAr: 'زاد المسير',
-    authorAr: 'ابن الجوزي'
-  },
-  suyuti_durrul_mensur: {
-    titleTr: 'ed-Dürrü’l-Mensûr',
-    authorTr: 'Süyûtî',
-    titleAr: 'الدر المنثور',
-    authorAr: 'جلال الدين السيوطي'
-  },
-  ebussuud: {
-    titleTr: 'İrşâdü’l-Aklis-Selîm',
-    authorTr: 'Ebussuûd Efendi',
-    titleAr: 'إرشاد العقل السليم',
-    authorAr: 'أبو السعود'
-  },
-  razi: {
-    titleTr: 'Mefâtîhu’l-Gayb',
-    authorTr: 'Fahreddîn er-Râzî',
-    titleAr: 'مفاتيح الغيب',
-    authorAr: 'فخر الدين الرازي'
-  },
-  taberi: {
-    titleTr: 'Câmiu’l-Beyân',
-    authorTr: 'Taberî',
-    titleAr: 'جامع البيان',
-    authorAr: 'الطبري'
-  },
-  ruhulbeyan: {
-    titleTr: 'Rûhu’l-Beyân',
-    authorTr: 'İsmail Hakkı Bursevî',
-    titleAr: 'روح البيان',
-    authorAr: 'إسماعيل حقي'
-  },
-  elmalili_orijinal: {
-    titleTr: 'Hak Dini Kur’an Dili',
-    authorTr: 'Elmalılı Hamdi Yazır',
-    titleAr: 'حق ديني قرآن ديلي',
-    authorAr: 'محمد حمدي يازر'
-  },
-  elmalili_sadelestirilmis: {
-    titleTr: 'Hak Dini Kur’an Dili (Sade)',
-    authorTr: 'Elmalılı Hamdi Yazır',
-    titleAr: 'حق ديني قرآن ديلي',
-    authorAr: 'محمد حمدي يازر'
-  },
-  besairul_kuran: {
-    titleTr: 'Beşâirü’l-Kur’ân',
-    authorTr: 'Çağdaş Derleme',
-    titleAr: 'بصائر القرآن',
-    authorAr: 'مؤلف معاصر'
-  },
-  ibn_kesir: {
-    titleTr: 'İbn Kesîr Tefsiri',
-    authorTr: 'İbn Kesîr',
-    titleAr: 'تفسير ابن كثير',
-    authorAr: 'ابن كثير'
-  },
-  fizilalil_kuran: {
-    titleTr: 'Fî Zılâli’l-Kur’ân',
-    authorTr: 'Seyyid Kutub',
-    titleAr: 'في ظلال القرآن',
-    authorAr: 'سيد قطب'
-  },
-  tefhimul_kuran: {
-    titleTr: 'Tefhîmu’l-Kur’ân',
-    authorTr: 'Mevdûdî',
-    titleAr: 'تفهيم القرآن',
-    authorAr: 'أبو الأعلى المودودي'
-  }
-}
-
-const LIBRARY_SOURCES = TAFSIR_SOURCES.filter((source) => source.id !== 'kuran23' && source.id !== 'diyanet')
-
-export const LIBRARY_CONTENT = TEFSIRKUTUPHANESI_FATIHA_DATA?.content || {}
+import { TEFSIR_LIBRARY_BOOKS } from './tefsirLibraryCatalog'
 
 export const MEAL_BOOKS = [
   {
@@ -138,57 +34,23 @@ export const MEAL_BOOKS = [
   }
 ]
 
-export const TEFSIR_BOOKS = LIBRARY_SOURCES.map((source) => {
-  const meta = TEFSIR_BOOK_META[source.id] || {}
-  return {
-    id: source.id,
-    sourceId: source.id,
-    category: 'tefsir',
-    titleTr: meta.titleTr || source.tabLabel,
-    titleAr: meta.titleAr || 'كتاب التفسير',
-    authorTr: meta.authorTr || source.shortLabel,
-    authorAr: meta.authorAr || 'مفسر',
-    hasTrTranslation: true,
-    description: 'TR çeviri ile okunabilir tefsir metni'
-  }
-})
+export const TEFSIR_BOOKS = TEFSIR_LIBRARY_BOOKS.map((book) => ({
+  id: book.sourceId,
+  sourceId: book.sourceId,
+  bookId: book.bookId,
+  category: 'tefsir',
+  titleTr: book.titleTr,
+  titleAr: book.titleAr,
+  authorTr: book.authorTr,
+  authorAr: book.authorAr,
+  hasTrTranslation: true,
+  description: 'TR çeviri ile okunabilir tefsir metni'
+}))
 
 export const ALL_BOOKS = [...TEFSIR_BOOKS, ...MEAL_BOOKS]
 
 export function getBookById(bookId) {
   return ALL_BOOKS.find((book) => book.id === bookId) || null
-}
-
-export function getBookSourceData(book) {
-  if (!book || book.category !== 'tefsir') return { surah: {}, verse: {} }
-  return LIBRARY_CONTENT[book.sourceId] || { surah: {}, verse: {} }
-}
-
-export function getSurahIds(sourceData) {
-  const ids = new Set()
-
-  Object.keys(sourceData?.surah || {}).forEach((key) => {
-    const parsed = Number(key)
-    if (Number.isInteger(parsed) && parsed > 0) ids.add(parsed)
-  })
-
-  Object.keys(sourceData?.verse || {}).forEach((key) => {
-    const [sid] = String(key).split(':')
-    const parsed = Number(sid)
-    if (Number.isInteger(parsed) && parsed > 0) ids.add(parsed)
-  })
-
-  return Array.from(ids).sort((a, b) => a - b)
-}
-
-export function getAyahNumbers(sourceData, surahId) {
-  return Object.keys(sourceData?.verse || {})
-    .map((key) => {
-      const [sid, ayah] = String(key).split(':')
-      return Number(sid) === Number(surahId) ? Number(ayah) : null
-    })
-    .filter((value) => Number.isInteger(value) && value > 0)
-    .sort((a, b) => a - b)
 }
 
 export function splitIntoSections(formattedHtml) {

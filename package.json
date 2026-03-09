@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "fetch:tafsir-library": "node scripts/fetch-tefsirkutuphanesi-full.mjs",
     "migrate:supabase": "node scripts/migrate-mysql-to-supabase.mjs",
     "migrate:supabase:dry": "node scripts/migrate-mysql-to-supabase.mjs --dry-run",
     "import:qul": "node scripts/import-qul-sqlite.mjs"
