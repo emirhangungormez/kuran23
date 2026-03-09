@@ -6,15 +6,15 @@
   justify-content: center;
   border-radius: 7px;
   border: none;
-  background: rgba(46, 204, 113, 0.1);
-  color: #27ae60;
+  background: var(--fill);
+  color: var(--text-secondary);
   transition: all 0.2s var(--ease);
   flex-shrink: 0;
 }
 
 .diacritics-toggle:hover {
-  background: rgba(46, 204, 113, 0.16);
-  color: #219a52;
+  background: var(--fill-hover);
+  color: var(--text-primary);
 }
 
 .diacritics-toggle.active {
@@ -49,12 +49,13 @@
 }
 
 [data-theme='dark'] .diacritics-toggle {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-  color: var(--accent);
+  background: var(--fill);
+  color: var(--text-secondary);
 }
 
 [data-theme='dark'] .diacritics-toggle:hover {
-  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  background: var(--fill-hover);
+  color: var(--text-primary);
 }
 
 [data-theme='dark'] .diacritics-toggle.active {
