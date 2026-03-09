@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import './CustomSelect.css'
 
-export default function CustomSelect({ value, onChange, options, label, prefix = "", className = "" }) {
+export default function CustomSelect({ value, onChange, options, prefix = "", className = "" }) {
     const [isOpen, setIsOpen] = useState(false)
     const containerRef = useRef(null)
 

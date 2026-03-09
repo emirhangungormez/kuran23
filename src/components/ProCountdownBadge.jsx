@@ -11,7 +11,7 @@ function formatCountdown(totalSeconds) {
 
 export default function ProCountdownBadge() {
   const { isSupporter, isQuickProActive, quickProExpiresAt } = useSupporter();
-  const [nowTs, setNowTs] = useState(Date.now());
+  const [nowTs, setNowTs] = useState(() => Date.now());
 
   useEffect(() => {
     if (!isQuickProActive || isSupporter || !quickProExpiresAt) return undefined;

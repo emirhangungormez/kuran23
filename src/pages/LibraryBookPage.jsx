@@ -26,30 +26,25 @@ export default function LibraryBookPage() {
   const book = useMemo(() => getBookById(bookId), [bookId])
   const sourceData = useMemo(() => getBookSourceData(book), [book])
   const availableSurahIds = useMemo(() => getSurahIds(sourceData), [sourceData])
-  const availableAyahs = useMemo(() => getAyahNumbers(sourceData, activeSurahId), [sourceData, activeSurahId])
-
-  useEffect(() => {
-    if (!availableSurahIds.length) return
-    if (!availableSurahIds.includes(Number(activeSurahId))) setActiveSurahId(availableSurahIds[0])
+  const resolvedSurahId = useMemo(() => {
+    if (!availableSurahIds.length) return 1
+    return availableSurahIds.includes(Number(activeSurahId)) ? Number(activeSurahId) : availableSurahIds[0]
   }, [activeSurahId, availableSurahIds])
-
-  useEffect(() => {
-    if (!availableAyahs.length) {
-      setActiveAyahNo(1)
-      return
-    }
-    if (!availableAyahs.includes(Number(activeAyahNo))) setActiveAyahNo(availableAyahs[0])
+  const availableAyahs = useMemo(() => getAyahNumbers(sourceData, resolvedSurahId), [resolvedSurahId, sourceData])
+  const resolvedAyahNo = useMemo(() => {
+    if (!availableAyahs.length) return 1
+    return availableAyahs.includes(Number(activeAyahNo)) ? Number(activeAyahNo) : availableAyahs[0]
   }, [activeAyahNo, availableAyahs])
 
   const rawTafsirHtml = useMemo(() => {
     if (!book || book.category !== 'tefsir') return ''
-    if (activeScope === 'surah') return sourceData?.surah?.[activeSurahId] || ''
-    return sourceData?.verse?.[`${activeSurahId}:${activeAyahNo}`] || ''
-  }, [activeAyahNo, activeScope, activeSurahId, book, sourceData])
+    if (activeScope === 'surah') return sourceData?.surah?.[resolvedSurahId] || ''
+    return sourceData?.verse?.[`${resolvedSurahId}:${resolvedAyahNo}`] || ''
+  }, [activeScope, book, resolvedAyahNo, resolvedSurahId, sourceData])
 
   const formattedHtml = useMemo(
-    () => formatTafsirRichText(rawTafsirHtml, { context: activeScope, surahId: activeSurahId, ayahNo: activeAyahNo }),
-    [activeAyahNo, activeScope, activeSurahId, rawTafsirHtml]
+    () => formatTafsirRichText(rawTafsirHtml, { context: activeScope, surahId: resolvedSurahId, ayahNo: resolvedAyahNo }),
+    [activeScope, rawTafsirHtml, resolvedAyahNo, resolvedSurahId]
   )
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
@@ -62,9 +57,9 @@ export default function LibraryBookPage() {
     [pages]
   )
   const currentReferenceLabel = useMemo(() => {
-    if (activeScope === 'surah') return getSurahTitle(activeSurahId)
-    return `${getSurahTitle(activeSurahId)} · ${activeAyahNo}. ayet`
-  }, [activeAyahNo, activeScope, activeSurahId])
+    if (activeScope === 'surah') return getSurahTitle(resolvedSurahId)
+    return `${getSurahTitle(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
+  }, [activeScope, resolvedAyahNo, resolvedSurahId])
 
   const boundedPageIndex = Math.max(0, Math.min(pageIndex, pages.length - 1))
   const currentPage = pages[boundedPageIndex]
@@ -73,15 +68,7 @@ export default function LibraryBookPage() {
   const canGoNext = boundedPageIndex < pages.length - 1
 
   useEffect(() => {
-    setPageIndex(0)
-    setActiveSectionIndex(0)
-  }, [activeAyahNo, activeDesign, activeScope, activeSurahId, bookId])
-
-  useEffect(() => {
-    if (activeDesign !== 'sectioned') {
-      setActiveSectionIndex(boundedPageIndex)
-      return
-    }
+    if (activeDesign !== 'sectioned') return
 
     if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return
 
@@ -130,14 +117,38 @@ export default function LibraryBookPage() {
     event.currentTarget.releasePointerCapture?.(event.pointerId)
   }
 
-  const handleSidebarItemClick = (index) => {
-    setActiveSectionIndex(index)
+  const resetReaderPosition = () => {
+    setPageIndex(0)
+    setActiveSectionIndex(0)
+  }
 
+  const handleDesignChange = (event) => {
+    setActiveDesign(event.target.value)
+    resetReaderPosition()
+  }
+
+  const handleScopeChange = (event) => {
+    setActiveScope(event.target.value)
+    resetReaderPosition()
+  }
+
+  const handleSurahChange = (event) => {
+    setActiveSurahId(Number(event.target.value))
+    resetReaderPosition()
+  }
+
+  const handleAyahChange = (event) => {
+    setActiveAyahNo(Number(event.target.value))
+    resetReaderPosition()
+  }
+
+  const handleSidebarItemClick = (index) => {
     if (activeDesign === 'flip') {
       setPageIndex(index)
       return
     }
 
+    setActiveSectionIndex(index)
     const sectionElement = document.getElementById(`bolum-${index + 1}`)
     sectionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -205,21 +216,21 @@ export default function LibraryBookPage() {
                 <div className="reader-sidebar-block reader-sidebar-controls">
                   <label>
                     Mod
-                    <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
+                    <select value={activeDesign} onChange={handleDesignChange}>
                       <option value="sectioned">Bölüm bölüm</option>
                       <option value="flip">Sayfa çevirme</option>
                     </select>
                   </label>
                   <label>
                     Görünüm
-                    <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
+                    <select value={activeScope} onChange={handleScopeChange}>
                       <option value="verse">Ayet bazlı</option>
                       <option value="surah">Sûre bazlı</option>
                     </select>
                   </label>
                   <label>
                     Sûre
-                    <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
+                    <select value={resolvedSurahId} onChange={handleSurahChange}>
                       {availableSurahIds.map((surahId) => (
                         <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
                       ))}
@@ -228,7 +239,7 @@ export default function LibraryBookPage() {
                   {activeScope === 'verse' && (
                     <label>
                       Ayet
-                      <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
+                      <select value={resolvedAyahNo} onChange={handleAyahChange}>
                         {availableAyahs.map((ayah) => (
                           <option key={ayah} value={ayah}>{ayah}. ayet</option>
                         ))}
@@ -257,21 +268,21 @@ export default function LibraryBookPage() {
                 <div className="reader-toolbar">
                   <label>
                     Okuma Modu
-                    <select value={activeDesign} onChange={(event) => setActiveDesign(event.target.value)}>
+                    <select value={activeDesign} onChange={handleDesignChange}>
                       <option value="sectioned">Bölüm bölüm</option>
                       <option value="flip">Sayfa çevirme</option>
                     </select>
                   </label>
                   <label>
                     Görünüm
-                    <select value={activeScope} onChange={(event) => setActiveScope(event.target.value)}>
+                    <select value={activeScope} onChange={handleScopeChange}>
                       <option value="verse">Ayet bazlı</option>
                       <option value="surah">Sûre bazlı</option>
                     </select>
                   </label>
                   <label>
                     Sûre
-                    <select value={activeSurahId} onChange={(event) => setActiveSurahId(Number(event.target.value))}>
+                    <select value={resolvedSurahId} onChange={handleSurahChange}>
                       {availableSurahIds.map((surahId) => (
                         <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
                       ))}
@@ -280,7 +291,7 @@ export default function LibraryBookPage() {
                   {activeScope === 'verse' && (
                     <label>
                       Ayet
-                      <select value={activeAyahNo} onChange={(event) => setActiveAyahNo(Number(event.target.value))}>
+                      <select value={resolvedAyahNo} onChange={handleAyahChange}>
                         {availableAyahs.map((ayah) => (
                           <option key={ayah} value={ayah}>{ayah}. ayet</option>
                         ))}

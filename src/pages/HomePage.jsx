@@ -9,13 +9,10 @@ import { popularTopics } from '../data/topicsData'
 import { sanitizeSearchInput } from '../utils/security'
 import './HomePage.css'
 
-import { useBookmarks } from '../contexts/BookmarksContext'
 import GlobalNav from '../components/GlobalNav'
 import ArabicKeyboard from '../components/ArabicKeyboard'
 
 export default function HomePage() {
-    const { bookmarks } = useBookmarks()
-    const { lastPage, stringBookmark } = bookmarks
     const [query, setQuery] = useState('')
     const [results, setResults] = useState(null)
     const [isFocused, setIsFocused] = useState(false)
@@ -277,3 +274,6 @@ export default function HomePage() {
         </div>
     )
 }
+
+
+

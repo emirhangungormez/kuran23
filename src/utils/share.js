@@ -1,4 +1,4 @@
-function fallbackStripTags(text = '') {
+﻿function fallbackStripTags(text = '') {
     return String(text).replace(/<[^>]*>/g, ' ')
 }
 
@@ -76,7 +76,7 @@ export async function copyToClipboard(text) {
         try {
             await navigator.clipboard.writeText(value)
             return true
-        } catch (_e) {
+        } catch {
             // Fallback below.
         }
     }
@@ -91,7 +91,7 @@ export async function copyToClipboard(text) {
     let ok = false
     try {
         ok = document.execCommand('copy')
-    } catch (_e) {
+    } catch {
         ok = false
     }
     document.body.removeChild(ta)
@@ -124,3 +124,4 @@ export function openShareWindow(url) {
     if (typeof window === 'undefined') return
     window.open(url, '_blank', 'noopener,noreferrer')
 }
+

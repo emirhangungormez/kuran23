@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './ArabicKeyboard.css';
 
@@ -16,21 +16,20 @@ const LAYOUTS = {
 };
 
 export default function ArabicKeyboard({ onKeyClick, onBackspace, onClose }) {
+    const getInitialPosition = () => {
+        const kbWidth = 480;
+        const kbHeight = 320;
+        return {
+            x: Math.max(20, (window.innerWidth - kbWidth) / 2),
+            y: Math.max(20, (window.innerHeight - kbHeight) / 2)
+        };
+    };
+
     const [view, setView] = useState('default');
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [isVisible, setIsVisible] = useState(false);
+    const [position, setPosition] = useState(getInitialPosition);
     const kbRef = useRef(null);
     const draggingRef = useRef(false);
     const offsetRef = useRef({ x: 0, y: 0 });
-
-    useEffect(() => {
-        const kbWidth = 480;
-        const kbHeight = 320;
-        const x = Math.max(20, (window.innerWidth - kbWidth) / 2);
-        const y = Math.max(20, (window.innerHeight - kbHeight) / 2);
-        setPosition({ x, y });
-        setIsVisible(true);
-    }, []);
 
     const handleMouseDown = (e) => {
         if (e.target.closest('.kb-key') || e.target.closest('.kb-close-btn')) return;
@@ -70,8 +69,6 @@ export default function ArabicKeyboard({ onKeyClick, onBackspace, onClose }) {
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
     };
-
-    if (!isVisible) return null;
 
     return createPortal(
         <div

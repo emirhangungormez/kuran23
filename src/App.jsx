@@ -28,7 +28,7 @@ import SupportAdPrompt from './components/SupportAdPrompt'
 import BottomNav from './components/BottomNav'
 import InstallAppBanner from './components/InstallAppBanner'
 import { SupporterProvider } from './contexts/SupporterContext'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import './index.css'
 
 function GlobalPlayerWrapper() {
@@ -57,10 +57,15 @@ function GlobalPlayerWrapper() {
     skipPrevious: state.skipPrevious
   })))
   const { settings } = useSettings()
+  const latestSettingsRef = useRef(settings)
 
   useEffect(() => {
-    initAudioListeners(() => settings)
-  }, [settings.defaultReciterId, settings.defaultTurkishReciterId])
+    latestSettingsRef.current = settings
+  }, [settings])
+
+  useEffect(() => {
+    initAudioListeners(() => latestSettingsRef.current)
+  }, [])
 
   return (
     <IntegratedPlayer

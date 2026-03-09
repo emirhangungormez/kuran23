@@ -1,5 +1,5 @@
-﻿import { useState, useEffect, useMemo, useRef } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+﻿import { useState, useEffect, useMemo } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getSurah, getSurahInfo, getDiyanetSurahInfo } from '../services/api'
 import { useBookmarks } from '../contexts/BookmarksContext'
@@ -42,7 +42,6 @@ import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlayli
 
 export default function SurahPage() {
     const { id } = useParams()
-    const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('ayetler')
     const [tefsirTab, setTefsirTab] = useState('kuran23')
     const [diyanetSurahInfo, setDiyanetSurahInfo] = useState(null)
@@ -59,7 +58,6 @@ export default function SurahPage() {
         playSingle,
         playPlaylist,
         togglePlay,
-        seek,
         isPlaying,
         currentTime,
         duration,
@@ -74,7 +72,6 @@ export default function SurahPage() {
         playSingle: state.playSingle,
         playPlaylist: state.playPlaylist,
         togglePlay: state.togglePlay,
-        seek: state.seek,
         isPlaying: state.isPlaying,
         currentTime: state.currentTime,
         duration: state.duration,
@@ -301,27 +298,13 @@ export default function SurahPage() {
             try {
                 await navigator.share({ title, text, url })
                 return
-            } catch (_e) {
+            } catch {
                 // Fallback below.
             }
         }
 
         handleShareSurahX()
     }
-
-    const handleSeek = (idx) => {
-        // Implementation for seeking via verse click if needed globally
-        // For now surah mode plays single file, verse clicking usually just scrolls
-        // If we want to seek to verse time, we need verse timing data which surah API usually doesn't give for the whole file
-    }
-
-    const cycleSpeed = () => {
-        const speeds = [1, 1.25, 1.5, 2]
-        const currentIndex = speeds.indexOf(playbackSpeed)
-        const nextIndex = (currentIndex + 1) % speeds.length
-        setPlaybackSpeed(speeds[nextIndex])
-    }
-
     const toggleDiacritics = () => {
         updateSettings({ textMode: showDiacritics ? 'plain' : 'uthmani' })
     }
@@ -674,6 +657,9 @@ export default function SurahPage() {
         </div>
     )
 }
+
+
+
 
 
 

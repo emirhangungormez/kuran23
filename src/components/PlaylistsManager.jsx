@@ -33,7 +33,6 @@ const ARABIC_RECITERS = [
 ];
 
 export default function PlaylistsManager({
-    userId,
     onPlaylistOpen,
     basePath = '/profil',
     showSectionTitle = true,
@@ -452,8 +451,6 @@ export default function PlaylistsManager({
     };
 
     if (activePlaylist) {
-        const tracks = activePlaylist.items || [];
-
         return (
             <section className="native-playlist-section detail-view">
                 <button className="pl-back-btn back-link" onClick={handleBackClick}>

@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+﻿import { create } from 'zustand'
 import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
@@ -34,7 +34,7 @@ function resolvePlaybackSettings(settings) {
         if (!raw) return DEFAULT_PLAYBACK_SETTINGS
         const parsed = JSON.parse(raw)
         return normalizePayload(parsed)
-    } catch (_e) {
+    } catch {
         return DEFAULT_PLAYBACK_SETTINGS
     }
 }
@@ -52,7 +52,7 @@ function resolveActiveTrackIndex(state) {
         if (!trackSrc) return false
         try {
             return new URL(trackSrc, window.location.href).href === audioSrc
-        } catch (_e) {
+        } catch {
             return trackSrc === audioSrc || audioSrc.endsWith(trackSrc)
         }
     })
@@ -806,3 +806,4 @@ export const initAudioListeners = (settingsFunction) => {
 }
 
 export default usePlayerStore
+

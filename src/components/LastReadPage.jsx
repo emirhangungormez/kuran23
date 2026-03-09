@@ -41,7 +41,7 @@ export default function LastReadPage() {
     const { bookmarks } = useBookmarks()
     const { settings } = useSettings()
 
-    const journeys = settings.readingJourneys || []
+    const journeys = useMemo(() => settings.readingJourneys || [], [settings.readingJourneys])
     const journeyTarget = useMemo(() => getNextJourneyJuz(journeys), [journeys])
 
     const fallbackBookmark = bookmarks.stringBookmark || bookmarks.lastPage

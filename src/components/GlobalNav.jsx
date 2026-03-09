@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useSettings } from '../contexts/SettingsContext';
 import RamadanStatus from './RamadanStatus';
 import ThemeToggle from './ThemeToggle';
 import UserAvatar from './UserAvatar';
@@ -9,7 +8,6 @@ import ProCountdownBadge from './ProCountdownBadge';
 
 export default function GlobalNav({ className = "global-nav", backTo, backLabel }) {
     const location = useLocation();
-    const { settings, updateSettings } = useSettings();
     const isHome = location.pathname === '/';
 
     return (

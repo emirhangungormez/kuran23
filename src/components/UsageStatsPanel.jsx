@@ -70,7 +70,10 @@ export default function UsageStatsPanel() {
     };
   }, []);
 
-  const usage = useMemo(() => getUserUsageStats(user), [user, version]);
+  const usage = useMemo(() => {
+    void version;
+    return getUserUsageStats(user);
+  }, [user, version]);
   const dailySeries = useMemo(() => getLastDaysSeries(usage, 7), [usage]);
   const topSurahs = useMemo(() => getTopDurations(usage.surahs, 6), [usage.surahs]);
   const topVerses = useMemo(() => getTopDurations(usage.verses, 6), [usage.verses]);

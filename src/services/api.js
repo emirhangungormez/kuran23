@@ -2,7 +2,7 @@
 // Falls back to acikkuran-api directly when our backend is unavailable (local dev)
 
 import { surahs as mockSurahs, searchQuran as mockSearch } from '../data/quranData'
-import { getSurahAudioUrl, getVerseAudioUrl } from './audio'
+import { getVerseAudioUrl } from './audio'
 import { sanitizeSearchInput } from '../utils/security'
 import { buildTextModesFromVerse, getVerseTextByMode } from '../utils/textMode'
 
@@ -267,7 +267,7 @@ export async function getTranslationsList() {
                 author: normalizeTranslationName(t.author_name),
                 language: t.language_name
             }));
-        } catch (e2) {
+        } catch {
             return [];
         }
     }
@@ -340,7 +340,7 @@ export async function getSurahs() {
 // ========================
 // Surah detail with verses
 // ========================
-export async function getSurah(id, authorId, textMode = 'uthmani') {
+export async function getSurah(id, authorId) {
     // Primary: acikkuran
     try {
         const mappedAuthor = mapIdForApi(authorId || DEFAULT_AUTHOR);
@@ -479,7 +479,7 @@ export async function getSurahInfo(id) {
 // ========================
 // Verse detail
 // ========================
-export async function getVerse(surahId, ayahNo, authorId, textMode = 'uthmani') {
+export async function getVerse(surahId, ayahNo, authorId) {
     // Primary: acikkuran
     try {
         const mappedAuthor = mapIdForApi(authorId || DEFAULT_AUTHOR);
@@ -821,7 +821,7 @@ export async function searchQuran(query, limit = 30, page = 1) {
 // ========================
 // Page view
 // ========================
-export async function getPage(pageNumber, authorId, reciterId, textMode = 'uthmani') {
+export async function getPage(pageNumber, authorId, reciterId) {
     // Primary: acikkuran
     try {
         const mappedAuthor = mapIdForApi(authorId || DEFAULT_AUTHOR);
@@ -881,6 +881,7 @@ export async function getRoot(latinOrId) {
         return data.data;
     } catch { return null; }
 }
+
 
 
 

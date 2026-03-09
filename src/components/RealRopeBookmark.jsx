@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+﻿import React, { useRef, useEffect, useMemo, useState } from 'react';
 
 // Physics Constants (Internal Defaults)
 const GRAVITY = 0.5;
@@ -9,21 +9,20 @@ export default function RealRopeBookmark({
     isBookmarked,
     onToggle,
     readOnly = false,
-    variant = 'default',
-    isHovered = false
+    variant = 'default'
 }) {
     const canvasRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isNearRope, setIsNearRope] = useState(false);
 
     // Dynamic config for different variants
-    const config = {
+    const config = useMemo(() => ({
         segments: variant === 'card' ? 14 : 30, // Shorter for cards
         longLen: variant === 'card' ? 8 : 11,
         shortLen: variant === 'card' ? 3 : 2.5,
         ropeWidth: variant === 'card' ? 6 : 4, // Bigger/Thicker for cards
         tasselScale: variant === 'card' ? 1.4 : 1
-    };
+    }), [variant]);
 
     // Mutable Physics State - DEFINED AT TOP to avoid ReferenceErrors
     const state = useRef({
@@ -64,7 +63,7 @@ export default function RealRopeBookmark({
             });
         }
 
-    }, [variant]);
+    }, [config]);
 
     // Update Target Length
     useEffect(() => {
@@ -262,7 +261,7 @@ export default function RealRopeBookmark({
 
         loop();
         return () => cancelAnimationFrame(animationFrameId);
-    }, [variant, config.ropeWidth, config.tasselScale]); // Dependency on variant to resize segments properly
+    }, [config]); // Dependency on variant to resize segments properly
 
     const handleMouseDown = (e) => {
         const rect = canvasRef.current.getBoundingClientRect();
@@ -345,3 +344,4 @@ export default function RealRopeBookmark({
         </div>
     );
 }
+

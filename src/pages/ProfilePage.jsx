@@ -61,7 +61,7 @@ export default function ProfilePage() {
             if (v) setExampleVerse(v)
         })
 
-    }, [])
+    }, [isLoggedIn, navigate, settings.defaultAuthorId])
 
     const fontSizePercent = Math.min(100, Math.max(0, ((settings.fontSize - 14) / 18) * 100))
     const arabicScale = getSettingNumber(settings.arabicScale, 1.5)
@@ -178,7 +178,7 @@ export default function ProfilePage() {
             } else {
                 setPasswordStatus({ type: 'error', message: result.error || 'Bir hata oluştu.' })
             }
-        } catch (err) {
+        } catch {
             setPasswordStatus({ type: 'error', message: 'Sunucuyla bağlantı kurulamadı.' })
         } finally {
             setIsPasswordLoading(false)

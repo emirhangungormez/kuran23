@@ -16,7 +16,7 @@ export default function ReadingJourney() {
     const { isSupporter, journeyLimit } = useSupporter()
     const navigate = useNavigate()
 
-    const journeys = settings.readingJourneys || []
+    const journeys = useMemo(() => settings.readingJourneys || [], [settings.readingJourneys])
 
     const [expandedJourneyId, setExpandedJourneyId] = useState(null)
     const [isCreating, setIsCreating] = useState(false)

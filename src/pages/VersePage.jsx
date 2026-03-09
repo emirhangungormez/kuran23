@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+﻿import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getVerse, getTranslations, getVerseWords, getTafsir, getDiyanetTafsir } from '../services/api'
@@ -50,7 +50,7 @@ export default function VersePage() {
     const [selectedWord, setSelectedWord] = useState(null)
     const [showTechnicalMorphology, setShowTechnicalMorphology] = useState(false)
     const [copyStatus, setCopyStatus] = useState('idle')
-    const { bookmarks, isVerseBookmarked, toggleVerse, addToHistory } = useBookmarks()
+    const { isVerseBookmarked, toggleVerse, addToHistory } = useBookmarks()
     const { settings, updateSettings } = useSettings()
 
     useUsageTracker({ surahId, ayahNo, enabled: true })
@@ -62,11 +62,9 @@ export default function VersePage() {
         isPlaying,
         meta,
         mode,
-        singleSource,
         playbackSpeed,
         setPlaybackSpeed,
         setMeta,
-        currentTrackIndex,
         playPlaylist
     } = usePlayerStore(useShallow((state) => ({
         playSingle: state.playSingle,
@@ -75,11 +73,9 @@ export default function VersePage() {
         isPlaying: state.isPlaying,
         meta: state.meta,
         mode: state.mode,
-        singleSource: state.singleSource,
         playbackSpeed: state.playbackSpeed,
         setPlaybackSpeed: state.setPlaybackSpeed,
         setMeta: state.setMeta,
-        currentTrackIndex: state.currentTrackIndex
     })))
 
     const isVersePlaying = (mode === 'single' || mode === 'playlist') && meta.surahId === parseInt(surahId) && meta.ayahNo === parseInt(ayahNo) && meta.context === 'verse'
@@ -321,7 +317,7 @@ export default function VersePage() {
             try {
                 await navigator.share({ title, text, url })
                 return
-            } catch (_e) {
+            } catch {
                 // Fallback below.
             }
         }
@@ -810,3 +806,4 @@ export default function VersePage() {
         </div>
     )
 }
+

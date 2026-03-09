@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo, useRef } from 'react'
+﻿import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getPage } from '../services/api'
@@ -13,7 +13,7 @@ import RamadanStatus from '../components/RamadanStatus'
 import GlobalNav from '../components/GlobalNav'
 import usePlayerStore from '../stores/usePlayerStore'
 import { useShallow } from 'zustand/react/shallow'
-import { getSurahAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
+import { getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 import {
     buildVerseShareText,
     copyToClipboard,
@@ -47,7 +47,6 @@ export default function ReadingPage() {
     const lastSavedPage = Number.parseInt(bookmarks?.lastPage?.pageNumber || '', 10)
     const fallbackPage = Number.isInteger(lastSavedPage) && lastSavedPage >= 1 && lastSavedPage <= 604 ? lastSavedPage : 1
     const currentPage = Number.isInteger(parsedPage) && parsedPage >= 1 && parsedPage <= 604 ? parsedPage : fallbackPage
-    const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
     const [copiedVerseKey, setCopiedVerseKey] = useState('')
 
     const {
@@ -319,7 +318,7 @@ export default function ReadingPage() {
             try {
                 await navigator.share({ title, text, url })
                 return
-            } catch (_e) {
+            } catch {
                 // Fallback below.
             }
         }
@@ -514,7 +513,7 @@ export default function ReadingPage() {
                                         </div>
                                     )}
 
-                                    {section.verses.map((v, i) => {
+                                    {section.verses.map((v) => {
                                         const trAudioUrl = getTurkishAudioUrl(settings.defaultTurkishReciterId, v.surah.id, v.verse_number)
                                         const verseDisplayHtml = normalizeArabicDisplayText(getVerseTextByMode(v, textMode))
                                         const isActiveAr = meta?.playingType === 'arabic' && v.audio && v.audio === currentVerseAudio
@@ -694,5 +693,7 @@ export default function ReadingPage() {
         </div>
     )
 }
+
+
 
 

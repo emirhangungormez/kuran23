@@ -80,9 +80,6 @@ export default function IntegratedPlayer({
         }))
     const turkishReciterOptions = getTurkishReciters().map(r => ({ value: r.id, label: r.name }))
 
-    // Safeguard progress bar width calculation against NaN/Infinity
-    const progressBarWidth = duration && !isNaN(currentTime) && isFinite(duration) ? (currentTime / duration) * 100 : 0;
-
     return (
         <div className={`integrated-player ${isExpanded ? 'active' : ''}`}>
             <div className="player-main-row">

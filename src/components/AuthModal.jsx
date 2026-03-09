@@ -29,7 +29,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 return
             }
             setError(result.error || 'Giriş başarısız.')
-        } catch (err) {
+        } catch {
             setError('Bir hata oluştu.')
         } finally {
             setLoading(false)
@@ -51,7 +51,7 @@ export default function AuthModal({ isOpen, onClose }) {
             if (!result.success) {
                 setError(result.error || 'Google ile giriş başlatılamadı.')
             }
-        } catch (_err) {
+        } catch {
             setError('Google ile giriş başlatılırken bir hata oluştu.')
         } finally {
             setGoogleLoading(false)

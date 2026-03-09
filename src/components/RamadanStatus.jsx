@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { CITIES, getPrayerTimes } from '../data/cities';
 import './RamadanStatus.css';
 
@@ -9,7 +9,6 @@ export default function RamadanStatus() {
     const [cityQuery, setCityQuery] = useState('');
     const [showHijri, setShowHijri] = useState(false);
     const [times, setTimes] = useState({});
-    const [nextPrayer, setNextPrayer] = useState({ label: '', time: '' });
     const pickerRef = useRef(null);
     const infoRef = useRef(null);
 
@@ -31,8 +30,8 @@ export default function RamadanStatus() {
         window.dispatchEvent(new CustomEvent('selectedCityChanged', { detail: { city } }));
     }, [city]);
 
-    useEffect(() => {
-        if (!times.imsak) return;
+    const nextPrayer = useMemo(() => {
+        if (!times.imsak) return { label: '', time: '' };
 
         const now = currentTime.getHours() * 60 + currentTime.getMinutes();
 
@@ -50,13 +49,8 @@ export default function RamadanStatus() {
             { label: 'YATSI', time: times.yatsi, weight: parseTime(times.yatsi) }
         ];
 
-        let upcoming = prayerList.find((p) => p.weight > now);
-
-        if (!upcoming) {
-            upcoming = { label: 'İMSAK', time: times.imsak };
-        }
-
-        setNextPrayer(upcoming);
+        const upcoming = prayerList.find((p) => p.weight > now);
+        return upcoming || { label: 'İMSAK', time: times.imsak };
     }, [currentTime, times]);
 
     useEffect(() => {

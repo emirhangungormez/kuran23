@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Audio Service — Handles reciter mappings and URL generation for Quran audio.
  * Supports whole surah audio (via MP3Quran.net) and verse-by-verse audio (via EveryAyah.com).
  */
@@ -153,7 +153,7 @@ export function getVerseAudioUrl(reciterId, surahId, verseId) {
 
 export function getTurkishReciters() {
     return Object.entries(RECITER_MAP)
-        .filter(([_, reciter]) => reciter.isTurkish)
+        .filter(([, reciter]) => reciter.isTurkish)
         .map(([id, reciter]) => ({
             id: Number(id),
             name: reciter.name,
@@ -183,3 +183,4 @@ export function isTurkishPlaylistSupported(reciterId) {
     const reciter = RECITER_MAP[Number(reciterId)];
     return reciter && reciter.source === 'diyanet';
 }
+
