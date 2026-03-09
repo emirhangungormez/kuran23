@@ -176,13 +176,6 @@ export default function LibraryBookPage() {
     <div className="page kutuphane-page book-detail-page">
       <GlobalNav />
       <div className="page-content">
-        <div className="page-header-row">
-          <Link to="/kutuphane" className="back-link hidden-mobile">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-            <span>Kütüphane</span>
-          </Link>
-        </div>
-
         <section className="reader-panel">
           {isTafsirBook ? (
             <div className="book-reader-layout">
@@ -246,6 +239,13 @@ export default function LibraryBookPage() {
               </aside>
 
               <div className="reader-main">
+                <div className="reader-back-row">
+                  <Link to="/kutuphane" className="back-link hidden-mobile">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                    <span>Kütüphane</span>
+                  </Link>
+                </div>
+
                 <div className="reader-head">
                   <div>
                     <small className="reader-overline">{book.authorTr}</small>
@@ -355,6 +355,13 @@ export default function LibraryBookPage() {
             </div>
           ) : (
             <>
+              <div className="reader-back-row">
+                <Link to="/kutuphane" className="back-link hidden-mobile">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                  <span>Kütüphane</span>
+                </Link>
+              </div>
+
               <div className="reader-head">
                 <div>
                   <small className="reader-overline">{book.authorTr}</small>

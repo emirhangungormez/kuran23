@@ -3,7 +3,7 @@
 }
 
 .book-detail-page .page-content {
-    max-width: 1280px;
+    max-width: 1000px;
 }
 
 .kutuphane-hero {
@@ -192,6 +192,11 @@
     padding: 0;
     background: transparent;
     margin-bottom: 40px;
+    position: relative;
+}
+
+.reader-back-row {
+    margin-bottom: 24px;
 }
 
 .reader-head {
@@ -239,10 +244,11 @@
 
 .book-reader-layout {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1000px);
+    width: calc(100% + 268px);
+    margin-left: -268px;
+    grid-template-columns: 220px minmax(0, 1fr);
     gap: 48px;
     align-items: start;
-    justify-content: center;
 }
 
 .reader-sidebar {
@@ -351,7 +357,7 @@
 .reader-main {
     min-width: 0;
     width: 100%;
-    max-width: 1000px;
+    max-width: 100%;
 }
 
 .reader-toolbar {
@@ -575,6 +581,8 @@
     }
 
     .book-reader-layout {
+        width: calc(100% + 216px);
+        margin-left: -216px;
         grid-template-columns: 180px minmax(0, 1fr);
         gap: 36px;
     }
@@ -598,6 +606,8 @@
     }
 
     .book-reader-layout {
+        width: 100%;
+        margin-left: 0;
         grid-template-columns: 1fr;
         gap: 0;
     }
