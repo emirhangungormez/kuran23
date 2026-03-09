@@ -8,12 +8,6 @@ export const ARABIC_FONT_OPTIONS = [
     { value: 'DigitalKhattIndopak', label: 'Digital Khatt IndoPak' },
     { value: 'KFGQPCNastaleeq', label: 'KFGQPC Nastaleeq' },
     { value: 'IndopakNastaleeq', label: 'IndoPak Nastaleeq' },
-    { value: 'SurahHeaderFont', label: 'Surah Header Font' },
-    { value: 'SurahNameV1', label: 'Surah Name V1' },
-    { value: 'SurahNameV2', label: 'Surah Name V2' },
-    { value: 'SurahNameV4', label: 'Surah Name V4' },
-    { value: 'V4SurahNameColor', label: 'Surah Name Color V4' },
-    { value: 'JuzNameCommon', label: 'Juz Name Common' },
     { value: 'NotoNaskhArabic', label: 'Noto Naskh Arabic' },
     { value: 'ScheherazadeNew', label: 'Scheherazade New' },
     { value: 'Lateef', label: 'Lateef' }
