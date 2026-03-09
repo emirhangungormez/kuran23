@@ -18,8 +18,8 @@
 }
 
 .diacritics-toggle.active {
-  background: var(--fill);
-  color: var(--text-secondary);
+  background: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
 }
 
 .diacritics-toggle-mark-only {
@@ -59,6 +59,6 @@
 }
 
 [data-theme='dark'] .diacritics-toggle.active {
-  background: var(--fill);
-  color: var(--text-secondary);
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent);
 }
