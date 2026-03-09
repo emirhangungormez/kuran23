@@ -189,7 +189,7 @@
 
 .support-user-handle {
     margin: 0 0 2px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
     font-size: 13px;
@@ -198,9 +198,7 @@
 
 .support-user-name {
     margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: block;
     font-size: clamp(30px, 3vw, 42px);
     font-weight: 800;
     line-height: 1.12;
