@@ -23,13 +23,14 @@
 }
 
 .diacritics-toggle-mark-only {
-  font-family: "Noto Naskh Arabic", "Scheherazade New", serif;
-  font-size: 30px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transform: none;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  display: block;
 }
 
 .diacritics-toggle.diacritics-header-btn {
