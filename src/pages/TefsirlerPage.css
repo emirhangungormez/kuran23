@@ -428,6 +428,7 @@
     font-size: 19px;
     line-height: 1.9;
     color: var(--text-primary);
+    max-width: 100%;
 }
 
 .tefsirler-rich p,
@@ -437,7 +438,7 @@
 }
 
 .tefsirler-rich p {
-    max-width: 68ch;
+    max-width: none;
     margin-bottom: 16px;
     text-align: left;
 }
