@@ -72,6 +72,7 @@ export default function IntegratedPlayer({
     const isVeryLongSurah = verses.length > 50
     const showDiacritics = normalizeTextMode(settings.textMode, settings.showTajweed) !== 'plain'
     const displaySurahNameAr = resolveArabicTextVisibility(surahNameAr, showDiacritics)
+    const isTafsirContext = context === 'tafsir'
     const reciterOptions = availableReciters
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
@@ -168,22 +169,24 @@ export default function IntegratedPlayer({
             </div>
 
             <div className="player-expanded-content">
-                <div className="player-reciter-row">
-                    <CustomSelect
-                        value={settings.defaultReciterId}
-                        onChange={(val) => updateSettings({ defaultReciterId: val })}
-                        options={reciterOptions}
-                        prefix="ArapÃ§a: "
-                        className="player-reciter-select"
-                    />
-                    <CustomSelect
-                        value={settings.defaultTurkishReciterId || 1015}
-                        onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
-                        options={turkishReciterOptions}
-                        prefix="TÃ¼rkÃ§e: "
-                        className="player-reciter-select"
-                    />
-                </div>
+                {!isTafsirContext && (
+                    <div className="player-reciter-row">
+                        <CustomSelect
+                            value={settings.defaultReciterId}
+                            onChange={(val) => updateSettings({ defaultReciterId: val })}
+                            options={reciterOptions}
+                            prefix="ArapÃ§a: "
+                            className="player-reciter-select"
+                        />
+                        <CustomSelect
+                            value={settings.defaultTurkishReciterId || 1015}
+                            onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
+                            options={turkishReciterOptions}
+                            prefix="TÃ¼rkÃ§e: "
+                            className="player-reciter-select"
+                        />
+                    </div>
+                )}
                 <div className="player-top-controls">
                     <div className="player-volume-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -200,15 +203,17 @@ export default function IntegratedPlayer({
                             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
                         />
                     </div>
-                    <div className={`repeat-badge ${isRepeat ? 'active' : ''}`} onClick={onToggleRepeat} title="SÃ¼rekli Ã‡al">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="17 1 21 5 17 9"></polyline>
-                            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
-                            <polyline points="7 23 3 19 7 15"></polyline>
-                            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
-                        </svg>
-                        {isRepeat && <span style={{ fontSize: '10px' }}>SÃ¼rekli Ã‡al</span>}
-                    </div>
+                    {!isTafsirContext && (
+                        <div className={`repeat-badge ${isRepeat ? 'active' : ''}`} onClick={onToggleRepeat} title="SÃ¼rekli Ã‡al">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="17 1 21 5 17 9"></polyline>
+                                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                <polyline points="7 23 3 19 7 15"></polyline>
+                                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                            </svg>
+                            {isRepeat && <span style={{ fontSize: '10px' }}>SÃ¼rekli Ã‡al</span>}
+                        </div>
+                    )}
                     <div className="speed-badge" onClick={onSpeedChange} title="Oynatma HÄ±zÄ±">
                         {playbackSpeed}x
                     </div>

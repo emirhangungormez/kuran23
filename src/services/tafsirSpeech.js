@@ -1,4 +1,4 @@
-function getSpeechSynthesisInstance() {
+﻿function getSpeechSynthesisInstance() {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null
   return window.speechSynthesis
 }
@@ -9,6 +9,55 @@ export function isTafsirSpeechSupported() {
 
 function normalizeVoiceName(name) {
   return String(name || '').trim().toLocaleLowerCase('tr-TR')
+}
+
+const FEMALE_VOICE_MARKERS = [
+  'female',
+  'woman',
+  'microsoft ayse',
+  'ayse',
+  'emel',
+  'seda',
+  'selen',
+  'selin',
+  'selma',
+  'filiz',
+  'eda',
+  'esra',
+  'zira',
+  'zira desktop'
+]
+
+const MALE_VOICE_MARKERS = [
+  'male',
+  'man',
+  'ahmet',
+  'mehmet',
+  'ali',
+  'murat',
+  'cem',
+  'emre',
+  'kaan',
+  'hakan',
+  'fatih',
+  'onur',
+  'ocal'
+]
+
+function isLikelyFemaleVoice(voice) {
+  const name = normalizeVoiceName(voice?.name)
+  return FEMALE_VOICE_MARKERS.some((marker) => name.includes(marker))
+}
+
+function isLikelyMaleVoice(voice) {
+  const name = normalizeVoiceName(voice?.name)
+  return MALE_VOICE_MARKERS.some((marker) => name.includes(marker))
+}
+
+function isTurkishVoice(voice) {
+  const lang = String(voice?.lang || '').toLocaleLowerCase('tr-TR')
+  const name = normalizeVoiceName(voice?.name)
+  return lang.startsWith('tr') || name.includes('turk') || name.includes('türk')
 }
 
 const TAFSIR_SPEECH_REPLACEMENTS = [
@@ -22,7 +71,7 @@ const TAFSIR_SPEECH_REPLACEMENTS = [
   [/sûre/gi, 'sure'],
   [/âyet/gi, 'ayet'],
   [/teâlâ/gi, 'teala'],
-  [/şeyh/gi, 'şeh'],
+  [/şeyh/gi, 'şeyh'],
   [/بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ/gu, 'Bismillahirrahmanirrahim'],
   [/ٱلْحَمْدُ لِلَّٰهِ/gu, 'Elhamdülillah'],
   [/إِنْ شَاءَ اللَّهُ|إن شاء الله/gu, 'inşallah'],
@@ -61,13 +110,8 @@ export function getTafsirVoices() {
   const synthesis = getSpeechSynthesisInstance()
   if (!synthesis) return []
 
-  const voices = synthesis.getVoices() || []
-  return voices
-    .filter((voice) => {
-      const lang = String(voice.lang || '').toLocaleLowerCase('tr-TR')
-      const name = normalizeVoiceName(voice.name)
-      return lang.startsWith('tr') || name.includes('turk') || name.includes('türk')
-    })
+  return (synthesis.getVoices() || [])
+    .filter((voice) => isTurkishVoice(voice) && !isLikelyFemaleVoice(voice))
     .map((voice) => ({
       id: `${voice.name}__${voice.lang}`,
       name: voice.name,
@@ -91,16 +135,19 @@ export function resolveTafsirVoice(voiceName) {
   const synthesis = getSpeechSynthesisInstance()
   if (!synthesis) return null
 
-  const voices = synthesis.getVoices() || []
+  const voices = (synthesis.getVoices() || []).filter((voice) => isTurkishVoice(voice))
   const normalizedTarget = normalizeVoiceName(voiceName)
 
   if (normalizedTarget) {
-    const exactMatch = voices.find((voice) => normalizeVoiceName(voice.name) === normalizedTarget)
+    const exactMatch = voices.find((voice) => normalizeVoiceName(voice.name) === normalizedTarget && !isLikelyFemaleVoice(voice))
     if (exactMatch) return exactMatch
   }
 
-  const turkishMatch = voices.find((voice) => String(voice.lang || '').toLocaleLowerCase('tr-TR').startsWith('tr'))
-  return turkishMatch || voices[0] || null
+  const maleMatch = voices.find((voice) => isLikelyMaleVoice(voice) && !isLikelyFemaleVoice(voice))
+  if (maleMatch) return maleMatch
+
+  const neutralMatch = voices.find((voice) => !isLikelyFemaleVoice(voice))
+  return neutralMatch || null
 }
 
 export function stripHtmlForSpeech(html) {
@@ -116,9 +163,9 @@ export function stripHtmlForSpeech(html) {
 
   return normalizeArabicSpeechFragments(
     source
-    .replace(/<br\s*\/?>/gi, ' ')
-    .replace(/<\/p>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/<\/p>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
   )
 }
 

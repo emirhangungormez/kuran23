@@ -887,6 +887,19 @@
     gap: 12px;
 }
 
+.tafsir-voice-note {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    border: 1px solid var(--separator);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
 .setting-item.compact {
     gap: 8px;
 }

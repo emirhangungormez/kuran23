@@ -19,7 +19,6 @@ import JourneysPromoCard from '../components/JourneysPromoCard'
 import UsageStatsPanel from '../components/UsageStatsPanel'
 import { ARABIC_FONT_OPTIONS, getArabicFontFamily, getSettingNumber } from '../utils/typography'
 import { normalizeArabicDisplayText } from '../utils/textEncoding'
-import { isTafsirSpeechSupported, subscribeTafsirVoices } from '../services/tafsirSpeech'
 
 
 export default function ProfilePage() {
@@ -32,7 +31,6 @@ export default function ProfilePage() {
     const userId = user?.id || settings?.userId || '';
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false)
     const [availableTranslations, setAvailableTranslations] = useState([])
-    const [availableTafsirVoices, setAvailableTafsirVoices] = useState([])
     const [showIconModal, setShowIconModal] = useState(false)
     const [exampleVerse, setExampleVerse] = useState(null)
     const [settingsVerse, setSettingsVerse] = useState(null)
@@ -64,12 +62,6 @@ export default function ProfilePage() {
         })
 
     }, [isLoggedIn, navigate, settings.defaultAuthorId])
-
-    useEffect(() => {
-        if (!isTafsirSpeechSupported()) return undefined
-        return subscribeTafsirVoices(setAvailableTafsirVoices)
-    }, [])
-
     const fontSizePercent = Math.min(100, Math.max(0, ((settings.fontSize - 14) / 18) * 100))
     const arabicScale = getSettingNumber(settings.arabicScale, 1.5)
     const translationScale = getSettingNumber(settings.translationScale, 1)
@@ -473,23 +465,13 @@ export default function ProfilePage() {
                                         <div className="tafsir-meal-setting-copy">
                                             <h4>Tefsir Seslendirmesi</h4>
                                             <p>
-                                                Tefsir sayfasındaki dinleme özelliğinde kullanılacak Türkçe sesi ve okuma hızını seçin.
+                                                Tefsir dinlemede otomatik olarak uyumlu erkek Türkçe sistem sesi tercih edilir. Buradan yalnızca okuma hızını ayarlayabilirsiniz.
                                             </p>
                                         </div>
                                         <div className="tafsir-voice-settings">
-                                            <select
-                                                className="modern-input"
-                                                value={settings.tafsirVoiceName || ''}
-                                                onChange={(e) => updateSettings({ tafsirVoiceName: e.target.value })}
-                                                disabled={!availableTafsirVoices.length}
-                                            >
-                                                <option value="">Varsayılan Türkçe ses</option>
-                                                {availableTafsirVoices.map((voice) => (
-                                                    <option key={voice.id} value={voice.name}>
-                                                        {voice.name} ({voice.lang})
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <div className="tafsir-voice-note">
+                                                Erkek Türkçe sistem sesi otomatik seçilir.
+                                            </div>
 
                                             <div className="setting-item compact">
                                                 <label>Tefsir Ses Hızı</label>
