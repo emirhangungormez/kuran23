@@ -256,14 +256,20 @@
     top: 108px;
     align-self: start;
     width: 220px;
+    height: calc(100vh - 132px);
+    min-height: 520px;
     padding-right: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .reader-sidebar-intro {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-bottom: 28px;
+    flex: 0 0 112px;
+    margin-bottom: 24px;
 }
 
 .reader-sidebar-brand {
@@ -285,11 +291,22 @@
     line-height: 1.45;
 }
 
+.reader-sidebar-intro small {
+    display: block;
+    min-height: 2.9em;
+}
+
 .reader-sidebar-block {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 24px;
+}
+
+.reader-sidebar-block:last-child {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 0;
 }
 
 .reader-sidebar-title {
@@ -394,8 +411,10 @@
 .reader-sidebar-sections {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     gap: 10px;
-    max-height: 420px;
+    max-height: none;
+    min-height: 0;
     overflow: auto;
     padding-right: 4px;
     scrollbar-gutter: stable;
