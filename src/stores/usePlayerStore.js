@@ -3,7 +3,10 @@ import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 import {
+    estimateTafsirSpeechDuration,
     isEdgeTafsirTtsSupported,
+    isTafsirSpeechSupported,
+    resolveTafsirVoice,
     synthesizeEdgeTafsirAudio
 } from '../services/tafsirSpeech'
 import { normalizeTextMode } from '../utils/textMode'
@@ -70,8 +73,17 @@ function resolveActiveTrackIndex(state) {
 const globalAudio = new Audio()
 globalAudio.preload = 'auto'
 let lastPageAudioRecoveryKey = ''
+let activeSpeechProgressTimer = null
+let activeSpeechStartedAt = 0
+let activeSpeechElapsed = 0
+let activeSpeechDuration = 0
 let activeTafsirPlaybackEngine = 'none'
 let activeEdgeAudioUrl = ''
+
+function getSpeechSynthesisEngine() {
+    if (!isTafsirSpeechSupported()) return null
+    return window.speechSynthesis
+}
 
 function clearEdgeAudioUrl() {
     if (!activeEdgeAudioUrl) return
@@ -83,9 +95,51 @@ function clearEdgeAudioUrl() {
     activeEdgeAudioUrl = ''
 }
 
+function clearSpeechProgressTimer() {
+    if (activeSpeechProgressTimer) {
+        window.clearInterval(activeSpeechProgressTimer)
+        activeSpeechProgressTimer = null
+    }
+}
+
+function startSpeechProgressTimer() {
+    clearSpeechProgressTimer()
+    activeSpeechStartedAt = Date.now()
+    activeSpeechProgressTimer = window.setInterval(() => {
+        const state = usePlayerStore.getState()
+        if (state.mode !== 'tts' || !state.isPlaying) return
+        const elapsedSeconds = activeSpeechElapsed + ((Date.now() - activeSpeechStartedAt) / 1000)
+        state.setCurrentTime(Math.min(activeSpeechDuration, elapsedSeconds))
+    }, 180)
+}
+
 function stopSpeechPlayback() {
+    const synthesis = getSpeechSynthesisEngine()
+    clearSpeechProgressTimer()
     clearEdgeAudioUrl()
     activeTafsirPlaybackEngine = 'none'
+    activeSpeechStartedAt = 0
+    activeSpeechElapsed = 0
+    activeSpeechDuration = 0
+    if (!synthesis) return
+    synthesis.cancel()
+}
+
+function pauseSpeechPlayback() {
+    const synthesis = getSpeechSynthesisEngine()
+    if (!synthesis || !synthesis.speaking) return
+    activeSpeechElapsed += activeSpeechStartedAt ? ((Date.now() - activeSpeechStartedAt) / 1000) : 0
+    activeSpeechStartedAt = 0
+    clearSpeechProgressTimer()
+    synthesis.pause()
+}
+
+function resumeSpeechPlayback() {
+    const synthesis = getSpeechSynthesisEngine()
+    if (!synthesis || !synthesis.paused) return false
+    synthesis.resume()
+    startSpeechProgressTimer()
+    return true
 }
 
 function safePlayAudio(onFail) {
@@ -284,15 +338,73 @@ const usePlayerStore = create((set, get) => ({
 
         const resolvedSettings = resolvePlaybackSettings(settings)
         const rate = resolveTafsirSpeechRate(resolvedSettings)
+        const fallbackToSpeech = () => {
+            const synthesis = getSpeechSynthesisEngine()
+            if (!synthesis) {
+                set({ isPlaying: false })
+                return
+            }
+
+            const voice = resolveTafsirVoice(resolvedSettings.tafsirVoiceName)
+            const duration = estimateTafsirSpeechDuration(text, rate)
+            const utterance = new window.SpeechSynthesisUtterance(text)
+            utterance.lang = voice?.lang || 'tr-TR'
+            utterance.rate = rate
+            utterance.pitch = 1
+            utterance.volume = 1
+            if (voice) utterance.voice = voice
+            activeSpeechElapsed = 0
+            activeSpeechDuration = duration
+            activeTafsirPlaybackEngine = 'speech'
+
+            set({
+                mode: 'tts',
+                currentTrackIndex: idx,
+                currentTime: 0,
+                duration,
+                isPlaying: true
+            })
+
+            utterance.onboundary = (event) => {
+                const activeState = get()
+                if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
+                const progress = Math.max(0, Math.min(1, (event.charIndex || 0) / Math.max(text.length, 1)))
+                activeState.setCurrentTime(duration * progress)
+            }
+
+            utterance.onend = () => {
+                const activeState = get()
+                if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
+
+                clearSpeechProgressTimer()
+                activeState.setCurrentTime(duration)
+                if (idx < activeState.playlist.length - 1) {
+                    activeState.playTafsirTrackAtIndex(idx + 1, resolvedSettings)
+                    return
+                }
+
+                set({ isPlaying: false })
+            }
+
+            utterance.onerror = () => {
+                clearSpeechProgressTimer()
+                set({ isPlaying: false })
+            }
+
+            synthesis.speak(utterance)
+            startSpeechProgressTimer()
+            document.dispatchEvent(new CustomEvent('playerVisible'))
+        }
+
         if (!isEdgeTafsirTtsSupported()) {
-            set({ isPlaying: false })
+            fallbackToSpeech()
             return
         }
 
         try {
             const edgeResult = await synthesizeEdgeTafsirAudio(text, { rate })
             if (!edgeResult?.url) {
-                set({ isPlaying: false })
+                fallbackToSpeech()
                 return
             }
 
@@ -310,8 +422,8 @@ const usePlayerStore = create((set, get) => ({
             safePlayAudio(() => set({ isPlaying: false }))
             document.dispatchEvent(new CustomEvent('playerVisible'))
         } catch (error) {
-            console.warn('Edge TTS synthesis failed.', error)
-            set({ isPlaying: false })
+            console.warn('Edge TTS synthesis failed, falling back to browser speech.', error)
+            fallbackToSpeech()
         }
     },
 
@@ -350,7 +462,27 @@ const usePlayerStore = create((set, get) => ({
                 }
                 return
             }
-            set({ isPlaying: false })
+
+            const synthesis = getSpeechSynthesisEngine()
+            if (!synthesis) {
+                set({ isPlaying: false })
+                return
+            }
+
+            if (state.isPlaying && synthesis.speaking && !synthesis.paused) {
+                pauseSpeechPlayback()
+                set({ isPlaying: false })
+                return
+            }
+
+            if (!state.isPlaying && resumeSpeechPlayback()) {
+                set({ isPlaying: true })
+                return
+            }
+
+            if (state.playlist.length > 0) {
+                state.playTafsirTrackAtIndex(state.currentTrackIndex, resolvePlaybackSettings())
+            }
             return
         }
 
