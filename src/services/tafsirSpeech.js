@@ -64,7 +64,8 @@ function isTurkishVoice(voice) {
 
 function isEdgeBrowser() {
   if (typeof navigator === 'undefined') return false
-  return /Edg\//.test(navigator.userAgent || '')
+  const ua = navigator.userAgent || ''
+  return /Edg(A|iOS)?\//.test(ua)
 }
 
 let cachedEdgeVoicesPromise = null
