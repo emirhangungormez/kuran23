@@ -67,14 +67,40 @@ function resolveActiveTrackIndex(state) {
 const globalAudio = new Audio()
 globalAudio.preload = 'auto'
 let lastPageAudioRecoveryKey = ''
+let activeSpeechProgressTimer = null
+let activeSpeechStartedAt = 0
+let activeSpeechElapsed = 0
+let activeSpeechDuration = 0
 
 function getSpeechSynthesisEngine() {
     if (!isTafsirSpeechSupported()) return null
     return window.speechSynthesis
 }
 
+function clearSpeechProgressTimer() {
+    if (activeSpeechProgressTimer) {
+        window.clearInterval(activeSpeechProgressTimer)
+        activeSpeechProgressTimer = null
+    }
+}
+
+function startSpeechProgressTimer() {
+    clearSpeechProgressTimer()
+    activeSpeechStartedAt = Date.now()
+    activeSpeechProgressTimer = window.setInterval(() => {
+        const state = usePlayerStore.getState()
+        if (state.mode !== 'tts' || !state.isPlaying) return
+        const elapsedSeconds = activeSpeechElapsed + ((Date.now() - activeSpeechStartedAt) / 1000)
+        state.setCurrentTime(Math.min(activeSpeechDuration, elapsedSeconds))
+    }, 180)
+}
+
 function stopSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
+    clearSpeechProgressTimer()
+    activeSpeechStartedAt = 0
+    activeSpeechElapsed = 0
+    activeSpeechDuration = 0
     if (!synthesis) return
     synthesis.cancel()
 }
@@ -82,6 +108,9 @@ function stopSpeechPlayback() {
 function pauseSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     if (!synthesis || !synthesis.speaking) return
+    activeSpeechElapsed += activeSpeechStartedAt ? ((Date.now() - activeSpeechStartedAt) / 1000) : 0
+    activeSpeechStartedAt = 0
+    clearSpeechProgressTimer()
     synthesis.pause()
 }
 
@@ -89,6 +118,7 @@ function resumeSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     if (!synthesis || !synthesis.paused) return false
     synthesis.resume()
+    startSpeechProgressTimer()
     return true
 }
 
@@ -297,6 +327,8 @@ const usePlayerStore = create((set, get) => ({
         utterance.pitch = 1
         utterance.volume = 1
         if (voice) utterance.voice = voice
+        activeSpeechElapsed = 0
+        activeSpeechDuration = duration
 
         set({
             mode: 'tts',
@@ -317,6 +349,7 @@ const usePlayerStore = create((set, get) => ({
             const activeState = get()
             if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
 
+            clearSpeechProgressTimer()
             activeState.setCurrentTime(duration)
             if (idx < activeState.playlist.length - 1) {
                 activeState.playTafsirTrackAtIndex(idx + 1, resolvedSettings)
@@ -327,10 +360,12 @@ const usePlayerStore = create((set, get) => ({
         }
 
         utterance.onerror = () => {
+            clearSpeechProgressTimer()
             set({ isPlaying: false })
         }
 
         synthesis.speak(utterance)
+        startSpeechProgressTimer()
         document.dispatchEvent(new CustomEvent('playerVisible'))
     },
 
