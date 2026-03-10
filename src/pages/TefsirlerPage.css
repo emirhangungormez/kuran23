@@ -323,6 +323,32 @@
     font-size: 13px;
 }
 
+.reader-scope-toggle {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--separator);
+    border-radius: 999px;
+    background: transparent;
+}
+
+.reader-scope-toggle button {
+    min-height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.reader-scope-toggle button.active {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--text-primary);
+}
+
 .reader-sidebar-sections {
     display: flex;
     flex-direction: column;
@@ -421,30 +447,13 @@
 
 .reader-toolbar {
     display: none;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 12px;
     margin-bottom: 20px;
 }
 
-.reader-toolbar label {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-tertiary);
-}
-
-.reader-toolbar select {
-    width: 100%;
-    height: 36px;
-    border-radius: 8px;
-    border: 1px solid var(--separator);
-    background: var(--bg);
-    color: var(--text-primary);
-    padding: 0 10px;
-    font-size: 13px;
-    outline: none;
+.reader-toolbar .reader-sidebar-title {
+    margin-bottom: 0;
 }
 
 .tefsir-sections {

@@ -22,7 +22,7 @@ export default function LibraryBookPage() {
   const [activeScope, setActiveScope] = useState('verse')
   const [activeSurahId, setActiveSurahId] = useState(1)
   const [activeAyahNo, setActiveAyahNo] = useState(1)
-  const [expandedSurahIds, setExpandedSurahIds] = useState([])
+  const [expandedSurahIds, setExpandedSurahIds] = useState(null)
 
   const book = useMemo(() => getBookById(bookId), [bookId])
   const isTafsirBook = book?.category === 'tefsir'
@@ -137,58 +137,67 @@ export default function LibraryBookPage() {
       label: getSurahTitle(nextSurahId)
     }
   }, [effectiveScope, nextSurahId])
+  const visibleExpandedSurahIds = useMemo(() => {
+    if (expandedSurahIds !== null) return expandedSurahIds
+    return effectiveScope === 'verse' ? [resolvedSurahId] : []
+  }, [effectiveScope, expandedSurahIds, resolvedSurahId])
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
   }
 
-  const handleScopeChange = (event) => {
-    setActiveScope(event.target.value)
-    resetReaderPosition()
-  }
-
-  const handleSurahChange = (event) => {
-    const surahId = Number(event.target.value)
-    setActiveSurahId(surahId)
-    setExpandedSurahIds((value) => (value.includes(surahId) ? value : [...value, surahId]))
+  const handleScopeChange = (scope) => {
+    setActiveScope(scope)
+    if (scope === 'verse') {
+      setExpandedSurahIds((value) => (value === null ? [resolvedSurahId] : value))
+    }
     resetReaderPosition()
   }
 
   const handleSurahSelect = (surahId) => {
     setActiveSurahId(surahId)
-    setExpandedSurahIds((value) => (value.includes(surahId) ? value : [...value, surahId]))
+    setExpandedSurahIds((value) => {
+      const current = value ?? []
+      return current.includes(surahId) ? current : [...current, surahId]
+    })
     resetReaderPosition()
   }
 
   const handleAyahSelect = (surahId, ayahNo) => {
     setActiveSurahId(surahId)
     setActiveAyahNo(ayahNo)
-    setExpandedSurahIds((value) => (value.includes(surahId) ? value : [...value, surahId]))
+    setExpandedSurahIds((value) => {
+      const current = value ?? []
+      return current.includes(surahId) ? current : [...current, surahId]
+    })
     resetReaderPosition()
   }
 
   const toggleSurahExpansion = (surahId) => {
-    setExpandedSurahIds((value) =>
-      value.includes(surahId) ? value.filter((id) => id !== surahId) : [...value, surahId]
-    )
+    setExpandedSurahIds((value) => {
+      const current = value ?? [resolvedSurahId]
+      return current.includes(surahId) ? current.filter((id) => id !== surahId) : [...current, surahId]
+    })
   }
 
   const handleReaderAdvance = () => {
     if (effectiveScope === 'verse' && nextVerseTarget) {
       setActiveSurahId(nextVerseTarget.surahId)
       setActiveAyahNo(nextVerseTarget.ayahNo)
-      setExpandedSurahIds((value) =>
-        value.includes(nextVerseTarget.surahId) ? value : [...value, nextVerseTarget.surahId]
-      )
+      setExpandedSurahIds((value) => {
+        const current = value ?? []
+        return current.includes(nextVerseTarget.surahId) ? current : [...current, nextVerseTarget.surahId]
+      })
       resetReaderPosition()
       return
     }
 
     if (effectiveScope === 'surah' && nextSurahTarget) {
       setActiveSurahId(nextSurahTarget.surahId)
-      setExpandedSurahIds((value) =>
-        value.includes(nextSurahTarget.surahId) ? value : [...value, nextSurahTarget.surahId]
-      )
+      setExpandedSurahIds((value) => {
+        const current = value ?? []
+        return current.includes(nextSurahTarget.surahId) ? current : [...current, nextSurahTarget.surahId]
+      })
       resetReaderPosition()
     }
   }
@@ -230,21 +239,23 @@ export default function LibraryBookPage() {
                 </div>
 
                 <div className="reader-sidebar-block reader-sidebar-controls">
-                  <label>
-                    Görünüm
-                    <select value={effectiveScope} onChange={handleScopeChange}>
-                      <option value="verse">Ayet bazlı</option>
-                      <option value="surah">Sûre bazlı</option>
-                    </select>
-                  </label>
-                  <label>
-                    Sûre
-                    <select value={resolvedSurahId} onChange={handleSurahChange}>
-                      {availableSurahIds.map((surahId) => (
-                        <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
-                      ))}
-                    </select>
-                  </label>
+                  <span className="reader-sidebar-title">Görünüm</span>
+                  <div className="reader-scope-toggle" role="tablist" aria-label="Görünüm seçimi">
+                    <button
+                      type="button"
+                      className={effectiveScope === 'verse' ? 'active' : ''}
+                      onClick={() => handleScopeChange('verse')}
+                    >
+                      Ayet
+                    </button>
+                    <button
+                      type="button"
+                      className={effectiveScope === 'surah' ? 'active' : ''}
+                      onClick={() => handleScopeChange('surah')}
+                    >
+                      Sûre
+                    </button>
+                  </div>
                 </div>
 
                 <div className="reader-sidebar-block">
@@ -252,7 +263,7 @@ export default function LibraryBookPage() {
                   <div className="reader-sidebar-sections">
                     {surahNavigationItems.map((item) => {
                       const isActiveSurah = Number(resolvedSurahId) === Number(item.surahId)
-                      const isExpanded = effectiveScope === 'verse' && (isActiveSurah || expandedSurahIds.includes(item.surahId))
+                      const isExpanded = effectiveScope === 'verse' && visibleExpandedSurahIds.includes(item.surahId)
 
                       return (
                         <div key={item.surahId} className={`reader-sidebar-group ${isActiveSurah ? 'active' : ''}`}>
@@ -268,7 +279,10 @@ export default function LibraryBookPage() {
                               <button
                                 type="button"
                                 className={`reader-sidebar-toggle ${isExpanded ? 'open' : ''}`}
-                                onClick={() => toggleSurahExpansion(item.surahId)}
+                                onClick={(event) => {
+                                  event.stopPropagation()
+                                  toggleSurahExpansion(item.surahId)
+                                }}
                                 aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'göster'}`}
                               >
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
@@ -315,21 +329,23 @@ export default function LibraryBookPage() {
                 </div>
 
                 <div className="reader-toolbar">
-                  <label>
-                    Görünüm
-                    <select value={effectiveScope} onChange={handleScopeChange}>
-                      <option value="verse">Ayet bazlı</option>
-                      <option value="surah">Sûre bazlı</option>
-                    </select>
-                  </label>
-                  <label>
-                    Sûre
-                    <select value={resolvedSurahId} onChange={handleSurahChange}>
-                      {availableSurahIds.map((surahId) => (
-                        <option key={surahId} value={surahId}>{getSurahTitle(surahId)}</option>
-                      ))}
-                    </select>
-                  </label>
+                  <span className="reader-sidebar-title">Görünüm</span>
+                  <div className="reader-scope-toggle" role="tablist" aria-label="Görünüm seçimi">
+                    <button
+                      type="button"
+                      className={effectiveScope === 'verse' ? 'active' : ''}
+                      onClick={() => handleScopeChange('verse')}
+                    >
+                      Ayet
+                    </button>
+                    <button
+                      type="button"
+                      className={effectiveScope === 'surah' ? 'active' : ''}
+                      onClick={() => handleScopeChange('surah')}
+                    >
+                      Sûre
+                    </button>
+                  </div>
                 </div>
 
                 {readerErrorMessage ? (
