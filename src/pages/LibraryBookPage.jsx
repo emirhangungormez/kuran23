@@ -252,6 +252,10 @@ export default function LibraryBookPage() {
       const doc = parser.parseFromString(`<div id="root">${formattedHtml}</div>`, 'text/html')
       const root = doc.querySelector('#root')
       if (!root) return []
+      const contentRoot =
+        root.childElementCount === 1 && root.firstElementChild?.classList?.contains('tafsir-content-wrapper')
+          ? root.firstElementChild
+          : root
 
       const verseMap = new Map(selectedSurahVerses.map((verse) => [Number(verse.verse_number), verse]))
       const blocks = []
@@ -268,7 +272,7 @@ export default function LibraryBookPage() {
         })
       }
 
-      Array.from(root.childNodes).forEach((node) => {
+      Array.from(contentRoot.childNodes).forEach((node) => {
         const markerAyahNo = getAyahMarkerNumber(node)
 
         if (markerAyahNo) {
