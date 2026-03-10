@@ -632,32 +632,39 @@ export default function LibraryBookPage() {
                   </div>
                   <div className="reader-head-side">
                     <small className="reader-kicker">{currentReferenceLabel}</small>
-                    <div className="reader-audio-actions">
-                      <button
-                        type="button"
-                        className={`reader-audio-btn ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
-                        onClick={handleTafsirListen}
-                        disabled={!canPlayTafsirSpeech}
-                      >
-                        {isActiveTafsirPlayback
-                          ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
-                          : 'Tefsiri Dinle'}
+                  </div>
+                </div>
+
+                <div className="reader-audio-bar">
+                  <div className="reader-audio-bar-copy">
+                    <span className="reader-sidebar-title">Dinleme</span>
+                    <strong>Tefsiri T?rk?e seslendir</strong>
+                  </div>
+                  <div className="reader-audio-actions">
+                    <button
+                      type="button"
+                      className={`reader-audio-btn ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
+                      onClick={handleTafsirListen}
+                      disabled={!canPlayTafsirSpeech}
+                    >
+                      {isActiveTafsirPlayback
+                        ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
+                        : 'Tefsiri Dinle'}
+                    </button>
+                    {isActiveTafsirPlayback && (
+                      <button type="button" className="reader-audio-btn secondary" onClick={handleTafsirStop}>
+                        Durdur
                       </button>
-                      {isActiveTafsirPlayback && (
-                        <button type="button" className="reader-audio-btn secondary" onClick={handleTafsirStop}>
-                          Durdur
-                        </button>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="reader-toolbar">
-                  <span className="reader-sidebar-title">Görünüm</span>
+                  <span className="reader-sidebar-title">G?r?n?m</span>
                   <div
                     className={`reader-scope-toggle ${effectiveScope === 'verse' ? 'scope-verse' : 'scope-surah'}`}
                     role="tablist"
-                    aria-label="Görünüm seçimi"
+                    aria-label="G?r?n?m se?imi"
                   >
                     <span className="reader-scope-toggle-indicator" aria-hidden="true" />
                     <button
@@ -674,23 +681,6 @@ export default function LibraryBookPage() {
                     >
                       S?re
                     </button>
-                  </div>
-                  <div className="reader-audio-actions mobile">
-                    <button
-                      type="button"
-                      className={`reader-audio-btn ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
-                      onClick={handleTafsirListen}
-                      disabled={!canPlayTafsirSpeech}
-                    >
-                      {isActiveTafsirPlayback
-                        ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
-                        : 'Tefsiri Dinle'}
-                    </button>
-                    {isActiveTafsirPlayback && (
-                      <button type="button" className="reader-audio-btn secondary" onClick={handleTafsirStop}>
-                        Durdur
-                      </button>
-                    )}
                   </div>
                 </div>
 
