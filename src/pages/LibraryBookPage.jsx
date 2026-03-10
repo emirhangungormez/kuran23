@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
@@ -19,14 +19,10 @@ import './TefsirlerPage.css'
 
 export default function LibraryBookPage() {
   const { bookId } = useParams()
-  const [activeDesign, setActiveDesign] = useState('sectioned')
   const [activeScope, setActiveScope] = useState('verse')
   const [activeSurahId, setActiveSurahId] = useState(1)
   const [activeAyahNo, setActiveAyahNo] = useState(1)
-  const [pageIndex, setPageIndex] = useState(0)
-  const [activeSectionIndex, setActiveSectionIndex] = useState(0)
-  const [dragStartX, setDragStartX] = useState(null)
-  const [dragOffset, setDragOffset] = useState(0)
+  const [expandedSurahIds, setExpandedSurahIds] = useState([])
 
   const book = useMemo(() => getBookById(bookId), [bookId])
   const isTafsirBook = book?.category === 'tefsir'
@@ -87,23 +83,19 @@ export default function LibraryBookPage() {
   )
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
-  const pages = useMemo(
+  const displaySections = useMemo(
     () => (sections.length ? sections : [{ title: '', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
     [sections]
   )
-  const sidebarItems = useMemo(() => {
-    if (effectiveScope === 'verse') {
-      return availableAyahs.map((ayah) => ({
-        id: `ayet-${ayah}`,
-        label: `${ayah}. ayet`,
-        ayahNo: ayah
-      }))
-    }
-
-    return pages
-      .map((page, index) => ({ id: `bolum-${index + 1}`, label: page.title, index }))
-      .filter((item) => item.label)
-  }, [availableAyahs, effectiveScope, pages])
+  const surahNavigationItems = useMemo(
+    () =>
+      availableSurahIds.map((surahId) => ({
+        surahId,
+        label: getSurahTitle(surahId),
+        ayahs: getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, surahId)
+      })),
+    [availableSurahIds, book?.id, book?.sourceId, manifest]
+  )
   const currentReferenceLabel = useMemo(() => {
     if (effectiveScope === 'surah') return getSurahTitle(resolvedSurahId)
     return `${getSurahTitle(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
@@ -146,70 +138,8 @@ export default function LibraryBookPage() {
     }
   }, [effectiveScope, nextSurahId])
 
-  const boundedPageIndex = Math.max(0, Math.min(pageIndex, pages.length - 1))
-  const currentPage = pages[boundedPageIndex]
-  const prevPage = pages[boundedPageIndex - 1] || null
-  const canGoPrev = boundedPageIndex > 0
-  const canGoNext = boundedPageIndex < pages.length - 1
-
-  useEffect(() => {
-    if (activeDesign !== 'sectioned') return
-
-    if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return
-
-    const sectionNodes = Array.from(document.querySelectorAll('.tefsir-section-card[data-section-index]'))
-    if (!sectionNodes.length) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-
-        if (!visibleEntries.length) return
-
-        const index = Number(visibleEntries[0].target.getAttribute('data-section-index') || 0)
-        if (Number.isFinite(index)) setActiveSectionIndex(index)
-      },
-      {
-        rootMargin: '-12% 0px -70% 0px',
-        threshold: [0.15, 0.35, 0.6]
-      }
-    )
-
-    sectionNodes.forEach((node) => observer.observe(node))
-    return () => observer.disconnect()
-  }, [activeDesign, boundedPageIndex, pages])
-
-  const handlePointerDown = (event) => {
-    setDragStartX(event.clientX)
-    setDragOffset(0)
-    event.currentTarget.setPointerCapture?.(event.pointerId)
-  }
-
-  const handlePointerMove = (event) => {
-    if (dragStartX === null) return
-    const delta = event.clientX - dragStartX
-    setDragOffset(Math.max(-220, Math.min(220, delta)))
-  }
-
-  const handlePointerUp = (event) => {
-    if (dragStartX === null) return
-    if (dragOffset <= -90 && canGoNext) setPageIndex((value) => Math.min(value + 1, pages.length - 1))
-    if (dragOffset >= 90 && canGoPrev) setPageIndex((value) => Math.max(value - 1, 0))
-    setDragStartX(null)
-    setDragOffset(0)
-    event.currentTarget.releasePointerCapture?.(event.pointerId)
-  }
-
   const resetReaderPosition = () => {
-    setPageIndex(0)
-    setActiveSectionIndex(0)
-  }
-
-  const handleDesignChange = (event) => {
-    setActiveDesign(event.target.value)
-    resetReaderPosition()
+    window.scrollTo?.({ top: 0, behavior: 'smooth' })
   }
 
   const handleScopeChange = (event) => {
@@ -218,51 +148,50 @@ export default function LibraryBookPage() {
   }
 
   const handleSurahChange = (event) => {
-    setActiveSurahId(Number(event.target.value))
+    const surahId = Number(event.target.value)
+    setActiveSurahId(surahId)
+    setExpandedSurahIds((value) => (value.includes(surahId) ? value : [...value, surahId]))
     resetReaderPosition()
   }
 
-  const handleAyahChange = (event) => {
-    setActiveAyahNo(Number(event.target.value))
+  const handleSurahSelect = (surahId) => {
+    setActiveSurahId(surahId)
+    setExpandedSurahIds((value) => (value.includes(surahId) ? value : [...value, surahId]))
     resetReaderPosition()
   }
 
-  const handleSidebarItemClick = (item) => {
-    if (effectiveScope === 'verse' && item.ayahNo) {
-      setActiveAyahNo(item.ayahNo)
-      resetReaderPosition()
-      window.scrollTo?.({ top: 0, behavior: 'smooth' })
-      return
-    }
+  const handleAyahSelect = (surahId, ayahNo) => {
+    setActiveSurahId(surahId)
+    setActiveAyahNo(ayahNo)
+    setExpandedSurahIds((value) => (value.includes(surahId) ? value : [...value, surahId]))
+    resetReaderPosition()
+  }
 
-    if (activeDesign === 'flip') {
-      setPageIndex(item.index)
-      return
-    }
-
-    setActiveSectionIndex(item.index)
-    const sectionElement = document.getElementById(`bolum-${item.index + 1}`)
-    sectionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const toggleSurahExpansion = (surahId) => {
+    setExpandedSurahIds((value) =>
+      value.includes(surahId) ? value.filter((id) => id !== surahId) : [...value, surahId]
+    )
   }
 
   const handleReaderAdvance = () => {
     if (effectiveScope === 'verse' && nextVerseTarget) {
       setActiveSurahId(nextVerseTarget.surahId)
       setActiveAyahNo(nextVerseTarget.ayahNo)
+      setExpandedSurahIds((value) =>
+        value.includes(nextVerseTarget.surahId) ? value : [...value, nextVerseTarget.surahId]
+      )
       resetReaderPosition()
-      window.scrollTo?.({ top: 0, behavior: 'smooth' })
       return
     }
 
     if (effectiveScope === 'surah' && nextSurahTarget) {
       setActiveSurahId(nextSurahTarget.surahId)
+      setExpandedSurahIds((value) =>
+        value.includes(nextSurahTarget.surahId) ? value : [...value, nextSurahTarget.surahId]
+      )
       resetReaderPosition()
-      window.scrollTo?.({ top: 0, behavior: 'smooth' })
     }
   }
-
-  const dragRatio = Math.max(-1, Math.min(1, dragOffset / 220))
-  const rightPageTransform = `translateX(${dragOffset}px) rotateY(${dragRatio * -52}deg)`
   const isReaderLoading = isManifestLoading || isSurahLoading
   const readerErrorMessage = manifestError
     ? 'Kütüphane manifesti yüklenemedi.'
@@ -302,13 +231,6 @@ export default function LibraryBookPage() {
 
                 <div className="reader-sidebar-block reader-sidebar-controls">
                   <label>
-                    Mod
-                    <select value={activeDesign} onChange={handleDesignChange}>
-                      <option value="sectioned">Bölüm bölüm</option>
-                      <option value="flip">Sayfa çevirme</option>
-                    </select>
-                  </label>
-                  <label>
                     Görünüm
                     <select value={effectiveScope} onChange={handleScopeChange}>
                       <option value="verse">Ayet bazlı</option>
@@ -323,30 +245,54 @@ export default function LibraryBookPage() {
                       ))}
                     </select>
                   </label>
-                  {effectiveScope === 'verse' && (
-                    <label>
-                      Ayet
-                      <select value={resolvedAyahNo} onChange={handleAyahChange}>
-                        {availableAyahs.map((ayah) => (
-                          <option key={ayah} value={ayah}>{ayah}. ayet</option>
-                        ))}
-                      </select>
-                    </label>
-                  )}
                 </div>
 
                 <div className="reader-sidebar-block">
-                  <p className="reader-sidebar-title">{effectiveScope === 'verse' ? 'Ayetler' : 'İçindekiler'}</p>
+                  <p className="reader-sidebar-title">İçindekiler</p>
                   <div className="reader-sidebar-sections">
-                    {sidebarItems.map((item) => (
-                      <button
-                        key={item.id}
-                        className={effectiveScope === 'verse' ? (resolvedAyahNo === item.ayahNo ? 'active' : '') : (activeSectionIndex === item.index ? 'active' : '')}
-                        onClick={() => handleSidebarItemClick(item)}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
+                    {surahNavigationItems.map((item) => {
+                      const isActiveSurah = Number(resolvedSurahId) === Number(item.surahId)
+                      const isExpanded = effectiveScope === 'verse' && (isActiveSurah || expandedSurahIds.includes(item.surahId))
+
+                      return (
+                        <div key={item.surahId} className={`reader-sidebar-group ${isActiveSurah ? 'active' : ''}`}>
+                          <div className="reader-sidebar-group-row">
+                            <button
+                              type="button"
+                              className={`reader-sidebar-surah ${isActiveSurah ? 'active' : ''}`}
+                              onClick={() => handleSurahSelect(item.surahId)}
+                            >
+                              {item.label}
+                            </button>
+                            {effectiveScope === 'verse' && item.ayahs.length > 0 && (
+                              <button
+                                type="button"
+                                className={`reader-sidebar-toggle ${isExpanded ? 'open' : ''}`}
+                                onClick={() => toggleSurahExpansion(item.surahId)}
+                                aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'göster'}`}
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+                              </button>
+                            )}
+                          </div>
+
+                          {effectiveScope === 'verse' && isExpanded && item.ayahs.length > 0 && (
+                            <div className="reader-sidebar-ayahs">
+                              {item.ayahs.map((ayahNo) => (
+                                <button
+                                  key={`${item.surahId}-${ayahNo}`}
+                                  type="button"
+                                  className={Number(resolvedSurahId) === Number(item.surahId) && Number(resolvedAyahNo) === Number(ayahNo) ? 'active' : ''}
+                                  onClick={() => handleAyahSelect(item.surahId, ayahNo)}
+                                >
+                                  {ayahNo}. ayet
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </aside>
@@ -370,13 +316,6 @@ export default function LibraryBookPage() {
 
                 <div className="reader-toolbar">
                   <label>
-                    Okuma Modu
-                    <select value={activeDesign} onChange={handleDesignChange}>
-                      <option value="sectioned">Bölüm bölüm</option>
-                      <option value="flip">Sayfa çevirme</option>
-                    </select>
-                  </label>
-                  <label>
                     Görünüm
                     <select value={effectiveScope} onChange={handleScopeChange}>
                       <option value="verse">Ayet bazlı</option>
@@ -391,16 +330,6 @@ export default function LibraryBookPage() {
                       ))}
                     </select>
                   </label>
-                  {effectiveScope === 'verse' && (
-                    <label>
-                      Ayet
-                      <select value={resolvedAyahNo} onChange={handleAyahChange}>
-                        {availableAyahs.map((ayah) => (
-                          <option key={ayah} value={ayah}>{ayah}. ayet</option>
-                        ))}
-                      </select>
-                    </label>
-                  )}
                 </div>
 
                 {readerErrorMessage ? (
@@ -423,13 +352,12 @@ export default function LibraryBookPage() {
                     <h2>İçerik bulunamadı</h2>
                     <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
                   </div>
-                ) : activeDesign === 'sectioned' ? (
+                ) : (
                   <section className="tefsir-sections">
-                    {sections.map((section, index) => (
+                    {displaySections.map((section, index) => (
                       <article
                         key={`${section.title}-${index}`}
                         id={`bolum-${index + 1}`}
-                        data-section-index={index}
                         className="tefsir-section-card"
                       >
                         {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
@@ -437,46 +365,6 @@ export default function LibraryBookPage() {
                         <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
                       </article>
                     ))}
-                  </section>
-                ) : (
-                  <section className="tefsir-flip-wrapper">
-                    <div className="flipbook-stage">
-                      <div
-                        className="flipbook"
-                        onPointerDown={handlePointerDown}
-                        onPointerMove={handlePointerMove}
-                        onPointerUp={handlePointerUp}
-                        onPointerCancel={handlePointerUp}
-                      >
-                        <article className="flipbook-page flipbook-left">
-                          {prevPage ? (
-                            <>
-                              {prevPage.title && <h3>{prevPage.title}</h3>}
-                              <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: prevPage.bodyHtml }} />
-                            </>
-                          ) : (
-                            <div className="flipbook-placeholder">Ön sayfa yok</div>
-                          )}
-                        </article>
-
-                        <article
-                          className={`flipbook-page flipbook-right ${dragStartX !== null ? 'dragging' : ''}`}
-                          style={{
-                            transform: rightPageTransform,
-                            transformOrigin: dragOffset < 0 ? 'left center' : 'right center'
-                          }}
-                        >
-                          {currentPage?.title && <h3>{currentPage.title}</h3>}
-                          <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: currentPage?.bodyHtml || '' }} />
-                        </article>
-                      </div>
-                    </div>
-
-                    <div className="flipbook-actions">
-                      <button disabled={!canGoPrev} onClick={() => setPageIndex((value) => Math.max(value - 1, 0))}>Önceki</button>
-                      <span>{boundedPageIndex + 1} / {pages.length}</span>
-                      <button disabled={!canGoNext} onClick={() => setPageIndex((value) => Math.min(value + 1, pages.length - 1))}>Sonraki</button>
-                    </div>
                   </section>
                 )}
 

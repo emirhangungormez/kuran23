@@ -326,13 +326,26 @@
 .reader-sidebar-sections {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
     max-height: 420px;
     overflow: auto;
     padding-right: 4px;
 }
 
-.reader-sidebar-sections button {
+.reader-sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.reader-sidebar-group-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reader-sidebar-surah,
+.reader-sidebar-ayahs button {
     min-height: 20px;
     padding: 0;
     border: none;
@@ -345,11 +358,57 @@
     line-height: 1.45;
 }
 
-.reader-sidebar-sections button:hover {
+.reader-sidebar-surah {
+    flex: 1;
+    font-weight: 500;
+}
+
+.reader-sidebar-surah.active {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.reader-sidebar-toggle {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-tertiary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.reader-sidebar-toggle.open svg {
+    transform: rotate(180deg);
+}
+
+.reader-sidebar-toggle svg {
+    transition: transform 0.18s var(--ease);
+}
+
+.reader-sidebar-surah:hover,
+.reader-sidebar-ayahs button:hover,
+.reader-sidebar-toggle:hover {
     color: var(--text-primary);
 }
 
-.reader-sidebar-sections button.active {
+.reader-sidebar-ayahs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 14px;
+    border-left: 1px solid var(--separator-light);
+}
+
+.reader-sidebar-ayahs button {
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+.reader-sidebar-ayahs button.active {
     color: var(--text-primary);
     font-weight: 700;
 }
