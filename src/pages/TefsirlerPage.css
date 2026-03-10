@@ -556,6 +556,43 @@
     font-weight: 600;
 }
 
+.reader-next-nav {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--separator-light);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reader-next-nav-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.reader-next-nav-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+}
+
+.reader-next-nav-link strong {
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
 .meal-reader-placeholder {
     border: none;
     padding: 6px 0 2px;

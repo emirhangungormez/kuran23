@@ -96,9 +96,46 @@ export default function LibraryBookPage() {
     [pages]
   )
   const currentReferenceLabel = useMemo(() => {
-    if (activeScope === 'surah') return getSurahTitle(resolvedSurahId)
+    if (effectiveScope === 'surah') return getSurahTitle(resolvedSurahId)
     return `${getSurahTitle(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
-  }, [activeScope, resolvedAyahNo, resolvedSurahId])
+  }, [effectiveScope, resolvedAyahNo, resolvedSurahId])
+  const currentSurahIndex = useMemo(
+    () => availableSurahIds.findIndex((surahId) => Number(surahId) === Number(resolvedSurahId)),
+    [availableSurahIds, resolvedSurahId]
+  )
+  const nextSurahId = currentSurahIndex >= 0 ? availableSurahIds[currentSurahIndex + 1] || null : null
+  const nextSurahAyahs = useMemo(
+    () => (nextSurahId ? getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, nextSurahId) : []),
+    [book?.id, book?.sourceId, manifest, nextSurahId]
+  )
+  const nextVerseTarget = useMemo(() => {
+    if (effectiveScope !== 'verse') return null
+
+    const currentAyahIndex = availableAyahs.findIndex((ayah) => Number(ayah) === Number(resolvedAyahNo))
+    if (currentAyahIndex >= 0 && currentAyahIndex < availableAyahs.length - 1) {
+      const ayahNo = availableAyahs[currentAyahIndex + 1]
+      return {
+        surahId: resolvedSurahId,
+        ayahNo,
+        label: `${getSurahTitle(resolvedSurahId)} · ${ayahNo}. ayet`
+      }
+    }
+
+    if (!nextSurahId || !nextSurahAyahs.length) return null
+
+    return {
+      surahId: nextSurahId,
+      ayahNo: nextSurahAyahs[0],
+      label: `${getSurahTitle(nextSurahId)} · ${nextSurahAyahs[0]}. ayet`
+    }
+  }, [availableAyahs, effectiveScope, nextSurahAyahs, nextSurahId, resolvedAyahNo, resolvedSurahId])
+  const nextSurahTarget = useMemo(() => {
+    if (effectiveScope !== 'surah' || !nextSurahId) return null
+    return {
+      surahId: nextSurahId,
+      label: getSurahTitle(nextSurahId)
+    }
+  }, [effectiveScope, nextSurahId])
 
   const boundedPageIndex = Math.max(0, Math.min(pageIndex, pages.length - 1))
   const currentPage = pages[boundedPageIndex]
@@ -190,6 +227,22 @@ export default function LibraryBookPage() {
     setActiveSectionIndex(index)
     const sectionElement = document.getElementById(`bolum-${index + 1}`)
     sectionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleReaderAdvance = () => {
+    if (effectiveScope === 'verse' && nextVerseTarget) {
+      setActiveSurahId(nextVerseTarget.surahId)
+      setActiveAyahNo(nextVerseTarget.ayahNo)
+      resetReaderPosition()
+      window.scrollTo?.({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    if (effectiveScope === 'surah' && nextSurahTarget) {
+      setActiveSurahId(nextSurahTarget.surahId)
+      resetReaderPosition()
+      window.scrollTo?.({ top: 0, behavior: 'smooth' })
+    }
   }
 
   const dragRatio = Math.max(-1, Math.min(1, dragOffset / 220))
@@ -409,6 +462,18 @@ export default function LibraryBookPage() {
                       <button disabled={!canGoNext} onClick={() => setPageIndex((value) => Math.min(value + 1, pages.length - 1))}>Sonraki</button>
                     </div>
                   </section>
+                )}
+
+                {(nextVerseTarget || nextSurahTarget) && (
+                  <div className="reader-next-nav">
+                    <span className="reader-next-nav-label">
+                      {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sûre'}
+                    </span>
+                    <button type="button" className="reader-next-nav-link" onClick={handleReaderAdvance}>
+                      <strong>{effectiveScope === 'verse' ? nextVerseTarget?.label : nextSurahTarget?.label}</strong>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M13 5l7 7-7 7" /></svg>
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
