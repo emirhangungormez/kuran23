@@ -73,6 +73,7 @@ export default function ProfilePage() {
     const transcriptionScalePercent = getRangePercent(transcriptionScale, 0.45, 1.1)
     const tafsirMealAuthorId = Number(settings.tafsirVerseAuthorId || settings.defaultAuthorId || 77)
     const tafsirVoiceRate = Number(settings.tafsirVoiceRate || 1)
+    const tafsirTtsEngine = settings.tafsirTtsEngine === 'system' ? 'system' : 'edge'
     const settingsVerseArabic = normalizeArabicDisplayText(
         String(settingsVerse?.verse || settingsVerse?.verse_simplified || 'قُلْ هُوَ اللَّهُ أَحَدٌ').replace(/<[^>]+>/g, '')
     )
@@ -465,12 +466,24 @@ export default function ProfilePage() {
                                         <div className="tafsir-meal-setting-copy">
                                             <h4>Tefsir Seslendirmesi</h4>
                                             <p>
-                                                Tefsir dinlemede otomatik olarak uyumlu erkek Türkçe sistem sesi tercih edilir. Buradan yalnızca okuma hızını ayarlayabilirsiniz.
+                                                Tefsir dinlemede ses motorunu seçebilirsiniz. Beğenmediğiniz durumda anında diğer motora geçebilirsiniz.
                                             </p>
                                         </div>
                                         <div className="tafsir-voice-settings">
                                             <div className="tafsir-voice-note">
-                                                Erkek Türkçe sistem sesi otomatik seçilir.
+                                                Kadın ses kullanılmaz. Uygun erkek Türkçe ses otomatik seçilir.
+                                            </div>
+
+                                            <div className="setting-item compact">
+                                                <label>Tefsir Ses Motoru</label>
+                                                <select
+                                                    className="modern-input"
+                                                    value={tafsirTtsEngine}
+                                                    onChange={(e) => updateSettings({ tafsirTtsEngine: e.target.value === 'system' ? 'system' : 'edge' })}
+                                                >
+                                                    <option value="edge">Edge Neural (Daha doğal)</option>
+                                                    <option value="system">Sistem Sesi (Cihaz sesi)</option>
+                                                </select>
                                             </div>
 
                                             <div className="setting-item compact">

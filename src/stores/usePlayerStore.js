@@ -17,6 +17,7 @@ const DEFAULT_PLAYBACK_SETTINGS = {
     defaultReciterId: 7,
     defaultTurkishReciterId: 1015,
     tafsirVoiceName: '',
+    tafsirTtsEngine: 'edge',
     tafsirVoiceRate: 1,
     textMode: 'uthmani',
     showTajweed: false
@@ -176,6 +177,11 @@ function normalizeAudioUrl(url) {
 
 function resolveTafsirSpeechRate(settings) {
     return Math.min(1.5, Math.max(0.7, Number(settings?.tafsirVoiceRate) || 1))
+}
+
+function resolveTafsirTtsEngine(settings) {
+    const raw = String(settings?.tafsirTtsEngine || '').trim().toLowerCase()
+    return raw === 'system' ? 'system' : 'edge'
 }
 
 const usePlayerStore = create((set, get) => ({
@@ -338,6 +344,7 @@ const usePlayerStore = create((set, get) => ({
 
         const resolvedSettings = resolvePlaybackSettings(settings)
         const rate = resolveTafsirSpeechRate(resolvedSettings)
+        const selectedEngine = resolveTafsirTtsEngine(resolvedSettings)
         const fallbackToSpeech = () => {
             const synthesis = getSpeechSynthesisEngine()
             if (!synthesis) {
@@ -396,7 +403,7 @@ const usePlayerStore = create((set, get) => ({
             document.dispatchEvent(new CustomEvent('playerVisible'))
         }
 
-        if (isEdgeTafsirTtsSupported()) {
+        if (selectedEngine === 'edge' && isEdgeTafsirTtsSupported()) {
             try {
                 const edgeResult = await synthesizeEdgeTafsirAudio(text, { rate })
                 if (edgeResult?.url) {
