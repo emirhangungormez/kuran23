@@ -447,12 +447,29 @@
 
 .reader-sidebar-surah {
     flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
     font-weight: 500;
 }
 
 .reader-sidebar-surah.active {
     color: var(--text-primary);
     font-weight: 700;
+}
+
+.reader-sidebar-surah-no {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.reader-sidebar-surah.active .reader-sidebar-surah-no {
+    color: var(--text-secondary);
 }
 
 .reader-sidebar-toggle {

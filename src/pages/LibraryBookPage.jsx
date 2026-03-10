@@ -112,7 +112,8 @@ export default function LibraryBookPage() {
     () =>
       availableSurahIds.map((surahId) => ({
         surahId,
-        label: getSurahTitle(surahId),
+        label: getSurahTitle(surahId).replace(/\s*\(\d+\)$/, ''),
+        numberLabel: `${surahId}.`,
         ayahs: getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, surahId)
       })),
     [availableSurahIds, book?.id, book?.sourceId, manifest]
@@ -308,7 +309,8 @@ export default function LibraryBookPage() {
                               className={`reader-sidebar-surah ${isActiveSurah ? 'active' : ''}`}
                               onClick={() => handleSurahSelect(item.surahId)}
                             >
-                              {item.label}
+                              <span>{item.label}</span>
+                              <span className="reader-sidebar-surah-no">{item.numberLabel}</span>
                             </button>
                             {item.ayahs.length > 0 && (
                               <button
