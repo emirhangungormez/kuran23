@@ -17,6 +17,7 @@ const GUEST_PROFILE_DEFAULTS = {
 function createDefaultSettings() {
     return {
         defaultAuthorId: 77, // Diyanet Isleri
+        tafsirVerseAuthorId: 77, // Tefsir icindeki ayet meali
         coreAuthorIds: [77, 21], // Ana mealler
         selectedAuthorIds: DEFAULT_ACTIVE_IDS, // Diger aktif mealler
         defaultReciterId: 7, // Mishari Rashid al-`Afasy
@@ -44,8 +45,10 @@ function createDefaultSettings() {
 function normalizeSettingsPayload(defaults, payload = {}) {
     const merged = { ...defaults, ...(payload && typeof payload === 'object' ? payload : {}) }
     const resolvedTextMode = normalizeTextMode(merged.textMode, Boolean(merged.showTajweed))
+    const resolvedTafsirVerseAuthorId = Number(merged.tafsirVerseAuthorId || merged.defaultAuthorId || defaults.tafsirVerseAuthorId)
     return {
         ...merged,
+        tafsirVerseAuthorId: resolvedTafsirVerseAuthorId,
         textMode: resolvedTextMode,
         showTajweed: modeToLegacyTajweed(resolvedTextMode)
     }

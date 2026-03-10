@@ -568,7 +568,7 @@
 
 .reader-verse-meta strong {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     color: color-mix(in srgb, var(--accent) 68%, var(--text-primary));
 }
 
@@ -578,6 +578,7 @@
     line-height: 2.05;
     color: color-mix(in srgb, var(--accent) 84%, var(--text-primary));
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    font-weight: 700;
 }
 
 .reader-verse-arabic tajweed,
@@ -590,12 +591,14 @@
     line-height: 1.75;
     color: color-mix(in srgb, var(--accent) 58%, var(--text-secondary));
     font-style: italic;
+    font-weight: 600;
 }
 
 .reader-verse-translation {
     font-size: 18px;
     line-height: 1.8;
     color: color-mix(in srgb, var(--accent) 74%, var(--text-primary));
+    font-weight: 600;
 }
 
 .reader-verse-card-loading p {

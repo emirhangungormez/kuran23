@@ -72,6 +72,7 @@ export default function ProfilePage() {
     const arabicScalePercent = getRangePercent(arabicScale, 0.9, 2.2)
     const translationScalePercent = getRangePercent(translationScale, 0.8, 1.8)
     const transcriptionScalePercent = getRangePercent(transcriptionScale, 0.45, 1.1)
+    const tafsirMealAuthorId = Number(settings.tafsirVerseAuthorId || settings.defaultAuthorId || 77)
     const settingsVerseArabic = normalizeArabicDisplayText(
         String(settingsVerse?.verse || settingsVerse?.verse_simplified || 'قُلْ هُوَ اللَّهُ أَحَدٌ').replace(/<[^>]+>/g, '')
     )
@@ -437,6 +438,27 @@ export default function ProfilePage() {
                                                 <polyline points="6 9 12 15 18 9" />
                                             </svg>
                                         </button>
+                                    </div>
+
+                                    <div className="tafsir-meal-setting">
+                                        <div className="tafsir-meal-setting-copy">
+                                            <h4>Tefsir İçi Ayet Meali</h4>
+                                            <p>
+                                                Tefsir ekranındaki Arapça, okunuş ve meal ile birlikte görünen ayetlerde kullanılacak çeviriyi seçin.
+                                            </p>
+                                        </div>
+                                        <select
+                                            className="modern-input"
+                                            value={tafsirMealAuthorId}
+                                            onChange={(e) => updateSettings({ tafsirVerseAuthorId: parseInt(e.target.value, 10) })}
+                                            disabled={!availableTranslations.length}
+                                        >
+                                            {availableTranslations.map((translation) => (
+                                                <option key={translation.id} value={translation.id}>
+                                                    {translation.name}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
 
                                     {exampleVerse && (

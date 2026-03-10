@@ -88,6 +88,7 @@ export default function LibraryBookPage() {
   )
   const canUseVerseScope = availableAyahs.length > 0
   const effectiveScope = canUseVerseScope ? activeScope : 'surah'
+  const tafsirMealAuthorId = Number(settings.tafsirVerseAuthorId || settings.defaultAuthorId || 77)
   const resolvedAyahNo = useMemo(() => {
     if (!availableAyahs.length) return 1
     return availableAyahs.includes(Number(activeAyahNo)) ? Number(activeAyahNo) : availableAyahs[0]
@@ -108,8 +109,8 @@ export default function LibraryBookPage() {
     data: selectedVerse,
     isLoading: isVerseLoading
   } = useQuery({
-    queryKey: ['library-reader-verse', resolvedSurahId, resolvedAyahNo, settings.defaultAuthorId],
-    queryFn: () => getVerse(resolvedSurahId, resolvedAyahNo, settings.defaultAuthorId),
+    queryKey: ['library-reader-verse', resolvedSurahId, resolvedAyahNo, tafsirMealAuthorId],
+    queryFn: () => getVerse(resolvedSurahId, resolvedAyahNo, tafsirMealAuthorId),
     enabled: Boolean(isTafsirBook && effectiveScope === 'verse' && resolvedSurahId && resolvedAyahNo),
     staleTime: 1000 * 60 * 60 * 12
   })
@@ -118,8 +119,8 @@ export default function LibraryBookPage() {
     data: selectedSurah,
     isLoading: isSelectedSurahLoading
   } = useQuery({
-    queryKey: ['library-reader-surah', resolvedSurahId, settings.defaultAuthorId],
-    queryFn: () => getSurah(resolvedSurahId, settings.defaultAuthorId),
+    queryKey: ['library-reader-surah', resolvedSurahId, tafsirMealAuthorId],
+    queryFn: () => getSurah(resolvedSurahId, tafsirMealAuthorId),
     enabled: Boolean(isTafsirBook && effectiveScope === 'surah' && resolvedSurahId),
     staleTime: 1000 * 60 * 60 * 12
   })

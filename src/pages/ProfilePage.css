@@ -850,6 +850,37 @@
     margin-top: 12px;
 }
 
+.tafsir-meal-setting {
+    margin-top: 12px;
+    margin-bottom: 14px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--separator);
+    background: var(--fill);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tafsir-meal-setting-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tafsir-meal-setting-copy h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.tafsir-meal-setting-copy p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
 .verse-preview-card {
     margin-top: 12px;
     margin-bottom: 14px;
