@@ -2,12 +2,22 @@ import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
+import { useSettings } from '../contexts/SettingsContext'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
+import { normalizeArabicDisplayText } from '../utils/textEncoding'
+import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
+import {
+  getArabicFontFamily,
+  getArabicFontSize,
+  getTranslationFontSize,
+  getTranscriptionFontSize
+} from '../utils/typography'
 import {
   getBookById,
   getSurahTitle,
   splitIntoSections
 } from '../data/libraryBooks'
+import { getVerse } from '../services/api'
 import {
   getAyahNumbersFromManifest,
   getRawTafsirHtml,
@@ -23,6 +33,7 @@ export default function LibraryBookPage() {
   const [activeSurahId, setActiveSurahId] = useState(1)
   const [activeAyahNo, setActiveAyahNo] = useState(1)
   const [expandedSurahIds, setExpandedSurahIds] = useState(null)
+  const { settings } = useSettings()
 
   const book = useMemo(() => getBookById(bookId), [bookId])
   const isTafsirBook = book?.category === 'tefsir'
@@ -64,6 +75,16 @@ export default function LibraryBookPage() {
     queryKey: ['library-surah', book?.sourceId || book?.id, resolvedSurahId],
     queryFn: () => loadLibrarySurah({ bookId: book?.sourceId || book?.id, surahId: resolvedSurahId }),
     enabled: Boolean(isTafsirBook && (book?.sourceId || book?.id) && resolvedSurahId && availableSurahIds.length),
+    staleTime: 1000 * 60 * 60 * 12
+  })
+
+  const {
+    data: selectedVerse,
+    isLoading: isVerseLoading
+  } = useQuery({
+    queryKey: ['library-reader-verse', resolvedSurahId, resolvedAyahNo, settings.defaultAuthorId],
+    queryFn: () => getVerse(resolvedSurahId, resolvedAyahNo, settings.defaultAuthorId),
+    enabled: Boolean(isTafsirBook && effectiveScope === 'verse' && resolvedSurahId && resolvedAyahNo),
     staleTime: 1000 * 60 * 60 * 12
   })
 
@@ -141,6 +162,15 @@ export default function LibraryBookPage() {
     if (expandedSurahIds !== null) return expandedSurahIds
     return effectiveScope === 'verse' ? [resolvedSurahId] : []
   }, [effectiveScope, expandedSurahIds, resolvedSurahId])
+  const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
+  const arabicFontFamily = getArabicFontFamily(settings.arabicFont)
+  const arabicFontSize = getArabicFontSize(settings)
+  const transcriptionFontSize = getTranscriptionFontSize(settings)
+  const translationFontSize = getTranslationFontSize(settings)
+  const selectedVerseArabicHtml = useMemo(
+    () => normalizeArabicDisplayText(getVerseTextByMode(selectedVerse, textMode)),
+    [selectedVerse, textMode]
+  )
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
@@ -382,19 +412,52 @@ export default function LibraryBookPage() {
                     <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
                   </div>
                 ) : (
-                  <section className="tefsir-sections">
-                    {displaySections.map((section, index) => (
-                      <article
-                        key={`${section.title}-${index}`}
-                        id={`bolum-${index + 1}`}
-                        className="tefsir-section-card"
-                      >
-                        {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
-                        {section.title && <h3>{section.title}</h3>}
-                        <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
-                      </article>
-                    ))}
-                  </section>
+                  <>
+                    {effectiveScope === 'verse' && (
+                      <section className="reader-verse-panel">
+                        {isVerseLoading ? (
+                          <div className="reader-verse-card reader-verse-card-loading">
+                            <span className="reader-verse-label">Ayet Metni</span>
+                            <p>Ayet yükleniyor...</p>
+                          </div>
+                        ) : selectedVerse ? (
+                          <div className="reader-verse-card">
+                            <div className="reader-verse-meta">
+                              <span className="reader-verse-label">Ayet Metni</span>
+                              <strong>{getSurahTitle(resolvedSurahId)} · {resolvedAyahNo}. ayet</strong>
+                            </div>
+                            <div
+                              className="reader-verse-arabic"
+                              style={{ fontSize: `${arabicFontSize}px`, fontFamily: arabicFontFamily }}
+                              dangerouslySetInnerHTML={{ __html: selectedVerseArabicHtml }}
+                            />
+                            {selectedVerse.transcription && (
+                              <p className="reader-verse-transcription" style={{ fontSize: `${transcriptionFontSize}px` }}>
+                                {selectedVerse.transcription}
+                              </p>
+                            )}
+                            <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
+                              {selectedVerse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
+                            </p>
+                          </div>
+                        ) : null}
+                      </section>
+                    )}
+
+                    <section className="tefsir-sections">
+                      {displaySections.map((section, index) => (
+                        <article
+                          key={`${section.title}-${index}`}
+                          id={`bolum-${index + 1}`}
+                          className="tefsir-section-card"
+                        >
+                          {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
+                          {section.title && <h3>{section.title}</h3>}
+                          <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
+                        </article>
+                      ))}
+                    </section>
+                  </>
                 )}
 
                 {(nextVerseTarget || nextSurahTarget) && (

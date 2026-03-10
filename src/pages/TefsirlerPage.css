@@ -522,6 +522,69 @@
     margin-bottom: 0;
 }
 
+.reader-verse-panel {
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--separator-light);
+    margin-bottom: 12px;
+}
+
+.reader-verse-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.reader-verse-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.reader-verse-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.reader-verse-meta strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.reader-verse-arabic {
+    direction: rtl;
+    text-align: right;
+    line-height: 2.05;
+    color: var(--text-primary);
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+}
+
+.reader-verse-arabic tajweed,
+.reader-verse-arabic .end {
+    font-family: inherit;
+}
+
+.reader-verse-transcription {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.reader-verse-translation {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.reader-verse-card-loading p {
+    color: var(--text-secondary);
+}
+
 .tefsir-sections {
     display: flex;
     flex-direction: column;
@@ -814,6 +877,12 @@
 
     .reader-head p {
         font-size: 15px;
+    }
+
+    .reader-verse-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
     }
 
     .reader-kicker {
