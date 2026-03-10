@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
@@ -25,6 +25,8 @@ import {
   loadLibraryManifest,
   loadLibrarySurah
 } from '../services/libraryContent'
+import { isTafsirSpeechSupported, stripHtmlForSpeech } from '../services/tafsirSpeech'
+import usePlayerStore from '../stores/usePlayerStore'
 import './TefsirlerPage.css'
 
 function getPlainSurahTitleLabel(surahId) {
@@ -53,6 +55,13 @@ function getAyahMarkerNumber(node) {
   return null
 }
 
+function buildSpeechSegmentText(parts) {
+  return parts
+    .map((part) => String(part || '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .join('. ')
+}
+
 export default function LibraryBookPage() {
   const { bookId } = useParams()
   const [activeScope, setActiveScope] = useState('verse')
@@ -60,6 +69,13 @@ export default function LibraryBookPage() {
   const [activeAyahNo, setActiveAyahNo] = useState(1)
   const [expandedSurahIds, setExpandedSurahIds] = useState(null)
   const { settings } = useSettings()
+  const playerMode = usePlayerStore((state) => state.mode)
+  const playerMeta = usePlayerStore((state) => state.meta)
+  const playerTrackIndex = usePlayerStore((state) => state.currentTrackIndex)
+  const playerIsPlaying = usePlayerStore((state) => state.isPlaying)
+  const playTafsirPlaylist = usePlayerStore((state) => state.playTafsirPlaylist)
+  const stopPlayback = usePlayerStore((state) => state.stopPlayback)
+  const togglePlay = usePlayerStore((state) => state.togglePlay)
 
   const book = useMemo(() => getBookById(bookId), [bookId])
   const isTafsirBook = book?.category === 'tefsir'
@@ -295,9 +311,95 @@ export default function LibraryBookPage() {
       return []
     }
   }, [effectiveScope, formattedHtml, selectedSurahVerses])
+  const tafsirSpeechSegments = useMemo(() => {
+    if (!isTafsirBook || !formattedHtml) return []
+
+    if (effectiveScope === 'surah' && surahContentBlocks.length > 0) {
+      return surahContentBlocks
+        .map((block, index) => {
+          const spokenBody = stripHtmlForSpeech(block.bodyHtml)
+          if (!spokenBody) return null
+
+          const label = block.ayahNo
+            ? `${getPlainSurahTitleLabel(resolvedSurahId)} · ${block.ayahNo}. ayet`
+            : `${getPlainSurahTitleLabel(resolvedSurahId)} · giriş`
+
+          return {
+            text: buildSpeechSegmentText([label, spokenBody]),
+            title: label,
+            shortLabel: block.ayahNo ? `${block.ayahNo}. ayet` : 'Giriş',
+            ayahNo: block.ayahNo || 0,
+            sectionIndex: index
+          }
+        })
+        .filter(Boolean)
+    }
+
+    return displaySections
+      .map((section, index) => {
+        const spokenBody = stripHtmlForSpeech(section.bodyHtml)
+        if (!spokenBody) return null
+
+        const referenceLabel = `${getPlainSurahTitleLabel(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
+        const title = section.title || referenceLabel
+
+        return {
+          text: buildSpeechSegmentText([referenceLabel, section.title, spokenBody]),
+          title,
+          shortLabel: section.title || `Bölüm ${index + 1}`,
+          ayahNo: resolvedAyahNo,
+          sectionIndex: index
+        }
+      })
+      .filter(Boolean)
+  }, [displaySections, effectiveScope, formattedHtml, isTafsirBook, resolvedAyahNo, resolvedSurahId, surahContentBlocks])
+  const isActiveTafsirPlayback = useMemo(() => (
+    playerMode === 'tts'
+    && playerMeta?.context === 'tafsir'
+    && playerMeta?.bookId === (book?.id || '')
+    && Number(playerMeta?.surahId || 0) === Number(resolvedSurahId)
+    && playerMeta?.tafsirScope === effectiveScope
+    && (effectiveScope !== 'verse' || Number(playerMeta?.ayahNo || 0) === Number(resolvedAyahNo))
+  ), [book?.id, effectiveScope, playerMeta, playerMode, resolvedAyahNo, resolvedSurahId])
+  const currentTafsirSegmentIndex = isActiveTafsirPlayback ? playerTrackIndex : -1
+  const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
+  const isTafsirSpeechPaused = isActiveTafsirPlayback && !playerIsPlaying
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleTafsirListen = () => {
+    if (!canPlayTafsirSpeech) return
+
+    if (isActiveTafsirPlayback) {
+      togglePlay()
+      return
+    }
+
+    playTafsirPlaylist(
+      tafsirSpeechSegments,
+      0,
+      {
+        surahNameAr: book.titleAr,
+        surahNameTr: currentReferenceLabel,
+        surahNameEn: book.titleTr,
+        surahType: effectiveScope === 'verse' ? 'Ayet Tefsiri' : 'Süre Tefsiri',
+        ayahCount: tafsirSpeechSegments.length,
+        playingType: 'turkish',
+        link: `/kutuphane/${book.id}`,
+        surahId: resolvedSurahId,
+        ayahNo: 0,
+        context: 'tafsir',
+        bookId: book.id,
+        tafsirScope: effectiveScope
+      },
+      settings
+    )
+  }
+
+  const handleTafsirStop = () => {
+    stopPlayback({ resetMode: true })
   }
 
   const handleScopeChange = (scope) => {
@@ -376,6 +478,25 @@ export default function LibraryBookPage() {
       resetReaderPosition()
     }
   }
+
+  useEffect(() => {
+    if (playerMode !== 'tts' || playerMeta?.context !== 'tafsir') return
+    if (playerMeta?.bookId !== book?.id) return
+
+    const hasScopeChanged = playerMeta?.tafsirScope !== effectiveScope
+    const hasSurahChanged = Number(playerMeta?.surahId || 0) !== Number(resolvedSurahId)
+    const hasAyahChanged = effectiveScope === 'verse' && Number(playerMeta?.ayahNo || 0) !== Number(resolvedAyahNo)
+
+    if (hasScopeChanged || hasSurahChanged || hasAyahChanged) {
+      stopPlayback({ resetMode: true })
+    }
+  }, [book?.id, effectiveScope, playerMeta, playerMode, resolvedAyahNo, resolvedSurahId, stopPlayback])
+
+  useEffect(() => {
+    if (!isActiveTafsirPlayback || currentTafsirSegmentIndex < 0) return
+    const activeSection = document.getElementById(`bolum-${currentTafsirSegmentIndex + 1}`)
+    activeSection?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' })
+  }, [currentTafsirSegmentIndex, isActiveTafsirPlayback])
   const isReaderLoading = isManifestLoading || isSurahLoading || (effectiveScope === 'surah' && isSelectedSurahLoading)
   const readerErrorMessage = manifestError
     ? 'Kütüphane manifesti yüklenemedi.'
@@ -509,7 +630,26 @@ export default function LibraryBookPage() {
                     <h2>{book.titleTr}</h2>
                     <p>{book.titleAr}</p>
                   </div>
-                  <small className="reader-kicker">{currentReferenceLabel}</small>
+                  <div className="reader-head-side">
+                    <small className="reader-kicker">{currentReferenceLabel}</small>
+                    <div className="reader-audio-actions">
+                      <button
+                        type="button"
+                        className={`reader-audio-btn ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
+                        onClick={handleTafsirListen}
+                        disabled={!canPlayTafsirSpeech}
+                      >
+                        {isActiveTafsirPlayback
+                          ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
+                          : 'Tefsiri Dinle'}
+                      </button>
+                      {isActiveTafsirPlayback && (
+                        <button type="button" className="reader-audio-btn secondary" onClick={handleTafsirStop}>
+                          Durdur
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="reader-toolbar">
@@ -532,8 +672,25 @@ export default function LibraryBookPage() {
                       className={effectiveScope === 'surah' ? 'active' : ''}
                       onClick={() => handleScopeChange('surah')}
                     >
-                      Sûre
+                      S?re
                     </button>
+                  </div>
+                  <div className="reader-audio-actions mobile">
+                    <button
+                      type="button"
+                      className={`reader-audio-btn ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
+                      onClick={handleTafsirListen}
+                      disabled={!canPlayTafsirSpeech}
+                    >
+                      {isActiveTafsirPlayback
+                        ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
+                        : 'Tefsiri Dinle'}
+                    </button>
+                    {isActiveTafsirPlayback && (
+                      <button type="button" className="reader-audio-btn secondary" onClick={handleTafsirStop}>
+                        Durdur
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -601,7 +758,7 @@ export default function LibraryBookPage() {
                             <article
                               key={`surah-block-${block.ayahNo || 'intro'}-${index}`}
                               id={`bolum-${index + 1}`}
-                              className="tefsir-section-card"
+                              className={`tefsir-section-card ${currentTafsirSegmentIndex === index ? 'is-speaking' : ''}`}
                             >
                               {block.verse && (
                                 <div className="reader-inline-verse-card">
@@ -632,7 +789,7 @@ export default function LibraryBookPage() {
                           <article
                             key={`${section.title}-${index}`}
                             id={`bolum-${index + 1}`}
-                            className="tefsir-section-card"
+                            className={`tefsir-section-card ${currentTafsirSegmentIndex === index ? 'is-speaking' : ''}`}
                           >
                             {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
                             {section.title && <h3>{section.title}</h3>}

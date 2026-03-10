@@ -2,6 +2,7 @@
 import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
+import { estimateTafsirSpeechDuration, isTafsirSpeechSupported, resolveTafsirVoice } from '../services/tafsirSpeech'
 import { normalizeTextMode } from '../utils/textMode'
 
 const DEFAULT_PLAYBACK_SETTINGS = {
@@ -9,6 +10,8 @@ const DEFAULT_PLAYBACK_SETTINGS = {
     defaultAuthorId: 77,
     defaultReciterId: 7,
     defaultTurkishReciterId: 1015,
+    tafsirVoiceName: '',
+    tafsirVoiceRate: 1,
     textMode: 'uthmani',
     showTajweed: false
 }
@@ -65,6 +68,30 @@ const globalAudio = new Audio()
 globalAudio.preload = 'auto'
 let lastPageAudioRecoveryKey = ''
 
+function getSpeechSynthesisEngine() {
+    if (!isTafsirSpeechSupported()) return null
+    return window.speechSynthesis
+}
+
+function stopSpeechPlayback() {
+    const synthesis = getSpeechSynthesisEngine()
+    if (!synthesis) return
+    synthesis.cancel()
+}
+
+function pauseSpeechPlayback() {
+    const synthesis = getSpeechSynthesisEngine()
+    if (!synthesis || !synthesis.speaking) return
+    synthesis.pause()
+}
+
+function resumeSpeechPlayback() {
+    const synthesis = getSpeechSynthesisEngine()
+    if (!synthesis || !synthesis.paused) return false
+    synthesis.resume()
+    return true
+}
+
 function safePlayAudio(onFail) {
     globalAudio.muted = false
     const playPromise = globalAudio.play()
@@ -97,6 +124,10 @@ function normalizeAudioUrl(url) {
     return secure
 }
 
+function resolveTafsirSpeechRate(settings) {
+    return Math.min(1.5, Math.max(0.7, Number(settings?.tafsirVoiceRate) || 1))
+}
+
 const usePlayerStore = create((set, get) => ({
     audioRef: { current: globalAudio },
 
@@ -109,7 +140,7 @@ const usePlayerStore = create((set, get) => ({
     isRepeat: false,
 
     // Playlist / Queue
-    mode: 'none', // 'single', 'playlist', 'none'
+    mode: 'none', // 'single', 'playlist', 'tts', 'none'
     playlist: [], // Array of verse objects { audio, ... }
     currentTrackIndex: 0,
     singleSource: null,
@@ -163,9 +194,20 @@ const usePlayerStore = create((set, get) => ({
         return updates;
     }),
     setLoadingNextPage: (loading) => set({ loadingNextPage: loading }),
+    stopPlayback: ({ resetMode = false } = {}) => {
+        globalAudio.pause()
+        stopSpeechPlayback()
+        set((state) => ({
+            isPlaying: false,
+            currentTime: 0,
+            duration: 0,
+            mode: resetMode ? 'none' : state.mode
+        }))
+    },
 
     // Playback Methods
     playSingle: (url, metadata) => {
+        stopSpeechPlayback()
         set({
             mode: 'single',
             singleSource: url,
@@ -187,6 +229,7 @@ const usePlayerStore = create((set, get) => ({
     },
 
     playPlaylist: (tracks, startIndex = 0, metadata) => {
+        stopSpeechPlayback()
         set({
             mode: 'playlist',
             playlist: tracks,
@@ -209,6 +252,7 @@ const usePlayerStore = create((set, get) => ({
     },
 
     loadPlaylist: (tracks, startIndex = 0, metadata) => {
+        stopSpeechPlayback()
         set({
             mode: 'playlist',
             playlist: tracks,
@@ -225,8 +269,119 @@ const usePlayerStore = create((set, get) => ({
         }
     },
 
+    playTafsirTrackAtIndex: (idx, settings) => {
+        const state = get()
+        const synthesis = getSpeechSynthesisEngine()
+        if (!synthesis || idx < 0 || idx >= state.playlist.length) {
+            set({ isPlaying: false })
+            return
+        }
+
+        globalAudio.pause()
+        const track = state.playlist[idx]
+        const text = String(track?.text || '').trim()
+        if (!text) {
+            set({ isPlaying: false })
+            return
+        }
+
+        stopSpeechPlayback()
+
+        const resolvedSettings = resolvePlaybackSettings(settings)
+        const voice = resolveTafsirVoice(resolvedSettings.tafsirVoiceName)
+        const rate = resolveTafsirSpeechRate(resolvedSettings)
+        const duration = estimateTafsirSpeechDuration(text, rate)
+        const utterance = new window.SpeechSynthesisUtterance(text)
+        utterance.lang = voice?.lang || 'tr-TR'
+        utterance.rate = rate
+        utterance.pitch = 1
+        utterance.volume = 1
+        if (voice) utterance.voice = voice
+
+        set({
+            mode: 'tts',
+            currentTrackIndex: idx,
+            currentTime: 0,
+            duration,
+            isPlaying: true
+        })
+
+        utterance.onboundary = (event) => {
+            const activeState = get()
+            if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
+            const progress = Math.max(0, Math.min(1, (event.charIndex || 0) / Math.max(text.length, 1)))
+            activeState.setCurrentTime(duration * progress)
+        }
+
+        utterance.onend = () => {
+            const activeState = get()
+            if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
+
+            activeState.setCurrentTime(duration)
+            if (idx < activeState.playlist.length - 1) {
+                activeState.playTafsirTrackAtIndex(idx + 1, resolvedSettings)
+                return
+            }
+
+            set({ isPlaying: false })
+        }
+
+        utterance.onerror = () => {
+            set({ isPlaying: false })
+        }
+
+        synthesis.speak(utterance)
+        document.dispatchEvent(new CustomEvent('playerVisible'))
+    },
+
+    playTafsirPlaylist: (tracks, startIndex = 0, metadata, settings) => {
+        const safeTracks = Array.isArray(tracks) ? tracks.filter((track) => String(track?.text || '').trim()) : []
+        if (!safeTracks.length) {
+            set({ isPlaying: false })
+            return
+        }
+
+        globalAudio.pause()
+        stopSpeechPlayback()
+
+        set({
+            mode: 'tts',
+            playlist: safeTracks,
+            currentTrackIndex: Math.min(Math.max(startIndex, 0), safeTracks.length - 1),
+            meta: typeof metadata === 'function' ? metadata(get().meta) : metadata,
+            singleSource: null,
+            isPlaying: true
+        })
+
+        get().playTafsirTrackAtIndex(Math.min(Math.max(startIndex, 0), safeTracks.length - 1), settings)
+    },
+
     togglePlay: () => {
         const state = get()
+        if (state.mode === 'tts') {
+            const synthesis = getSpeechSynthesisEngine()
+            if (!synthesis) {
+                set({ isPlaying: false })
+                return
+            }
+
+            if (state.isPlaying && synthesis.speaking && !synthesis.paused) {
+                pauseSpeechPlayback()
+                set({ isPlaying: false })
+                return
+            }
+
+            if (!state.isPlaying && resumeSpeechPlayback()) {
+                set({ isPlaying: true })
+                return
+            }
+
+            if (state.playlist.length > 0) {
+                state.playTafsirTrackAtIndex(state.currentTrackIndex, resolvePlaybackSettings())
+            }
+            return
+        }
+
         if (state.isPlaying) {
             globalAudio.pause()
             set({ isPlaying: false })
@@ -259,6 +414,7 @@ const usePlayerStore = create((set, get) => ({
     playTrackAtIndex: (idx) => {
         const state = get()
         if (idx >= 0 && idx < state.playlist.length) {
+            stopSpeechPlayback()
             set({ currentTrackIndex: idx, isPlaying: true })
             const track = state.playlist[idx]
             if (track && track.audio) {
@@ -273,6 +429,15 @@ const usePlayerStore = create((set, get) => ({
         const state = get()
         const resolvedSettings = resolvePlaybackSettings(settings)
         const activeTrackIndex = resolveActiveTrackIndex(state)
+
+        if (state.mode === 'tts') {
+            if (activeTrackIndex < state.playlist.length - 1) {
+                state.playTafsirTrackAtIndex(activeTrackIndex + 1, resolvedSettings)
+            } else {
+                set({ isPlaying: false })
+            }
+            return
+        }
 
         if (activeTrackIndex !== state.currentTrackIndex) {
             set({ currentTrackIndex: activeTrackIndex })
@@ -305,6 +470,14 @@ const usePlayerStore = create((set, get) => ({
 
     playPrevious: () => {
         const state = get()
+        if (state.mode === 'tts') {
+            if (state.currentTrackIndex > 0) {
+                state.playTafsirTrackAtIndex(state.currentTrackIndex - 1, resolvePlaybackSettings())
+            } else {
+                state.playTafsirTrackAtIndex(0, resolvePlaybackSettings())
+            }
+            return
+        }
         if (state.currentTrackIndex > 0) {
             const prevIdx = state.currentTrackIndex - 1
             set({ currentTrackIndex: prevIdx, isPlaying: true })
@@ -666,6 +839,11 @@ const usePlayerStore = create((set, get) => ({
                     state.playNextPage(resolvedSettings)
                 }
             }
+        } else if (meta.context === 'tafsir' || state.mode === 'tts') {
+            const nextIdx = state.currentTrackIndex + 1
+            if (nextIdx < state.playlist.length) {
+                state.playTafsirTrackAtIndex(nextIdx, resolvedSettings)
+            }
         } else if (meta.context === 'verse' || meta.ayahNo > 0) {
             state.playNextVerse(resolvedSettings)
         } else {
@@ -704,6 +882,9 @@ const usePlayerStore = create((set, get) => ({
                     state.playTrackAtIndex(prevIdx)
                 }
             }
+        } else if (meta.context === 'tafsir' || state.mode === 'tts') {
+            const prevIdx = Math.max(0, state.currentTrackIndex - 1)
+            state.playTafsirTrackAtIndex(prevIdx, resolvedSettings)
         } else if (meta.context === 'verse' || meta.ayahNo > 0) {
             state.playPreviousVerse(resolvedSettings)
         } else {

@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react'
+﻿import React, { useState, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../contexts/SettingsContext'
@@ -91,7 +91,7 @@ export default function IntegratedPlayer({
                     <div className="player-row-mid">
                         <span className="player-surah-tr">
                             {context === 'page'
-                                ? `${juzNumber}. Cüz ${pageNumber}. Sayfa`
+                                ? `${juzNumber}. CÃ¼z ${pageNumber}. Sayfa`
                                 : `${surahNameTr}${ayahNo > 0 ? `:${ayahNo}` : ''}`
                             }
                         </span>
@@ -103,7 +103,7 @@ export default function IntegratedPlayer({
                     </div>
                     <div className="player-row-bot">
                         <span className="player-surah-meta">
-                            {surahNameEn} · {ayahCount} ayet {playingType && `(${playingType === 'arabic' ? 'Arapça' : 'Türkçe'})`}
+                            {surahNameEn} Â· {ayahCount} ayet {playingType && `(${playingType === 'arabic' ? 'ArapÃ§a' : 'TÃ¼rkÃ§e'})`}
                         </span>
                     </div>
                 </div>
@@ -111,7 +111,7 @@ export default function IntegratedPlayer({
                 {/* Center Controls */}
                 <div className="player-center-controls">
                     <div className="player-main-controls">
-                        <button className="control-btn" onClick={skipPrevious} title="Önceki">
+                        <button className="control-btn" onClick={skipPrevious} title="Ã–nceki">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                         </button>
 
@@ -153,7 +153,7 @@ export default function IntegratedPlayer({
                         <button
                             className="control-btn side-control toggle-expand"
                             onClick={() => setIsExpanded(!isExpanded)}
-                            title={isExpanded ? 'Küçült' : 'Genişlet'}
+                            title={isExpanded ? 'KÃ¼Ã§Ã¼lt' : 'GeniÅŸlet'}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="18 15 12 9 6 15" />
@@ -173,14 +173,14 @@ export default function IntegratedPlayer({
                         value={settings.defaultReciterId}
                         onChange={(val) => updateSettings({ defaultReciterId: val })}
                         options={reciterOptions}
-                        prefix="Arapça: "
+                        prefix="ArapÃ§a: "
                         className="player-reciter-select"
                     />
                     <CustomSelect
                         value={settings.defaultTurkishReciterId || 1015}
                         onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
                         options={turkishReciterOptions}
-                        prefix="Türkçe: "
+                        prefix="TÃ¼rkÃ§e: "
                         className="player-reciter-select"
                     />
                 </div>
@@ -200,16 +200,16 @@ export default function IntegratedPlayer({
                             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
                         />
                     </div>
-                    <div className={`repeat-badge ${isRepeat ? 'active' : ''}`} onClick={onToggleRepeat} title="Sürekli Çal">
+                    <div className={`repeat-badge ${isRepeat ? 'active' : ''}`} onClick={onToggleRepeat} title="SÃ¼rekli Ã‡al">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="17 1 21 5 17 9"></polyline>
                             <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
                             <polyline points="7 23 3 19 7 15"></polyline>
                             <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
                         </svg>
-                        {isRepeat && <span style={{ fontSize: '10px' }}>Sürekli Çal</span>}
+                        {isRepeat && <span style={{ fontSize: '10px' }}>SÃ¼rekli Ã‡al</span>}
                     </div>
-                    <div className="speed-badge" onClick={onSpeedChange} title="Oynatma Hızı">
+                    <div className="speed-badge" onClick={onSpeedChange} title="Oynatma HÄ±zÄ±">
                         {playbackSpeed}x
                     </div>
                 </div>
@@ -225,7 +225,7 @@ export default function IntegratedPlayer({
                                     : (currentVerseIndex === -1 ? 'active' : (currentVerseIndex > -1 ? 'played' : ''))
                                     }`}
                                 onClick={() => onSelectVerse(hasIntroTrack ? 0 : -1)}
-                                title="Başlangıç / Sure Başlığı"
+                                title="BaÅŸlangÄ±Ã§ / Sure BaÅŸlÄ±ÄŸÄ±"
                             />
 
                             <div className="verse-segments">
@@ -302,6 +302,37 @@ export default function IntegratedPlayer({
                     );
                 })()}
 
+                {showSegments && context === 'tafsir' && verses.length > 0 && (
+                    <div className="verse-segments-container playlist-segments">
+                        <div className="verse-segments">
+                            {verses.map((segment, idx) => {
+                                let status = ''
+                                if (idx === currentVerseIndex) status = 'active'
+                                else if (idx < currentVerseIndex) status = 'played'
+
+                                return (
+                                    <div
+                                        key={`${segment.title || 'segment'}-${idx}`}
+                                        className={`verse-segment playlist-segment ${status}`}
+                                        onClick={() => onSelectVerse(idx)}
+                                        title={segment.title || `BÃ¶lÃ¼m ${idx + 1}`}
+                                    />
+                                )
+                            })}
+                        </div>
+                        <div className="playlist-seg-names">
+                            {verses.map((segment, idx) => (
+                                <span
+                                    key={`${segment.title || 'segment-name'}-${idx}`}
+                                    className={`playlist-seg-name ${idx === currentVerseIndex ? 'active' : ''}`}
+                                >
+                                    {segment.shortLabel || segment.title || `BÃ¶lÃ¼m ${idx + 1}`}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div className="time-row">
                     <span>{formatTime(currentTime)}</span>
                     <span>-{formatTime(remainingTime)}</span>
@@ -310,4 +341,5 @@ export default function IntegratedPlayer({
         </div>
     )
 }
+
 

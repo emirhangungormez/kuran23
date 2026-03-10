@@ -22,6 +22,8 @@ function createDefaultSettings() {
         selectedAuthorIds: DEFAULT_ACTIVE_IDS, // Diger aktif mealler
         defaultReciterId: 7, // Mishari Rashid al-`Afasy
         defaultTurkishReciterId: 1015, // Seyfullah Kartal (Meali)
+        tafsirVoiceName: '',
+        tafsirVoiceRate: 1,
         textMode: 'uthmani',
         showTajweed: false,
         fontSize: 18,

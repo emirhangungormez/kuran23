@@ -35,7 +35,7 @@ function GlobalPlayerWrapper() {
   const {
     isPlaying, togglePlay, currentTime, duration, volume, setVolume,
     playbackSpeed, setPlaybackSpeed, isRepeat, toggleRepeat,
-    playlist, currentTrackIndex, meta, playTrackAtIndex, mode,
+    playlist, currentTrackIndex, meta, playTrackAtIndex, playTafsirTrackAtIndex, mode,
     skipNext, skipPrevious
   } = usePlayerStore(useShallow(state => ({
     isPlaying: state.isPlaying,
@@ -52,11 +52,12 @@ function GlobalPlayerWrapper() {
     currentTrackIndex: state.currentTrackIndex,
     meta: state.meta,
     playTrackAtIndex: state.playTrackAtIndex,
+    playTafsirTrackAtIndex: state.playTafsirTrackAtIndex,
     mode: state.mode,
     skipNext: state.skipNext,
     skipPrevious: state.skipPrevious
   })))
-  const { settings } = useSettings()
+  const { settings, updateSettings } = useSettings()
   const latestSettingsRef = useRef(settings)
 
   useEffect(() => {
@@ -67,6 +68,14 @@ function GlobalPlayerWrapper() {
     initAudioListeners(() => latestSettingsRef.current)
   }, [])
 
+  const isTafsirPlayback = meta.context === 'tafsir'
+  const visiblePlaybackSpeed = isTafsirPlayback ? Number(settings.tafsirVoiceRate || 1) : playbackSpeed
+  const cycleTafsirSpeed = () => {
+    const currentRate = Number(settings.tafsirVoiceRate || 1)
+    const nextRate = currentRate === 1 ? 1.15 : currentRate === 1.15 ? 1.3 : currentRate === 1.3 ? 1.5 : 1
+    updateSettings({ tafsirVoiceRate: nextRate })
+  }
+
   return (
     <IntegratedPlayer
       isVisible={settings.isPlayerVisible && mode !== 'none'}
@@ -76,20 +85,24 @@ function GlobalPlayerWrapper() {
       duration={duration}
       volume={volume}
       onVolumeChange={setVolume}
-      playbackSpeed={playbackSpeed}
-      onSpeedChange={() => setPlaybackSpeed(playbackSpeed === 1 ? 1.25 : playbackSpeed === 1.25 ? 1.5 : playbackSpeed === 1.5 ? 2 : 1)}
+      playbackSpeed={visiblePlaybackSpeed}
+      onSpeedChange={() => (
+        isTafsirPlayback
+          ? cycleTafsirSpeed()
+          : setPlaybackSpeed(playbackSpeed === 1 ? 1.25 : playbackSpeed === 1.25 ? 1.5 : playbackSpeed === 1.5 ? 2 : 1)
+      )}
       isRepeat={isRepeat}
       onToggleRepeat={toggleRepeat}
-      verses={mode === 'playlist' ? playlist : []}
-      currentVerseIndex={mode === 'playlist' ? currentTrackIndex : -1}
-      onSelectVerse={playTrackAtIndex}
+      verses={mode === 'playlist' || mode === 'tts' ? playlist : []}
+      currentVerseIndex={mode === 'playlist' || mode === 'tts' ? currentTrackIndex : -1}
+      onSelectVerse={mode === 'tts' ? (idx) => playTafsirTrackAtIndex(idx, settings) : playTrackAtIndex}
       surahNameAr={meta.surahNameAr}
       surahNameTr={meta.surahNameTr}
       surahNameEn={meta.surahNameEn}
       surahType={meta.surahType}
       ayahCount={meta.ayahCount}
       playingType={meta.playingType}
-      showSegments={mode === 'playlist'}
+      showSegments={mode === 'playlist' || mode === 'tts'}
       link={meta.link}
       skipNext={() => skipNext(settings)}
       skipPrevious={() => skipPrevious(settings)}

@@ -19,6 +19,7 @@ import JourneysPromoCard from '../components/JourneysPromoCard'
 import UsageStatsPanel from '../components/UsageStatsPanel'
 import { ARABIC_FONT_OPTIONS, getArabicFontFamily, getSettingNumber } from '../utils/typography'
 import { normalizeArabicDisplayText } from '../utils/textEncoding'
+import { isTafsirSpeechSupported, subscribeTafsirVoices } from '../services/tafsirSpeech'
 
 
 export default function ProfilePage() {
@@ -31,6 +32,7 @@ export default function ProfilePage() {
     const userId = user?.id || settings?.userId || '';
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false)
     const [availableTranslations, setAvailableTranslations] = useState([])
+    const [availableTafsirVoices, setAvailableTafsirVoices] = useState([])
     const [showIconModal, setShowIconModal] = useState(false)
     const [exampleVerse, setExampleVerse] = useState(null)
     const [settingsVerse, setSettingsVerse] = useState(null)
@@ -63,6 +65,11 @@ export default function ProfilePage() {
 
     }, [isLoggedIn, navigate, settings.defaultAuthorId])
 
+    useEffect(() => {
+        if (!isTafsirSpeechSupported()) return undefined
+        return subscribeTafsirVoices(setAvailableTafsirVoices)
+    }, [])
+
     const fontSizePercent = Math.min(100, Math.max(0, ((settings.fontSize - 14) / 18) * 100))
     const arabicScale = getSettingNumber(settings.arabicScale, 1.5)
     const translationScale = getSettingNumber(settings.translationScale, 1)
@@ -73,6 +80,7 @@ export default function ProfilePage() {
     const translationScalePercent = getRangePercent(translationScale, 0.8, 1.8)
     const transcriptionScalePercent = getRangePercent(transcriptionScale, 0.45, 1.1)
     const tafsirMealAuthorId = Number(settings.tafsirVerseAuthorId || settings.defaultAuthorId || 77)
+    const tafsirVoiceRate = Number(settings.tafsirVoiceRate || 1)
     const settingsVerseArabic = normalizeArabicDisplayText(
         String(settingsVerse?.verse || settingsVerse?.verse_simplified || 'قُلْ هُوَ اللَّهُ أَحَدٌ').replace(/<[^>]+>/g, '')
     )
@@ -459,6 +467,47 @@ export default function ProfilePage() {
                                                 </option>
                                             ))}
                                         </select>
+                                    </div>
+
+                                    <div className="tafsir-meal-setting">
+                                        <div className="tafsir-meal-setting-copy">
+                                            <h4>Tefsir Seslendirmesi</h4>
+                                            <p>
+                                                Tefsir sayfasındaki dinleme özelliğinde kullanılacak Türkçe sesi ve okuma hızını seçin.
+                                            </p>
+                                        </div>
+                                        <div className="tafsir-voice-settings">
+                                            <select
+                                                className="modern-input"
+                                                value={settings.tafsirVoiceName || ''}
+                                                onChange={(e) => updateSettings({ tafsirVoiceName: e.target.value })}
+                                                disabled={!availableTafsirVoices.length}
+                                            >
+                                                <option value="">Varsayılan Türkçe ses</option>
+                                                {availableTafsirVoices.map((voice) => (
+                                                    <option key={voice.id} value={voice.name}>
+                                                        {voice.name} ({voice.lang})
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            <div className="setting-item compact">
+                                                <label>Tefsir Ses Hızı</label>
+                                                <div className="font-size-control">
+                                                    <input
+                                                        type="range"
+                                                        min="0.7"
+                                                        max="1.5"
+                                                        step="0.05"
+                                                        value={tafsirVoiceRate}
+                                                        onChange={(e) => updateSettings({ tafsirVoiceRate: parseFloat(e.target.value) })}
+                                                        className="settings-range"
+                                                        style={{ '--range-fill': `${getRangePercent(tafsirVoiceRate, 0.7, 1.5)}%` }}
+                                                    />
+                                                    <span className="font-size-value">{tafsirVoiceRate.toFixed(2)}x</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {exampleVerse && (
