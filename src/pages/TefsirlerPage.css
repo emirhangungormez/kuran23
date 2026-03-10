@@ -563,13 +563,13 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
+    color: color-mix(in srgb, var(--accent) 72%, var(--text-secondary));
 }
 
 .reader-verse-meta strong {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: color-mix(in srgb, var(--accent) 68%, var(--text-primary));
 }
 
 .reader-verse-arabic {
@@ -588,14 +588,14 @@
 .reader-verse-transcription {
     font-size: 16px;
     line-height: 1.75;
-    color: var(--text-secondary);
+    color: color-mix(in srgb, var(--accent) 58%, var(--text-secondary));
     font-style: italic;
 }
 
 .reader-verse-translation {
     font-size: 18px;
     line-height: 1.8;
-    color: var(--text-primary);
+    color: color-mix(in srgb, var(--accent) 74%, var(--text-primary));
 }
 
 .reader-verse-card-loading p {
@@ -604,14 +604,16 @@
 
 .reader-verse-card,
 .reader-inline-verse-card {
-    border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--separator));
-    background: color-mix(in srgb, var(--accent) 7%, transparent);
-    border-radius: 18px;
-    padding: 18px 18px 16px;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
 }
 
 .reader-inline-verse-card {
     margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, var(--separator-light));
 }
 
 .tefsir-sections {
