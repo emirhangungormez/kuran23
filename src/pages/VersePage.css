@@ -275,6 +275,15 @@
     font-weight: 700;
 }
 
+.tafsir-html .tafsir-ayah-marker {
+    margin: 24px 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
 .tafsir-html p {
     margin-bottom: 18px;
     text-align: justify;

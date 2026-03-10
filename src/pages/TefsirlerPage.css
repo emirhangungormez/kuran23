@@ -449,6 +449,15 @@
     margin: 24px 0 12px;
 }
 
+.tefsirler-rich .tafsir-ayah-marker {
+    margin: 28px 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
 .tefsir-flip-wrapper {
     display: flex;
     flex-direction: column;

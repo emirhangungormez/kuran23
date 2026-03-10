@@ -1,9 +1,10 @@
-import fs from 'node:fs/promises'
+﻿import fs from 'node:fs/promises'
 import path from 'node:path'
 import https from 'node:https'
 import { fileURLToPath } from 'node:url'
 import { surahs } from '../src/data/quranData.js'
 import { TEFSIR_LIBRARY_BOOKS } from '../src/data/tefsirLibraryCatalog.js'
+import { normalizeTafsirText } from '../src/utils/textEncoding.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -12,6 +13,8 @@ const projectRoot = path.resolve(__dirname, '..')
 const BASE_URL = 'https://tefsirkutuphanesi.net/Kitaplar/Tefsir'
 const OUTPUT_ROOT = path.join(projectRoot, 'public', 'tafsir-library')
 const DEFAULT_CONCURRENCY = 4
+const SENTENCE_END_REGEX = /[.!?:;)\]»”]$/
+const SURAH_HEADING_REGEX = /\bSURESI\b/i
 
 function parseArgs(argv) {
   const args = {
@@ -103,7 +106,7 @@ function stripHtmlToText(html) {
       .replace(/<style[\s\S]*?<\/style>/gi, ' ')
       .replace(/<!--[\s\S]*?-->/g, ' ')
       .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/(p|div|h1|h2|h3|h4|h5|h6|li|tr|td|font|span|b|i|u)>/gi, '\n\n')
+      .replace(/<\/(p|div|h1|h2|h3|h4|h5|h6|li|tr|td)>/gi, '\n\n')
       .replace(/<li[^>]*>/gi, '- ')
       .replace(/<[^>]+>/g, ' ')
       .replace(/\r/g, '')
@@ -115,11 +118,51 @@ function stripHtmlToText(html) {
   )
 }
 
+function normalizeBlockText(value) {
+  return String(value || '')
+    .replace(/\s*\n\s*/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
+function shouldMergeBlocks(previous, current) {
+  if (!previous || !current) return false
+  if (/^\d{1,3}$/.test(previous) || /^\d{1,3}$/.test(current)) return false
+  if (SURAH_HEADING_REGEX.test(normalizeComparable(previous)) || SURAH_HEADING_REGEX.test(normalizeComparable(current))) return false
+  if (previous.length > 220) return false
+
+  const currentStartsInline = /^[a-zçğıöşüâîû(“"'’,-]/iu.test(current)
+  const previousLooksIncomplete = !SENTENCE_END_REGEX.test(previous)
+  const hasShortFragment = previous.length <= 40 || current.length <= 40
+  return previousLooksIncomplete && (currentStartsInline || hasShortFragment)
+}
+
+function compactBlocks(blocks) {
+  const merged = []
+
+  for (const block of blocks) {
+    const normalized = normalizeBlockText(block)
+    if (!normalized) continue
+
+    const previous = merged[merged.length - 1]
+    if (shouldMergeBlocks(previous, normalized)) {
+      merged[merged.length - 1] = `${previous} ${normalized}`.replace(/\s{2,}/g, ' ').trim()
+      continue
+    }
+
+    merged.push(normalized)
+  }
+
+  return merged
+}
+
 function splitBlocks(text) {
-  return text
-    .split(/\n{2,}/)
-    .map((line) => line.trim())
-    .filter(Boolean)
+  return compactBlocks(
+    text
+      .split(/\n{2,}/)
+      .map((line) => normalizeBlockText(line))
+      .filter(Boolean)
+  )
 }
 
 function escapeHtml(value) {
@@ -143,12 +186,63 @@ function buildVerseHtml(ayahNo, blocks) {
   ].join('\n')
 }
 
-function buildSurahHtml(title, introBlocks, verses) {
-  const parts = ['<div class="tafsir-content-wrapper">']
-  const heading = introBlocks[0] || title
-  parts.push(`<h2>${escapeHtml(heading)}</h2>`)
+function normalizeComparable(value) {
+  return normalizeTafsirText(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleUpperCase('tr-TR')
+    .replace(/[\-–—:;,.()[\]'"`’“”]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
 
-  for (const block of introBlocks.slice(1)) {
+function isSurahTitleBlock(block, surah) {
+  const normalizedBlock = normalizeComparable(block)
+  const normalizedSurahName = normalizeComparable(surah.nameTr)
+  const normalizedLabel = normalizeComparable(`${surah.no} ${surah.nameTr} Sûresi`)
+  const startsWithNumber = normalizedBlock.startsWith(`${surah.no} `) || normalizedBlock === String(surah.no)
+  const startsWithName = normalizedBlock.startsWith(normalizedSurahName)
+
+  return normalizedBlock.startsWith(normalizedLabel) || (
+    (startsWithNumber || startsWithName) &&
+    normalizedBlock.includes(normalizedSurahName) &&
+    SURAH_HEADING_REGEX.test(normalizedBlock)
+  )
+}
+
+function sanitizeIntroBlocks(introBlocks, surah) {
+  const blocks = compactBlocks(introBlocks)
+  const numberedTitleIndex = blocks.findIndex((block) => /^\s*\d{1,3}\s*[-.)]\s*/.test(block) && /s[ûu]resi/i.test(block))
+  if (numberedTitleIndex > 0) return blocks.slice(numberedTitleIndex)
+  const titleIndex = blocks.findIndex((block) => isSurahTitleBlock(block, surah))
+  if (titleIndex > 0) return blocks.slice(titleIndex)
+  return blocks
+}
+
+function splitHeadingBlock(block, surah) {
+  const text = normalizeBlockText(block)
+  if (!text) return { heading: `${surah.no} - ${surah.nameTr} Sûresi`, remainder: '' }
+
+  const surahHeadingMatch = text.match(new RegExp(`^\\s*${surah.no}\\s*[-.)]?\\s*.+?s[ûu]resi\\b`, 'iu'))
+  if (surahHeadingMatch) {
+    const heading = normalizeBlockText(surahHeadingMatch[0])
+    const remainder = normalizeBlockText(text.slice(surahHeadingMatch[0].length))
+    return { heading, remainder }
+  }
+
+  return { heading: text, remainder: '' }
+}
+
+function buildSurahHtml(surah, introBlocks, verses) {
+  const cleanedIntroBlocks = sanitizeIntroBlocks(introBlocks, surah)
+  const { heading, remainder } = splitHeadingBlock(cleanedIntroBlocks[0], surah)
+  const parts = ['<div class="tafsir-content-wrapper">', `<h2>${escapeHtml(heading)}</h2>`]
+
+  if (remainder) {
+    parts.push(blockToHtml(remainder))
+  }
+
+  for (const block of cleanedIntroBlocks.slice(1)) {
     parts.push(blockToHtml(block))
   }
 
@@ -166,7 +260,23 @@ function buildSurahHtml(title, introBlocks, verses) {
   return parts.join('\n')
 }
 
-function extractSurahContent(rawText, ayahCount, title) {
+function trimLeadingFrontMatter(html) {
+  const pattern = /^<div class="tafsir-content-wrapper">\s*<h2>(?<currentHeading>[\s\S]*?)<\/h2>(?<beforeTitle>[\s\S]*?)<p>(?<surahHeading>\d{1,3}\s*-\s*.+?S[ÛU]RESİ)<\/p>\s*/u
+  const match = html.match(pattern)
+  if (!match?.groups) return html
+
+  const normalizedCurrentHeading = normalizeComparable(match.groups.currentHeading)
+  if (/^\d{1,3}\s/.test(normalizedCurrentHeading) && SURAH_HEADING_REGEX.test(normalizedCurrentHeading)) {
+    return html
+  }
+
+  return html.replace(
+    pattern,
+    `<div class="tafsir-content-wrapper">\n<h2>${match.groups.surahHeading}</h2>\n`
+  )
+}
+
+function extractSurahContent(rawText, surah) {
   const blocks = splitBlocks(rawText)
   const verses = {}
   const introBlocks = []
@@ -176,7 +286,7 @@ function extractSurahContent(rawText, ayahCount, title) {
     const numeric = /^(?<ayah>\d{1,3})$/.exec(block)
     const nextAyah = Number(numeric?.groups?.ayah)
 
-    if (Number.isInteger(nextAyah) && nextAyah >= 1 && nextAyah <= ayahCount) {
+    if (Number.isInteger(nextAyah) && nextAyah >= 1 && nextAyah <= surah.ayahCount) {
       currentAyah = nextAyah
       if (!verses[currentAyah]) verses[currentAyah] = []
       continue
@@ -192,11 +302,11 @@ function extractSurahContent(rawText, ayahCount, title) {
     .sort((a, b) => a - b)
 
   const verseHtml = Object.fromEntries(
-    availableAyahs.map((ayahNo) => [String(ayahNo), buildVerseHtml(ayahNo, verses[ayahNo])])
+    availableAyahs.map((ayahNo) => [String(ayahNo), buildVerseHtml(ayahNo, compactBlocks(verses[ayahNo]))])
   )
 
   return {
-    surahHtml: buildSurahHtml(title, introBlocks, verses),
+    surahHtml: trimLeadingFrontMatter(buildSurahHtml(surah, introBlocks, verses)),
     verse: verseHtml,
     availableAyahs
   }
@@ -208,6 +318,15 @@ async function fileExists(targetFile) {
     return true
   } catch {
     return false
+  }
+}
+
+async function readJsonIfExists(targetFile, fallback) {
+  try {
+    const raw = await fs.readFile(targetFile, 'utf8')
+    return JSON.parse(raw)
+  } catch {
+    return fallback
   }
 }
 
@@ -253,7 +372,7 @@ async function fetchSurahPayload(book, surah, options) {
       return { status: 'empty', book: book.sourceId, surahId: surah.no, sourceUrl }
     }
 
-    const extracted = extractSurahContent(text, surah.ayahCount, `${surah.no} - ${surah.nameTr} Sûresi`)
+    const extracted = extractSurahContent(text, surah)
     if (!extracted.surahHtml.trim() && !Object.keys(extracted.verse).length) {
       return { status: 'empty', book: book.sourceId, surahId: surah.no, sourceUrl }
     }
@@ -305,11 +424,17 @@ function selectSurahs(args) {
 async function buildLibraryDataset(args) {
   const books = selectBooks(args)
   const selectedSurahs = selectSurahs(args)
+  const existingManifest = await readJsonIfExists(path.join(OUTPUT_ROOT, 'manifest.json'), null)
+  const existingReport = await readJsonIfExists(path.join(OUTPUT_ROOT, 'report.json'), null)
+  const selectedBookIds = new Set(books.map((book) => book.sourceId))
+
   const report = {
     generatedAt: new Date().toISOString(),
     baseUrl: BASE_URL,
-    books: {},
-    errors: []
+    books: { ...(existingReport?.books || {}) },
+    errors: Array.isArray(existingReport?.errors)
+      ? existingReport.errors.filter((error) => !selectedBookIds.has(error.book))
+      : []
   }
 
   await fs.mkdir(OUTPUT_ROOT, { recursive: true })
@@ -318,13 +443,23 @@ async function buildLibraryDataset(args) {
     console.log(`\n[Kitap] ${book.sourceId} (${book.bookId})`)
     const results = await runLimited(selectedSurahs, args.concurrency, (surah) => fetchSurahPayload(book, surah, args))
 
-    const surahEntries = results
+    const previousBookEntry = report.books[book.sourceId] || existingManifest?.books?.find((entry) => entry.sourceId === book.sourceId)
+    const surahMap = new Map(
+      Array.isArray(previousBookEntry?.surahs)
+        ? previousBookEntry.surahs.map((entry) => [entry.surahId, entry])
+        : []
+    )
+
+    results
       .filter((result) => result?.status === 'ok' || result?.status === 'skipped')
-      .map((result) => ({
-        surahId: result.surahId,
-        availableAyahs: result.availableAyahs
-      }))
-      .sort((a, b) => a.surahId - b.surahId)
+      .forEach((result) => {
+        surahMap.set(result.surahId, {
+          surahId: result.surahId,
+          availableAyahs: result.availableAyahs
+        })
+      })
+
+    const surahEntries = Array.from(surahMap.values()).sort((a, b) => a.surahId - b.surahId)
 
     report.books[book.sourceId] = {
       sourceId: book.sourceId,
@@ -352,7 +487,7 @@ async function buildLibraryDataset(args) {
     version: 1,
     generatedAt: report.generatedAt,
     baseUrl: BASE_URL,
-    books: Object.values(report.books)
+    books: Object.values(report.books).sort((a, b) => String(a.bookId).localeCompare(String(b.bookId), 'tr'))
   }
 
   await fs.writeFile(path.join(OUTPUT_ROOT, 'manifest.json'), JSON.stringify(manifest), 'utf8')

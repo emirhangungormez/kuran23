@@ -77,6 +77,35 @@ function processParagraph(doc, paragraph) {
   }
 }
 
+function isNumericHeading(text) {
+  const value = normalizeTafsirText(text || '').replace(/\s+/g, ' ').trim()
+  return /^\d+([\-–]\d+)?$/.test(value)
+}
+
+function transformUtilityHeadings(doc, root, options = {}) {
+  const headings = Array.from(root.querySelectorAll('h1, h2, h3, h4'))
+
+  for (const heading of headings) {
+    const rawText = normalizeTafsirText(heading.textContent || '').replace(/\s+/g, ' ').trim()
+    if (!rawText) {
+      heading.remove()
+      continue
+    }
+
+    if (!isNumericHeading(rawText)) continue
+
+    if (options.context === 'verse') {
+      heading.remove()
+      continue
+    }
+
+    const marker = doc.createElement('div')
+    marker.className = 'tafsir-ayah-marker'
+    marker.textContent = rawText
+    heading.replaceWith(marker)
+  }
+}
+
 function normalizeHeadingLabel(text, options = {}) {
   let value = normalizeTafsirText(text || '').replace(/\s+/g, ' ').trim()
   if (!value) return ''
@@ -160,6 +189,7 @@ export function formatTafsirRichText(inputHtml, options = {}) {
     if (!root) return normalized
 
     root.querySelectorAll('p').forEach((paragraph) => processParagraph(doc, paragraph))
+    transformUtilityHeadings(doc, root, options)
     decorateTextNodes(doc, root)
     applyHeadingNormalization(root, options)
 
