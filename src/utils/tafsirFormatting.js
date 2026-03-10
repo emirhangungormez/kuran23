@@ -50,9 +50,17 @@ function wrapTextPattern(doc, node, regex, className) {
   node.parentNode?.replaceChild(fragment, node)
 }
 
-function processParagraph(doc, paragraph) {
+function processParagraph(doc, paragraph, options = {}) {
   const rawText = paragraph.textContent?.replace(/\s+/g, ' ').trim() || ''
   if (!rawText) return
+
+  if (options.context !== 'verse' && isNumericHeading(rawText) && !paragraph.querySelector('*')) {
+    const marker = doc.createElement('div')
+    marker.className = 'tafsir-ayah-marker'
+    marker.textContent = rawText
+    paragraph.replaceWith(marker)
+    return
+  }
 
   if (looksLikeHeading(rawText) && !paragraph.querySelector('*')) {
     const h4 = doc.createElement('h4')
@@ -188,7 +196,7 @@ export function formatTafsirRichText(inputHtml, options = {}) {
     const root = doc.querySelector('#root')
     if (!root) return normalized
 
-    root.querySelectorAll('p').forEach((paragraph) => processParagraph(doc, paragraph))
+    root.querySelectorAll('p').forEach((paragraph) => processParagraph(doc, paragraph, options))
     transformUtilityHeadings(doc, root, options)
     decorateTextNodes(doc, root)
     applyHeadingNormalization(root, options)

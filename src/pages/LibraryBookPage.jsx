@@ -31,6 +31,28 @@ function getPlainSurahTitleLabel(surahId) {
   return getSurahTitle(surahId).replace(/\s*\(\d+\)$/, '')
 }
 
+function getAyahMarkerNumber(node) {
+  if (!node || node.nodeType !== Node.ELEMENT_NODE) return null
+
+  const text = String(node.textContent || '').replace(/\s+/g, ' ').trim()
+  if (!/^\d+([-–]\d+)?$/.test(text)) return null
+
+  const tagName = node.tagName?.toLowerCase()
+  if (
+    node.classList?.contains('tafsir-ayah-marker') ||
+    tagName === 'h1' ||
+    tagName === 'h2' ||
+    tagName === 'h3' ||
+    tagName === 'h4' ||
+    tagName === 'p'
+  ) {
+    const match = text.match(/\d+/)
+    return match ? Number(match[0]) : null
+  }
+
+  return null
+}
+
 export default function LibraryBookPage() {
   const { bookId } = useParams()
   const [activeScope, setActiveScope] = useState('verse')
@@ -246,14 +268,11 @@ export default function LibraryBookPage() {
       }
 
       Array.from(root.childNodes).forEach((node) => {
-        const isAyahMarker =
-          node.nodeType === Node.ELEMENT_NODE &&
-          node.classList?.contains('tafsir-ayah-marker')
+        const markerAyahNo = getAyahMarkerNumber(node)
 
-        if (isAyahMarker) {
+        if (markerAyahNo) {
           pushCurrent()
-          const match = (node.textContent || '').match(/\d+/)
-          currentAyahNo = match ? Number(match[0]) : null
+          currentAyahNo = markerAyahNo
           currentBodyHtml = ''
           return
         }

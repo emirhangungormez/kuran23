@@ -576,7 +576,7 @@
     direction: rtl;
     text-align: right;
     line-height: 2.05;
-    color: var(--text-primary);
+    color: color-mix(in srgb, var(--accent) 84%, var(--text-primary));
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
 }
 
@@ -802,19 +802,19 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
+    color: color-mix(in srgb, var(--accent) 72%, var(--text-secondary));
 }
 
 .reader-next-nav-link {
-    width: 100%;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px;
-    padding: 14px 16px;
-    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--separator));
-    border-radius: 16px;
-    background: color-mix(in srgb, var(--accent) 6%, transparent);
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
     color: var(--accent);
     text-align: left;
     cursor: pointer;
@@ -838,6 +838,7 @@
     font-size: 18px;
     line-height: 1.4;
     font-weight: 600;
+    color: var(--accent);
 }
 
 .meal-reader-placeholder {
