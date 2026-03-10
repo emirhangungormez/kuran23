@@ -11,6 +11,52 @@ function normalizeVoiceName(name) {
   return String(name || '').trim().toLocaleLowerCase('tr-TR')
 }
 
+const TAFSIR_SPEECH_REPLACEMENTS = [
+  [/s\.a\.v\.|sav\b/gi, 'sallallahu aleyhi ve sellem'],
+  [/a\.s\.|as\b/gi, 'aleyhisselam'],
+  [/r\.a\.|ra\b/gi, 'radıyallahu anh'],
+  [/r\.anh[üu]m/gi, 'radıyallahu anhüm'],
+  [/k\.s\.|ks\b/gi, 'kuddise sirruh'],
+  [/c\.c\.|cc\b/gi, 'celle celalühü'],
+  [/hz\./gi, 'Hazreti'],
+  [/sûre/gi, 'sure'],
+  [/âyet/gi, 'ayet'],
+  [/teâlâ/gi, 'teala'],
+  [/şeyh/gi, 'şeh'],
+  [/بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ/gu, 'Bismillahirrahmanirrahim'],
+  [/ٱلْحَمْدُ لِلَّٰهِ/gu, 'Elhamdülillah'],
+  [/إِنْ شَاءَ اللَّهُ|إن شاء الله/gu, 'inşallah'],
+  [/مَا شَاءَ اللَّهُ|ما شاء الله/gu, 'maşallah'],
+  [/لَا إِلٰهَ إِلَّا ٱللَّٰهُ|لا إله إلا الله/gu, 'la ilahe illallah'],
+  [/صلى الله عليه وسلم/gu, 'sallallahu aleyhi ve sellem'],
+  [/رضي الله عنه/gu, 'radıyallahu anh'],
+  [/رضي الله عنها/gu, 'radıyallahu anha'],
+  [/رضي الله عنهم/gu, 'radıyallahu anhüm'],
+  [/رحمه الله/gu, 'rahmetullahi aleyh'],
+  [/عز وجل/gu, 'azze ve celle'],
+  [/جل جلاله/gu, 'celle celalühü'],
+  [/سبحانه وتعالى/gu, 'subhanehu ve teala'],
+  [/ﷺ/gu, 'sallallahu aleyhi ve sellem'],
+  [/ؓ/gu, 'radıyallahu anh'],
+  [/ؒ/gu, 'rahmetullahi aleyh']
+]
+
+function normalizeArabicSpeechFragments(text) {
+  let normalized = String(text || '')
+
+  TAFSIR_SPEECH_REPLACEMENTS.forEach(([pattern, replacement]) => {
+    normalized = normalized.replace(pattern, replacement)
+  })
+
+  return normalized
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/gu, '')
+    .replace(/[“”"]/g, '')
+    .replace(/\(([^)]*?)\)/g, ' $1 ')
+    .replace(/\/+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function getTafsirVoices() {
   const synthesis = getSpeechSynthesisInstance()
   if (!synthesis) return []
@@ -65,15 +111,15 @@ export function stripHtmlForSpeech(html) {
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(`<div>${source}</div>`, 'text/html')
     const text = doc.body?.textContent || ''
-    return text.replace(/\s+/g, ' ').trim()
+    return normalizeArabicSpeechFragments(text)
   }
 
-  return source
+  return normalizeArabicSpeechFragments(
+    source
     .replace(/<br\s*\/?>/gi, ' ')
     .replace(/<\/p>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  )
 }
 
 export function estimateTafsirSpeechDuration(text, rate = 1) {

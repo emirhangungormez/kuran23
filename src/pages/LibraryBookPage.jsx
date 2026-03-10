@@ -68,7 +68,7 @@ export default function LibraryBookPage() {
   const [activeSurahId, setActiveSurahId] = useState(1)
   const [activeAyahNo, setActiveAyahNo] = useState(1)
   const [expandedSurahIds, setExpandedSurahIds] = useState(null)
-  const { settings } = useSettings()
+  const { settings, updateSettings } = useSettings()
   const playerMode = usePlayerStore((state) => state.mode)
   const playerMeta = usePlayerStore((state) => state.meta)
   const playerTrackIndex = usePlayerStore((state) => state.currentTrackIndex)
@@ -364,6 +364,7 @@ export default function LibraryBookPage() {
   const currentTafsirSegmentIndex = isActiveTafsirPlayback ? playerTrackIndex : -1
   const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
   const isTafsirSpeechPaused = isActiveTafsirPlayback && !playerIsPlaying
+  const tafsirVoiceRate = Number(settings.tafsirVoiceRate || 1)
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
@@ -400,6 +401,11 @@ export default function LibraryBookPage() {
 
   const handleTafsirStop = () => {
     stopPlayback({ resetMode: true })
+  }
+
+  const cycleTafsirVoiceRate = () => {
+    const nextRate = tafsirVoiceRate === 1 ? 1.15 : tafsirVoiceRate === 1.15 ? 1.3 : tafsirVoiceRate === 1.3 ? 1.5 : 1
+    updateSettings({ tafsirVoiceRate: nextRate })
   }
 
   const handleScopeChange = (scope) => {
@@ -638,22 +644,37 @@ export default function LibraryBookPage() {
                 <div className="reader-audio-bar">
                   <div className="reader-audio-bar-copy">
                     <span className="reader-sidebar-title">Dinleme</span>
-                    <strong>Tefsiri T?rk?e seslendir</strong>
+                    <strong>Tefsiri Türkçe seslendir</strong>
                   </div>
-                  <div className="reader-audio-actions">
+                  <div className="audio-control-group tafsir-audio-controls">
                     <button
                       type="button"
-                      className={`reader-audio-btn ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
+                      className={`surah-audio-btn turkish ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}
                       onClick={handleTafsirListen}
                       disabled={!canPlayTafsirSpeech}
                     >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        {isActiveTafsirPlayback && !isTafsirSpeechPaused ? (
+                          <>
+                            <rect x="6" y="4" width="4" height="16" rx="1" />
+                            <rect x="14" y="4" width="4" height="16" rx="1" />
+                          </>
+                        ) : (
+                          <path d="M5 3l14 9-14 9V3z" />
+                        )}
+                      </svg>
                       {isActiveTafsirPlayback
                         ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
                         : 'Tefsiri Dinle'}
                     </button>
+                    <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
+                      {tafsirVoiceRate.toFixed(2)}x
+                    </button>
                     {isActiveTafsirPlayback && (
-                      <button type="button" className="reader-audio-btn secondary" onClick={handleTafsirStop}>
-                        Durdur
+                      <button type="button" className="surah-audio-btn player-toggle" onClick={handleTafsirStop} title="Durdur">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <rect x="6" y="6" width="12" height="12" rx="2" />
+                        </svg>
                       </button>
                     )}
                   </div>
