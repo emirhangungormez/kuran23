@@ -265,11 +265,13 @@
 }
 
 .reader-sidebar-intro {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    align-content: start;
     gap: 6px;
-    flex: 0 0 112px;
+    height: 136px;
+    min-height: 136px;
     margin-bottom: 24px;
+    overflow: hidden;
 }
 
 .reader-sidebar-brand {
@@ -279,6 +281,7 @@
 }
 
 .reader-sidebar-intro strong {
+    display: block;
     font-size: 15px;
     line-height: 1.2;
     letter-spacing: -0.02em;
@@ -292,8 +295,12 @@
 }
 
 .reader-sidebar-intro small {
-    display: block;
+    display: -webkit-box;
     min-height: 2.9em;
+    max-height: 2.9em;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .reader-sidebar-block {
