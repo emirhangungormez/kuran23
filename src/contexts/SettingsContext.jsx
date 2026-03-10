@@ -23,7 +23,6 @@ function createDefaultSettings() {
         defaultReciterId: 7, // Mishari Rashid al-`Afasy
         defaultTurkishReciterId: 1015, // Seyfullah Kartal (Meali)
         tafsirVoiceName: '',
-        tafsirTtsEngine: 'edge',
         tafsirVoiceRate: 1,
         textMode: 'uthmani',
         showTajweed: false,
