@@ -324,16 +324,47 @@
 }
 
 .reader-scope-toggle {
+    position: relative;
     display: inline-grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
     padding: 4px;
+    min-height: 42px;
     border: 1px solid var(--separator);
     border-radius: 999px;
     background: transparent;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.reader-scope-toggle-indicator {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    transition:
+        transform 0.24s var(--ease),
+        background-color 0.24s var(--ease);
+    z-index: 0;
+}
+
+.reader-scope-toggle.scope-verse .reader-scope-toggle-indicator {
+    transform: translateX(0);
+}
+
+.reader-scope-toggle.scope-surah .reader-scope-toggle-indicator {
+    transform: translateX(calc(100% + 4px));
 }
 
 .reader-scope-toggle button {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 32px;
     padding: 0 12px;
     border: 0;
@@ -342,11 +373,22 @@
     color: var(--text-secondary);
     font-size: 13px;
     font-weight: 600;
+    line-height: 1;
+    transition:
+        color 0.2s var(--ease),
+        transform 0.2s var(--ease);
 }
 
 .reader-scope-toggle button.active {
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
     color: var(--text-primary);
+}
+
+.reader-scope-toggle button:hover {
+    color: var(--text-primary);
+}
+
+.reader-scope-toggle button:active {
+    transform: scale(0.98);
 }
 
 .reader-sidebar-sections {

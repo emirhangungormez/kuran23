@@ -240,7 +240,12 @@ export default function LibraryBookPage() {
 
                 <div className="reader-sidebar-block reader-sidebar-controls">
                   <span className="reader-sidebar-title">Görünüm</span>
-                  <div className="reader-scope-toggle" role="tablist" aria-label="Görünüm seçimi">
+                  <div
+                    className={`reader-scope-toggle ${effectiveScope === 'verse' ? 'scope-verse' : 'scope-surah'}`}
+                    role="tablist"
+                    aria-label="Görünüm seçimi"
+                  >
+                    <span className="reader-scope-toggle-indicator" aria-hidden="true" />
                     <button
                       type="button"
                       className={effectiveScope === 'verse' ? 'active' : ''}
@@ -330,7 +335,12 @@ export default function LibraryBookPage() {
 
                 <div className="reader-toolbar">
                   <span className="reader-sidebar-title">Görünüm</span>
-                  <div className="reader-scope-toggle" role="tablist" aria-label="Görünüm seçimi">
+                  <div
+                    className={`reader-scope-toggle ${effectiveScope === 'verse' ? 'scope-verse' : 'scope-surah'}`}
+                    role="tablist"
+                    aria-label="Görünüm seçimi"
+                  >
+                    <span className="reader-scope-toggle-indicator" aria-hidden="true" />
                     <button
                       type="button"
                       className={effectiveScope === 'verse' ? 'active' : ''}
