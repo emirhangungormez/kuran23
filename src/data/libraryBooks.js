@@ -55,13 +55,13 @@ export function getBookById(bookId) {
 
 export function splitIntoSections(formattedHtml) {
   if (!formattedHtml) return []
-  if (typeof window === 'undefined') return [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
+  if (typeof window === 'undefined') return [{ title: '', bodyHtml: formattedHtml }]
 
   try {
     const parser = new DOMParser()
     const doc = parser.parseFromString(`<div id="root">${formattedHtml}</div>`, 'text/html')
     const root = doc.querySelector('#root')
-    if (!root) return [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
+    if (!root) return [{ title: '', bodyHtml: formattedHtml }]
 
     const sections = []
     let current = null
@@ -71,7 +71,7 @@ export function splitIntoSections(formattedHtml) {
       const normalized = (current.bodyHtml || '').trim()
       if (!normalized) return
       sections.push({
-        title: current.title || `${sections.length + 1}. Bölüm`,
+        title: current.title || '',
         bodyHtml: normalized
       })
     }
@@ -83,14 +83,14 @@ export function splitIntoSections(formattedHtml) {
       if (isHeading) {
         pushCurrent()
         current = {
-          title: (node.textContent || '').trim() || `${sections.length + 1}. Bölüm`,
+          title: (node.textContent || '').trim() || '',
           bodyHtml: ''
         }
         return
       }
 
       if (!current) {
-        current = { title: '1. Bölüm', bodyHtml: '' }
+        current = { title: '', bodyHtml: '' }
       }
 
       if (node.nodeType === Node.ELEMENT_NODE) {
@@ -101,9 +101,9 @@ export function splitIntoSections(formattedHtml) {
     })
 
     pushCurrent()
-    return sections.length ? sections : [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
+    return sections.length ? sections : [{ title: '', bodyHtml: formattedHtml }]
   } catch {
-    return [{ title: '1. Bölüm', bodyHtml: formattedHtml }]
+    return [{ title: '', bodyHtml: formattedHtml }]
   }
 }
 

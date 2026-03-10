@@ -88,13 +88,22 @@ export default function LibraryBookPage() {
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
   const pages = useMemo(
-    () => (sections.length ? sections : [{ title: '1. Bölüm', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
+    () => (sections.length ? sections : [{ title: '', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
     [sections]
   )
-  const sidebarItems = useMemo(
-    () => pages.map((page, index) => ({ id: `bolum-${index + 1}`, label: page.title, index })),
-    [pages]
-  )
+  const sidebarItems = useMemo(() => {
+    if (effectiveScope === 'verse') {
+      return availableAyahs.map((ayah) => ({
+        id: `ayet-${ayah}`,
+        label: `${ayah}. ayet`,
+        ayahNo: ayah
+      }))
+    }
+
+    return pages
+      .map((page, index) => ({ id: `bolum-${index + 1}`, label: page.title, index }))
+      .filter((item) => item.label)
+  }, [availableAyahs, effectiveScope, pages])
   const currentReferenceLabel = useMemo(() => {
     if (effectiveScope === 'surah') return getSurahTitle(resolvedSurahId)
     return `${getSurahTitle(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
@@ -218,14 +227,21 @@ export default function LibraryBookPage() {
     resetReaderPosition()
   }
 
-  const handleSidebarItemClick = (index) => {
-    if (activeDesign === 'flip') {
-      setPageIndex(index)
+  const handleSidebarItemClick = (item) => {
+    if (effectiveScope === 'verse' && item.ayahNo) {
+      setActiveAyahNo(item.ayahNo)
+      resetReaderPosition()
+      window.scrollTo?.({ top: 0, behavior: 'smooth' })
       return
     }
 
-    setActiveSectionIndex(index)
-    const sectionElement = document.getElementById(`bolum-${index + 1}`)
+    if (activeDesign === 'flip') {
+      setPageIndex(item.index)
+      return
+    }
+
+    setActiveSectionIndex(item.index)
+    const sectionElement = document.getElementById(`bolum-${item.index + 1}`)
     sectionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
@@ -320,15 +336,15 @@ export default function LibraryBookPage() {
                 </div>
 
                 <div className="reader-sidebar-block">
-                  <p className="reader-sidebar-title">İçindekiler</p>
+                  <p className="reader-sidebar-title">{effectiveScope === 'verse' ? 'Ayetler' : 'İçindekiler'}</p>
                   <div className="reader-sidebar-sections">
                     {sidebarItems.map((item) => (
                       <button
                         key={item.id}
-                        className={activeSectionIndex === item.index ? 'active' : ''}
-                        onClick={() => handleSidebarItemClick(item.index)}
+                        className={effectiveScope === 'verse' ? (resolvedAyahNo === item.ayahNo ? 'active' : '') : (activeSectionIndex === item.index ? 'active' : '')}
+                        onClick={() => handleSidebarItemClick(item)}
                       >
-                        {item.index + 1}. {item.label}
+                        {item.label}
                       </button>
                     ))}
                   </div>
@@ -416,8 +432,8 @@ export default function LibraryBookPage() {
                         data-section-index={index}
                         className="tefsir-section-card"
                       >
-                        <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>
-                        <h3>{section.title}</h3>
+                        {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
+                        {section.title && <h3>{section.title}</h3>}
                         <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
                       </article>
                     ))}
@@ -435,7 +451,7 @@ export default function LibraryBookPage() {
                         <article className="flipbook-page flipbook-left">
                           {prevPage ? (
                             <>
-                              <h3>{prevPage.title}</h3>
+                              {prevPage.title && <h3>{prevPage.title}</h3>}
                               <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: prevPage.bodyHtml }} />
                             </>
                           ) : (
@@ -450,7 +466,7 @@ export default function LibraryBookPage() {
                             transformOrigin: dragOffset < 0 ? 'left center' : 'right center'
                           }}
                         >
-                          <h3>{currentPage?.title}</h3>
+                          {currentPage?.title && <h3>{currentPage.title}</h3>}
                           <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: currentPage?.bodyHtml || '' }} />
                         </article>
                       </div>
