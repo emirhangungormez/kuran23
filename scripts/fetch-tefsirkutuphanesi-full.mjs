@@ -99,12 +99,9 @@ function decodeEntities(value) {
   })
 }
 
-function stripHtmlToText(html) {
+function stripHtmlTags(html) {
   return decodeEntities(
-    html
-      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-      .replace(/<!--[\s\S]*?-->/g, ' ')
+    String(html || '')
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<\/(p|div|h1|h2|h3|h4|h5|h6|li|tr|td)>/gi, '\n\n')
       .replace(/<li[^>]*>/gi, '- ')
@@ -115,6 +112,15 @@ function stripHtmlToText(html) {
       .replace(/[ \f\v]+/g, ' ')
       .replace(/[ \t]+\n/g, '\n')
       .replace(/\n{3,}/g, '\n\n')
+  )
+}
+
+function stripHtmlToText(html) {
+  return stripHtmlTags(
+    html
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<!--[\s\S]*?-->/g, ' ')
   )
 }
 
@@ -170,6 +176,133 @@ function escapeHtml(value) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
+}
+
+function extractMainContentHtml(rawHtml) {
+  const normalized = String(rawHtml || '')
+    .replace(/\ufeff/g, '')
+    .replace(/\u00a0/g, ' ')
+  if (!normalized.trim()) return ''
+
+  const textMatch = normalized.match(/<div[^>]+id=["']text["'][^>]*>([\s\S]*?)<\/div>\s*(?:<\/div>\s*){0,4}/i)
+  if (textMatch?.[1]) return textMatch[1].trim()
+
+  const tdMatches = [...normalized.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
+  if (tdMatches.length) {
+    const ranked = tdMatches
+      .map((match) => match[1])
+      .sort((left, right) => right.length - left.length)
+    return String(ranked[0] || '').trim()
+  }
+
+  return normalized.trim()
+}
+
+function sanitizeLegacyHtml(html) {
+  return String(html || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<\/?font\b[^>]*>/gi, '')
+    .replace(/<(\/?)(b)\b[^>]*>/gi, '<$1strong>')
+    .replace(/<(\/?)(i)\b[^>]*>/gi, '<$1em>')
+    .replace(/<(\/?)(u)\b[^>]*>/gi, '<$1span>')
+    .replace(/<(h[1-4]|p|span|strong|em|br)\b[^>]*>/gi, '<$1>')
+    .replace(/<o:p>\s*<\/o:p>/gi, '')
+    .replace(/<o:p>/gi, '')
+    .replace(/<\/o:p>/gi, '')
+    .replace(/\r/g, '')
+    .replace(/\u00a0/g, ' ')
+    .trim()
+}
+
+function extractHtmlBlocks(html) {
+  const sanitized = sanitizeLegacyHtml(html)
+  const matches = [...sanitized.matchAll(/<(h1|h2|h3|h4|p)\b[^>]*>[\s\S]*?<\/\1>/gi)]
+  return matches.map((match) => {
+    const rawHtml = match[0].trim()
+    return {
+      html: rawHtml,
+      text: normalizeBlockText(stripHtmlTags(rawHtml))
+    }
+  }).filter((block) => block.text)
+}
+
+function getHtmlAyahMarker(blockText, surah) {
+  const direct = /^(?<ayah>\d{1,3})$/.exec(blockText)
+  const ayahNo = Number(direct?.groups?.ayah)
+  if (Number.isInteger(ayahNo) && ayahNo >= 1 && ayahNo <= surah.ayahCount) return ayahNo
+
+  const wrapped = /^\((?<ayah>\d{1,3})\)$/.exec(blockText)
+  const wrappedAyahNo = Number(wrapped?.groups?.ayah)
+  if (Number.isInteger(wrappedAyahNo) && wrappedAyahNo >= 1 && wrappedAyahNo <= surah.ayahCount) return wrappedAyahNo
+
+  return null
+}
+
+function findSurahStartIndex(blocks, surah) {
+  const numberedTitleIndex = blocks.findIndex((block) => /^\s*\d{1,3}\s*[-.)]\s*/.test(block.text) && /s[ûu]resi/i.test(block.text))
+  if (numberedTitleIndex >= 0) return numberedTitleIndex
+
+  const titleIndex = blocks.findIndex((block) => isSurahTitleBlock(block.text, surah))
+  if (titleIndex >= 0) return titleIndex
+
+  return 0
+}
+
+function buildWrappedHtml(blocks) {
+  if (!Array.isArray(blocks) || !blocks.length) return ''
+  return ['<div class="tafsir-content-wrapper">', ...blocks.map((block) => block.html), '</div>'].join('\n')
+}
+
+function extractSurahContentFromHtml(rawHtml, surah) {
+  const mainHtml = extractMainContentHtml(rawHtml)
+  if (!mainHtml) return null
+
+  const allBlocks = extractHtmlBlocks(mainHtml)
+  if (!allBlocks.length) return null
+
+  const startIndex = findSurahStartIndex(allBlocks, surah)
+  const blocks = allBlocks.slice(startIndex)
+  if (!blocks.length) return null
+
+  const verses = {}
+  const introBlocks = []
+  const surahBlocks = []
+  let currentAyah = null
+
+  for (const block of blocks) {
+    const nextAyah = getHtmlAyahMarker(block.text, surah)
+    if (nextAyah) {
+      currentAyah = nextAyah
+      if (!verses[currentAyah]) verses[currentAyah] = []
+    }
+
+    surahBlocks.push(block)
+
+    if (currentAyah === null) introBlocks.push(block)
+    else verses[currentAyah].push(block)
+  }
+
+  const availableAyahs = Object.keys(verses)
+    .map((ayahNo) => Number(ayahNo))
+    .filter((ayahNo) => {
+      const blocksForAyah = verses[ayahNo] || []
+      const contentText = normalizeBlockText(
+        blocksForAyah
+          .map((block) => block.text)
+          .filter((text) => text && text !== String(ayahNo) && text !== `(${ayahNo})`)
+          .join(' ')
+      )
+      return Boolean(contentText)
+    })
+    .sort((a, b) => a - b)
+
+  return {
+    surahHtml: trimLeadingFrontMatter(buildWrappedHtml(surahBlocks)),
+    verse: Object.fromEntries(availableAyahs.map((ayahNo) => [String(ayahNo), buildWrappedHtml(verses[ayahNo] || [])])),
+    availableAyahs
+  }
 }
 
 function blockToHtml(block) {
@@ -372,7 +505,7 @@ async function fetchSurahPayload(book, surah, options) {
       return { status: 'empty', book: book.sourceId, surahId: surah.no, sourceUrl }
     }
 
-    const extracted = extractSurahContent(text, surah)
+    const extracted = extractSurahContentFromHtml(rawHtml, surah) || extractSurahContent(text, surah)
     if (!extracted.surahHtml.trim() && !Object.keys(extracted.verse).length) {
       return { status: 'empty', book: book.sourceId, surahId: surah.no, sourceUrl }
     }
