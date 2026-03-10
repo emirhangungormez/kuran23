@@ -602,6 +602,42 @@
     color: var(--text-secondary);
 }
 
+.reader-surah-verses {
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--separator-light);
+    margin-bottom: 12px;
+}
+
+.reader-surah-verses-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.reader-surah-verses-head strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.reader-surah-verses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.reader-surah-verse-item {
+    padding: 0 0 16px;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.reader-surah-verse-item:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
 .tefsir-sections {
     display: flex;
     flex-direction: column;
@@ -774,12 +810,16 @@
     margin-top: 28px;
     padding-top: 18px;
     border-top: 1px solid var(--separator-light);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+}
+
+.reader-next-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
 }
 
 .reader-next-nav-label {
+    display: block;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -790,15 +830,30 @@
 .reader-next-nav-link {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 14px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--text-primary);
+    padding: 14px 16px;
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--separator));
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+    color: var(--accent);
     text-align: left;
     cursor: pointer;
+}
+
+.reader-next-nav-link span {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.reader-next-nav-link.prev {
+    justify-content: flex-start;
+}
+
+.reader-next-nav-link.next {
+    justify-content: space-between;
 }
 
 .reader-next-nav-link strong {
@@ -902,6 +957,12 @@
         gap: 6px;
     }
 
+    .reader-surah-verses-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
     .reader-kicker {
         min-width: 0;
         padding-top: 0;
@@ -920,6 +981,10 @@
     .tefsirler-rich {
         font-size: 17px;
         line-height: 1.82;
+    }
+
+    .reader-next-nav-grid {
+        grid-template-columns: 1fr;
     }
 
     .flipbook {

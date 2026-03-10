@@ -17,7 +17,7 @@ import {
   getSurahTitle,
   splitIntoSections
 } from '../data/libraryBooks'
-import { getVerse } from '../services/api'
+import { getSurah, getVerse } from '../services/api'
 import {
   getAyahNumbersFromManifest,
   getRawTafsirHtml,
@@ -26,6 +26,10 @@ import {
   loadLibrarySurah
 } from '../services/libraryContent'
 import './TefsirlerPage.css'
+
+function getPlainSurahTitleLabel(surahId) {
+  return getSurahTitle(surahId).replace(/\s*\(\d+\)$/, '')
+}
 
 export default function LibraryBookPage() {
   const { bookId } = useParams()
@@ -88,6 +92,16 @@ export default function LibraryBookPage() {
     staleTime: 1000 * 60 * 60 * 12
   })
 
+  const {
+    data: selectedSurah,
+    isLoading: isSelectedSurahLoading
+  } = useQuery({
+    queryKey: ['library-reader-surah', resolvedSurahId, settings.defaultAuthorId],
+    queryFn: () => getSurah(resolvedSurahId, settings.defaultAuthorId),
+    enabled: Boolean(isTafsirBook && effectiveScope === 'surah' && resolvedSurahId),
+    staleTime: 1000 * 60 * 60 * 12
+  })
+
   const rawTafsirHtml = useMemo(() => {
     if (!book || book.category !== 'tefsir') return ''
     return getRawTafsirHtml({
@@ -112,25 +126,52 @@ export default function LibraryBookPage() {
     () =>
       availableSurahIds.map((surahId) => ({
         surahId,
-        label: getSurahTitle(surahId).replace(/\s*\(\d+\)$/, ''),
+        label: getPlainSurahTitleLabel(surahId),
         numberLabel: `${surahId}.`,
         ayahs: getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, surahId)
       })),
     [availableSurahIds, book?.id, book?.sourceId, manifest]
   )
   const currentReferenceLabel = useMemo(() => {
-    if (effectiveScope === 'surah') return getSurahTitle(resolvedSurahId)
-    return `${getSurahTitle(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
+    if (effectiveScope === 'surah') return getPlainSurahTitleLabel(resolvedSurahId)
+    return `${getPlainSurahTitleLabel(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
   }, [effectiveScope, resolvedAyahNo, resolvedSurahId])
   const currentSurahIndex = useMemo(
     () => availableSurahIds.findIndex((surahId) => Number(surahId) === Number(resolvedSurahId)),
     [availableSurahIds, resolvedSurahId]
   )
+  const prevSurahId = currentSurahIndex > 0 ? availableSurahIds[currentSurahIndex - 1] || null : null
   const nextSurahId = currentSurahIndex >= 0 ? availableSurahIds[currentSurahIndex + 1] || null : null
+  const prevSurahAyahs = useMemo(
+    () => (prevSurahId ? getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, prevSurahId) : []),
+    [book?.id, book?.sourceId, manifest, prevSurahId]
+  )
   const nextSurahAyahs = useMemo(
     () => (nextSurahId ? getAyahNumbersFromManifest(manifest, book?.sourceId || book?.id, nextSurahId) : []),
     [book?.id, book?.sourceId, manifest, nextSurahId]
   )
+  const previousVerseTarget = useMemo(() => {
+    if (effectiveScope !== 'verse') return null
+
+    const currentAyahIndex = availableAyahs.findIndex((ayah) => Number(ayah) === Number(resolvedAyahNo))
+    if (currentAyahIndex > 0) {
+      const ayahNo = availableAyahs[currentAyahIndex - 1]
+      return {
+        surahId: resolvedSurahId,
+        ayahNo,
+        label: `${getPlainSurahTitleLabel(resolvedSurahId)} · ${ayahNo}. ayet`
+      }
+    }
+
+    if (!prevSurahId || !prevSurahAyahs.length) return null
+
+    const ayahNo = prevSurahAyahs[prevSurahAyahs.length - 1]
+    return {
+      surahId: prevSurahId,
+      ayahNo,
+      label: `${getPlainSurahTitleLabel(prevSurahId)} · ${ayahNo}. ayet`
+    }
+  }, [availableAyahs, effectiveScope, prevSurahAyahs, prevSurahId, resolvedAyahNo, resolvedSurahId])
   const nextVerseTarget = useMemo(() => {
     if (effectiveScope !== 'verse') return null
 
@@ -140,7 +181,7 @@ export default function LibraryBookPage() {
       return {
         surahId: resolvedSurahId,
         ayahNo,
-        label: `${getSurahTitle(resolvedSurahId)} · ${ayahNo}. ayet`
+        label: `${getPlainSurahTitleLabel(resolvedSurahId)} · ${ayahNo}. ayet`
       }
     }
 
@@ -149,14 +190,21 @@ export default function LibraryBookPage() {
     return {
       surahId: nextSurahId,
       ayahNo: nextSurahAyahs[0],
-      label: `${getSurahTitle(nextSurahId)} · ${nextSurahAyahs[0]}. ayet`
+      label: `${getPlainSurahTitleLabel(nextSurahId)} · ${nextSurahAyahs[0]}. ayet`
     }
   }, [availableAyahs, effectiveScope, nextSurahAyahs, nextSurahId, resolvedAyahNo, resolvedSurahId])
+  const previousSurahTarget = useMemo(() => {
+    if (effectiveScope !== 'surah' || !prevSurahId) return null
+    return {
+      surahId: prevSurahId,
+      label: getPlainSurahTitleLabel(prevSurahId)
+    }
+  }, [effectiveScope, prevSurahId])
   const nextSurahTarget = useMemo(() => {
     if (effectiveScope !== 'surah' || !nextSurahId) return null
     return {
       surahId: nextSurahId,
-      label: getSurahTitle(nextSurahId)
+      label: getPlainSurahTitleLabel(nextSurahId)
     }
   }, [effectiveScope, nextSurahId])
   const visibleExpandedSurahIds = useMemo(() => {
@@ -172,6 +220,7 @@ export default function LibraryBookPage() {
     () => normalizeArabicDisplayText(getVerseTextByMode(selectedVerse, textMode)),
     [selectedVerse, textMode]
   )
+  const selectedSurahVerses = useMemo(() => selectedSurah?.verses || [], [selectedSurah])
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
@@ -232,7 +281,28 @@ export default function LibraryBookPage() {
       resetReaderPosition()
     }
   }
-  const isReaderLoading = isManifestLoading || isSurahLoading
+  const handleReaderRetreat = () => {
+    if (effectiveScope === 'verse' && previousVerseTarget) {
+      setActiveSurahId(previousVerseTarget.surahId)
+      setActiveAyahNo(previousVerseTarget.ayahNo)
+      setExpandedSurahIds((value) => {
+        const current = value ?? []
+        return current.includes(previousVerseTarget.surahId) ? current : [...current, previousVerseTarget.surahId]
+      })
+      resetReaderPosition()
+      return
+    }
+
+    if (effectiveScope === 'surah' && previousSurahTarget) {
+      setActiveSurahId(previousSurahTarget.surahId)
+      setExpandedSurahIds((value) => {
+        const current = value ?? []
+        return current.includes(previousSurahTarget.surahId) ? current : [...current, previousSurahTarget.surahId]
+      })
+      resetReaderPosition()
+    }
+  }
+  const isReaderLoading = isManifestLoading || isSurahLoading || (effectiveScope === 'surah' && isSelectedSurahLoading)
   const readerErrorMessage = manifestError
     ? 'Kütüphane manifesti yüklenemedi.'
     : surahError
@@ -426,7 +496,7 @@ export default function LibraryBookPage() {
                           <div className="reader-verse-card">
                             <div className="reader-verse-meta">
                               <span className="reader-verse-label">Ayet Metni</span>
-                              <strong>{getSurahTitle(resolvedSurahId)} · {resolvedAyahNo}. ayet</strong>
+                              <strong>{getPlainSurahTitleLabel(resolvedSurahId)} · {resolvedAyahNo}. ayet</strong>
                             </div>
                             <div
                               className="reader-verse-arabic"
@@ -446,6 +516,40 @@ export default function LibraryBookPage() {
                       </section>
                     )}
 
+                    {effectiveScope === 'surah' && selectedSurahVerses.length > 0 && (
+                      <section className="reader-surah-verses">
+                        <div className="reader-surah-verses-head">
+                          <span className="reader-verse-label">Sûre Ayetleri</span>
+                          <strong>{getPlainSurahTitleLabel(resolvedSurahId)}</strong>
+                        </div>
+                        <div className="reader-surah-verses-list">
+                          {selectedSurahVerses.map((verse) => {
+                            const verseArabicHtml = normalizeArabicDisplayText(getVerseTextByMode(verse, textMode))
+                            return (
+                              <article key={verse.id || `${resolvedSurahId}-${verse.verse_number}`} className="reader-surah-verse-item">
+                                <div className="reader-verse-meta">
+                                  <span className="reader-verse-label">{verse.verse_number}. ayet</span>
+                                </div>
+                                <div
+                                  className="reader-verse-arabic"
+                                  style={{ fontSize: `${arabicFontSize}px`, fontFamily: arabicFontFamily }}
+                                  dangerouslySetInnerHTML={{ __html: verseArabicHtml }}
+                                />
+                                {verse.transcription && (
+                                  <p className="reader-verse-transcription" style={{ fontSize: `${transcriptionFontSize}px` }}>
+                                    {verse.transcription}
+                                  </p>
+                                )}
+                                <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
+                                  {verse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
+                                </p>
+                              </article>
+                            )
+                          })}
+                        </div>
+                      </section>
+                    )}
+
                     <section className="tefsir-sections">
                       {displaySections.map((section, index) => (
                         <article
@@ -462,15 +566,33 @@ export default function LibraryBookPage() {
                   </>
                 )}
 
-                {(nextVerseTarget || nextSurahTarget) && (
+                {(previousVerseTarget || nextVerseTarget || previousSurahTarget || nextSurahTarget) && (
                   <div className="reader-next-nav">
-                    <span className="reader-next-nav-label">
-                      {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sûre'}
-                    </span>
-                    <button type="button" className="reader-next-nav-link" onClick={handleReaderAdvance}>
-                      <strong>{effectiveScope === 'verse' ? nextVerseTarget?.label : nextSurahTarget?.label}</strong>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M13 5l7 7-7 7" /></svg>
-                    </button>
+                    <div className="reader-next-nav-grid">
+                      {(effectiveScope === 'verse' ? previousVerseTarget : previousSurahTarget) ? (
+                        <button type="button" className="reader-next-nav-link prev" onClick={handleReaderRetreat}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5" /><path d="M11 19l-7-7 7-7" /></svg>
+                          <span>
+                            <span className="reader-next-nav-label">
+                              {effectiveScope === 'verse' ? 'Önceki ayet' : 'Önceki sûre'}
+                            </span>
+                            <strong>{effectiveScope === 'verse' ? previousVerseTarget?.label : previousSurahTarget?.label}</strong>
+                          </span>
+                        </button>
+                      ) : <span />}
+
+                      {(effectiveScope === 'verse' ? nextVerseTarget : nextSurahTarget) ? (
+                        <button type="button" className="reader-next-nav-link next" onClick={handleReaderAdvance}>
+                          <span>
+                            <span className="reader-next-nav-label">
+                              {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sûre'}
+                            </span>
+                            <strong>{effectiveScope === 'verse' ? nextVerseTarget?.label : nextSurahTarget?.label}</strong>
+                          </span>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M13 5l7 7-7 7" /></svg>
+                        </button>
+                      ) : <span />}
+                    </div>
                   </div>
                 )}
               </div>
