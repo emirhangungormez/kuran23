@@ -398,6 +398,7 @@
     max-height: 420px;
     overflow: auto;
     padding-right: 4px;
+    scrollbar-gutter: stable;
 }
 
 .reader-sidebar-group {
@@ -447,6 +448,11 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+}
+
+.reader-sidebar-toggle.is-hidden {
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .reader-sidebar-toggle.open svg {

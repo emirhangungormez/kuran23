@@ -280,15 +280,18 @@ export default function LibraryBookPage() {
                             >
                               {item.label}
                             </button>
-                            {effectiveScope === 'verse' && item.ayahs.length > 0 && (
+                            {item.ayahs.length > 0 && (
                               <button
                                 type="button"
-                                className={`reader-sidebar-toggle ${isExpanded ? 'open' : ''}`}
+                                className={`reader-sidebar-toggle ${isExpanded ? 'open' : ''} ${effectiveScope !== 'verse' ? 'is-hidden' : ''}`}
                                 onClick={(event) => {
                                   event.stopPropagation()
+                                  if (effectiveScope !== 'verse') return
                                   toggleSurahExpansion(item.surahId)
                                 }}
                                 aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'göster'}`}
+                                aria-hidden={effectiveScope !== 'verse'}
+                                tabIndex={effectiveScope !== 'verse' ? -1 : 0}
                               >
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                               </button>
