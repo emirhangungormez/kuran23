@@ -359,7 +359,7 @@ export default function LibraryBookPage() {
     && playerMeta?.bookId === (book?.id || '')
     && Number(playerMeta?.surahId || 0) === Number(resolvedSurahId)
     && playerMeta?.tafsirScope === effectiveScope
-    && (effectiveScope !== 'verse' || Number(playerMeta?.ayahNo || 0) === Number(resolvedAyahNo))
+    && (effectiveScope !== 'verse' || Number(playerMeta?.tafsirAyahNo || 0) === Number(resolvedAyahNo))
   ), [book?.id, effectiveScope, playerMeta, playerMode, resolvedAyahNo, resolvedSurahId])
   const currentTafsirSegmentIndex = isActiveTafsirPlayback ? playerTrackIndex : -1
   const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
@@ -391,6 +391,7 @@ export default function LibraryBookPage() {
         link: `/kutuphane/${book.id}`,
         surahId: resolvedSurahId,
         ayahNo: 0,
+        tafsirAyahNo: effectiveScope === 'verse' ? resolvedAyahNo : 0,
         context: 'tafsir',
         bookId: book.id,
         tafsirScope: effectiveScope
@@ -491,7 +492,7 @@ export default function LibraryBookPage() {
 
     const hasScopeChanged = playerMeta?.tafsirScope !== effectiveScope
     const hasSurahChanged = Number(playerMeta?.surahId || 0) !== Number(resolvedSurahId)
-    const hasAyahChanged = effectiveScope === 'verse' && Number(playerMeta?.ayahNo || 0) !== Number(resolvedAyahNo)
+    const hasAyahChanged = effectiveScope === 'verse' && Number(playerMeta?.tafsirAyahNo || 0) !== Number(resolvedAyahNo)
 
     if (hasScopeChanged || hasSurahChanged || hasAyahChanged) {
       stopPlayback({ resetMode: true })
