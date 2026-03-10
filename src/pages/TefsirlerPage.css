@@ -252,26 +252,22 @@
 }
 
 .reader-sidebar {
-    position: sticky;
-    top: 108px;
+    position: relative;
+    top: 0;
     align-self: start;
     width: 220px;
-    height: calc(100vh - 132px);
-    min-height: 520px;
     padding-right: 12px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    min-height: 0;
 }
 
 .reader-sidebar-intro {
     display: grid;
     align-content: start;
     gap: 6px;
-    height: 136px;
     min-height: 136px;
     margin-bottom: 24px;
-    overflow: hidden;
 }
 
 .reader-sidebar-brand {
@@ -311,8 +307,6 @@
 }
 
 .reader-sidebar-block:last-child {
-    flex: 1 1 auto;
-    min-height: 0;
     margin-bottom: 0;
 }
 
@@ -418,10 +412,8 @@
 .reader-sidebar-sections {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
     gap: 10px;
-    max-height: none;
-    min-height: 0;
+    max-height: 60vh;
     overflow: auto;
     padding-right: 4px;
     scrollbar-gutter: stable;
