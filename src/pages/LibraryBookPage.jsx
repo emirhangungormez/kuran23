@@ -221,6 +221,56 @@ export default function LibraryBookPage() {
     [selectedVerse, textMode]
   )
   const selectedSurahVerses = useMemo(() => selectedSurah?.verses || [], [selectedSurah])
+  const surahContentBlocks = useMemo(() => {
+    if (effectiveScope !== 'surah' || typeof window === 'undefined' || !formattedHtml) return []
+
+    try {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(`<div id="root">${formattedHtml}</div>`, 'text/html')
+      const root = doc.querySelector('#root')
+      if (!root) return []
+
+      const verseMap = new Map(selectedSurahVerses.map((verse) => [Number(verse.verse_number), verse]))
+      const blocks = []
+      let currentAyahNo = null
+      let currentBodyHtml = ''
+
+      const pushCurrent = () => {
+        const normalizedBodyHtml = currentBodyHtml.trim()
+        if (!normalizedBodyHtml && !currentAyahNo) return
+        blocks.push({
+          ayahNo: currentAyahNo,
+          verse: currentAyahNo ? verseMap.get(currentAyahNo) || null : null,
+          bodyHtml: normalizedBodyHtml
+        })
+      }
+
+      Array.from(root.childNodes).forEach((node) => {
+        const isAyahMarker =
+          node.nodeType === Node.ELEMENT_NODE &&
+          node.classList?.contains('tafsir-ayah-marker')
+
+        if (isAyahMarker) {
+          pushCurrent()
+          const match = (node.textContent || '').match(/\d+/)
+          currentAyahNo = match ? Number(match[0]) : null
+          currentBodyHtml = ''
+          return
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          currentBodyHtml += node.outerHTML
+        } else if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+          currentBodyHtml += `<p>${node.textContent.trim()}</p>`
+        }
+      })
+
+      pushCurrent()
+      return blocks.filter((block) => block.ayahNo || block.bodyHtml)
+    } catch {
+      return []
+    }
+  }, [effectiveScope, formattedHtml, selectedSurahVerses])
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
@@ -516,52 +566,55 @@ export default function LibraryBookPage() {
                       </section>
                     )}
 
-                    {effectiveScope === 'surah' && selectedSurahVerses.length > 0 && (
-                      <section className="reader-surah-verses">
-                        <div className="reader-surah-verses-head">
-                          <span className="reader-verse-label">Sûre Ayetleri</span>
-                          <strong>{getPlainSurahTitleLabel(resolvedSurahId)}</strong>
-                        </div>
-                        <div className="reader-surah-verses-list">
-                          {selectedSurahVerses.map((verse) => {
-                            const verseArabicHtml = normalizeArabicDisplayText(getVerseTextByMode(verse, textMode))
-                            return (
-                              <article key={verse.id || `${resolvedSurahId}-${verse.verse_number}`} className="reader-surah-verse-item">
-                                <div className="reader-verse-meta">
-                                  <span className="reader-verse-label">{verse.verse_number}. ayet</span>
-                                </div>
-                                <div
-                                  className="reader-verse-arabic"
-                                  style={{ fontSize: `${arabicFontSize}px`, fontFamily: arabicFontFamily }}
-                                  dangerouslySetInnerHTML={{ __html: verseArabicHtml }}
-                                />
-                                {verse.transcription && (
-                                  <p className="reader-verse-transcription" style={{ fontSize: `${transcriptionFontSize}px` }}>
-                                    {verse.transcription}
-                                  </p>
-                                )}
-                                <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
-                                  {verse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
-                                </p>
-                              </article>
-                            )
-                          })}
-                        </div>
-                      </section>
-                    )}
-
                     <section className="tefsir-sections">
-                      {displaySections.map((section, index) => (
-                        <article
-                          key={`${section.title}-${index}`}
-                          id={`bolum-${index + 1}`}
-                          className="tefsir-section-card"
-                        >
-                          {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
-                          {section.title && <h3>{section.title}</h3>}
-                          <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
-                        </article>
-                      ))}
+                      {effectiveScope === 'surah' && surahContentBlocks.length > 0
+                        ? surahContentBlocks.map((block, index) => {
+                          const verseArabicHtml = block.verse
+                            ? normalizeArabicDisplayText(getVerseTextByMode(block.verse, textMode))
+                            : ''
+
+                          return (
+                            <article
+                              key={`surah-block-${block.ayahNo || 'intro'}-${index}`}
+                              id={`bolum-${index + 1}`}
+                              className="tefsir-section-card"
+                            >
+                              {block.verse && (
+                                <div className="reader-inline-verse-card">
+                                  <div className="reader-verse-meta">
+                                    <span className="reader-verse-label">{block.verse.verse_number}. ayet</span>
+                                    <strong>{getPlainSurahTitleLabel(resolvedSurahId)} · {block.verse.verse_number}. ayet</strong>
+                                  </div>
+                                  <div
+                                    className="reader-verse-arabic"
+                                    style={{ fontSize: `${arabicFontSize}px`, fontFamily: arabicFontFamily }}
+                                    dangerouslySetInnerHTML={{ __html: verseArabicHtml }}
+                                  />
+                                  {block.verse.transcription && (
+                                    <p className="reader-verse-transcription" style={{ fontSize: `${transcriptionFontSize}px` }}>
+                                      {block.verse.transcription}
+                                    </p>
+                                  )}
+                                  <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
+                                    {block.verse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
+                                  </p>
+                                </div>
+                              )}
+                              {block.bodyHtml && <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: block.bodyHtml }} />}
+                            </article>
+                          )
+                        })
+                        : displaySections.map((section, index) => (
+                          <article
+                            key={`${section.title}-${index}`}
+                            id={`bolum-${index + 1}`}
+                            className="tefsir-section-card"
+                          >
+                            {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
+                            {section.title && <h3>{section.title}</h3>}
+                            <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
+                          </article>
+                        ))}
                     </section>
                   </>
                 )}

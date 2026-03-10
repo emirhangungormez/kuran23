@@ -602,40 +602,16 @@
     color: var(--text-secondary);
 }
 
-.reader-surah-verses {
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--separator-light);
-    margin-bottom: 12px;
+.reader-verse-card,
+.reader-inline-verse-card {
+    border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--separator));
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
 }
 
-.reader-surah-verses-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-}
-
-.reader-surah-verses-head strong {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-
-.reader-surah-verses-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.reader-surah-verse-item {
-    padding: 0 0 16px;
-    border-bottom: 1px solid var(--separator-light);
-}
-
-.reader-surah-verse-item:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
+.reader-inline-verse-card {
+    margin-bottom: 18px;
 }
 
 .tefsir-sections {
@@ -952,12 +928,6 @@
     }
 
     .reader-verse-meta {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-    }
-
-    .reader-surah-verses-head {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
