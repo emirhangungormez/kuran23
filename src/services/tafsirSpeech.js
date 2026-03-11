@@ -142,6 +142,8 @@ function normalizeTurkishOrthography(text) {
 
   // Kelime içi kesmeleri sadeleştir (te'vil -> tevil, Kur'an -> Kuran).
   normalized = normalized.replace(/([A-Za-zÇĞİÖŞÜçğıöşü])'([A-Za-zÇĞİÖŞÜçğıöşü])/g, '$1$2')
+  // Osmanlıca tireli izafet kalıplarını birleştir (Ayet-i -> Ayeti, şerif-i -> şerifi).
+  normalized = normalized.replace(/\b([A-Za-zÇĞİÖŞÜçğıöşü]+)-([ıiuüİIUÜ])\b/g, '$1$2')
 
   return normalized
 }
