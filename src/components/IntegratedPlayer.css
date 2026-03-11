@@ -2,7 +2,7 @@
     position: fixed;
     bottom: 24px;
     left: 24px;
-    width: 370px;
+    width: 356px;
     padding: 14px 14px 18px;
     border-radius: 26px;
     background: var(--card-bg);
@@ -14,7 +14,7 @@
 }
 
 .integrated-player.active {
-    width: 432px;
+    width: 404px;
     padding: 16px 16px 20px;
 }
 
