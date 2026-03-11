@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useSettings } from '../contexts/SettingsContext'
+import usePlayerStore from '../stores/usePlayerStore'
 import './BottomNav.css'
 
 const items = [
@@ -63,10 +64,18 @@ const items = [
 export default function BottomNav() {
   const location = useLocation()
   const { settings, updateSettings } = useSettings()
+  const playerMode = usePlayerStore((state) => state.mode)
+  const hasPlayer = playerMode !== 'none'
+  const isPlayerActive = hasPlayer && settings.isPlayerVisible
 
   const handleToggleTheme = () => {
     const nextTheme = settings.theme === 'dark' ? 'light' : 'dark'
     updateSettings({ theme: nextTheme })
+  }
+
+  const handleTogglePlayer = () => {
+    if (!hasPlayer) return
+    updateSettings({ isPlayerVisible: !settings.isPlayerVisible })
   }
 
   return (
@@ -108,6 +117,24 @@ export default function BottomNav() {
           </Link>
         )
       })}
+      <button
+        type="button"
+        className={`bottom-nav-item player-toggle${isPlayerActive ? ' active' : ''}`}
+        onClick={handleTogglePlayer}
+        aria-label={isPlayerActive ? 'Player gizle' : 'Player goster'}
+        aria-pressed={isPlayerActive}
+        disabled={!hasPlayer}
+      >
+        <span className="bottom-nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 13.5a2.5 2.5 0 0 1 2.5-2.5H8v8H6.5A2.5 2.5 0 0 1 4 16.5z" />
+            <path d="M16 11h1.5a2.5 2.5 0 0 1 2.5 2.5v3A2.5 2.5 0 0 1 17.5 19H16z" />
+            <path d="M8 11a4 4 0 0 1 8 0" />
+            <path d="M8 15h8" />
+          </svg>
+        </span>
+        <span className="bottom-nav-label">Player</span>
+      </button>
     </nav>
   )
 }

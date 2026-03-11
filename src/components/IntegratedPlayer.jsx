@@ -56,6 +56,7 @@ export default function IntegratedPlayer({
 }) {
     const [isExpanded, setIsExpanded] = useState(false)
     const progressFillRef = useRef(null)
+    const swipeStartRef = useRef(null)
     const navigate = useNavigate()
     const { settings, updateSettings } = useSettings()
     const { data: availableReciters = [] } = useQuery({
@@ -205,10 +206,58 @@ export default function IntegratedPlayer({
         }
     }, [context, currentTime, duration, isPlaying, playbackSpeed])
 
+    const handleSwipeStart = (event) => {
+        if (typeof window !== 'undefined' && window.innerWidth > 900) return
+        if (event.touches.length !== 1) return
+
+        const target = event.target
+        if (target instanceof Element && target.closest('button, input, .custom-select')) return
+
+        const touch = event.touches[0]
+        swipeStartRef.current = {
+            x: touch.clientX,
+            y: touch.clientY
+        }
+    }
+
+    const handleSwipeMove = (event) => {
+        if (!swipeStartRef.current || event.touches.length !== 1) return
+
+        const touch = event.touches[0]
+        const deltaX = touch.clientX - swipeStartRef.current.x
+        const deltaY = touch.clientY - swipeStartRef.current.y
+
+        if (Math.abs(deltaY) > 28 && Math.abs(deltaY) > Math.abs(deltaX)) {
+            swipeStartRef.current = null
+        }
+    }
+
+    const handleSwipeEnd = (event) => {
+        if (!swipeStartRef.current || event.changedTouches.length !== 1) {
+            swipeStartRef.current = null
+            return
+        }
+
+        const touch = event.changedTouches[0]
+        const deltaX = touch.clientX - swipeStartRef.current.x
+        const deltaY = touch.clientY - swipeStartRef.current.y
+        swipeStartRef.current = null
+
+        if (deltaX <= -72 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35) {
+            updateSettings({ isPlayerVisible: false })
+        }
+    }
+
     if (!isVisible) return null
 
     return (
-        <div className={`integrated-player ${isExpanded ? 'active' : ''}`}>
+        <div
+            className={`integrated-player ${isExpanded ? 'active' : ''}`}
+            onTouchStart={handleSwipeStart}
+            onTouchMove={handleSwipeMove}
+            onTouchEnd={handleSwipeEnd}
+            onTouchCancel={handleSwipeEnd}
+        >
             <div className="player-main-row">
                 <div className="player-rich-info">
                     <div className="player-row-mid">

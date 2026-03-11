@@ -5,7 +5,7 @@
   width: auto;
   bottom: calc(var(--mobile-tabbar-offset, 10px) + env(safe-area-inset-bottom));
   display: none;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1px;
   padding: 5px 6px;
   border-radius: 18px;
@@ -27,11 +27,18 @@
   border-radius: 10px;
   color: var(--text-secondary);
   text-decoration: none;
+  border: none;
+  background: transparent;
   transition: background 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
 }
 
 .bottom-nav-item:active {
   transform: translateY(1px);
+}
+
+.bottom-nav-item:disabled {
+  opacity: 0.42;
+  cursor: default;
 }
 
 .bottom-nav-icon svg {
