@@ -3,11 +3,11 @@
     bottom: 24px;
     left: 24px;
     width: 370px;
-    padding: 12px 14px;
-    border-radius: 24px;
+    padding: 14px 14px 18px;
+    border-radius: 26px;
     background: var(--card-bg);
     border: 1px solid var(--separator);
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
     z-index: 9991;
     overflow: visible;
     transition:
@@ -21,7 +21,7 @@
 
 .integrated-player.active {
     width: 432px;
-    padding: 14px 16px;
+    padding: 16px 16px 20px;
 }
 
 @keyframes playerEnter {
@@ -121,11 +121,11 @@
 .player-main-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px;
-    border-radius: 16px;
-    background: var(--fill);
-    border: 1px solid var(--separator-light);
+    gap: 7px;
+    padding: 5px;
+    border-radius: 18px;
+    background: rgba(60, 60, 67, 0.035);
+    border: 1px solid var(--separator);
 }
 
 .control-btn {
@@ -143,7 +143,7 @@
 }
 
 .control-btn:hover {
-    background: var(--fill-hover);
+    background: rgba(60, 60, 67, 0.06);
     color: var(--text-primary);
 }
 
@@ -159,24 +159,25 @@
 .player-main-controls .play-btn {
     width: 40px;
     height: 40px;
-    border-radius: 12px;
-    background: var(--accent);
-    color: #fff;
+    border-radius: 14px;
+    background: var(--text-primary);
+    color: var(--card-bg);
 }
 
 .player-main-controls .play-btn:hover {
-    background: var(--accent);
-    filter: brightness(0.95);
-    color: #fff;
+    background: var(--text-primary);
+    filter: none;
+    opacity: 0.92;
+    color: var(--card-bg);
 }
 
 .player-side-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    border-left: 1px solid var(--separator-light);
-    padding-left: 8px;
+    gap: 6px;
+    border-left: 1px solid var(--separator);
+    padding-left: 10px;
 }
 
 .player-side-actions .control-btn {
@@ -194,36 +195,37 @@
 }
 
 .go-to-source:hover {
-    color: var(--accent);
+    color: var(--text-primary);
 }
 
 .player-mini-progress {
     position: absolute;
-    left: 14px;
-    right: 14px;
-    bottom: 8px;
-    height: 3px;
-    border-radius: 999px;
-    background: var(--fill);
+    left: 16px;
+    right: 16px;
+    bottom: 0;
+    height: 5px;
+    border-radius: 999px 999px 18px 18px;
+    background: rgba(60, 60, 67, 0.08);
     overflow: hidden;
+    pointer-events: none;
 }
 
 .mini-progress-fill {
     width: 100%;
     height: 100%;
     border-radius: inherit;
-    background: var(--accent);
+    background: var(--text-primary);
     transform-origin: left center;
     transform: scaleX(0);
-    transition: transform 0.09s linear;
+    transition: transform 0.07s linear;
     will-change: transform;
 }
 
 .player-expanded-content {
     display: none;
-    margin-top: 20px;
+    margin-top: 18px;
     padding-top: 16px;
-    border-top: 1px solid var(--separator-light);
+    border-top: 1px solid var(--separator);
 }
 
 .integrated-player.active .player-expanded-content {
@@ -278,12 +280,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    height: 36px;
+    height: 38px;
     padding: 0 12px;
-    border-radius: 18px;
+    border-radius: 19px;
     color: var(--text-secondary);
-    background: var(--fill);
-    border: 1px solid var(--separator-light);
+    background: rgba(60, 60, 67, 0.035);
+    border: 1px solid var(--separator);
 }
 
 .player-volume-slider {
@@ -326,9 +328,9 @@
 .repeat-badge {
     height: 34px;
     padding: 0 12px;
-    border-radius: 17px;
-    border: 1px solid var(--separator-light);
-    background: var(--fill);
+    border-radius: 18px;
+    border: 1px solid var(--separator);
+    background: rgba(60, 60, 67, 0.035);
     color: var(--text-primary);
     font-size: 11px;
     font-weight: 700;
@@ -342,7 +344,7 @@
 
 .speed-badge:hover,
 .repeat-badge:hover {
-    background: var(--fill-hover);
+    background: rgba(60, 60, 67, 0.06);
 }
 
 .repeat-badge {
@@ -351,9 +353,9 @@
 }
 
 .repeat-badge.active {
-    color: var(--accent);
-    background: var(--accent-light);
-    border-color: var(--accent-light);
+    color: var(--text-primary);
+    background: rgba(60, 60, 67, 0.08);
+    border-color: var(--separator);
 }
 
 .verse-segments-container {
@@ -383,12 +385,12 @@
 }
 
 .intro-dot.played {
-    background: var(--accent);
-    opacity: 0.45;
+    background: var(--text-primary);
+    opacity: 0.3;
 }
 
 .intro-dot.active {
-    background: var(--accent);
+    background: var(--text-primary);
     opacity: 1;
 }
 
@@ -411,12 +413,12 @@
 }
 
 .verse-segment.played {
-    background: var(--accent);
-    opacity: 0.46;
+    background: var(--text-primary);
+    opacity: 0.24;
 }
 
 .verse-segment.active {
-    background: var(--accent);
+    background: var(--text-primary);
     opacity: 1;
 }
 
@@ -485,7 +487,7 @@
 }
 
 .playlist-seg-name.active {
-    color: var(--accent);
+    color: var(--text-primary);
     font-weight: 700;
 }
 
@@ -505,12 +507,48 @@
 .verse-segment:focus-visible,
 .intro-dot:focus-visible,
 .playlist-segment:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--text-primary);
     outline-offset: 2px;
 }
 
 [data-theme='dark'] .integrated-player {
     box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+}
+
+[data-theme='dark'] .player-main-controls {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .player-main-controls .play-btn {
+    background: #f5f5f7;
+    color: #121212;
+}
+
+[data-theme='dark'] .player-main-controls .play-btn:hover {
+    background: #f5f5f7;
+    color: #121212;
+}
+
+[data-theme='dark'] .player-volume-box,
+[data-theme='dark'] .speed-badge,
+[data-theme='dark'] .repeat-badge {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .player-mini-progress {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme='dark'] .mini-progress-fill,
+[data-theme='dark'] .intro-dot.played,
+[data-theme='dark'] .intro-dot.active,
+[data-theme='dark'] .verse-segment.played,
+[data-theme='dark'] .verse-segment.active {
+    background: #f5f5f7;
+}
+
+[data-theme='dark'] .playlist-seg-name.active {
+    color: #f5f5f7;
 }
 
 [data-theme='dark'] .player-badge.mekki {
@@ -530,12 +568,12 @@
         left: 12px;
         bottom: calc(78px + env(safe-area-inset-bottom));
         width: calc(100% - 24px);
-        border-radius: 22px;
+        border-radius: 24px;
     }
 
     .integrated-player.active {
         width: calc(100% - 24px);
-        padding: 12px 14px;
+        padding: 14px 14px 18px;
     }
 
     .player-main-row {
@@ -549,6 +587,11 @@
     .player-reciter-row {
         grid-template-columns: 1fr;
         gap: 6px;
+    }
+
+    .player-mini-progress {
+        left: 12px;
+        right: 12px;
     }
 }
 
