@@ -127,10 +127,8 @@ export default function BottomNav() {
       >
         <span className="bottom-nav-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 13.5a2.5 2.5 0 0 1 2.5-2.5H8v8H6.5A2.5 2.5 0 0 1 4 16.5z" />
-            <path d="M16 11h1.5a2.5 2.5 0 0 1 2.5 2.5v3A2.5 2.5 0 0 1 17.5 19H16z" />
-            <path d="M8 11a4 4 0 0 1 8 0" />
-            <path d="M8 15h8" />
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
           </svg>
         </span>
         <span className="bottom-nav-label">Player</span>
