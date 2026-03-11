@@ -81,6 +81,7 @@ export default function IntegratedPlayer({
     const isPageContext = context === 'page'
     const playbackLabel = playingType ? (playingType === 'arabic' ? 'Arapça' : 'Türkçe') : ''
     const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
+    const normalizedVolume = Math.max(0, Math.min(1, Number(volume || 0)))
     const reciterOptions = availableReciters
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
@@ -372,7 +373,21 @@ export default function IntegratedPlayer({
                     <div className="player-volume-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.08" />
+                            {normalizedVolume <= 0.01 ? (
+                                <>
+                                    <line x1="23" y1="9" x2="17" y2="15" />
+                                    <line x1="17" y1="9" x2="23" y2="15" />
+                                </>
+                            ) : normalizedVolume < 0.34 ? (
+                                <path d="M14.83 9.17a4 4 0 0 1 0 5.66" />
+                            ) : normalizedVolume < 0.67 ? (
+                                <path d="M15.54 8.46a5 5 0 0 1 0 7.08" />
+                            ) : (
+                                <>
+                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.08" />
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                                </>
+                            )}
                         </svg>
                         <input
                             type="range"
