@@ -382,6 +382,10 @@ const PIPER_ENGINE_VOICE_MAP = {
   sherpa: 'ar_JO-kareem-medium',
   coqui: 'ar_JO-kareem-low'
 }
+const PIPER_LANG_VOICE_MAP = {
+  tr: 'tr_TR-dfki-medium',
+  ar: 'ar_JO-kareem-medium'
+}
 
 let piperEnginePromise = null
 let piperVoicesPromise = null
@@ -431,27 +435,60 @@ function pickPiperVoice(voices, engine) {
   return first || null
 }
 
+function pickPiperVoiceByLanguage(voices, lang, engine) {
+  const isArabic = String(lang || '').toLowerCase().startsWith('ar')
+  const preferred = isArabic ? PIPER_LANG_VOICE_MAP.ar : PIPER_LANG_VOICE_MAP.tr
+  if (preferred && voices[preferred]) return preferred
+  return pickPiperVoice(voices, engine)
+}
+
+async function generatePiperSegment(engine, text, voice, options = {}) {
+  const synthesisOptions = {
+    length_scale: Math.max(0.75, Math.min(1.45, Number(options.length_scale) || 1)),
+    noise_scale: Math.max(0.3, Math.min(1.2, Number(options.noise_scale) || 0.667)),
+    noise_w: Math.max(0.3, Math.min(1.2, Number(options.noise_w) || 0.8))
+  }
+
+  try {
+    return await engine.generate(text, voice, 0, synthesisOptions)
+  } catch {
+    return engine.generate(text, voice, 0)
+  }
+}
+
 export async function synthesizePiperTafsirAudio(text, options = {}) {
   const queue = buildTafsirSpeechQueue(String(text || '').trim(), { maxChunkLength: 200 })
-  const normalizedText = queue.map((segment) => segment.text).join('. ').trim()
-  if (!normalizedText) return null
+  if (!queue.length) return null
 
   try {
     const voices = await getPiperVoiceMap()
-    const selectedVoice = pickPiperVoice(voices, options.engine)
-    if (!selectedVoice) return null
-
     const engine = await getPiperEngine()
-    const result = await engine.generate(normalizedText, selectedVoice, 0)
-    const audioBlob = result?.file
-    if (!audioBlob) return null
 
-    const durationMs = Number(result?.duration || 0)
-    return {
-      url: URL.createObjectURL(audioBlob),
-      voice: selectedVoice,
-      duration: durationMs > 0 ? durationMs / 1000 : estimateTafsirSpeechDuration(normalizedText, options.rate || 1)
+    const generatedSegments = []
+    for (const segment of queue) {
+      const selectedVoice = pickPiperVoiceByLanguage(voices, segment.lang, options.engine)
+      if (!selectedVoice) continue
+
+      const rateMultiplier = Math.max(0.65, Math.min(1.3, Number(segment.rateMultiplier) || 1))
+      const result = await generatePiperSegment(engine, segment.text, selectedVoice, {
+        length_scale: 1 / rateMultiplier,
+        noise_scale: 0.667,
+        noise_w: 0.8
+      })
+      const audioBlob = result?.file
+      if (!audioBlob) continue
+
+      const durationMs = Number(result?.duration || 0)
+      generatedSegments.push({
+        url: URL.createObjectURL(audioBlob),
+        voice: selectedVoice,
+        lang: segment.lang,
+        pauseAfterMs: Number(segment.pauseMs) || 0,
+        duration: durationMs > 0 ? durationMs / 1000 : estimateTafsirSpeechDuration(segment.text, rateMultiplier)
+      })
     }
+
+    return generatedSegments.length ? generatedSegments : null
   } catch {
     return null
   }

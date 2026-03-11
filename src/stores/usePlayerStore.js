@@ -82,14 +82,24 @@ let activeSpeechDuration = 0
 let activeGeneratedAudioUrl = ''
 let activeSpeechSessionId = 0
 let activeSpeechSegmentDelayTimer = null
+let activeGeneratedAudioUrls = []
+let activeGeneratedSegments = []
+let activeGeneratedSegmentIndex = -1
+let activeGeneratedElapsedBeforeSegment = 0
 
 function clearGeneratedAudioUrl() {
-    if (!activeGeneratedAudioUrl) return
-    try {
-        URL.revokeObjectURL(activeGeneratedAudioUrl)
-    } catch {
-        // noop
-    }
+    activeGeneratedAudioUrls.forEach((url) => {
+        if (!url || /^https?:\/\//i.test(url)) return
+        try {
+            URL.revokeObjectURL(url)
+        } catch {
+            // noop
+        }
+    })
+    activeGeneratedAudioUrls = []
+    activeGeneratedSegments = []
+    activeGeneratedSegmentIndex = -1
+    activeGeneratedElapsedBeforeSegment = 0
     activeGeneratedAudioUrl = ''
 }
 
@@ -109,6 +119,25 @@ function clearSpeechDelayTimer() {
     if (!activeSpeechSegmentDelayTimer) return
     window.clearTimeout(activeSpeechSegmentDelayTimer)
     activeSpeechSegmentDelayTimer = null
+}
+
+function playGeneratedSegmentAt(index) {
+    if (!Array.isArray(activeGeneratedSegments) || index < 0 || index >= activeGeneratedSegments.length) return false
+    const segment = activeGeneratedSegments[index]
+    if (!segment?.url) return false
+
+    activeGeneratedSegmentIndex = index
+    activeGeneratedElapsedBeforeSegment = activeGeneratedSegments
+        .slice(0, index)
+        .reduce((sum, item) => sum + Number(item?.duration || 0) + ((Number(item?.pauseAfterMs || 0)) / 1000), 0)
+    activeGeneratedAudioUrl = segment.url
+    globalAudio.src = segment.url
+    globalAudio.load()
+    globalAudio.playbackRate = 1
+    safePlayAudio(() => {
+        usePlayerStore.getState().setIsPlaying(false)
+    })
+    return true
 }
 
 function startSpeechProgressTimer() {
@@ -371,19 +400,21 @@ const usePlayerStore = create((set, get) => ({
                 'Piper TTS timeout'
             )
 
-            if (piperResult?.url) {
-                activeGeneratedAudioUrl = piperResult.url
+            if (Array.isArray(piperResult) && piperResult.length > 0) {
+                activeGeneratedSegments = piperResult
+                activeGeneratedAudioUrls = piperResult.map((segment) => segment?.url).filter(Boolean)
+                const totalDuration = piperResult.reduce(
+                    (sum, segment) => sum + Number(segment?.duration || 0) + ((Number(segment?.pauseAfterMs || 0)) / 1000),
+                    0
+                )
                 set({
                     mode: 'tts',
                     currentTrackIndex: idx,
                     currentTime: 0,
-                    duration: Number(piperResult.duration || 0),
+                    duration: Math.max(1, totalDuration),
                     isPlaying: true
                 })
-                globalAudio.src = piperResult.url
-                globalAudio.load()
-                globalAudio.playbackRate = rate
-                safePlayAudio(() => set({ isPlaying: false }))
+                playGeneratedSegmentAt(0)
                 document.dispatchEvent(new CustomEvent('playerVisible'))
                 return
             }
@@ -518,10 +549,18 @@ const usePlayerStore = create((set, get) => ({
         if (state.mode === 'tts') {
             if (activeGeneratedAudioUrl) {
                 if (state.isPlaying) {
+                    clearSpeechDelayTimer()
                     globalAudio.pause()
                     set({ isPlaying: false })
                 } else {
-                    safePlayAudio(() => set({ isPlaying: false }))
+                    if (globalAudio.ended && activeGeneratedSegments.length > 0) {
+                        const nextIndex = Math.min(activeGeneratedSegments.length - 1, Math.max(0, activeGeneratedSegmentIndex + 1))
+                        if (!playGeneratedSegmentAt(nextIndex)) {
+                            safePlayAudio(() => set({ isPlaying: false }))
+                        }
+                    } else {
+                        safePlayAudio(() => set({ isPlaying: false }))
+                    }
                     set({ isPlaying: true })
                 }
                 return
@@ -1070,7 +1109,16 @@ export const initAudioListeners = (settingsFunction) => {
     usePlayerStore.getState().setAudioInitialized(true);
 
     audio.addEventListener('timeupdate', () => {
-        usePlayerStore.getState().setCurrentTime(audio.currentTime)
+        const state = usePlayerStore.getState()
+        if (state.mode === 'tts' && activeGeneratedSegments.length > 0 && activeGeneratedSegmentIndex >= 0) {
+            const progressTime = Math.min(
+                state.duration || Infinity,
+                Math.max(0, activeGeneratedElapsedBeforeSegment + Number(audio.currentTime || 0))
+            )
+            state.setCurrentTime(progressTime)
+            return
+        }
+        state.setCurrentTime(audio.currentTime)
     })
 
     audio.addEventListener('loadedmetadata', () => {
@@ -1090,6 +1138,23 @@ export const initAudioListeners = (settingsFunction) => {
     audio.addEventListener('ended', () => {
         const state = usePlayerStore.getState()
         const settings = settingsFunction ? settingsFunction() : null
+
+        if (state.mode === 'tts' && activeGeneratedSegments.length > 0 && activeGeneratedSegmentIndex >= 0) {
+            const currentSegment = activeGeneratedSegments[activeGeneratedSegmentIndex]
+            const nextIndex = activeGeneratedSegmentIndex + 1
+            const pauseMs = Math.max(0, Number(currentSegment?.pauseAfterMs || 0))
+
+            if (nextIndex < activeGeneratedSegments.length) {
+                clearSpeechDelayTimer()
+                activeSpeechSegmentDelayTimer = window.setTimeout(() => {
+                    activeSpeechSegmentDelayTimer = null
+                    if (!playGeneratedSegmentAt(nextIndex)) {
+                        state.playNext(settings)
+                    }
+                }, pauseMs)
+                return
+            }
+        }
 
         if (state.mode === 'playlist') {
             state.playNext(settings)
