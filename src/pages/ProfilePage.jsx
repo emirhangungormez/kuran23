@@ -465,7 +465,7 @@ export default function ProfilePage() {
                                         <div className="tafsir-meal-setting-copy">
                                             <h4>Tefsir Seslendirmesi</h4>
                                             <p>
-                                                Tefsir dinleme Edge ile başlar. Desteklenmeyen tarayıcılarda sistem sesi otomatik devreye girer.
+                                                Tefsir dinleme sistem sesi ile çalışır. Cihazın desteklediği en uygun erkek Türkçe ses otomatik seçilir.
                                             </p>
                                         </div>
                                         <div className="tafsir-voice-settings">

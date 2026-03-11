@@ -21,7 +21,6 @@
     "animejs": "^3.2.2",
     "better-sqlite3": "^11.8.1",
     "boring-avatars": "^2.0.4",
-    "edge-tts-universal": "^1.4.0",
     "mysql2": "^3.15.3",
     "pg": "^8.16.3",
     "react": "^19.2.0",
