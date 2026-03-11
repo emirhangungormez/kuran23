@@ -49,6 +49,12 @@
     z-index: 10010;
 }
 
+.player-drag-row {
+    display: flex;
+    justify-content: center;
+    margin: -2px 0 10px;
+}
+
 .player-main-row {
     display: flex;
     align-items: center;
@@ -56,12 +62,19 @@
 }
 
 .player-drag-handle {
+    width: 72px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(60, 60, 67, 0.12);
     cursor: grab;
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .integrated-player.dragging .player-drag-handle {
     cursor: grabbing;
+    background: rgba(60, 60, 67, 0.18);
 }
 
 .player-rich-info {
@@ -144,12 +157,12 @@
 
 .player-badge {
     height: 18px;
-    min-width: 42px;
-    padding: 0 7px;
+    min-width: 38px;
+    padding: 0 6px;
     border-radius: 5px;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
@@ -170,8 +183,8 @@
 }
 
 .player-badge.language {
-    min-width: 28px;
-    padding: 0 6px;
+    min-width: 24px;
+    padding: 0 5px;
 }
 
 .player-badge.lang-ar {
@@ -594,6 +607,14 @@
     box-shadow: none;
 }
 
+[data-theme='dark'] .player-drag-handle {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+[data-theme='dark'] .integrated-player.dragging .player-drag-handle {
+    background: rgba(255, 255, 255, 0.24);
+}
+
 [data-theme='dark'] .player-main-controls {
     background: rgba(255, 255, 255, 0.04);
 }
@@ -685,6 +706,14 @@
 
     .player-main-row {
         gap: 10px;
+    }
+
+    .player-drag-row {
+        margin: -1px 0 8px;
+    }
+
+    .player-drag-handle {
+        width: 64px;
     }
 
     .player-side-actions {

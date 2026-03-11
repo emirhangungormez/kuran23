@@ -60,6 +60,7 @@ export default function IntegratedPlayer({
     const playerRef = useRef(null)
     const progressFillRef = useRef(null)
     const dragStateRef = useRef(null)
+    const dragFrameRef = useRef(0)
     const navigate = useNavigate()
     const { settings, updateSettings } = useSettings()
     const { data: availableReciters = [] } = useQuery({
@@ -89,6 +90,14 @@ export default function IntegratedPlayer({
     const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
     const normalizedVolume = Math.max(0, Math.min(1, Number(volume || 0)))
     const playerDock = settings.playerDock || 'bottom-left'
+    const resolvedAyahCount = Number.isFinite(Number(ayahCount)) && Number(ayahCount) > 0
+        ? Number(ayahCount)
+        : null
+    const effectivePosition = dragPosition || settings.playerPosition || null
+    const hasCustomPosition = Boolean(effectivePosition)
+    const playerMetaText = isPageContext
+        ? [surahNameEn, resolvedAyahCount ? `${resolvedAyahCount} ayet` : null].filter(Boolean).join(' / ')
+        : (resolvedAyahCount ? `${resolvedAyahCount} ayet` : '')
     const reciterOptions = availableReciters
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
@@ -214,6 +223,11 @@ export default function IntegratedPlayer({
         }
     }, [context, currentTime, duration, isPlaying, playbackSpeed])
 
+    useEffect(() => {
+        if (dragStateRef.current) return
+        setDragPosition(settings.playerPosition || null)
+    }, [settings.playerPosition])
+
     const clampDragPosition = (left, top, width, height) => {
         const minInset = 8
         return {
@@ -228,6 +242,22 @@ export default function IntegratedPlayer({
         return `${vertical}-${horizontal}`
     }
 
+    const applyDragTransform = () => {
+        const playerEl = playerRef.current
+        const drag = dragStateRef.current
+        if (!playerEl || !drag) return
+
+        playerEl.style.transform = `translate3d(${drag.currentLeft - drag.originLeft}px, ${drag.currentTop - drag.originTop}px, 0)`
+    }
+
+    const clearDragTransform = () => {
+        const playerEl = playerRef.current
+        if (!playerEl) return
+
+        playerEl.style.transform = ''
+        playerEl.style.willChange = ''
+    }
+
     useEffect(() => {
         const handlePointerMove = (event) => {
             const drag = dragStateRef.current
@@ -240,7 +270,10 @@ export default function IntegratedPlayer({
             if (!drag.hasMoved && movement < 8) return
 
             drag.hasMoved = true
-            setIsDragging(true)
+            if (!drag.isVisualDrag) {
+                drag.isVisualDrag = true
+                setIsDragging(true)
+            }
 
             const nextPosition = clampDragPosition(
                 drag.originLeft + deltaX,
@@ -248,7 +281,15 @@ export default function IntegratedPlayer({
                 drag.width,
                 drag.height
             )
-            setDragPosition(nextPosition)
+            drag.currentLeft = nextPosition.left
+            drag.currentTop = nextPosition.top
+
+            if (!dragFrameRef.current) {
+                dragFrameRef.current = window.requestAnimationFrame(() => {
+                    dragFrameRef.current = 0
+                    applyDragTransform()
+                })
+            }
             event.preventDefault()
         }
 
@@ -258,6 +299,20 @@ export default function IntegratedPlayer({
 
             const deltaX = event.clientX - drag.startX
             const deltaY = event.clientY - drag.startY
+            const finalPosition = drag.hasMoved
+                ? clampDragPosition(
+                    drag.originLeft + deltaX,
+                    drag.originTop + deltaY,
+                    drag.width,
+                    drag.height
+                )
+                : { left: drag.originLeft, top: drag.originTop }
+
+            if (dragFrameRef.current) {
+                window.cancelAnimationFrame(dragFrameRef.current)
+                dragFrameRef.current = 0
+            }
+            clearDragTransform()
 
             if (
                 event.pointerType !== 'mouse'
@@ -266,28 +321,27 @@ export default function IntegratedPlayer({
                 && Math.abs(deltaY) < 42
             ) {
                 updateSettings({ isPlayerVisible: false })
-                setDragPosition(null)
+                setDragPosition(settings.playerPosition || null)
                 setIsDragging(false)
                 dragStateRef.current = null
                 return
             }
 
             if (drag.hasMoved) {
-                const finalPosition = clampDragPosition(
-                    drag.originLeft + deltaX,
-                    drag.originTop + deltaY,
-                    drag.width,
-                    drag.height
-                )
                 const nextDock = resolveDockFromPoint(
                     finalPosition.left + (drag.width / 2),
                     finalPosition.top + (drag.height / 2)
                 )
 
-                updateSettings({ playerDock: nextDock })
+                setDragPosition(finalPosition)
+                updateSettings({
+                    playerDock: nextDock,
+                    playerPosition: finalPosition
+                })
+            } else {
+                setDragPosition(settings.playerPosition || null)
             }
 
-            setDragPosition(null)
             setIsDragging(false)
             dragStateRef.current = null
         }
@@ -300,28 +354,67 @@ export default function IntegratedPlayer({
             window.removeEventListener('pointermove', handlePointerMove)
             window.removeEventListener('pointerup', handlePointerEnd)
             window.removeEventListener('pointercancel', handlePointerEnd)
+            if (dragFrameRef.current) {
+                window.cancelAnimationFrame(dragFrameRef.current)
+                dragFrameRef.current = 0
+            }
         }
-    }, [updateSettings])
+    }, [settings.playerPosition, updateSettings])
+
+    useEffect(() => {
+        const handleResize = () => {
+            const playerEl = playerRef.current
+            const storedPosition = settings.playerPosition
+            if (!playerEl || !storedPosition || dragStateRef.current) return
+
+            const rect = playerEl.getBoundingClientRect()
+            const nextPosition = clampDragPosition(storedPosition.left, storedPosition.top, rect.width, rect.height)
+
+            if (nextPosition.left === storedPosition.left && nextPosition.top === storedPosition.top) return
+
+            const nextDock = resolveDockFromPoint(
+                nextPosition.left + (rect.width / 2),
+                nextPosition.top + (rect.height / 2)
+            )
+
+            setDragPosition(nextPosition)
+            updateSettings({
+                playerDock: nextDock,
+                playerPosition: nextPosition
+            })
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [settings.playerPosition, updateSettings])
 
     const handleDragStart = (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return
-
-        const target = event.target
-        if (target instanceof Element && target.closest('button, input, a, .custom-select-container')) return
 
         const playerEl = playerRef.current
         if (!playerEl) return
 
         const rect = playerEl.getBoundingClientRect()
+        const originPosition = clampDragPosition(rect.left, rect.top, rect.width, rect.height)
+
+        setDragPosition(originPosition)
+        playerEl.style.willChange = 'transform'
         dragStateRef.current = {
             pointerId: event.pointerId,
             startX: event.clientX,
             startY: event.clientY,
-            originLeft: rect.left,
-            originTop: rect.top,
+            originLeft: originPosition.left,
+            originTop: originPosition.top,
             width: rect.width,
             height: rect.height,
-            hasMoved: false
+            currentLeft: originPosition.left,
+            currentTop: originPosition.top,
+            hasMoved: false,
+            isVisualDrag: false
+        }
+
+        if (event.currentTarget.setPointerCapture) {
+            event.currentTarget.setPointerCapture(event.pointerId)
         }
     }
 
@@ -330,15 +423,23 @@ export default function IntegratedPlayer({
     return (
         <div
             ref={playerRef}
-            className={`integrated-player player-dock-${playerDock} ${isExpanded ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
-            style={dragPosition ? {
-                left: `${dragPosition.left}px`,
-                top: `${dragPosition.top}px`,
+            className={`integrated-player ${hasCustomPosition ? '' : `player-dock-${playerDock}`} ${isExpanded ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
+            style={effectivePosition ? {
+                left: `${effectivePosition.left}px`,
+                top: `${effectivePosition.top}px`,
                 right: 'auto',
                 bottom: 'auto'
             } : undefined}
         >
-            <div className="player-main-row player-drag-handle" onPointerDown={handleDragStart}>
+            <div className="player-drag-row">
+                <div
+                    className="player-drag-handle"
+                    onPointerDown={handleDragStart}
+                    role="presentation"
+                    aria-hidden="true"
+                />
+            </div>
+            <div className="player-main-row">
                 <div className="player-rich-info">
                     <div className="player-row-mid">
                         <span className={`player-surah-tr ${isPageContext ? '' : 'player-surah-title'}`}>
@@ -362,13 +463,12 @@ export default function IntegratedPlayer({
                         {hasInlineArabicMeta && (
                             <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
                         )}
-                        {hasInlineArabicMeta && <span className="player-meta-separator">·</span>}
-                        <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
-                            {isPageContext
-                                ? `${surahNameEn} · ${ayahCount} ayet`
-                                : `${ayahCount} ayet`
-                            }
-                        </span>
+                        {hasInlineArabicMeta && playerMetaText && <span className="player-meta-separator">&middot;</span>}
+                        {playerMetaText && (
+                            <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
+                                {playerMetaText}
+                            </span>
+                        )}
                     </div>
                 </div>
 

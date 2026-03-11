@@ -43,7 +43,8 @@ function createDefaultSettings() {
         recentHistory: { surahs: [], verses: [] },
         isPlayerVisible: false,
         isPlayerMinimized: false,
-        playerDock: 'bottom-left'
+        playerDock: 'bottom-left',
+        playerPosition: null
     }
 }
 
@@ -53,11 +54,20 @@ function normalizeSettingsPayload(defaults, payload = {}) {
     const resolvedTafsirVerseAuthorId = Number(merged.tafsirVerseAuthorId || merged.defaultAuthorId || defaults.tafsirVerseAuthorId)
     const resolvedTurkishReciterId = Number(merged.defaultTurkishReciterId || defaults.defaultTurkishReciterId || 1014)
     const resolvedPlayerDock = VALID_PLAYER_DOCKS.has(merged.playerDock) ? merged.playerDock : defaults.playerDock
+    const resolvedPlayerPosition = merged.playerPosition
+        && Number.isFinite(Number(merged.playerPosition.left))
+        && Number.isFinite(Number(merged.playerPosition.top))
+        ? {
+            left: Number(merged.playerPosition.left),
+            top: Number(merged.playerPosition.top)
+        }
+        : null
     return {
         ...merged,
         tafsirVerseAuthorId: resolvedTafsirVerseAuthorId,
         defaultTurkishReciterId: resolvedTurkishReciterId === 1015 ? 1014 : resolvedTurkishReciterId,
         playerDock: resolvedPlayerDock,
+        playerPosition: resolvedPlayerPosition,
         textMode: resolvedTextMode,
         showTajweed: modeToLegacyTajweed(resolvedTextMode)
     }
