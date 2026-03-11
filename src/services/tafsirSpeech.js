@@ -227,43 +227,6 @@ export function isEdgeTafsirTtsSupported() {
   return typeof window !== 'undefined' && isEdgeBrowser()
 }
 
-export async function synthesizeGoogleTafsirAudio(text, options = {}) {
-  if (typeof window === 'undefined' || typeof fetch !== 'function') return null
-
-  const normalizedText = normalizeArabicSpeechFragments(String(text || '').trim())
-  if (!normalizedText) return null
-
-  const controller = new AbortController()
-  const timeoutId = window.setTimeout(() => controller.abort(), 12000)
-
-  try {
-    const response = await fetch('/api/tts.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: normalizedText,
-        rate: Math.min(1.5, Math.max(0.7, Number(options.rate) || 1))
-      }),
-      signal: controller.signal
-    })
-
-    if (!response.ok) return null
-    const audioBlob = await response.blob()
-    if (!audioBlob || audioBlob.size <= 0) return null
-
-    const objectUrl = URL.createObjectURL(audioBlob)
-    return {
-      url: objectUrl,
-      voice: 'google-cloud-tr',
-      duration: estimateTafsirSpeechDuration(normalizedText, options.rate || 1)
-    }
-  } catch {
-    return null
-  } finally {
-    window.clearTimeout(timeoutId)
-  }
-}
-
 export async function synthesizeEdgeTafsirAudio(text, options = {}) {
   if (!isEdgeTafsirTtsSupported()) return null
 
