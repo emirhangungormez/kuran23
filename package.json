@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:tts-lexicon": "node scripts/build-tts-lexicon.mjs",
+    "group:tts-lemmas": "node scripts/group-tts-lemma-candidates.mjs",
     "fetch:tafsir-library": "node scripts/fetch-tefsirkutuphanesi-full.mjs",
     "migrate:supabase": "node scripts/migrate-mysql-to-supabase.mjs",
     "migrate:supabase:dry": "node scripts/migrate-mysql-to-supabase.mjs --dry-run",
