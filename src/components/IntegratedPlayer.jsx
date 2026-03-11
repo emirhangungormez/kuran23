@@ -64,8 +64,6 @@ export default function IntegratedPlayer({
         staleTime: 1000 * 60 * 60 * 24
     })
 
-    if (!isVisible) return null
-
     const formatTime = (time) => {
         if (isNaN(time)) return '0:00'
         const mins = Math.floor(time / 60)
@@ -169,6 +167,8 @@ export default function IntegratedPlayer({
             )
         })
     }, [currentVerseIndex, onSelectVerse, pageSegmentsModel])
+
+    if (!isVisible) return null
 
     return (
         <div className={`integrated-player ${isExpanded ? 'active' : ''}`}>
