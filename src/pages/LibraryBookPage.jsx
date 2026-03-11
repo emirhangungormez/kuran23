@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
@@ -37,7 +37,7 @@ function getAyahMarkerNumber(node) {
   if (!node || node.nodeType !== Node.ELEMENT_NODE) return null
 
   const text = String(node.textContent || '').replace(/\s+/g, ' ').trim()
-  if (!/^\d+([-–]\d+)?$/.test(text)) return null
+  if (!/^\d+([-â€“]\d+)?$/.test(text)) return null
 
   const tagName = node.tagName?.toLowerCase()
   if (
@@ -62,10 +62,14 @@ function buildSpeechSegmentText(parts) {
     .join('. ')
 }
 
+function countSpeechWords(text) {
+  return (String(text || '').match(/[\p{L}\p{N}]+/gu) || []).length
+}
+
 function highlightSpokenWordsInHtml(html, progressRatio) {
   const source = String(html || '').trim()
   if (!source || typeof window === 'undefined') return source
-  if (!Number.isFinite(progressRatio) || progressRatio <= 0) return source
+  const safeRatio = Number.isFinite(progressRatio) ? Math.max(0, Math.min(1, progressRatio)) : 0
 
   try {
     const parser = new DOMParser()
@@ -90,7 +94,7 @@ function highlightSpokenWordsInHtml(html, progressRatio) {
     const totalWords = wordsPerNode.reduce((sum, entry) => sum + entry.wordCount, 0)
     if (!totalWords) return source
 
-    const targetWordCount = Math.max(1, Math.min(totalWords, Math.floor(totalWords * Math.max(0, Math.min(1, progressRatio)))))
+    const targetWordCount = Math.max(0, Math.min(totalWords, Math.floor(totalWords * safeRatio)))
     let wordCursor = 0
 
     wordsPerNode.forEach(({ node, parts }) => {
@@ -105,6 +109,8 @@ function highlightSpokenWordsInHtml(html, progressRatio) {
         const span = doc.createElement('span')
         span.textContent = part
         span.className = 'tefsir-spoken-word'
+        span.dataset.wordIndex = String(wordCursor + 1)
+        span.dataset.wordTotal = String(totalWords)
 
         if (wordCursor < targetWordCount) {
           span.classList.add('spoken')
@@ -139,6 +145,7 @@ export default function LibraryBookPage() {
   const playerCurrentTime = usePlayerStore((state) => state.currentTime)
   const playerDuration = usePlayerStore((state) => state.duration)
   const playTafsirPlaylist = usePlayerStore((state) => state.playTafsirPlaylist)
+  const seekTafsirSpeechByRatio = usePlayerStore((state) => state.seekTafsirSpeechByRatio)
   const stopPlayback = usePlayerStore((state) => state.stopPlayback)
   const togglePlay = usePlayerStore((state) => state.togglePlay)
 
@@ -223,7 +230,7 @@ export default function LibraryBookPage() {
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
   const displaySections = useMemo(
-    () => (sections.length ? sections : [{ title: '', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
+    () => (sections.length ? sections : [{ title: '', bodyHtml: '<p>Bu seÃ§im iÃ§in tefsir bulunamadÄ±.</p>' }]),
     [sections]
   )
   const surahNavigationItems = useMemo(
@@ -238,7 +245,7 @@ export default function LibraryBookPage() {
   )
   const currentReferenceLabel = useMemo(() => {
     if (effectiveScope === 'surah') return getPlainSurahTitleLabel(resolvedSurahId)
-    return `${getPlainSurahTitleLabel(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
+    return `${getPlainSurahTitleLabel(resolvedSurahId)} Â· ${resolvedAyahNo}. ayet`
   }, [effectiveScope, resolvedAyahNo, resolvedSurahId])
   const currentSurahIndex = useMemo(
     () => availableSurahIds.findIndex((surahId) => Number(surahId) === Number(resolvedSurahId)),
@@ -263,7 +270,7 @@ export default function LibraryBookPage() {
       return {
         surahId: resolvedSurahId,
         ayahNo,
-        label: `${getPlainSurahTitleLabel(resolvedSurahId)} · ${ayahNo}. ayet`
+        label: `${getPlainSurahTitleLabel(resolvedSurahId)} Â· ${ayahNo}. ayet`
       }
     }
 
@@ -273,7 +280,7 @@ export default function LibraryBookPage() {
     return {
       surahId: prevSurahId,
       ayahNo,
-      label: `${getPlainSurahTitleLabel(prevSurahId)} · ${ayahNo}. ayet`
+      label: `${getPlainSurahTitleLabel(prevSurahId)} Â· ${ayahNo}. ayet`
     }
   }, [availableAyahs, effectiveScope, prevSurahAyahs, prevSurahId, resolvedAyahNo, resolvedSurahId])
   const nextVerseTarget = useMemo(() => {
@@ -285,7 +292,7 @@ export default function LibraryBookPage() {
       return {
         surahId: resolvedSurahId,
         ayahNo,
-        label: `${getPlainSurahTitleLabel(resolvedSurahId)} · ${ayahNo}. ayet`
+        label: `${getPlainSurahTitleLabel(resolvedSurahId)} Â· ${ayahNo}. ayet`
       }
     }
 
@@ -294,7 +301,7 @@ export default function LibraryBookPage() {
     return {
       surahId: nextSurahId,
       ayahNo: nextSurahAyahs[0],
-      label: `${getPlainSurahTitleLabel(nextSurahId)} · ${nextSurahAyahs[0]}. ayet`
+      label: `${getPlainSurahTitleLabel(nextSurahId)} Â· ${nextSurahAyahs[0]}. ayet`
     }
   }, [availableAyahs, effectiveScope, nextSurahAyahs, nextSurahId, resolvedAyahNo, resolvedSurahId])
   const previousSurahTarget = useMemo(() => {
@@ -388,13 +395,16 @@ export default function LibraryBookPage() {
           const label = block.ayahNo
             ? `${getPlainSurahTitleLabel(resolvedSurahId)} · ${block.ayahNo}. ayet`
             : `${getPlainSurahTitleLabel(resolvedSurahId)} · giriş`
+          const leadText = label
 
           return {
-            text: buildSpeechSegmentText([label, spokenBody]),
+            text: buildSpeechSegmentText([leadText, spokenBody]),
             title: label,
             shortLabel: block.ayahNo ? `${block.ayahNo}. ayet` : 'Giriş',
             ayahNo: block.ayahNo || 0,
-            sectionIndex: index
+            sectionIndex: index,
+            highlightLeadWordCount: countSpeechWords(leadText),
+            highlightBodyWordCount: countSpeechWords(spokenBody)
           }
         })
         .filter(Boolean)
@@ -407,13 +417,16 @@ export default function LibraryBookPage() {
 
         const referenceLabel = `${getPlainSurahTitleLabel(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
         const title = section.title || referenceLabel
+        const leadText = buildSpeechSegmentText([referenceLabel, section.title])
 
         return {
-          text: buildSpeechSegmentText([referenceLabel, section.title, spokenBody]),
+          text: buildSpeechSegmentText([leadText, spokenBody]),
           title,
           shortLabel: section.title || `Bölüm ${index + 1}`,
           ayahNo: resolvedAyahNo,
-          sectionIndex: index
+          sectionIndex: index,
+          highlightLeadWordCount: countSpeechWords(leadText),
+          highlightBodyWordCount: countSpeechWords(spokenBody)
         }
       })
       .filter(Boolean)
@@ -433,9 +446,46 @@ export default function LibraryBookPage() {
     // Re-render frekansini dusurup titremeyi azaltmak icin adimlayalim.
     return Math.round(ratio * 32) / 32
   }, [isActiveTafsirPlayback, playerCurrentTime, playerDuration])
+  const getSectionHighlightRatio = (index) => {
+    if (!isActiveTafsirPlayback) return 0
+    if (index < currentTafsirSegmentIndex) return 1
+    if (index !== currentTafsirSegmentIndex) return 0
+
+    const segment = tafsirSpeechSegments[index]
+    if (!segment) return activeTrackProgressRatio
+
+    const leadWordCount = Math.max(0, Number(segment.highlightLeadWordCount || 0))
+    const bodyWordCount = Math.max(1, Number(segment.highlightBodyWordCount || 1))
+    const totalWordCount = leadWordCount + bodyWordCount
+    if (totalWordCount <= 0) return activeTrackProgressRatio
+
+    const bodyRatio = ((activeTrackProgressRatio * totalWordCount) - leadWordCount) / bodyWordCount
+    return Math.max(0, Math.min(1, bodyRatio))
+  }
+  const getSectionPlaybackState = (index) => {
+    if (!isActiveTafsirPlayback) return 'idle'
+    if (index < currentTafsirSegmentIndex) return 'spoken'
+    if (index === currentTafsirSegmentIndex) return 'speaking'
+    return 'idle'
+  }
   const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
   const isTafsirSpeechPaused = isActiveTafsirPlayback && !playerIsPlaying
   const tafsirVoiceRate = Number(settings.tafsirVoiceRate || 1)
+  const tafsirPlaybackMeta = useMemo(() => ({
+    surahNameAr: book?.titleAr || '',
+    surahNameTr: currentReferenceLabel,
+    surahNameEn: book?.titleTr || '',
+    surahType: effectiveScope === 'verse' ? 'Ayet Tefsiri' : 'Süre Tefsiri',
+    ayahCount: tafsirSpeechSegments.length,
+    playingType: 'turkish',
+    link: `/kutuphane/${book?.id || ''}`,
+    surahId: resolvedSurahId,
+    ayahNo: 0,
+    tafsirAyahNo: effectiveScope === 'verse' ? resolvedAyahNo : 0,
+    context: 'tafsir',
+    bookId: book?.id || '',
+    tafsirScope: effectiveScope
+  }), [book?.id, book?.titleAr, book?.titleTr, currentReferenceLabel, effectiveScope, resolvedAyahNo, resolvedSurahId, tafsirSpeechSegments.length])
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
@@ -449,30 +499,30 @@ export default function LibraryBookPage() {
       return
     }
 
-    playTafsirPlaylist(
-      tafsirSpeechSegments,
-      0,
-      {
-        surahNameAr: book.titleAr,
-        surahNameTr: currentReferenceLabel,
-        surahNameEn: book.titleTr,
-        surahType: effectiveScope === 'verse' ? 'Ayet Tefsiri' : 'Süre Tefsiri',
-        ayahCount: tafsirSpeechSegments.length,
-        playingType: 'turkish',
-        link: `/kutuphane/${book.id}`,
-        surahId: resolvedSurahId,
-        ayahNo: 0,
-        tafsirAyahNo: effectiveScope === 'verse' ? resolvedAyahNo : 0,
-        context: 'tafsir',
-        bookId: book.id,
-        tafsirScope: effectiveScope
-      },
-      settings
-    )
+    playTafsirPlaylist(tafsirSpeechSegments, 0, tafsirPlaybackMeta, settings)
   }
 
   const handleTafsirStop = () => {
     stopPlayback({ resetMode: true })
+  }
+
+  const handleTafsirWordClick = (event, sectionIndex) => {
+    const target = event.target
+    if (!(target instanceof HTMLElement)) return
+
+    const token = target.closest('.tefsir-spoken-word')
+    if (!(token instanceof HTMLElement)) return
+
+    const wordIndex = Math.max(1, Number(token.dataset.wordIndex || 1))
+    const wordTotal = Math.max(1, Number(token.dataset.wordTotal || 1))
+    const wordRatio = Math.max(0, Math.min(1, (wordIndex - 1) / wordTotal))
+
+    if (!isActiveTafsirPlayback || currentTafsirSegmentIndex !== sectionIndex) {
+      playTafsirPlaylist(tafsirSpeechSegments, sectionIndex, tafsirPlaybackMeta, settings, { startRatio: wordRatio })
+      return
+    }
+
+    seekTafsirSpeechByRatio(wordRatio)
   }
 
   const cycleTafsirVoiceRate = () => {
@@ -577,9 +627,9 @@ export default function LibraryBookPage() {
   }, [currentTafsirSegmentIndex, isActiveTafsirPlayback])
   const isReaderLoading = isManifestLoading || isSurahLoading || (effectiveScope === 'surah' && isSelectedSurahLoading)
   const readerErrorMessage = manifestError
-    ? 'Kütüphane manifesti yüklenemedi.'
+    ? 'KÃ¼tÃ¼phane manifesti yÃ¼klenemedi.'
     : surahError
-      ? 'Seçilen sûre içeriği yüklenemedi.'
+      ? 'SeÃ§ilen sÃ»re iÃ§eriÄŸi yÃ¼klenemedi.'
       : ''
 
   if (!book) {
@@ -588,9 +638,9 @@ export default function LibraryBookPage() {
         <GlobalNav />
         <div className="page-content">
           <div className="empty-state">
-            <h2>Kitap bulunamadı</h2>
-            <p>Seçilen kitap kaydı sistemde yok.</p>
-            <Link to="/kutuphane" className="meal-quick-link">Kütüphaneye Dön</Link>
+            <h2>Kitap bulunamadÄ±</h2>
+            <p>SeÃ§ilen kitap kaydÄ± sistemde yok.</p>
+            <Link to="/kutuphane" className="meal-quick-link">KÃ¼tÃ¼phaneye DÃ¶n</Link>
           </div>
         </div>
       </div>
@@ -606,18 +656,18 @@ export default function LibraryBookPage() {
             <div className="book-reader-layout">
               <aside className="reader-sidebar hidden-mobile">
                 <div className="reader-sidebar-intro">
-                  <span className="reader-sidebar-brand">Kütüphane</span>
+                  <span className="reader-sidebar-brand">KÃ¼tÃ¼phane</span>
                   <strong>{book.titleTr}</strong>
                   <p>{book.authorTr}</p>
                   <small>{currentReferenceLabel}</small>
                 </div>
 
                 <div className="reader-sidebar-block reader-sidebar-controls">
-                  <span className="reader-sidebar-title">Görünüm</span>
+                  <span className="reader-sidebar-title">GÃ¶rÃ¼nÃ¼m</span>
                   <div
                     className={`reader-scope-toggle ${effectiveScope === 'verse' ? 'scope-verse' : 'scope-surah'}`}
                     role="tablist"
-                    aria-label="Görünüm seçimi"
+                    aria-label="GÃ¶rÃ¼nÃ¼m seÃ§imi"
                   >
                     <span className="reader-scope-toggle-indicator" aria-hidden="true" />
                     <button
@@ -632,13 +682,13 @@ export default function LibraryBookPage() {
                       className={effectiveScope === 'surah' ? 'active' : ''}
                       onClick={() => handleScopeChange('surah')}
                     >
-                      Sûre
+                      SÃ»re
                     </button>
                   </div>
                 </div>
 
                 <div className="reader-sidebar-block">
-                  <p className="reader-sidebar-title">İçindekiler</p>
+                  <p className="reader-sidebar-title">Ä°Ã§indekiler</p>
                   <div className="reader-sidebar-sections">
                     {surahNavigationItems.map((item) => {
                       const isActiveSurah = Number(resolvedSurahId) === Number(item.surahId)
@@ -664,7 +714,7 @@ export default function LibraryBookPage() {
                                   if (effectiveScope !== 'verse') return
                                   toggleSurahExpansion(item.surahId)
                                 }}
-                                aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'göster'}`}
+                                aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'gÃ¶ster'}`}
                                 aria-hidden={effectiveScope !== 'verse'}
                                 tabIndex={effectiveScope !== 'verse' ? -1 : 0}
                               >
@@ -698,7 +748,7 @@ export default function LibraryBookPage() {
                 <div className="reader-back-row">
                   <Link to="/kutuphane" className="back-link hidden-mobile">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-                    <span>Kütüphane</span>
+                    <span>KÃ¼tÃ¼phane</span>
                   </Link>
                 </div>
 
@@ -716,7 +766,7 @@ export default function LibraryBookPage() {
                 <div className="reader-audio-bar">
                   <div className="reader-audio-bar-copy">
                     <span className="reader-sidebar-title">Dinleme</span>
-                    <strong>Tefsiri Türkçe seslendir</strong>
+                    <strong>Tefsiri TÃ¼rkÃ§e seslendir</strong>
                   </div>
                   <div className="audio-control-group tafsir-audio-controls">
                     <button
@@ -730,7 +780,7 @@ export default function LibraryBookPage() {
                       ) : (
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                       )}
-                      {isActiveTafsirPlayback ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat') : 'Türkçe'}
+                      {isActiveTafsirPlayback ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat') : 'TÃ¼rkÃ§e'}
                     </button>
                     <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
@@ -772,23 +822,23 @@ export default function LibraryBookPage() {
 
                 {readerErrorMessage ? (
                   <div className="empty-state">
-                    <h2>Yükleme hatası</h2>
+                    <h2>YÃ¼kleme hatasÄ±</h2>
                     <p>{readerErrorMessage}</p>
                   </div>
                 ) : isReaderLoading ? (
                   <div className="empty-state">
-                    <h2>İçerik yükleniyor</h2>
-                    <p>Seçilen kitap ve sûre için tefsir getiriliyor.</p>
+                    <h2>Ä°Ã§erik yÃ¼kleniyor</h2>
+                    <p>SeÃ§ilen kitap ve sÃ»re iÃ§in tefsir getiriliyor.</p>
                   </div>
                 ) : !availableSurahIds.length ? (
                   <div className="empty-state">
-                    <h2>Veri bulunamadı</h2>
-                    <p>Bu kitap için henüz kullanılabilir sûre verisi yok.</p>
+                    <h2>Veri bulunamadÄ±</h2>
+                    <p>Bu kitap iÃ§in henÃ¼z kullanÄ±labilir sÃ»re verisi yok.</p>
                   </div>
                 ) : !rawTafsirHtml ? (
                   <div className="empty-state">
-                    <h2>İçerik bulunamadı</h2>
-                    <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
+                    <h2>Ä°Ã§erik bulunamadÄ±</h2>
+                    <p>SeÃ§ilen sÃ»re/ayet iÃ§in bu kitapta veri yok.</p>
                   </div>
                 ) : (
                   <>
@@ -797,13 +847,13 @@ export default function LibraryBookPage() {
                         {isVerseLoading ? (
                           <div className="reader-verse-card reader-verse-card-loading">
                             <span className="reader-verse-label">Ayet Metni</span>
-                            <p>Ayet yükleniyor...</p>
+                            <p>Ayet yÃ¼kleniyor...</p>
                           </div>
                         ) : selectedVerse ? (
                           <div className="reader-verse-card">
                             <div className="reader-verse-meta">
                               <span className="reader-verse-label">Ayet Metni</span>
-                              <strong>{getPlainSurahTitleLabel(resolvedSurahId)} · {resolvedAyahNo}. ayet</strong>
+                              <strong>{getPlainSurahTitleLabel(resolvedSurahId)} Â· {resolvedAyahNo}. ayet</strong>
                             </div>
                             <div
                               className="reader-verse-arabic"
@@ -816,7 +866,7 @@ export default function LibraryBookPage() {
                               </p>
                             )}
                             <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
-                              {selectedVerse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
+                              {selectedVerse.translation?.text || 'Bu ayet iÃ§in TÃ¼rkÃ§e meal bulunamadÄ±.'}
                             </p>
                           </div>
                         ) : null}
@@ -829,18 +879,22 @@ export default function LibraryBookPage() {
                           const verseArabicHtml = block.verse
                             ? normalizeArabicDisplayText(getVerseTextByMode(block.verse, textMode))
                             : ''
+                          const sectionPlaybackState = getSectionPlaybackState(index)
+                          const sectionBodyHtml = sectionPlaybackState === 'speaking'
+                            ? highlightSpokenWordsInHtml(block.bodyHtml, getSectionHighlightRatio(index))
+                            : block.bodyHtml
 
                           return (
                             <article
                               key={`surah-block-${block.ayahNo || 'intro'}-${index}`}
                               id={`bolum-${index + 1}`}
-                              className={`tefsir-section-card ${currentTafsirSegmentIndex === index ? 'is-speaking' : ''}`}
+                              className={`tefsir-section-card ${sectionPlaybackState === 'speaking' ? 'is-speaking' : ''} ${sectionPlaybackState === 'spoken' ? 'is-spoken' : ''}`}
                             >
                               {block.verse && (
                                 <div className="reader-inline-verse-card">
                                   <div className="reader-verse-meta">
                                     <span className="reader-verse-label">{block.verse.verse_number}. ayet</span>
-                                    <strong>{getPlainSurahTitleLabel(resolvedSurahId)} · {block.verse.verse_number}. ayet</strong>
+                                    <strong>{getPlainSurahTitleLabel(resolvedSurahId)} Â· {block.verse.verse_number}. ayet</strong>
                                   </div>
                                   <div
                                     className="reader-verse-arabic"
@@ -853,43 +907,46 @@ export default function LibraryBookPage() {
                                     </p>
                                   )}
                                   <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
-                                    {block.verse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
+                                    {block.verse.translation?.text || 'Bu ayet iÃ§in TÃ¼rkÃ§e meal bulunamadÄ±.'}
                                   </p>
                                 </div>
                               )}
                               {block.bodyHtml && (
                                 <div
                                   className="tefsirler-rich"
+                                  onClick={sectionPlaybackState === 'speaking' ? (event) => handleTafsirWordClick(event, index) : undefined}
                                   dangerouslySetInnerHTML={{
-                                    __html: highlightSpokenWordsInHtml(
-                                      block.bodyHtml,
-                                      currentTafsirSegmentIndex === index ? activeTrackProgressRatio : 0
-                                    )
+                                    __html: sectionBodyHtml
                                   }}
                                 />
                               )}
                             </article>
                           )
                         })
-                        : displaySections.map((section, index) => (
-                          <article
-                            key={`${section.title}-${index}`}
-                            id={`bolum-${index + 1}`}
-                            className={`tefsir-section-card ${currentTafsirSegmentIndex === index ? 'is-speaking' : ''}`}
-                          >
-                            {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
-                            {section.title && <h3>{section.title}</h3>}
-                            <div
-                              className="tefsirler-rich"
-                              dangerouslySetInnerHTML={{
-                                __html: highlightSpokenWordsInHtml(
-                                  section.bodyHtml,
-                                  currentTafsirSegmentIndex === index ? activeTrackProgressRatio : 0
-                                )
-                              }}
-                            />
-                          </article>
-                        ))}
+                        : displaySections.map((section, index) => {
+                          const sectionPlaybackState = getSectionPlaybackState(index)
+                          const sectionBodyHtml = sectionPlaybackState === 'speaking'
+                            ? highlightSpokenWordsInHtml(section.bodyHtml, getSectionHighlightRatio(index))
+                            : section.bodyHtml
+
+                          return (
+                            <article
+                              key={`${section.title}-${index}`}
+                              id={`bolum-${index + 1}`}
+                              className={`tefsir-section-card ${sectionPlaybackState === 'speaking' ? 'is-speaking' : ''} ${sectionPlaybackState === 'spoken' ? 'is-spoken' : ''}`}
+                            >
+                              {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
+                              {section.title && <h3>{section.title}</h3>}
+                              <div
+                                className="tefsirler-rich"
+                                onClick={sectionPlaybackState === 'speaking' ? (event) => handleTafsirWordClick(event, index) : undefined}
+                                dangerouslySetInnerHTML={{
+                                  __html: sectionBodyHtml
+                                }}
+                              />
+                            </article>
+                          )
+                        })}
                     </section>
                   </>
                 )}
@@ -902,7 +959,7 @@ export default function LibraryBookPage() {
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5" /><path d="M11 19l-7-7 7-7" /></svg>
                           <span>
                             <span className="reader-next-nav-label">
-                              {effectiveScope === 'verse' ? 'Önceki ayet' : 'Önceki sûre'}
+                              {effectiveScope === 'verse' ? 'Ã–nceki ayet' : 'Ã–nceki sÃ»re'}
                             </span>
                             <strong>{effectiveScope === 'verse' ? previousVerseTarget?.label : previousSurahTarget?.label}</strong>
                           </span>
@@ -913,7 +970,7 @@ export default function LibraryBookPage() {
                         <button type="button" className="reader-next-nav-link next" onClick={handleReaderAdvance}>
                           <span>
                             <span className="reader-next-nav-label">
-                              {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sûre'}
+                              {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sÃ»re'}
                             </span>
                             <strong>{effectiveScope === 'verse' ? nextVerseTarget?.label : nextSurahTarget?.label}</strong>
                           </span>
@@ -930,7 +987,7 @@ export default function LibraryBookPage() {
               <div className="reader-back-row">
                 <Link to="/kutuphane" className="back-link hidden-mobile">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-                  <span>Kütüphane</span>
+                  <span>KÃ¼tÃ¼phane</span>
                 </Link>
               </div>
 
@@ -944,9 +1001,9 @@ export default function LibraryBookPage() {
               </div>
 
               <div className="meal-reader-placeholder">
-                <p><strong>{book.titleTr}</strong> için meal odaklı kitap sayfası sonraki adımda genişletilecek.</p>
-                <p>Şu an meal okumaya ayet ekranından devam edebilirsin.</p>
-                <Link to="/sure/1/1" className="meal-quick-link">Örnek Meal Sayfası</Link>
+                <p><strong>{book.titleTr}</strong> iÃ§in meal odaklÄ± kitap sayfasÄ± sonraki adÄ±mda geniÅŸletilecek.</p>
+                <p>Åu an meal okumaya ayet ekranÄ±ndan devam edebilirsin.</p>
+                <Link to="/sure/1/1" className="meal-quick-link">Ã–rnek Meal SayfasÄ±</Link>
               </div>
             </>
           )}
@@ -955,3 +1012,7 @@ export default function LibraryBookPage() {
     </div>
   )
 }
+
+
+
+

@@ -679,6 +679,16 @@
     border-bottom-color: color-mix(in srgb, var(--accent) 24%, var(--separator-light));
 }
 
+.tefsir-section-card.is-spoken {
+    border-bottom-color: color-mix(in srgb, var(--accent) 18%, var(--separator-light));
+}
+
+.tefsir-section-card.is-spoken .tefsirler-rich,
+.tefsir-section-card.is-spoken .tefsir-section-index,
+.tefsir-section-card.is-spoken .reader-inline-verse-card {
+    color: color-mix(in srgb, var(--accent) 74%, var(--text-primary));
+}
+
 .tefsir-section-card.is-speaking .tefsirler-rich,
 .tefsir-section-card.is-speaking .tefsir-section-index,
 .tefsir-section-card.is-speaking .reader-inline-verse-card {
@@ -744,6 +754,7 @@
 
 .tefsir-spoken-word {
     border-radius: 4px;
+    cursor: pointer;
     transition: background-color 0.18s var(--ease), color 0.18s var(--ease), text-decoration-color 0.18s var(--ease);
 }
 

@@ -147,6 +147,10 @@ function clearSpeechDelayTimer() {
 }
 
 function playGeneratedSegmentAt(index) {
+    return playGeneratedSegmentAtWithOffset(index, 0)
+}
+
+function playGeneratedSegmentAtWithOffset(index, startOffsetSeconds = 0) {
     if (!Array.isArray(activeGeneratedSegments) || index < 0 || index >= activeGeneratedSegments.length) return false
     const segment = activeGeneratedSegments[index]
     if (!segment?.url) return false
@@ -156,6 +160,14 @@ function playGeneratedSegmentAt(index) {
     globalAudio.src = segment.url
     globalAudio.load()
     globalAudio.playbackRate = 1
+    const desiredOffset = Math.max(0, Number(startOffsetSeconds || 0))
+    if (desiredOffset > 0) {
+        const applyOffset = () => {
+            const maxOffset = Math.max(0, Number(globalAudio.duration || desiredOffset) - 0.05)
+            globalAudio.currentTime = Math.min(maxOffset, desiredOffset)
+        }
+        globalAudio.addEventListener('loadedmetadata', applyOffset, { once: true })
+    }
     safePlayAudio(() => {
         usePlayerStore.getState().setIsPlaying(false)
     })
@@ -202,6 +214,43 @@ function playPreloadedGeneratedSegment(index) {
     })
     preloadGeneratedSegment(index + 1)
     return true
+}
+
+function resolveGeneratedSegmentForAbsoluteTime(targetSeconds) {
+    const safeTarget = Math.max(0, Number(targetSeconds || 0))
+    if (!Array.isArray(activeGeneratedSegments) || !activeGeneratedSegments.length) {
+        return { segmentIndex: 0, offsetSeconds: 0 }
+    }
+
+    let cursor = 0
+    for (let index = 0; index < activeGeneratedSegments.length; index += 1) {
+        const segment = activeGeneratedSegments[index]
+        const duration = getGeneratedSegmentDuration(segment)
+        const pause = Math.max(0, Number(segment?.pauseAfterMs || 0)) / 1000
+
+        if (safeTarget <= cursor + duration) {
+            return {
+                segmentIndex: index,
+                offsetSeconds: Math.max(0, safeTarget - cursor)
+            }
+        }
+        cursor += duration
+
+        if (safeTarget <= cursor + pause) {
+            return {
+                segmentIndex: Math.min(index + 1, activeGeneratedSegments.length - 1),
+                offsetSeconds: 0
+            }
+        }
+        cursor += pause
+    }
+
+    const lastIndex = activeGeneratedSegments.length - 1
+    const lastDuration = getGeneratedSegmentDuration(activeGeneratedSegments[lastIndex])
+    return {
+        segmentIndex: lastIndex,
+        offsetSeconds: Math.max(0, lastDuration - 0.2)
+    }
 }
 
 function startSpeechProgressTimer() {
@@ -436,7 +485,7 @@ const usePlayerStore = create((set, get) => ({
         }
     },
 
-    playTafsirTrackAtIndex: async (idx, settings) => {
+    playTafsirTrackAtIndex: async (idx, settings, options = {}) => {
         const state = get()
         if (idx < 0 || idx >= state.playlist.length) {
             set({ isPlaying: false })
@@ -479,7 +528,13 @@ const usePlayerStore = create((set, get) => ({
                     duration: Math.max(1, totalDuration),
                     isPlaying: true
                 })
-                playGeneratedSegmentAt(0)
+                const requestedRatio = Math.max(0, Math.min(1, Number(options?.startRatio) || 0))
+                if (requestedRatio > 0) {
+                    const targetPosition = resolveGeneratedSegmentForAbsoluteTime(totalDuration * requestedRatio)
+                    playGeneratedSegmentAtWithOffset(targetPosition.segmentIndex, targetPosition.offsetSeconds)
+                } else {
+                    playGeneratedSegmentAt(0)
+                }
                 document.dispatchEvent(new CustomEvent('playerVisible'))
                 return
             }
@@ -587,7 +642,7 @@ const usePlayerStore = create((set, get) => ({
         document.dispatchEvent(new CustomEvent('playerVisible'))
     },
 
-    playTafsirPlaylist: (tracks, startIndex = 0, metadata, settings) => {
+    playTafsirPlaylist: (tracks, startIndex = 0, metadata, settings, options = {}) => {
         const safeTracks = Array.isArray(tracks) ? tracks.filter((track) => String(track?.text || '').trim()) : []
         if (!safeTracks.length) {
             set({ isPlaying: false })
@@ -606,7 +661,11 @@ const usePlayerStore = create((set, get) => ({
             isPlaying: true
         })
 
-        get().playTafsirTrackAtIndex(Math.min(Math.max(startIndex, 0), safeTracks.length - 1), settings)
+        get().playTafsirTrackAtIndex(
+            Math.min(Math.max(startIndex, 0), safeTracks.length - 1),
+            settings,
+            options
+        )
     },
 
     togglePlay: () => {
@@ -681,6 +740,44 @@ const usePlayerStore = create((set, get) => ({
     seek: (time) => {
         globalAudio.currentTime = time
         set({ currentTime: time })
+    },
+
+    seekTafsirSpeechByRatio: (ratio) => {
+        const state = get()
+        if (state.mode !== 'tts') return
+
+        const safeRatio = Math.max(0, Math.min(1, Number(ratio) || 0))
+        const totalDuration = Math.max(0, Number(state.duration || getGeneratedSegmentsTotalDuration() || 0))
+        if (totalDuration <= 0) return
+
+        if (activeGeneratedSegments.length > 0) {
+            const targetSeconds = safeRatio * totalDuration
+            const targetPosition = resolveGeneratedSegmentForAbsoluteTime(targetSeconds)
+            clearSpeechDelayTimer()
+
+            if (targetPosition.segmentIndex === activeGeneratedSegmentIndex && globalAudio.src) {
+                const segmentBase = getGeneratedElapsedBefore(targetPosition.segmentIndex)
+                try {
+                    globalAudio.currentTime = Math.max(0, Number(targetPosition.offsetSeconds || 0))
+                    state.setCurrentTime(Math.min(totalDuration, segmentBase + Number(targetPosition.offsetSeconds || 0)))
+                    if (!state.isPlaying) {
+                        safePlayAudio(() => set({ isPlaying: false }))
+                        set({ isPlaying: true })
+                    }
+                } catch {
+                    playGeneratedSegmentAtWithOffset(targetPosition.segmentIndex, targetPosition.offsetSeconds)
+                    set({ isPlaying: true })
+                }
+                return
+            }
+
+            playGeneratedSegmentAtWithOffset(targetPosition.segmentIndex, targetPosition.offsetSeconds)
+            set({ isPlaying: true })
+            return
+        }
+
+        // SpeechSynthesis fallback modunda yalnizca lineer seek simule edilir.
+        state.seek(totalDuration * safeRatio)
     },
 
     playTrackAtIndex: (idx) => {
