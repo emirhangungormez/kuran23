@@ -1,4 +1,4 @@
-﻿import React, { useState, memo } from 'react'
+import React, { memo, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../contexts/SettingsContext'
@@ -8,6 +8,9 @@ import { isReciterSupported, getTurkishReciters } from '../services/audio'
 import { resolveArabicTextVisibility } from '../utils/textEncoding'
 import { normalizeTextMode } from '../utils/textMode'
 import './IntegratedPlayer.css'
+
+const DENSE_SEGMENT_THRESHOLD = 90
+const DENSE_SEGMENT_TARGET = 60
 
 // Helper component for individual verse segments to optimize performance
 const VerseSegment = memo(({ idx, status, onClick, ayahNo }) => {
@@ -61,10 +64,10 @@ export default function IntegratedPlayer({
         staleTime: 1000 * 60 * 60 * 24
     })
 
-    if (!isVisible) return null;
+    if (!isVisible) return null
 
     const formatTime = (time) => {
-        if (isNaN(time)) return "0:00"
+        if (isNaN(time)) return '0:00'
         const mins = Math.floor(time / 60)
         const secs = Math.floor(time % 60)
         return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -72,6 +75,7 @@ export default function IntegratedPlayer({
 
     const remainingTime = duration - currentTime
     const isVeryLongSurah = verses.length > 50
+    const progressRatio = duration > 0 ? Math.min(1, Math.max(0, currentTime / duration)) : 0
     const showDiacritics = normalizeTextMode(settings.textMode, settings.showTajweed) !== 'plain'
     const displaySurahNameAr = resolveArabicTextVisibility(surahNameAr, showDiacritics)
     const isTafsirContext = context === 'tafsir'
@@ -83,10 +87,92 @@ export default function IntegratedPlayer({
         }))
     const turkishReciterOptions = getTurkishReciters().map(r => ({ value: r.id, label: r.name }))
 
+    const pageSegmentsModel = useMemo(() => {
+        if (context !== 'page' || !showSegments || verses.length === 0) return null
+
+        const hasIntroTrack = verses[0]?.ayah === 0
+        const firstVerseIdx = hasIntroTrack ? 1 : 0
+        const entries = []
+
+        for (let idx = firstVerseIdx; idx < verses.length; idx += 1) {
+            const verse = verses[idx] || {}
+            const ayahNo = verse.ayah || verse.verse_number || (hasIntroTrack ? idx : idx + 1)
+            entries.push({
+                startIdx: idx,
+                endIdx: idx,
+                ayahNo,
+                label: `Ayet ${ayahNo}`
+            })
+        }
+
+        if (entries.length > DENSE_SEGMENT_THRESHOLD) {
+            const chunkSize = Math.max(2, Math.ceil(entries.length / DENSE_SEGMENT_TARGET))
+            const condensed = []
+
+            for (let idx = 0; idx < entries.length; idx += chunkSize) {
+                const chunk = entries.slice(idx, idx + chunkSize)
+                const first = chunk[0]
+                const last = chunk[chunk.length - 1]
+                const isSingleAyah = first.ayahNo === last.ayahNo
+
+                condensed.push({
+                    startIdx: first.startIdx,
+                    endIdx: last.endIdx,
+                    ayahNo: isSingleAyah ? `${first.ayahNo}` : `${first.ayahNo}-${last.ayahNo}`,
+                    label: isSingleAyah ? `Ayet ${first.ayahNo}` : `Ayet ${first.ayahNo}-${last.ayahNo}`
+                })
+            }
+
+            return {
+                hasIntroTrack,
+                isDense: true,
+                entries: condensed
+            }
+        }
+
+        return {
+            hasIntroTrack,
+            isDense: false,
+            entries
+        }
+    }, [context, showSegments, verses])
+
+    const pageSegments = useMemo(() => {
+        if (!pageSegmentsModel) return []
+
+        return pageSegmentsModel.entries.map((segment) => {
+            let status = ''
+            if (currentVerseIndex >= segment.startIdx && currentVerseIndex <= segment.endIdx) status = 'active'
+            else if (currentVerseIndex > segment.endIdx) status = 'played'
+
+            if (pageSegmentsModel.isDense) {
+                return (
+                    <button
+                        type="button"
+                        key={`segment-${segment.startIdx}`}
+                        className={`verse-segment dense-segment ${status}`}
+                        onClick={() => onSelectVerse(segment.startIdx)}
+                        title={segment.label}
+                        aria-label={segment.label}
+                    />
+                )
+            }
+
+            return (
+                <VerseSegment
+                    key={segment.startIdx}
+                    idx={segment.startIdx}
+                    status={status}
+                    onClick={onSelectVerse}
+                    ayahNo={segment.ayahNo}
+                />
+            )
+        })
+    }, [currentVerseIndex, onSelectVerse, pageSegmentsModel])
+
     return (
         <div className={`integrated-player ${isExpanded ? 'active' : ''}`}>
             <div className="player-main-row">
-                {/* The original play button is replaced by the new center controls */}
                 <div className="player-rich-info">
                     <div className="player-row-top">
                         <span className="player-surah-ar" dir="rtl">{displaySurahNameAr}</span>
@@ -111,7 +197,6 @@ export default function IntegratedPlayer({
                     </div>
                 </div>
 
-                {/* Center Controls */}
                 <div className="player-center-controls">
                     <div className="player-main-controls">
                         <button className="control-btn" onClick={skipPrevious} title="Önceki" aria-label="Önceki">
@@ -171,7 +256,7 @@ export default function IntegratedPlayer({
             </div>
 
             <div className="player-mini-progress">
-                <div className="mini-progress-fill" style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }} />
+                <div className="mini-progress-fill" style={{ transform: `scaleX(${progressRatio})` }} />
             </div>
 
             <div className="player-expanded-content">
@@ -219,10 +304,10 @@ export default function IntegratedPlayer({
                             aria-label="Sürekli Çal"
                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="17 1 21 5 17 9"></polyline>
-                                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
-                                <polyline points="7 23 3 19 7 15"></polyline>
-                                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                                <polyline points="17 1 21 5 17 9" />
+                                <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                                <polyline points="7 23 3 19 7 15" />
+                                <path d="M21 13v2a4 4 0 0 1-4 4H3" />
                             </svg>
                             {isRepeat && <span style={{ fontSize: '10px' }}>Sürekli Çal</span>}
                         </button>
@@ -238,96 +323,73 @@ export default function IntegratedPlayer({
                     </button>
                 </div>
 
-                {showSegments && context === 'page' && (() => {
-                    const hasIntroTrack = verses[0]?.ayah === 0;
+                {showSegments && context === 'page' && pageSegmentsModel && (
+                    <div className={`verse-segments-container ${pageSegmentsModel.isDense ? 'dense-mode' : (isVeryLongSurah ? 'grid-view' : '')}`}>
+                        <button
+                            type="button"
+                            className={`intro-dot ${pageSegmentsModel.hasIntroTrack
+                                ? (currentVerseIndex === 0 ? 'active' : (currentVerseIndex > 0 ? 'played' : ''))
+                                : (currentVerseIndex === -1 ? 'active' : (currentVerseIndex > -1 ? 'played' : ''))
+                                }`}
+                            onClick={() => onSelectVerse(pageSegmentsModel.hasIntroTrack ? 0 : -1)}
+                            title="Başlangıç / Sure Başlığı"
+                            aria-label="Başlangıç / Sure Başlığı"
+                        />
 
-                    return (
-                        <div className={`verse-segments-container ${isVeryLongSurah ? 'grid-view' : ''}`}>
-                            <button
-                                type="button"
-                                className={`intro-dot ${hasIntroTrack
-                                    ? (currentVerseIndex === 0 ? 'active' : (currentVerseIndex > 0 ? 'played' : ''))
-                                    : (currentVerseIndex === -1 ? 'active' : (currentVerseIndex > -1 ? 'played' : ''))
-                                    }`}
-                                onClick={() => onSelectVerse(hasIntroTrack ? 0 : -1)}
-                                title="Başlangıç / Sure Başlığı"
-                                aria-label="Başlangıç / Sure Başlığı"
-                            />
-
-                            <div className="verse-segments">
-                                {verses.map((v, idx) => {
-                                    if (hasIntroTrack && idx === 0) return null;
-
-                                    let status = "";
-                                    if (idx === currentVerseIndex) status = "active";
-                                    else if (idx < currentVerseIndex) status = "played";
-
-                                    return (
-                                        <VerseSegment
-                                            key={idx}
-                                            idx={idx}
-                                            status={status}
-                                            onClick={onSelectVerse}
-                                            ayahNo={v.ayah || v.verse_number || (hasIntroTrack ? idx : idx + 1)}
-                                        />
-                                    );
-                                })}
-                            </div>
+                        <div className="verse-segments">
+                            {pageSegments}
                         </div>
-                    );
-                })()}
+                    </div>
+                )}
 
-                {/* Playlist surah segments */}
                 {showSegments && context === 'playlist' && verses.length > 0 && (() => {
-                    // verses here holds the playlist tracks; group by surahId using segmentIndex stored on each track
-                    // We gather unique surah groups and show one segment per surah
-                    const segments = [];
-                    let lastSurahId = null;
+                    const segments = []
+                    let lastSurahId = null
                     verses.forEach((v, idx) => {
                         if (v.surahId !== lastSurahId) {
-                            segments.push({ surahId: v.surahId, name: v.surahName, startIdx: idx });
-                            lastSurahId = v.surahId;
+                            segments.push({ surahId: v.surahId, name: v.surahName, startIdx: idx })
+                            lastSurahId = v.surahId
                         }
-                    });
+                    })
 
                     return (
                         <div className="verse-segments-container playlist-segments">
                             <div className="verse-segments">
                                 {segments.map((seg, i) => {
-                                    let status = '';
+                                    let status = ''
                                     if (currentVerseIndex >= seg.startIdx) {
-                                        const nextSegStart = segments[i + 1]?.startIdx ?? Infinity;
-                                        if (currentVerseIndex < nextSegStart) status = 'active';
-                                        else status = 'played';
+                                        const nextSegStart = segments[i + 1]?.startIdx ?? Infinity
+                                        if (currentVerseIndex < nextSegStart) status = 'active'
+                                        else status = 'played'
                                     }
                                     return (
                                         <button
                                             type="button"
-                                            key={seg.surahId}
+                                            key={`${seg.surahId}-${seg.startIdx}`}
                                             className={`verse-segment playlist-segment ${status}`}
                                             onClick={() => onSelectVerse(seg.startIdx)}
                                             title={seg.name}
                                             aria-label={seg.name || `Sure ${seg.surahId}`}
                                         />
-                                    );
+                                    )
                                 })}
                             </div>
                             <div className="playlist-seg-names">
                                 {segments.map((seg, i) => {
-                                    const nextSegStart = segments[i + 1]?.startIdx ?? Infinity;
-                                    const isActive = currentVerseIndex >= seg.startIdx && currentVerseIndex < nextSegStart;
+                                    const nextSegStart = segments[i + 1]?.startIdx ?? Infinity
+                                    const isActive = currentVerseIndex >= seg.startIdx && currentVerseIndex < nextSegStart
                                     return (
                                         <span
-                                            key={seg.surahId}
+                                            key={`${seg.surahId}-${seg.startIdx}-name`}
                                             className={`playlist-seg-name ${isActive ? 'active' : ''}`}
                                         >
                                             {seg.name}
                                         </span>
-                                    );
+                                    )
                                 })}
                             </div>
                         </div>
-                    );
+                    )
                 })()}
 
                 {showSegments && context === 'tafsir' && verses.length > 0 && (
@@ -371,5 +433,3 @@ export default function IntegratedPlayer({
         </div>
     )
 }
-
-
