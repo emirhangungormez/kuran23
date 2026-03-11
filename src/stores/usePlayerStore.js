@@ -87,8 +87,28 @@ let activeSpeechSegmentDelayTimer = null
 let activeGeneratedAudioUrls = []
 let activeGeneratedSegments = []
 let activeGeneratedSegmentIndex = -1
-let activeGeneratedElapsedBeforeSegment = 0
 let preloadedGeneratedSegmentIndex = -1
+
+function getGeneratedSegmentDuration(segment) {
+    const runtime = Number(segment?.runtimeDuration || 0)
+    if (runtime > 0) return runtime
+    return Math.max(0, Number(segment?.duration || 0))
+}
+
+function getGeneratedSegmentsTotalDuration() {
+    if (!Array.isArray(activeGeneratedSegments) || !activeGeneratedSegments.length) return 0
+    return activeGeneratedSegments.reduce(
+        (sum, segment) => sum + getGeneratedSegmentDuration(segment) + (Math.max(0, Number(segment?.pauseAfterMs || 0)) / 1000),
+        0
+    )
+}
+
+function getGeneratedElapsedBefore(index) {
+    if (!Array.isArray(activeGeneratedSegments) || index <= 0) return 0
+    return activeGeneratedSegments
+        .slice(0, index)
+        .reduce((sum, segment) => sum + getGeneratedSegmentDuration(segment) + (Math.max(0, Number(segment?.pauseAfterMs || 0)) / 1000), 0)
+}
 
 function clearGeneratedAudioUrl() {
     activeGeneratedAudioUrls.forEach((url) => {
@@ -102,7 +122,6 @@ function clearGeneratedAudioUrl() {
     activeGeneratedAudioUrls = []
     activeGeneratedSegments = []
     activeGeneratedSegmentIndex = -1
-    activeGeneratedElapsedBeforeSegment = 0
     preloadedGeneratedSegmentIndex = -1
     activeGeneratedAudioUrl = ''
     generatedPreloadAudio.pause()
@@ -133,9 +152,6 @@ function playGeneratedSegmentAt(index) {
     if (!segment?.url) return false
 
     activeGeneratedSegmentIndex = index
-    activeGeneratedElapsedBeforeSegment = activeGeneratedSegments
-        .slice(0, index)
-        .reduce((sum, item) => sum + Number(item?.duration || 0) + ((Number(item?.pauseAfterMs || 0)) / 1000), 0)
     activeGeneratedAudioUrl = segment.url
     globalAudio.src = segment.url
     globalAudio.load()
@@ -177,12 +193,9 @@ function playPreloadedGeneratedSegment(index) {
     if (!preloadedUrl) return false
 
     activeGeneratedSegmentIndex = index
-    activeGeneratedElapsedBeforeSegment = activeGeneratedSegments
-        .slice(0, index)
-        .reduce((sum, item) => sum + Number(item?.duration || 0) + ((Number(item?.pauseAfterMs || 0)) / 1000), 0)
     activeGeneratedAudioUrl = segment.url
     globalAudio.src = preloadedUrl
-    globalAudio.load()
+    // Preloaded URL'de tekrar load() cagirmamak gecis boslugunu azaltir.
     globalAudio.playbackRate = 1
     safePlayAudio(() => {
         usePlayerStore.getState().setIsPlaying(false)
@@ -458,10 +471,7 @@ const usePlayerStore = create((set, get) => ({
             if (Array.isArray(piperResult) && piperResult.length > 0) {
                 activeGeneratedSegments = piperResult
                 activeGeneratedAudioUrls = piperResult.map((segment) => segment?.url).filter(Boolean)
-                const totalDuration = piperResult.reduce(
-                    (sum, segment) => sum + Number(segment?.duration || 0) + ((Number(segment?.pauseAfterMs || 0)) / 1000),
-                    0
-                )
+                const totalDuration = getGeneratedSegmentsTotalDuration()
                 set({
                     mode: 'tts',
                     currentTrackIndex: idx,
@@ -1166,9 +1176,10 @@ export const initAudioListeners = (settingsFunction) => {
     audio.addEventListener('timeupdate', () => {
         const state = usePlayerStore.getState()
         if (state.mode === 'tts' && activeGeneratedSegments.length > 0 && activeGeneratedSegmentIndex >= 0) {
+            const elapsedBefore = getGeneratedElapsedBefore(activeGeneratedSegmentIndex)
             const progressTime = Math.min(
                 state.duration || Infinity,
-                Math.max(0, activeGeneratedElapsedBeforeSegment + Number(audio.currentTime || 0))
+                Math.max(0, elapsedBefore + Number(audio.currentTime || 0))
             )
             state.setCurrentTime(progressTime)
             return
@@ -1178,6 +1189,15 @@ export const initAudioListeners = (settingsFunction) => {
 
     audio.addEventListener('loadedmetadata', () => {
         const state = usePlayerStore.getState()
+        if (state.mode === 'tts' && activeGeneratedSegments.length > 0 && activeGeneratedSegmentIndex >= 0) {
+            const segment = activeGeneratedSegments[activeGeneratedSegmentIndex]
+            if (segment) {
+                segment.runtimeDuration = Number(audio.duration || segment.duration || 0)
+            }
+            state.setDuration(Math.max(1, getGeneratedSegmentsTotalDuration()))
+            return
+        }
+
         state.setDuration(audio.duration)
 
         // Smart Seek for Turkish Surah Audio

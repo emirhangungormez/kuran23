@@ -744,19 +744,25 @@
 
 .tefsir-spoken-word {
     border-radius: 4px;
-    transition: background-color 0.18s var(--ease), color 0.18s var(--ease), font-weight 0.18s var(--ease);
+    transition: background-color 0.18s var(--ease), color 0.18s var(--ease), text-decoration-color 0.18s var(--ease);
 }
 
 .tefsir-spoken-word.spoken {
     background: color-mix(in srgb, var(--accent) 16%, transparent);
     color: color-mix(in srgb, var(--accent) 84%, var(--text-primary));
-    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-underline-offset: 2px;
 }
 
 .tefsir-spoken-word.speaking {
     background: color-mix(in srgb, var(--accent) 24%, transparent);
     color: color-mix(in srgb, var(--accent) 92%, var(--text-primary));
-    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 56%, transparent);
+    text-underline-offset: 2px;
 }
 
 .tefsir-flip-wrapper {

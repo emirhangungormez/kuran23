@@ -119,6 +119,13 @@ const TR_PRONUNCIATION_LEXICON = [
   [/\bzâhir\b/gi, 'zaahir'],
   [/\bbâtın\b/gi, 'baatın'],
   [/\bfıkıh\b/gi, 'fıkıh'],
+  [/\baleyhissel[aâ]m\b/gi, 'aleyhisselaam'],
+  [/\bsallallahu aleyhi ve sellem\b/gi, 'sallallahu aleyhi vesellem'],
+  [/\brad[iı]yallahu anh\b/gi, 'radiyallahu anh'],
+  [/\bteâlâ\b/gi, 'tealaa'],
+  [/\bisnad\b/gi, 'isnaad'],
+  [/\brivayet\b/gi, 'rivaayet'],
+  [/\bkıyamet\b/gi, 'kıyaamet'],
   [/\bkelâm\b/gi, 'kelam'],
   [/\bistiğfar\b/gi, 'istiğfar'],
   [/\bKur'an\b/gi, 'Kuran'],
@@ -147,10 +154,11 @@ function normalizeBaseSpeechText(text) {
   return normalized
     .replace(/[ـ]+/gu, '')
     .replace(/[“”"]/g, '')
+    .replace(/\.{3,}/g, '…')
     .replace(/\(([^)]*?)\)/g, ' $1 ')
     .replace(/\/+?/g, ' ')
     .replace(/([,:;!?])([^\s])/g, '$1 $2')
-    .replace(/([.۔،]){2,}/g, '$1')
+    .replace(/([.۔،؟!؛:…]){2,}/g, '$1')
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -225,7 +233,7 @@ function splitByLanguage(text) {
   if (!source) return []
 
   const runs = source.match(ARABIC_RUN_SPLIT_REGEX) || []
-  const parts = runs
+  const rawParts = runs
     .map((chunk) => String(chunk || '').trim())
     .filter(Boolean)
     .map((chunk) => ({
@@ -233,7 +241,21 @@ function splitByLanguage(text) {
       lang: ARABIC_CHAR_REGEX.test(chunk) ? 'ar-SA' : 'tr-TR'
     }))
 
-  if (!parts.length) return [{ text: source, lang: detectSegmentLanguage(source) }]
+  if (!rawParts.length) return [{ text: source, lang: detectSegmentLanguage(source) }]
+
+  // Sadece noktalama/ayrac içeren chunk'ları onceki anlamsal parçaya ekleyelim.
+  const parts = []
+  rawParts.forEach((item) => {
+    const hasArabic = ARABIC_CHAR_REGEX.test(item.text)
+    const hasLatin = /[A-Za-zÇĞİÖŞÜçğıöşü]/u.test(item.text)
+    if (!hasArabic && !hasLatin && parts.length) {
+      const last = parts[parts.length - 1]
+      last.text = `${last.text} ${item.text}`.trim()
+      return
+    }
+    parts.push(item)
+  })
+
   return parts
 }
 
@@ -243,7 +265,7 @@ function splitLongText(text, maxLength = 220) {
   if (source.length <= maxLength) return [source]
 
   const segments = source
-    .split(/(?<=[.!?:;۔،])\s+/u)
+    .split(/(?<=[.!?:;…۔،؛؟])\s+/u)
     .map((part) => part.trim())
     .filter(Boolean)
 
@@ -271,6 +293,7 @@ function getPauseMs(text, lang) {
 
   if (String(lang || '').toLowerCase().startsWith('ar')) {
     if (/[۝﴿﴾]$/.test(safeText)) return 420
+    if (/…$/.test(safeText)) return 340
     if (/[؟]$/.test(safeText)) return 320
     if (/[؛]$/.test(safeText)) return 280
     if (/[،]$/.test(safeText)) return 220
@@ -278,9 +301,25 @@ function getPauseMs(text, lang) {
     return 170
   }
 
+  if (/…$/.test(safeText)) return 340
   if (/[.!?]$/.test(safeText)) return 280
   if (/[,;:]$/.test(safeText)) return 180
   return 150
+}
+
+function getRateMultiplier(text, lang) {
+  const safeText = String(text || '').trim()
+  if (!safeText) return 1
+
+  if (String(lang || '').toLowerCase().startsWith('ar')) {
+    return 0.82
+  }
+
+  if (/\b\d+\.?\s*ayet\b/i.test(safeText)) return 0.93
+  if (/…$/.test(safeText)) return 0.9
+  if (/[!?]$/.test(safeText)) return 0.92
+  if (/[:;]$/.test(safeText)) return 0.96
+  return 1
 }
 
 export function buildTafsirSpeechQueue(text, options = {}) {
@@ -300,9 +339,7 @@ export function buildTafsirSpeechQueue(text, options = {}) {
         ? applyArabicDiacritization(trimmed, options)
         : applyTurkishPronunciationLexicon(trimmed)
       const pauseMs = getPauseMs(preparedText, lang)
-      const rateMultiplier = lang.startsWith('ar')
-        ? 0.82
-        : (/\b\d+\.?\s*ayet\b/i.test(preparedText) ? 0.93 : 1)
+      const rateMultiplier = getRateMultiplier(preparedText, lang)
       queue.push({
         text: preparedText,
         lang,

@@ -81,7 +81,7 @@ function highlightSpokenWordsInHtml(html, progressRatio) {
       textNodes.push(node)
     }
 
-    const isWordToken = (value) => /[A-Za-zÇĞİÖŞÜçğıöşü0-9\u0600-\u06FF]+/u.test(String(value || ''))
+    const isWordToken = (value) => /[\p{L}\p{N}]/u.test(String(value || ''))
     const wordsPerNode = textNodes.map((node) => {
       const parts = String(node.textContent || '').split(/(\s+)/)
       const words = parts.filter((part) => isWordToken(part))
@@ -430,8 +430,8 @@ export default function LibraryBookPage() {
   const activeTrackProgressRatio = useMemo(() => {
     if (!isActiveTafsirPlayback || !playerDuration || playerDuration <= 0) return 0
     const ratio = Math.max(0, Math.min(1, playerCurrentTime / playerDuration))
-    // Re-render frekansini dusurmek icin adimlayalim.
-    return Math.round(ratio * 24) / 24
+    // Re-render frekansini dusurup titremeyi azaltmak icin adimlayalim.
+    return Math.round(ratio * 32) / 32
   }, [isActiveTafsirPlayback, playerCurrentTime, playerDuration])
   const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
   const isTafsirSpeechPaused = isActiveTafsirPlayback && !playerIsPlaying
@@ -863,9 +863,7 @@ export default function LibraryBookPage() {
                                   dangerouslySetInnerHTML={{
                                     __html: highlightSpokenWordsInHtml(
                                       block.bodyHtml,
-                                      currentTafsirSegmentIndex === index
-                                        ? activeTrackProgressRatio
-                                        : (isActiveTafsirPlayback && index < currentTafsirSegmentIndex ? 1 : 0)
+                                      currentTafsirSegmentIndex === index ? activeTrackProgressRatio : 0
                                     )
                                   }}
                                 />
@@ -886,9 +884,7 @@ export default function LibraryBookPage() {
                               dangerouslySetInnerHTML={{
                                 __html: highlightSpokenWordsInHtml(
                                   section.bodyHtml,
-                                  currentTafsirSegmentIndex === index
-                                    ? activeTrackProgressRatio
-                                    : (isActiveTafsirPlayback && index < currentTafsirSegmentIndex ? 1 : 0)
+                                  currentTafsirSegmentIndex === index ? activeTrackProgressRatio : 0
                                 )
                               }}
                             />
