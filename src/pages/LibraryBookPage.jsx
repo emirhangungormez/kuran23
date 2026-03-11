@@ -365,6 +365,7 @@ export default function LibraryBookPage() {
   const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
   const isTafsirSpeechPaused = isActiveTafsirPlayback && !playerIsPlaying
   const tafsirVoiceRate = Number(settings.tafsirVoiceRate || 1)
+  const tafsirSpeechEngine = String(settings.tafsirSpeechEngine || 'piper').toLowerCase()
 
   const resetReaderPosition = () => {
     window.scrollTo?.({ top: 0, behavior: 'smooth' })
@@ -407,6 +408,10 @@ export default function LibraryBookPage() {
   const cycleTafsirVoiceRate = () => {
     const nextRate = tafsirVoiceRate === 1 ? 1.15 : tafsirVoiceRate === 1.15 ? 1.3 : tafsirVoiceRate === 1.3 ? 1.5 : 1
     updateSettings({ tafsirVoiceRate: nextRate })
+  }
+
+  const handleTafsirEngineChange = (engine) => {
+    updateSettings({ tafsirSpeechEngine: engine })
   }
 
   const handleScopeChange = (scope) => {
@@ -648,6 +653,29 @@ export default function LibraryBookPage() {
                     <strong>Tefsiri Türkçe seslendir</strong>
                   </div>
                   <div className="audio-control-group tafsir-audio-controls">
+                    <div className="tafsir-engine-buttons" role="group" aria-label="Tefsir ses motoru">
+                      <button
+                        type="button"
+                        className={`speed-toggle ${tafsirSpeechEngine === 'piper' ? 'active' : ''}`}
+                        onClick={() => handleTafsirEngineChange('piper')}
+                      >
+                        Piper
+                      </button>
+                      <button
+                        type="button"
+                        className={`speed-toggle ${tafsirSpeechEngine === 'sherpa' ? 'active' : ''}`}
+                        onClick={() => handleTafsirEngineChange('sherpa')}
+                      >
+                        Sherpa
+                      </button>
+                      <button
+                        type="button"
+                        className={`speed-toggle ${tafsirSpeechEngine === 'coqui' ? 'active' : ''}`}
+                        onClick={() => handleTafsirEngineChange('coqui')}
+                      >
+                        Coqui
+                      </button>
+                    </div>
                     <button
                       type="button"
                       className={`surah-audio-btn turkish ${isActiveTafsirPlayback && playerIsPlaying ? 'playing' : ''}`}

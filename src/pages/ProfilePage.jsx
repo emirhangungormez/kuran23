@@ -465,7 +465,7 @@ export default function ProfilePage() {
                                         <div className="tafsir-meal-setting-copy">
                                             <h4>Tefsir Seslendirmesi</h4>
                                             <p>
-                                                Tefsir dinleme sistem sesi ile çalışır. Cihazın desteklediği en uygun erkek Türkçe ses otomatik seçilir.
+                                                Kütüphane okuma ekranındaki Piper, Sherpa ve Coqui butonlarıyla motorlar arasında geçiş yapabilirsiniz.
                                             </p>
                                         </div>
                                         <div className="tafsir-voice-settings">

@@ -5,7 +5,8 @@ import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlayli
 import {
     estimateTafsirSpeechDuration,
     isTafsirSpeechSupported,
-    resolveTafsirVoice
+    resolveTafsirVoice,
+    synthesizePiperTafsirAudio
 } from '../services/tafsirSpeech'
 import { normalizeTextMode } from '../utils/textMode'
 
@@ -15,6 +16,7 @@ const DEFAULT_PLAYBACK_SETTINGS = {
     defaultReciterId: 7,
     defaultTurkishReciterId: 1015,
     tafsirVoiceName: '',
+    tafsirSpeechEngine: 'piper',
     tafsirVoiceRate: 1,
     textMode: 'uthmani',
     showTajweed: false
@@ -75,6 +77,17 @@ let activeSpeechProgressTimer = null
 let activeSpeechStartedAt = 0
 let activeSpeechElapsed = 0
 let activeSpeechDuration = 0
+let activeGeneratedAudioUrl = ''
+
+function clearGeneratedAudioUrl() {
+    if (!activeGeneratedAudioUrl) return
+    try {
+        URL.revokeObjectURL(activeGeneratedAudioUrl)
+    } catch {
+        // noop
+    }
+    activeGeneratedAudioUrl = ''
+}
 
 function getSpeechSynthesisEngine() {
     if (!isTafsirSpeechSupported()) return null
@@ -102,6 +115,7 @@ function startSpeechProgressTimer() {
 function stopSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     clearSpeechProgressTimer()
+    clearGeneratedAudioUrl()
     activeSpeechStartedAt = 0
     activeSpeechElapsed = 0
     activeSpeechDuration = 0
@@ -160,6 +174,21 @@ function normalizeAudioUrl(url) {
 
 function resolveTafsirSpeechRate(settings) {
     return Math.min(1.5, Math.max(0.7, Number(settings?.tafsirVoiceRate) || 1))
+}
+
+function resolveTafsirSpeechEngine(settings) {
+    const value = String(settings?.tafsirSpeechEngine || '').trim().toLowerCase()
+    if (value === 'sherpa' || value === 'coqui') return value
+    return 'piper'
+}
+
+function withTimeout(promise, timeoutMs, message) {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+            window.setTimeout(() => reject(new Error(message || 'Operation timeout')), timeoutMs)
+        })
+    ])
 }
 
 const usePlayerStore = create((set, get) => ({
@@ -322,6 +351,37 @@ const usePlayerStore = create((set, get) => ({
 
         const resolvedSettings = resolvePlaybackSettings(settings)
         const rate = resolveTafsirSpeechRate(resolvedSettings)
+        const selectedEngine = resolveTafsirSpeechEngine(resolvedSettings)
+
+        if (selectedEngine === 'piper' || selectedEngine === 'sherpa' || selectedEngine === 'coqui') {
+            try {
+                const piperResult = await withTimeout(
+                    synthesizePiperTafsirAudio(text, { rate, engine: selectedEngine }),
+                    25000,
+                    'Piper TTS timeout'
+                )
+
+                if (piperResult?.url) {
+                    activeGeneratedAudioUrl = piperResult.url
+                    set({
+                        mode: 'tts',
+                        currentTrackIndex: idx,
+                        currentTime: 0,
+                        duration: Number(piperResult.duration || 0),
+                        isPlaying: true
+                    })
+                    globalAudio.src = piperResult.url
+                    globalAudio.load()
+                    globalAudio.playbackRate = rate
+                    safePlayAudio(() => set({ isPlaying: false }))
+                    document.dispatchEvent(new CustomEvent('playerVisible'))
+                    return
+                }
+            } catch {
+                // Fallback to system speech below.
+            }
+        }
+
         const synthesis = getSpeechSynthesisEngine()
         if (!synthesis) {
             set({ isPlaying: false })
@@ -403,6 +463,17 @@ const usePlayerStore = create((set, get) => ({
     togglePlay: () => {
         const state = get()
         if (state.mode === 'tts') {
+            if (activeGeneratedAudioUrl) {
+                if (state.isPlaying) {
+                    globalAudio.pause()
+                    set({ isPlaying: false })
+                } else {
+                    safePlayAudio(() => set({ isPlaying: false }))
+                    set({ isPlaying: true })
+                }
+                return
+            }
+
             const synthesis = getSpeechSynthesisEngine()
             if (!synthesis) {
                 set({ isPlaying: false })

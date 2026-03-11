@@ -1,4 +1,7 @@
-﻿function getSpeechSynthesisInstance() {
+﻿const PIPER_CDN_URL = 'https://cdn.jsdelivr.net/npm/piper-tts-web@1.1.2/dist/piper-tts-web.js'
+let piperModulePromise = null
+
+function getSpeechSynthesisInstance() {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null
   return window.speechSynthesis
 }
@@ -160,4 +163,83 @@ export function estimateTafsirSpeechDuration(text, rate = 1) {
 
   const charsPerSecond = 14
   return Math.max(2, safeText.length / (charsPerSecond * normalizedRate))
+}
+
+const PIPER_ENGINE_VOICE_MAP = {
+  piper: 'tr_TR-dfki-medium',
+  sherpa: 'ar_JO-kareem-medium',
+  coqui: 'ar_JO-kareem-low'
+}
+
+let piperEnginePromise = null
+let piperVoicesPromise = null
+
+function resolveTafsirEngine(engine) {
+  const value = String(engine || '').trim().toLowerCase()
+  if (value === 'sherpa' || value === 'coqui') return value
+  return 'piper'
+}
+
+async function loadPiperModule() {
+  if (!piperModulePromise) {
+    piperModulePromise = import(/* @vite-ignore */ PIPER_CDN_URL)
+  }
+  return piperModulePromise
+}
+
+async function getPiperEngine() {
+  if (!piperEnginePromise) {
+    piperEnginePromise = (async () => {
+      const module = await loadPiperModule()
+      const voiceProvider = new module.HuggingFaceVoiceProvider()
+      const onnxRuntime = new module.OnnxWebWorkerRuntime({ basePath: '/onnx/' })
+      return new module.PiperWebWorkerEngine({ onnxRuntime, voiceProvider })
+    })()
+  }
+  return piperEnginePromise
+}
+
+async function getPiperVoiceMap() {
+  if (!piperVoicesPromise) {
+    piperVoicesPromise = (async () => {
+      const module = await loadPiperModule()
+      const provider = new module.HuggingFaceVoiceProvider()
+      const voices = await provider.list()
+      return voices && typeof voices === 'object' ? voices : {}
+    })()
+  }
+  return piperVoicesPromise
+}
+
+function pickPiperVoice(voices, engine) {
+  const preferred = PIPER_ENGINE_VOICE_MAP[resolveTafsirEngine(engine)]
+  if (preferred && voices[preferred]) return preferred
+  if (voices['tr_TR-dfki-medium']) return 'tr_TR-dfki-medium'
+  const first = Object.keys(voices)[0]
+  return first || null
+}
+
+export async function synthesizePiperTafsirAudio(text, options = {}) {
+  const normalizedText = normalizeArabicSpeechFragments(String(text || '').trim())
+  if (!normalizedText) return null
+
+  try {
+    const voices = await getPiperVoiceMap()
+    const selectedVoice = pickPiperVoice(voices, options.engine)
+    if (!selectedVoice) return null
+
+    const engine = await getPiperEngine()
+    const result = await engine.generate(normalizedText, selectedVoice, 0)
+    const audioBlob = result?.file
+    if (!audioBlob) return null
+
+    const durationMs = Number(result?.duration || 0)
+    return {
+      url: URL.createObjectURL(audioBlob),
+      voice: selectedVoice,
+      duration: durationMs > 0 ? durationMs / 1000 : estimateTafsirSpeechDuration(normalizedText, options.rate || 1)
+    }
+  } catch {
+    return null
+  }
 }
