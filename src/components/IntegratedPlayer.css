@@ -208,7 +208,7 @@
     background: var(--accent);
     transform-origin: left center;
     transform: scaleX(0);
-    transition: transform 0.07s linear;
+    transition: none;
     will-change: transform;
 }
 

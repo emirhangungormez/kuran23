@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../contexts/SettingsContext'
@@ -56,6 +56,7 @@ export default function IntegratedPlayer({
     context
 }) {
     const [isExpanded, setIsExpanded] = useState(false)
+    const progressFillRef = useRef(null)
     const navigate = useNavigate()
     const { settings, updateSettings } = useSettings()
     const { data: availableReciters = [] } = useQuery({
@@ -168,6 +169,40 @@ export default function IntegratedPlayer({
         })
     }, [currentVerseIndex, onSelectVerse, pageSegmentsModel])
 
+    useEffect(() => {
+        const fillEl = progressFillRef.current
+        if (!fillEl) return undefined
+
+        const safeDuration = Math.max(0, Number(duration || 0))
+        const safeCurrentTime = Math.max(0, Math.min(safeDuration, Number(currentTime || 0)))
+        const baseRatio = safeDuration > 0 ? safeCurrentTime / safeDuration : 0
+        const playbackRate = context === 'tafsir' ? 1 : Math.max(0.25, Number(playbackSpeed || 1))
+
+        fillEl.style.transform = `scaleX(${baseRatio})`
+
+        if (!isPlaying || safeDuration <= 0) return undefined
+
+        let frameId = 0
+        const startedAt = performance.now()
+
+        const render = (now) => {
+            const elapsedSeconds = Math.max(0, (now - startedAt) / 1000)
+            const visualTime = Math.min(safeDuration, safeCurrentTime + (elapsedSeconds * playbackRate))
+            const nextRatio = safeDuration > 0 ? (visualTime / safeDuration) : 0
+            fillEl.style.transform = `scaleX(${nextRatio})`
+
+            if (visualTime < safeDuration) {
+                frameId = window.requestAnimationFrame(render)
+            }
+        }
+
+        frameId = window.requestAnimationFrame(render)
+
+        return () => {
+            if (frameId) window.cancelAnimationFrame(frameId)
+        }
+    }, [context, currentTime, duration, isPlaying, playbackSpeed])
+
     if (!isVisible) return null
 
     return (
@@ -256,7 +291,7 @@ export default function IntegratedPlayer({
             </div>
 
             <div className="player-mini-progress">
-                <div className="mini-progress-fill" style={{ transform: `scaleX(${progressRatio})` }} />
+                <div ref={progressFillRef} className="mini-progress-fill" style={{ transform: `scaleX(${progressRatio})` }} />
             </div>
 
             <div className="player-expanded-content">
