@@ -128,8 +128,26 @@ function normalizeBaseSpeechText(text) {
     .trim()
 }
 
+function normalizeTurkishOrthography(text) {
+  let normalized = String(text || '')
+    .normalize('NFKC')
+    .replace(/[’`´‘‛]/g, "'")
+    .replace(/[\u0300-\u036f]/g, '')
+
+  // TTS motorlarında sesli harf düşmesine sebep olabilen şapkalı karakterleri sadeleştir.
+  normalized = normalized
+    .replace(/â/gi, (m) => (m === 'Â' ? 'A' : 'a'))
+    .replace(/î/gi, (m) => (m === 'Î' ? 'I' : 'i'))
+    .replace(/û/gi, (m) => (m === 'Û' ? 'U' : 'u'))
+
+  // Kelime içi kesmeleri sadeleştir (te'vil -> tevil, Kur'an -> Kuran).
+  normalized = normalized.replace(/([A-Za-zÇĞİÖŞÜçğıöşü])'([A-Za-zÇĞİÖŞÜçğıöşü])/g, '$1$2')
+
+  return normalized
+}
+
 function applyTurkishPronunciationLexicon(text) {
-  let next = String(text || '')
+  let next = normalizeTurkishOrthography(text)
   TR_PRONUNCIATION_LEXICON.forEach(([pattern, value]) => {
     next = next.replace(pattern, value)
   })
