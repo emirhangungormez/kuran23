@@ -179,6 +179,15 @@ export function getGoogleTranslateTtsUrl(text, options = {}) {
 
   const lang = String(options.lang || 'tr').toLowerCase().startsWith('ar') ? 'ar' : 'tr'
   const query = encodeURIComponent(sample)
+  return `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=${lang}&q=${query}`
+}
+
+export function getGoogleTranslateTtsFallbackUrl(text, options = {}) {
+  const sample = pickGoogleTranslateSampleText(text, Number(options.maxLength) || 180)
+  if (!sample) return ''
+
+  const lang = String(options.lang || 'tr').toLowerCase().startsWith('ar') ? 'ar' : 'tr'
+  const query = encodeURIComponent(sample)
   return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${query}`
 }
 

@@ -4,6 +4,7 @@ import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 import {
     estimateTafsirSpeechDuration,
+    getGoogleTranslateTtsFallbackUrl,
     getGoogleTranslateTtsUrl,
     isTafsirSpeechSupported,
     resolveTafsirVoice,
@@ -355,9 +356,13 @@ const usePlayerStore = create((set, get) => ({
         const selectedEngine = resolveTafsirSpeechEngine(resolvedSettings)
 
         if (selectedEngine === 'gtranslate') {
-            const translateUrl = getGoogleTranslateTtsUrl(text, { lang: 'tr', maxLength: 180 })
-            if (translateUrl) {
-                activeGeneratedAudioUrl = translateUrl
+            const translateUrls = [
+                getGoogleTranslateTtsUrl(text, { lang: 'tr', maxLength: 180 }),
+                getGoogleTranslateTtsFallbackUrl(text, { lang: 'tr', maxLength: 180 })
+            ].filter(Boolean)
+
+            if (translateUrls.length) {
+                activeGeneratedAudioUrl = translateUrls[0]
                 const duration = estimateTafsirSpeechDuration(text.slice(0, 180), rate)
                 set({
                     mode: 'tts',
@@ -366,10 +371,27 @@ const usePlayerStore = create((set, get) => ({
                     duration,
                     isPlaying: true
                 })
-                globalAudio.src = translateUrl
-                globalAudio.load()
-                globalAudio.playbackRate = 1
-                safePlayAudio(() => set({ isPlaying: false }))
+                const playTranslateAt = (urlIndex) => {
+                    const targetUrl = translateUrls[urlIndex] || ''
+                    if (!targetUrl) {
+                        set({ isPlaying: false })
+                        return
+                    }
+
+                    activeGeneratedAudioUrl = targetUrl
+                    globalAudio.src = targetUrl
+                    globalAudio.load()
+                    globalAudio.playbackRate = 1
+                    safePlayAudio(() => {
+                        if (urlIndex < translateUrls.length - 1) {
+                            playTranslateAt(urlIndex + 1)
+                            return
+                        }
+                        set({ isPlaying: false })
+                    })
+                }
+
+                playTranslateAt(0)
                 document.dispatchEvent(new CustomEvent('playerVisible'))
                 return
             }
