@@ -79,6 +79,7 @@ export default function IntegratedPlayer({
     const displaySurahNameAr = resolveArabicTextVisibility(surahNameAr, showDiacritics)
     const isTafsirContext = context === 'tafsir'
     const isPageContext = context === 'page'
+    const showRepeatControl = context === 'playlist'
     const playbackLabel = playingType ? (playingType === 'arabic' ? 'Arapça' : 'Türkçe') : ''
     const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
     const normalizedVolume = Math.max(0, Math.min(1, Number(volume || 0)))
@@ -399,7 +400,7 @@ export default function IntegratedPlayer({
                             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
                         />
                     </div>
-                    {!isTafsirContext && (
+                    {!isTafsirContext && showRepeatControl && (
                         <button
                             type="button"
                             className={`repeat-badge ${isRepeat ? 'active' : ''}`}
