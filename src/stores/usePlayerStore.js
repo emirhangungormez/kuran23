@@ -178,6 +178,15 @@ function resolveTafsirSpeechRate(settings) {
     return Math.min(1.5, Math.max(0.7, Number(settings?.tafsirVoiceRate) || 1))
 }
 
+function withTimeout(promise, timeoutMs, message) {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+            window.setTimeout(() => reject(new Error(message || 'Operation timeout')), timeoutMs)
+        })
+    ])
+}
+
 const usePlayerStore = create((set, get) => ({
     audioRef: { current: globalAudio },
 
@@ -402,7 +411,11 @@ const usePlayerStore = create((set, get) => ({
         }
 
         try {
-            const edgeResult = await synthesizeEdgeTafsirAudio(text, { rate })
+            const edgeResult = await withTimeout(
+                synthesizeEdgeTafsirAudio(text, { rate }),
+                9000,
+                'Edge TTS timeout'
+            )
             if (!edgeResult?.url) {
                 fallbackToSpeech()
                 return
