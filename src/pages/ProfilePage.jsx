@@ -465,12 +465,12 @@ export default function ProfilePage() {
                                         <div className="tafsir-meal-setting-copy">
                                             <h4>Tefsir Seslendirmesi</h4>
                                             <p>
-                                                Kütüphane okuma ekranındaki Piper, Sherpa, Coqui ve Google deneme butonlarıyla motorlar arasında geçiş yapabilirsiniz.
+                                                Tefsir seslendirmesi tek TTS altyapısı ile otomatik çalışır.
                                             </p>
                                         </div>
                                         <div className="tafsir-voice-settings">
                                             <div className="tafsir-voice-note">
-                                                Erkek Türkçe ses önceliklenir. Motor seçimi otomatik yapılır.
+                                                Erkek Türkçe ses önceliklenir.
                                             </div>
 
                                             <div className="setting-item compact">

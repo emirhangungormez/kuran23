@@ -5,8 +5,6 @@ import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlayli
 import {
     buildTafsirSpeechQueue,
     estimateTafsirSpeechDuration,
-    getGoogleTranslateTtsFallbackUrl,
-    getGoogleTranslateTtsUrl,
     isTafsirSpeechSupported,
     resolveTafsirVoice,
     resolveTafsirVoiceByLanguage,
@@ -182,9 +180,7 @@ function resolveTafsirSpeechRate(settings) {
     return Math.min(1.5, Math.max(0.7, Number(settings?.tafsirVoiceRate) || 1))
 }
 
-function resolveTafsirSpeechEngine(settings) {
-    const value = String(settings?.tafsirSpeechEngine || '').trim().toLowerCase()
-    if (value === 'sherpa' || value === 'coqui' || value === 'gtranslate') return value
+function resolveTafsirSpeechEngine() {
     return 'piper'
 }
 
@@ -357,77 +353,33 @@ const usePlayerStore = create((set, get) => ({
 
         const resolvedSettings = resolvePlaybackSettings(settings)
         const rate = resolveTafsirSpeechRate(resolvedSettings)
-        const selectedEngine = resolveTafsirSpeechEngine(resolvedSettings)
+        const selectedEngine = resolveTafsirSpeechEngine()
 
-        if (selectedEngine === 'gtranslate') {
-            const translateUrls = [
-                getGoogleTranslateTtsUrl(text, { lang: 'tr', maxLength: 180 }),
-                getGoogleTranslateTtsFallbackUrl(text, { lang: 'tr', maxLength: 180 })
-            ].filter(Boolean)
+        try {
+            const piperResult = await withTimeout(
+                synthesizePiperTafsirAudio(text, { rate, engine: selectedEngine }),
+                25000,
+                'Piper TTS timeout'
+            )
 
-            if (translateUrls.length) {
-                activeGeneratedAudioUrl = translateUrls[0]
-                const duration = estimateTafsirSpeechDuration(text.slice(0, 180), rate)
+            if (piperResult?.url) {
+                activeGeneratedAudioUrl = piperResult.url
                 set({
                     mode: 'tts',
                     currentTrackIndex: idx,
                     currentTime: 0,
-                    duration,
+                    duration: Number(piperResult.duration || 0),
                     isPlaying: true
                 })
-                const playTranslateAt = (urlIndex) => {
-                    const targetUrl = translateUrls[urlIndex] || ''
-                    if (!targetUrl) {
-                        set({ isPlaying: false })
-                        return
-                    }
-
-                    activeGeneratedAudioUrl = targetUrl
-                    globalAudio.src = targetUrl
-                    globalAudio.load()
-                    globalAudio.playbackRate = 1
-                    safePlayAudio(() => {
-                        if (urlIndex < translateUrls.length - 1) {
-                            playTranslateAt(urlIndex + 1)
-                            return
-                        }
-                        set({ isPlaying: false })
-                    })
-                }
-
-                playTranslateAt(0)
+                globalAudio.src = piperResult.url
+                globalAudio.load()
+                globalAudio.playbackRate = rate
+                safePlayAudio(() => set({ isPlaying: false }))
                 document.dispatchEvent(new CustomEvent('playerVisible'))
                 return
             }
-        }
-
-        if (selectedEngine === 'piper' || selectedEngine === 'sherpa' || selectedEngine === 'coqui') {
-            try {
-                const piperResult = await withTimeout(
-                    synthesizePiperTafsirAudio(text, { rate, engine: selectedEngine }),
-                    25000,
-                    'Piper TTS timeout'
-                )
-
-                if (piperResult?.url) {
-                    activeGeneratedAudioUrl = piperResult.url
-                    set({
-                        mode: 'tts',
-                        currentTrackIndex: idx,
-                        currentTime: 0,
-                        duration: Number(piperResult.duration || 0),
-                        isPlaying: true
-                    })
-                    globalAudio.src = piperResult.url
-                    globalAudio.load()
-                    globalAudio.playbackRate = rate
-                    safePlayAudio(() => set({ isPlaying: false }))
-                    document.dispatchEvent(new CustomEvent('playerVisible'))
-                    return
-                }
-            } catch {
-                // Fallback to system speech below.
-            }
+        } catch {
+            // Fallback to system speech below.
         }
 
         const synthesis = getSpeechSynthesisEngine()
