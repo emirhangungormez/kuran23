@@ -17,6 +17,7 @@ import {
   getSurahTitle,
   splitIntoSections
 } from '../data/libraryBooks'
+import { surahs as quranSurahs } from '../data/quranData'
 import { getSurah, getVerse } from '../services/api'
 import {
   getAyahNumbersFromManifest,
@@ -37,7 +38,7 @@ function getAyahMarkerNumber(node) {
   if (!node || node.nodeType !== Node.ELEMENT_NODE) return null
 
   const text = String(node.textContent || '').replace(/\s+/g, ' ').trim()
-  if (!/^\d+([-â€“]\d+)?$/.test(text)) return null
+  if (!/^\d+([-–]\d+)?$/.test(text)) return null
 
   const tagName = node.tagName?.toLowerCase()
   if (
@@ -230,7 +231,7 @@ export default function LibraryBookPage() {
 
   const sections = useMemo(() => splitIntoSections(formattedHtml), [formattedHtml])
   const displaySections = useMemo(
-    () => (sections.length ? sections : [{ title: '', bodyHtml: '<p>Bu seÃ§im iÃ§in tefsir bulunamadÄ±.</p>' }]),
+    () => (sections.length ? sections : [{ title: '', bodyHtml: '<p>Bu seçim için tefsir bulunamadı.</p>' }]),
     [sections]
   )
   const surahNavigationItems = useMemo(
@@ -245,8 +246,32 @@ export default function LibraryBookPage() {
   )
   const currentReferenceLabel = useMemo(() => {
     if (effectiveScope === 'surah') return getPlainSurahTitleLabel(resolvedSurahId)
-    return `${getPlainSurahTitleLabel(resolvedSurahId)} Â· ${resolvedAyahNo}. ayet`
+    return `${getPlainSurahTitleLabel(resolvedSurahId)} · ${resolvedAyahNo}. ayet`
   }, [effectiveScope, resolvedAyahNo, resolvedSurahId])
+  const readerSurahDetails = useMemo(() => {
+    const fallback = quranSurahs.find((item) => Number(item.no) === Number(resolvedSurahId)) || null
+    const fromApi = selectedSurah || null
+    const surahNo = Number(fallback?.no || fromApi?.id || resolvedSurahId || 0)
+    const surahNameAr = normalizeArabicDisplayText(fromApi?.name_original || fallback?.nameAr || '')
+    const surahNameTr = fromApi?.name || fallback?.nameTr || getPlainSurahTitleLabel(surahNo || resolvedSurahId)
+    const surahNameEn = fromApi?.name_en || fallback?.nameEn || ''
+    const ayahCount = Number(fromApi?.verse_count || fallback?.ayahCount || 0) || 0
+
+    let surahType = fallback?.type || ''
+    if (!surahType && typeof fromApi?.revelation_place === 'string') {
+      const normalizedPlace = fromApi.revelation_place.toLowerCase()
+      surahType = normalizedPlace.includes('makk') ? 'Mekki' : 'Medeni'
+    }
+
+    return {
+      surahNo,
+      surahNameAr,
+      surahNameTr,
+      surahNameEn,
+      ayahCount,
+      surahType
+    }
+  }, [resolvedSurahId, selectedSurah])
   const currentSurahIndex = useMemo(
     () => availableSurahIds.findIndex((surahId) => Number(surahId) === Number(resolvedSurahId)),
     [availableSurahIds, resolvedSurahId]
@@ -270,7 +295,7 @@ export default function LibraryBookPage() {
       return {
         surahId: resolvedSurahId,
         ayahNo,
-        label: `${getPlainSurahTitleLabel(resolvedSurahId)} Â· ${ayahNo}. ayet`
+        label: `${getPlainSurahTitleLabel(resolvedSurahId)} · ${ayahNo}. ayet`
       }
     }
 
@@ -280,7 +305,7 @@ export default function LibraryBookPage() {
     return {
       surahId: prevSurahId,
       ayahNo,
-      label: `${getPlainSurahTitleLabel(prevSurahId)} Â· ${ayahNo}. ayet`
+      label: `${getPlainSurahTitleLabel(prevSurahId)} · ${ayahNo}. ayet`
     }
   }, [availableAyahs, effectiveScope, prevSurahAyahs, prevSurahId, resolvedAyahNo, resolvedSurahId])
   const nextVerseTarget = useMemo(() => {
@@ -292,7 +317,7 @@ export default function LibraryBookPage() {
       return {
         surahId: resolvedSurahId,
         ayahNo,
-        label: `${getPlainSurahTitleLabel(resolvedSurahId)} Â· ${ayahNo}. ayet`
+        label: `${getPlainSurahTitleLabel(resolvedSurahId)} · ${ayahNo}. ayet`
       }
     }
 
@@ -301,7 +326,7 @@ export default function LibraryBookPage() {
     return {
       surahId: nextSurahId,
       ayahNo: nextSurahAyahs[0],
-      label: `${getPlainSurahTitleLabel(nextSurahId)} Â· ${nextSurahAyahs[0]}. ayet`
+      label: `${getPlainSurahTitleLabel(nextSurahId)} · ${nextSurahAyahs[0]}. ayet`
     }
   }, [availableAyahs, effectiveScope, nextSurahAyahs, nextSurahId, resolvedAyahNo, resolvedSurahId])
   const previousSurahTarget = useMemo(() => {
@@ -627,9 +652,9 @@ export default function LibraryBookPage() {
   }, [currentTafsirSegmentIndex, isActiveTafsirPlayback])
   const isReaderLoading = isManifestLoading || isSurahLoading || (effectiveScope === 'surah' && isSelectedSurahLoading)
   const readerErrorMessage = manifestError
-    ? 'KÃ¼tÃ¼phane manifesti yÃ¼klenemedi.'
+    ? 'Kütüphane manifesti yüklenemedi.'
     : surahError
-      ? 'SeÃ§ilen sÃ»re iÃ§eriÄŸi yÃ¼klenemedi.'
+      ? 'Seçilen sûre içeriği yüklenemedi.'
       : ''
 
   if (!book) {
@@ -638,9 +663,9 @@ export default function LibraryBookPage() {
         <GlobalNav />
         <div className="page-content">
           <div className="empty-state">
-            <h2>Kitap bulunamadÄ±</h2>
-            <p>SeÃ§ilen kitap kaydÄ± sistemde yok.</p>
-            <Link to="/kutuphane" className="meal-quick-link">KÃ¼tÃ¼phaneye DÃ¶n</Link>
+            <h2>Kitap bulunamadı</h2>
+            <p>Seçilen kitap kaydı sistemde yok.</p>
+            <Link to="/kutuphane" className="meal-quick-link">Kütüphaneye Dön</Link>
           </div>
         </div>
       </div>
@@ -656,18 +681,18 @@ export default function LibraryBookPage() {
             <div className="book-reader-layout">
               <aside className="reader-sidebar hidden-mobile">
                 <div className="reader-sidebar-intro">
-                  <span className="reader-sidebar-brand">KÃ¼tÃ¼phane</span>
+                  <span className="reader-sidebar-brand">Kütüphane</span>
                   <strong>{book.titleTr}</strong>
                   <p>{book.authorTr}</p>
                   <small>{currentReferenceLabel}</small>
                 </div>
 
                 <div className="reader-sidebar-block reader-sidebar-controls">
-                  <span className="reader-sidebar-title">GÃ¶rÃ¼nÃ¼m</span>
+                  <span className="reader-sidebar-title">Görünüm</span>
                   <div
                     className={`reader-scope-toggle ${effectiveScope === 'verse' ? 'scope-verse' : 'scope-surah'}`}
                     role="tablist"
-                    aria-label="GÃ¶rÃ¼nÃ¼m seÃ§imi"
+                    aria-label="Görünüm seçimi"
                   >
                     <span className="reader-scope-toggle-indicator" aria-hidden="true" />
                     <button
@@ -682,13 +707,13 @@ export default function LibraryBookPage() {
                       className={effectiveScope === 'surah' ? 'active' : ''}
                       onClick={() => handleScopeChange('surah')}
                     >
-                      SÃ»re
+                      Sûre
                     </button>
                   </div>
                 </div>
 
                 <div className="reader-sidebar-block">
-                  <p className="reader-sidebar-title">Ä°Ã§indekiler</p>
+                  <p className="reader-sidebar-title">İçindekiler</p>
                   <div className="reader-sidebar-sections">
                     {surahNavigationItems.map((item) => {
                       const isActiveSurah = Number(resolvedSurahId) === Number(item.surahId)
@@ -714,7 +739,7 @@ export default function LibraryBookPage() {
                                   if (effectiveScope !== 'verse') return
                                   toggleSurahExpansion(item.surahId)
                                 }}
-                                aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'gÃ¶ster'}`}
+                                aria-label={`${item.label} ayetlerini ${isExpanded ? 'gizle' : 'göster'}`}
                                 aria-hidden={effectiveScope !== 'verse'}
                                 tabIndex={effectiveScope !== 'verse' ? -1 : 0}
                               >
@@ -748,7 +773,7 @@ export default function LibraryBookPage() {
                 <div className="reader-back-row">
                   <Link to="/kutuphane" className="back-link hidden-mobile">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-                    <span>KÃ¼tÃ¼phane</span>
+                    <span>Kütüphane</span>
                   </Link>
                 </div>
 
@@ -763,10 +788,33 @@ export default function LibraryBookPage() {
                   </div>
                 </div>
 
+                {effectiveScope === 'surah' && (
+                  <div className="reader-surah-summary">
+                    <span className="reader-surah-summary-no">{readerSurahDetails.surahNo}</span>
+                    <div className="reader-surah-summary-content">
+                      {readerSurahDetails.surahNameAr && (
+                        <p className="reader-surah-summary-ar" dir="rtl">{readerSurahDetails.surahNameAr}</p>
+                      )}
+                      <div className="reader-surah-summary-row">
+                        <h3 className="reader-surah-summary-tr">{readerSurahDetails.surahNameTr}</h3>
+                        {readerSurahDetails.surahType && (
+                          <span className={`surah-type-badge ${readerSurahDetails.surahType.toLocaleLowerCase('tr-TR')}`}>
+                            {readerSurahDetails.surahType.toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <p className="reader-surah-summary-meta">
+                        {readerSurahDetails.surahNameEn || `Surah ${readerSurahDetails.surahNo}`}
+                        {readerSurahDetails.ayahCount ? ` · ${readerSurahDetails.ayahCount} ayet` : ''}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="reader-audio-bar">
                   <div className="reader-audio-bar-copy">
                     <span className="reader-sidebar-title">Dinleme</span>
-                    <strong>Tefsiri TÃ¼rkÃ§e seslendir</strong>
+                    <strong>Tefsiri Türkçe seslendir</strong>
                   </div>
                   <div className="audio-control-group tafsir-audio-controls">
                     <button
@@ -780,7 +828,7 @@ export default function LibraryBookPage() {
                       ) : (
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                       )}
-                      {isActiveTafsirPlayback ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat') : 'TÃ¼rkÃ§e'}
+                      {isActiveTafsirPlayback ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat') : 'Türkçe'}
                     </button>
                     <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
@@ -822,23 +870,23 @@ export default function LibraryBookPage() {
 
                 {readerErrorMessage ? (
                   <div className="empty-state">
-                    <h2>YÃ¼kleme hatasÄ±</h2>
+                    <h2>Yükleme hatası</h2>
                     <p>{readerErrorMessage}</p>
                   </div>
                 ) : isReaderLoading ? (
                   <div className="empty-state">
-                    <h2>Ä°Ã§erik yÃ¼kleniyor</h2>
-                    <p>SeÃ§ilen kitap ve sÃ»re iÃ§in tefsir getiriliyor.</p>
+                    <h2>İçerik yükleniyor</h2>
+                    <p>Seçilen kitap ve sûre için tefsir getiriliyor.</p>
                   </div>
                 ) : !availableSurahIds.length ? (
                   <div className="empty-state">
-                    <h2>Veri bulunamadÄ±</h2>
-                    <p>Bu kitap iÃ§in henÃ¼z kullanÄ±labilir sÃ»re verisi yok.</p>
+                    <h2>Veri bulunamadı</h2>
+                    <p>Bu kitap için henüz kullanılabilir sûre verisi yok.</p>
                   </div>
                 ) : !rawTafsirHtml ? (
                   <div className="empty-state">
-                    <h2>Ä°Ã§erik bulunamadÄ±</h2>
-                    <p>SeÃ§ilen sÃ»re/ayet iÃ§in bu kitapta veri yok.</p>
+                    <h2>İçerik bulunamadı</h2>
+                    <p>Seçilen sûre/ayet için bu kitapta veri yok.</p>
                   </div>
                 ) : (
                   <>
@@ -847,13 +895,13 @@ export default function LibraryBookPage() {
                         {isVerseLoading ? (
                           <div className="reader-verse-card reader-verse-card-loading">
                             <span className="reader-verse-label">Ayet Metni</span>
-                            <p>Ayet yÃ¼kleniyor...</p>
+                            <p>Ayet yükleniyor...</p>
                           </div>
                         ) : selectedVerse ? (
                           <div className="reader-verse-card">
                             <div className="reader-verse-meta">
                               <span className="reader-verse-label">Ayet Metni</span>
-                              <strong>{getPlainSurahTitleLabel(resolvedSurahId)} Â· {resolvedAyahNo}. ayet</strong>
+                              <strong>{getPlainSurahTitleLabel(resolvedSurahId)} · {resolvedAyahNo}. ayet</strong>
                             </div>
                             <div
                               className="reader-verse-arabic"
@@ -866,7 +914,7 @@ export default function LibraryBookPage() {
                               </p>
                             )}
                             <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
-                              {selectedVerse.translation?.text || 'Bu ayet iÃ§in TÃ¼rkÃ§e meal bulunamadÄ±.'}
+                              {selectedVerse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
                             </p>
                           </div>
                         ) : null}
@@ -894,7 +942,7 @@ export default function LibraryBookPage() {
                                 <div className="reader-inline-verse-card">
                                   <div className="reader-verse-meta">
                                     <span className="reader-verse-label">{block.verse.verse_number}. ayet</span>
-                                    <strong>{getPlainSurahTitleLabel(resolvedSurahId)} Â· {block.verse.verse_number}. ayet</strong>
+                                    <strong>{getPlainSurahTitleLabel(resolvedSurahId)} · {block.verse.verse_number}. ayet</strong>
                                   </div>
                                   <div
                                     className="reader-verse-arabic"
@@ -907,7 +955,7 @@ export default function LibraryBookPage() {
                                     </p>
                                   )}
                                   <p className="reader-verse-translation" style={{ fontSize: `${translationFontSize}px` }}>
-                                    {block.verse.translation?.text || 'Bu ayet iÃ§in TÃ¼rkÃ§e meal bulunamadÄ±.'}
+                                    {block.verse.translation?.text || 'Bu ayet için Türkçe meal bulunamadı.'}
                                   </p>
                                 </div>
                               )}
@@ -959,7 +1007,7 @@ export default function LibraryBookPage() {
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5" /><path d="M11 19l-7-7 7-7" /></svg>
                           <span>
                             <span className="reader-next-nav-label">
-                              {effectiveScope === 'verse' ? 'Ã–nceki ayet' : 'Ã–nceki sÃ»re'}
+                              {effectiveScope === 'verse' ? 'Önceki ayet' : 'Önceki sûre'}
                             </span>
                             <strong>{effectiveScope === 'verse' ? previousVerseTarget?.label : previousSurahTarget?.label}</strong>
                           </span>
@@ -970,7 +1018,7 @@ export default function LibraryBookPage() {
                         <button type="button" className="reader-next-nav-link next" onClick={handleReaderAdvance}>
                           <span>
                             <span className="reader-next-nav-label">
-                              {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sÃ»re'}
+                              {effectiveScope === 'verse' ? 'Sonraki ayet' : 'Sonraki sûre'}
                             </span>
                             <strong>{effectiveScope === 'verse' ? nextVerseTarget?.label : nextSurahTarget?.label}</strong>
                           </span>
@@ -987,7 +1035,7 @@ export default function LibraryBookPage() {
               <div className="reader-back-row">
                 <Link to="/kutuphane" className="back-link hidden-mobile">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-                  <span>KÃ¼tÃ¼phane</span>
+                  <span>Kütüphane</span>
                 </Link>
               </div>
 
@@ -1001,9 +1049,9 @@ export default function LibraryBookPage() {
               </div>
 
               <div className="meal-reader-placeholder">
-                <p><strong>{book.titleTr}</strong> iÃ§in meal odaklÄ± kitap sayfasÄ± sonraki adÄ±mda geniÅŸletilecek.</p>
-                <p>Åu an meal okumaya ayet ekranÄ±ndan devam edebilirsin.</p>
-                <Link to="/sure/1/1" className="meal-quick-link">Ã–rnek Meal SayfasÄ±</Link>
+                <p><strong>{book.titleTr}</strong> için meal odaklı kitap sayfası sonraki adımda genişletilecek.</p>
+                <p>Şu an meal okumaya ayet ekranından devam edebilirsin.</p>
+                <Link to="/sure/1/1" className="meal-quick-link">Örnek Meal Sayfası</Link>
               </div>
             </>
           )}

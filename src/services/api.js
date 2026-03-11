@@ -1,4 +1,4 @@
-﻿// API Service â€” Connects React frontend to PHP backend
+// API Service — Connects React frontend to PHP backend
 // Falls back to acikkuran-api directly when our backend is unavailable (local dev)
 
 import { surahs as mockSurahs, searchQuran as mockSearch } from '../data/quranData'
@@ -12,7 +12,7 @@ let diyanetSurahInfoCache = null
 async function loadDiyanetTafsirCache() {
     if (diyanetTafsirCache) return diyanetTafsirCache
     const response = await fetch('/diyanet_verse_tafsir.json', { cache: 'force-cache' })
-    if (!response.ok) throw new Error('Diyanet tefsir verisi yÃ¼klenemedi.')
+    if (!response.ok) throw new Error('Diyanet tefsir verisi yüklenemedi.')
     diyanetTafsirCache = await response.json()
     return diyanetTafsirCache
 }
@@ -20,7 +20,7 @@ async function loadDiyanetTafsirCache() {
 async function loadDiyanetSurahInfoCache() {
     if (diyanetSurahInfoCache) return diyanetSurahInfoCache
     const response = await fetch('/diyanet_surah_info.json', { cache: 'force-cache' })
-    if (!response.ok) throw new Error('Diyanet sure bilgisi yÃ¼klenemedi.')
+    if (!response.ok) throw new Error('Diyanet sure bilgisi yüklenemedi.')
     diyanetSurahInfoCache = await response.json()
     return diyanetSurahInfoCache
 }
@@ -44,7 +44,7 @@ export async function getDiyanetTafsir(surahId, ayahNo) {
                 text,
                 surah: parseInt(surahId),
                 ayah: parseInt(ayahNo),
-                source: "Diyanet Ä°ÅŸleri BaÅŸkanlÄ±ÄŸÄ± â€” Kur'an Yolu Tefsiri",
+                source: "Diyanet İşleri Başkanlığı — Kur'an Yolu Tefsiri",
                 from: 'local_json'
             }
         }
@@ -68,7 +68,7 @@ export async function getDiyanetSurahInfo(surahId) {
             chapter_info: {
                 text: info.text,
                 short_text: (String(info.text).replace(/<[^>]+>/g, '').slice(0, 300) + '...'),
-                source: info.source || 'Diyanet Ä°ÅŸleri BaÅŸkanlÄ±ÄŸÄ±'
+                source: info.source || 'Diyanet İşleri Başkanlığı'
             }
         }
     } catch (e) {
@@ -77,7 +77,7 @@ export async function getDiyanetSurahInfo(surahId) {
     }
 }
 const ACIKKURAN_API = 'https://api.acikkuran.com';
-const DEFAULT_AUTHOR = 77; // Diyanet Ä°ÅŸleri (quran.com ID, internally mapped to 11 for acikkuran)
+const DEFAULT_AUTHOR = 77; // Diyanet İşleri (quran.com ID, internally mapped to 11 for acikkuran)
 
 function mapIdForApi(id) {
     if (id === 77) return 11;
@@ -105,8 +105,8 @@ function normalizeTranslationName(name) {
         lower.includes('ibn-kathir');
 
     if (!isIbnKesir) return raw;
-    if (lower.includes('tefsir Ã§evirisi')) return raw;
-    return `${raw} (Tefsir Ã‡evirisi)`;
+    if (lower.includes('tefsir çevirisi')) return raw;
+    return `${raw} (Tefsir Çevirisi)`;
 }
 
 function normalizeTranslationAuthor(author) {
@@ -394,80 +394,80 @@ export async function getSurahInfo(id) {
             text: `
                 <div class="tafsir-content-wrapper">
                     <section>
-                        <h2>1. GiriÅŸ: Surenin KimliÄŸi ve Ä°simleri</h2>
-                        <p>Sureye verilen isimler, onun muhtevasÄ±nÄ±n zenginliÄŸini gÃ¶sterir.</p>
+                        <h2>1. Giriş: Surenin Kimliği ve İsimleri</h2>
+                        <p>Sureye verilen isimler, onun muhtevasının zenginliğini gösterir.</p>
                         <ul>
-                            <li><strong>FÃ¢tihatÃ¼'l-KitÃ¢b:</strong> KitabÄ±n, kÄ±raatin ve namazÄ±n kendisiyle baÅŸlamasÄ± nedeniyle bu isim verilmiÅŸtir [Razi, Cilt 1, s. 245; ElmalÄ±lÄ±, Cilt 1, s. 28].</li>
-                            <li><strong>ÃœmmÃ¼'l-Kur'an:</strong> Razi'ye gÃ¶re Kur'an'Ä±n temel maksatlarÄ± olan "Ä°lahiyat" (Allah'Ä±n zatÄ± ve sÄ±fatlarÄ±), "Mead" (Ahiret), "NÃ¼bÃ¼vvet" ve "Kader" konularÄ±nÄ± Ã¶zÃ¼nde barÄ±ndÄ±rdÄ±ÄŸÄ± iÃ§in bu ismi almÄ±ÅŸtÄ±r [Razi, Cilt 1, s. 246].</li>
-                            <li><strong>es-Seb'u'l-MesÃ¢nÃ®:</strong> Hicr Suresi 87. ayette geÃ§en "Tekrarlanan Yedi" ifadesidir. ZemahÅŸeri ve Razi'ye gÃ¶re, namazlarda tekrarlandÄ±ÄŸÄ± veya Ã¶vgÃ¼ ve dua olarak ikiye bÃ¼kÃ¼ldÃ¼ÄŸÃ¼ (ayrÄ±ldÄ±ÄŸÄ±) iÃ§in bu isim verilmiÅŸtir [Razi, Cilt 1, s. 248; ZemahÅŸeri, Cilt 2, s. 531].</li>
+                            <li><strong>Fâtihatü'l-Kitâb:</strong> Kitabın, kıraatin ve namazın kendisiyle başlaması nedeniyle bu isim verilmiştir [Razi, Cilt 1, s. 245; Elmalılı, Cilt 1, s. 28].</li>
+                            <li><strong>Ümmü'l-Kur'an:</strong> Razi'ye göre Kur'an'ın temel maksatları olan "İlahiyat" (Allah'ın zatı ve sıfatları), "Mead" (Ahiret), "Nübüvvet" ve "Kader" konularını özünde barındırdığı için bu ismi almıştır [Razi, Cilt 1, s. 246].</li>
+                            <li><strong>es-Seb'u'l-Mesânî:</strong> Hicr Suresi 87. ayette geçen "Tekrarlanan Yedi" ifadesidir. Zemahşeri ve Razi'ye göre, namazlarda tekrarlandığı veya övgü ve dua olarak ikiye büküldüğü (ayrıldığı) için bu isim verilmiştir [Razi, Cilt 1, s. 248; Zemahşeri, Cilt 2, s. 531].</li>
                         </ul>
-                        <p><strong>NÃ¼zul Yeri:</strong> Mukatil bin SÃ¼leyman ve bazÄ± rivayetlere gÃ¶re Medine'de inmiÅŸtir [Mukatil, Cilt 1, Fatiha Tefsiri]. Ancak Razi ve ElmalÄ±lÄ± gibi mÃ¼fessirler, namazÄ±n Mekke'de farz kÄ±lÄ±ndÄ±ÄŸÄ±nÄ± ve FatihasÄ±z namaz olmayacaÄŸÄ±nÄ± belirterek Mekke'de indiÄŸini savunurlar. Razi, surenin Ã¶nemine binaen hem Mekke hem Medine'de olmak Ã¼zere iki kez inmiÅŸ olabileceÄŸini belirterek gÃ¶rÃ¼ÅŸleri telif eder [Razi, Cilt 1, s. 253; ElmalÄ±lÄ±, Cilt 1, s. 30].</p>
+                        <p><strong>Nüzul Yeri:</strong> Mukatil bin Süleyman ve bazı rivayetlere göre Medine'de inmiştir [Mukatil, Cilt 1, Fatiha Tefsiri]. Ancak Razi ve Elmalılı gibi müfessirler, namazın Mekke'de farz kılındığını ve Fatihasız namaz olmayacağını belirterek Mekke'de indiğini savunurlar. Razi, surenin önemine binaen hem Mekke hem Medine'de olmak üzere iki kez inmiş olabileceğini belirterek görüşleri telif eder [Razi, Cilt 1, s. 253; Elmalılı, Cilt 1, s. 30].</p>
                     </section>
 
                     <section>
-                        <h2>2. Besmele: "BismillÃ¢hirrahmÃ¢nirrahÃ®m"</h2>
-                        <p><strong>FÄ±khi ve Kelami Boyut:</strong> Åafii mezhebine gÃ¶re Besmele Fatiha'dan bir ayettir. Hanefilere gÃ¶re ise sureleri ayÄ±ran mÃ¼stakil bir ayettir [Razi, Cilt 1, s. 268; ElmalÄ±lÄ±, Cilt 1, s. 36].</p>
-                        <p><strong>Tasavvufi ve BatÄ±ni Boyut (Ä°bnÃ¼'l-Arabi):</strong> Ä°bnÃ¼'l-Arabi'ye gÃ¶re Besmele, "Ä°sm-i A'zam"dÄ±r. VarlÄ±klar, Besmele'deki "Ba" harfiyle zuhur etmiÅŸtir. "Ba", Allah'Ä±n zatÄ±na iÅŸaret eden "Elif"ten sonra gelen ilk harftir ve Ä°lk AkÄ±l'a delalet eder. Besmele'yi okumak, Ä°lahi zatÄ±n ve sÄ±fatlarÄ±n mazharÄ± olan kamil insan suretiyle iÅŸe baÅŸlamak demektir [Ä°bnÃ¼'l-Arabi, Cilt 1, s. 27-28].</p>
-                        <p><strong>Dilbilimsel Boyut:</strong> ZemahÅŸeri'ye gÃ¶re buradaki "Ba" harfi, "Ä°stiane" (yardÄ±m dileme) veya "Ä°lbas" (bereket umarak baÅŸlama) manasÄ±ndadÄ±r. Kulun lisanÄ±yla sÃ¶ylenmiÅŸ bir sÃ¶zdÃ¼r; yani "Bize, Allah'Ä±n ismiyle teberrÃ¼k etmemiz Ã¶ÄŸretildi" demektir [ZemahÅŸeri, Cilt 1, s. 69-70].</p>
+                        <h2>2. Besmele: "Bismillâhirrahmânirrahîm"</h2>
+                        <p><strong>Fıkhi ve Kelami Boyut:</strong> Şafii mezhebine göre Besmele Fatiha'dan bir ayettir. Hanefilere göre ise sureleri ayıran müstakil bir ayettir [Razi, Cilt 1, s. 268; Elmalılı, Cilt 1, s. 36].</p>
+                        <p><strong>Tasavvufi ve Batıni Boyut (İbnü'l-Arabi):</strong> İbnü'l-Arabi'ye göre Besmele, "İsm-i A'zam"dır. Varlıklar, Besmele'deki "Ba" harfiyle zuhur etmiştir. "Ba", Allah'ın zatına işaret eden "Elif"ten sonra gelen ilk harftir ve İlk Akıl'a delalet eder. Besmele'yi okumak, İlahi zatın ve sıfatların mazharı olan kamil insan suretiyle işe başlamak demektir [İbnü'l-Arabi, Cilt 1, s. 27-28].</p>
+                        <p><strong>Dilbilimsel Boyut:</strong> Zemahşeri'ye göre buradaki "Ba" harfi, "İstiane" (yardım dileme) veya "İlbas" (bereket umarak başlama) manasındadır. Kulun lisanıyla söylenmiş bir sözdür; yani "Bize, Allah'ın ismiyle teberrük etmemiz öğretildi" demektir [Zemahşeri, Cilt 1, s. 69-70].</p>
                     </section>
 
                     <section>
                         <h2>3. Ayet Ayet Derinlemesine Analiz</h2>
                         
                         <div class="verse-analysis">
-                            <h3>1. Ayet: "Hamd, Ã¢lemlerin Rabbi olan Allah'a mahsustur."</h3>
-                            <p><strong>Hamd vs. ÅÃ¼kÃ¼r:</strong> Taberi ve Razi'ye gÃ¶re Hamd, ÅŸÃ¼kÃ¼rden daha kapsamlÄ±dÄ±r. ÅÃ¼kÃ¼r sadece verilen bir nimete karÅŸÄ±lÄ±k yapÄ±lÄ±rken, Hamd hem nimete karÅŸÄ±lÄ±k hem de Allah'Ä±n zatÄ±ndaki ezelÃ® mÃ¼kemmellik iÃ§in yapÄ±lÄ±r [Taberi, Cilt 1, s. 28; Razi, Cilt 9, s. 308]. ZemahÅŸeri'ye gÃ¶re "El" takÄ±sÄ± Ã¶vgÃ¼ tÃ¼rÃ¼nÃ¼n tamamÄ±nÄ±n sadece O'na ait olduÄŸunu ifade eder [ZemahÅŸeri, Cilt 1, s. 82].</p>
-                            <p><strong>Alemlerin Rabbi:</strong> Mukatil'e gÃ¶re alemlerden maksat "Cinler ve Ä°nsanlar"dÄ±r. Razi'ye gÃ¶re alem, Allah'Ä±n dÄ±ÅŸÄ±ndaki her varlÄ±ktÄ±r. "Rab" ise terbiye eden, yoktan var edip kemale erdirendir. Bu ifade, Allah'Ä±n varlÄ±ÄŸÄ±nÄ±n ve birliÄŸinin kozmolojik delilidir [Razi, Cilt 1, s. 245]. ElmalÄ±lÄ±, Allah'Ä±n Ã¶zellikle akÄ±l sahibi varlÄ±klar Ã¼zerindeki tecellisine ve hakimiyetine iÅŸarettir [ElmalÄ±lÄ±, Cilt 1, s. 70].</p>
+                            <h3>1. Ayet: "Hamd, âlemlerin Rabbi olan Allah'a mahsustur."</h3>
+                            <p><strong>Hamd vs. Şükür:</strong> Taberi ve Razi'ye göre Hamd, şükürden daha kapsamlıdır. Şükür sadece verilen bir nimete karşılık yapılırken, Hamd hem nimete karşılık hem de Allah'ın zatındaki ezelî mükemmellik için yapılır [Taberi, Cilt 1, s. 28; Razi, Cilt 9, s. 308]. Zemahşeri'ye göre "El" takısı övgü türünün tamamının sadece O'na ait olduğunu ifade eder [Zemahşeri, Cilt 1, s. 82].</p>
+                            <p><strong>Alemlerin Rabbi:</strong> Mukatil'e göre alemlerden maksat "Cinler ve İnsanlar"dır. Razi'ye göre alem, Allah'ın dışındaki her varlıktır. "Rab" ise terbiye eden, yoktan var edip kemale erdirendir. Bu ifade, Allah'ın varlığının ve birliğinin kozmolojik delilidir [Razi, Cilt 1, s. 245]. Elmalılı, Allah'ın özellikle akıl sahibi varlıklar üzerindeki tecellisine ve hakimiyetine işarettir [Elmalılı, Cilt 1, s. 70].</p>
                         </div>
 
                         <div class="verse-analysis">
-                            <h3>2. Ayet: "O RahmÃ¢n ve RahÃ®m'dir."</h3>
-                            <p><strong>SÄ±fatlarÄ±n FarkÄ±:</strong> Razi ve ElmalÄ±lÄ±'ya gÃ¶re "RahmÃ¢n" zatÃ® bir sÄ±fattÄ±r ve ezeliyetle ilgilidir; yaradÄ±lÄ±ÅŸÄ±n baÅŸlangÄ±cÄ±ndaki genel rahmeti ifade eder. "RahÃ®m" ise fiilÃ® bir sÄ±fattÄ±r ve ebediyetle (sonuÃ§la) ilgilidir; irade sahibi varlÄ±klarÄ±n amellerine karÅŸÄ±lÄ±k verilen Ã¶zel rahmeti ifade eder. Bu yÃ¼zden "DÃ¼nyanÄ±n RahmÃ¢n'Ä±, Ahiretin RahÃ®m'i" denilmiÅŸtir [ElmalÄ±lÄ±, Cilt 1, s. 51-86; Razi, Cilt 21, s. 1246].</p>
-                            <p><strong>ZemahÅŸeri'nin YaklaÅŸÄ±mÄ±:</strong> "RahmÃ¢n" kelimesi mÃ¼balaÄŸa ve doluluk ifade eder. "RahÃ®m" ise sÃ¼reklilik bildirir. RahmÃ¢n, RahÃ®m'de bulunmayan bir kuÅŸatÄ±cÄ±lÄ±ÄŸa sahiptir [ZemahÅŸeri, Cilt 1, s. 76].</p>
+                            <h3>2. Ayet: "O Rahmân ve Rahîm'dir."</h3>
+                            <p><strong>Sıfatların Farkı:</strong> Razi ve Elmalılı'ya göre "Rahmân" zatî bir sıfattır ve ezeliyetle ilgilidir; yaradılışın başlangıcındaki genel rahmeti ifade eder. "Rahîm" ise fiilî bir sıfattır ve ebediyetle (sonuçla) ilgilidir; irade sahibi varlıkların amellerine karşılık verilen özel rahmeti ifade eder. Bu yüzden "Dünyanın Rahmân'ı, Ahiretin Rahîm'i" denilmiştir [Elmalılı, Cilt 1, s. 51-86; Razi, Cilt 21, s. 1246].</p>
+                            <p><strong>Zemahşeri'nin Yaklaşımı:</strong> "Rahmân" kelimesi mübalağa ve doluluk ifade eder. "Rahîm" ise süreklilik bildirir. Rahmân, Rahîm'de bulunmayan bir kuşatıcılığa sahiptir [Zemahşeri, Cilt 1, s. 76].</p>
                         </div>
 
                         <div class="verse-analysis">
-                            <h3>3. Ayet: "Din gÃ¼nÃ¼nÃ¼n mÃ¢likidir."</h3>
-                            <p><strong>Din GÃ¼nÃ¼:</strong> "Din" burada ceza, hesap ve karÅŸÄ±lÄ±k anlamÄ±ndadÄ±r. O gÃ¼n, mÃ¼lkiyetin ve emrin sadece Allah'a ait olduÄŸu gÃ¼ndÃ¼r [Razi, Cilt 1, s. 374; Taberi, Cilt 1, s. 47].</p>
-                            <p><strong>Melik vs. MÃ¢lik:</strong> Razi'ye gÃ¶re "MÃ¢lik" mÃ¼lkÃ¼nde dilediÄŸi gibi tasarruf eden, "Melik" ise yÃ¶netendir. Allah o gÃ¼n her ikisidir. O gÃ¼n "MÃ¼lk kimindir?" sorusuna sadece "Allah'Ä±ndÄ±r" cevabÄ± verilecektir [Razi, Cilt 19, s. 209].</p>
+                            <h3>3. Ayet: "Din gününün mâlikidir."</h3>
+                            <p><strong>Din Günü:</strong> "Din" burada ceza, hesap ve karşılık anlamındadır. O gün, mülkiyetin ve emrin sadece Allah'a ait olduğu gündür [Razi, Cilt 1, s. 374; Taberi, Cilt 1, s. 47].</p>
+                            <p><strong>Melik vs. Mâlik:</strong> Razi'ye göre "Mâlik" mülkünde dilediği gibi tasarruf eden, "Melik" ise yönetendir. Allah o gün her ikisidir. O gün "Mülk kimindir?" sorusuna sadece "Allah'ındır" cevabı verilecektir [Razi, Cilt 19, s. 209].</p>
                         </div>
 
                         <div class="verse-analysis">
-                            <h3>4. Ayet: "Ancak sana kulluk eder ve ancak senden yardÄ±m dileriz."</h3>
-                            <p><strong>Ä°ltifat SanatÄ± (Hitap DeÄŸiÅŸikliÄŸi):</strong> ZemahÅŸeri ve Razi'ye gÃ¶re Ã¼Ã§Ã¼ncÃ¼ ÅŸahÄ±stan "Sen" (muhatap) hitabÄ±na geÃ§iÅŸ, kulun hamd ve sena ile Allah'Ä±n huzuruna manen yaklaÅŸtÄ±ÄŸÄ±nÄ± ve artÄ±k O'na doÄŸrudan hitap edecek huzur makamÄ±na erdiÄŸini gÃ¶sterir. Bu, belagatin zirvesidir [ZemahÅŸeri, Cilt 1, s. 90; Razi, Cilt 1, s. 151].</p>
-                            <p><strong>Tevhid ve Sosyoloji:</strong> ElmalÄ±lÄ±, "Ä°badet ederiz" (Ã§oÄŸul) ifadesinin ferdin bencilliÄŸinden kurtulup toplumsal bir ÅŸuurla tÃ¼m kainatla birlikte Allah'a yÃ¶nelmesi olduÄŸunu belirtir [ElmalÄ±lÄ±, Cilt 1, s. 102]. Razi'ye gÃ¶re kul Ã¶nce kulluÄŸunu arz eder (vesile), sonra yardÄ±m ister (talep) [Razi, Cilt 1, s. 151].</p>
+                            <h3>4. Ayet: "Ancak sana kulluk eder ve ancak senden yardım dileriz."</h3>
+                            <p><strong>İltifat Sanatı (Hitap Değişikliği):</strong> Zemahşeri ve Razi'ye göre üçüncü şahıstan "Sen" (muhatap) hitabına geçiş, kulun hamd ve sena ile Allah'ın huzuruna manen yaklaştığını ve artık O'na doğrudan hitap edecek huzur makamına erdiğini gösterir. Bu, belagatin zirvesidir [Zemahşeri, Cilt 1, s. 90; Razi, Cilt 1, s. 151].</p>
+                            <p><strong>Tevhid ve Sosyoloji:</strong> Elmalılı, "İbadet ederiz" (çoğul) ifadesinin ferdin bencilliğinden kurtulup toplumsal bir şuurla tüm kainatla birlikte Allah'a yönelmesi olduğunu belirtir [Elmalılı, Cilt 1, s. 102]. Razi'ye göre kul önce kulluğunu arz eder (vesile), sonra yardım ister (talep) [Razi, Cilt 1, s. 151].</p>
                         </div>
 
                         <div class="verse-analysis">
-                            <h3>5. Ayet: "Bizi dosdoÄŸru yola ilet."</h3>
-                            <p><strong>Hidayet Talebi:</strong> Buradaki talep; hidayette sebat etmek, hidayetin derecelerinde yÃ¼kselmek ve ahirette cennete giden yolda sabit kadem olmaktÄ±r [Razi, Cilt 1, s. 150].</p>
-                            <p><strong>SÄ±rat-Ä± MÃ¼stakim:</strong> EÄŸriliÄŸi olmayan, apaÃ§Ä±k yol. Bu; Ä°slam, Kur'an, Hz. Peygamber'in yolu veya tevhid inancÄ± olarak yorumlanmÄ±ÅŸtÄ±r [Taberi, Cilt 1, s. 74; ElmalÄ±lÄ±, Cilt 1, s. 124].</p>
+                            <h3>5. Ayet: "Bizi dosdoğru yola ilet."</h3>
+                            <p><strong>Hidayet Talebi:</strong> Buradaki talep; hidayette sebat etmek, hidayetin derecelerinde yükselmek ve ahirette cennete giden yolda sabit kadem olmaktır [Razi, Cilt 1, s. 150].</p>
+                            <p><strong>Sırat-ı Müstakim:</strong> Eğriliği olmayan, apaçık yol. Bu; İslam, Kur'an, Hz. Peygamber'in yolu veya tevhid inancı olarak yorumlanmıştır [Taberi, Cilt 1, s. 74; Elmalılı, Cilt 1, s. 124].</p>
                         </div>
 
                         <div class="verse-analysis">
-                            <h3>6. ve 7. Ayet: "Kendilerine nimet verdiklerinin yoluna; gazaba uÄŸrayanlarÄ±n ve sapÄ±tanlarÄ±n yoluna deÄŸil."</h3>
-                            <p><strong>Nimet Verilenler:</strong> Peygamberler, sÄ±ddÄ±klar, ÅŸehitler ve salihlerdir [ElmalÄ±lÄ±, Cilt 1, s. 124].</p>
-                            <p><strong>Gazaba UÄŸrayanlar ve SapÄ±tanlar:</strong> Rivayet tefsirine gÃ¶re Yahudiler (gazaba uÄŸrayanlar) ve HÄ±ristiyanlar (sapÄ±tanlar) Ã¶rneklendirilir [Taberi, Cilt 1, s. 84; Mukatil, Cilt 1]. Dirayet tefsirine gÃ¶re ise; hakkÄ± bildiÄŸi halde terk edenler (amelde kusur) ve haktan bilgisizce sapanlar (itikatta kusur) kastedilir [Razi, Cilt 1, s. 364; ElmalÄ±lÄ±, Cilt 1, s. 140].</p>
+                            <h3>6. ve 7. Ayet: "Kendilerine nimet verdiklerinin yoluna; gazaba uğrayanların ve sapıtanların yoluna değil."</h3>
+                            <p><strong>Nimet Verilenler:</strong> Peygamberler, sıddıklar, şehitler ve salihlerdir [Elmalılı, Cilt 1, s. 124].</p>
+                            <p><strong>Gazaba Uğrayanlar ve Sapıtanlar:</strong> Rivayet tefsirine göre Yahudiler (gazaba uğrayanlar) ve Hıristiyanlar (sapıtanlar) örneklendirilir [Taberi, Cilt 1, s. 84; Mukatil, Cilt 1]. Dirayet tefsirine göre ise; hakkı bildiği halde terk edenler (amelde kusur) ve haktan bilgisizce sapanlar (itikatta kusur) kastedilir [Razi, Cilt 1, s. 364; Elmalılı, Cilt 1, s. 140].</p>
                         </div>
                     </section>
 
                     <section>
                         <h2>4. Felsefi Yorum ve Sentez</h2>
-                        <p>Fatiha Suresi, "VarlÄ±k", "BilinÃ§" ve "Yolculuk" Ã¼Ã§geninde insanÄ±n kozmik serÃ¼veninin Ã¶zetidir.</p>
-                        <p><strong>Ontolojik BaÅŸlangÄ±Ã§ (VarlÄ±k):</strong> VarlÄ±ÄŸÄ±n kaynaÄŸÄ±nÄ±n ve devamÄ±nÄ±n mutlak surette Allah'a ait olduÄŸunun ilanÄ±dÄ±r. Alem "Rahman" isminin bir nefesi (Nefes-i Rahmani) olarak varlÄ±k sahasÄ±na Ã§Ä±kmÄ±ÅŸtÄ±r. Rububiyet, Allah'Ä±n her an yaratma ve terbiye halinde olan dinamik mÃ¼dahileti olduÄŸunu gÃ¶sterir.</p>
-                        <p><strong>Epistemolojik DÃ¶nÃ¼ÅŸÃ¼m (BilinÃ§):</strong> Surenin en kritik felsefi kÄ±rÄ±lmasÄ± "Ancak Sana" (Ä°yyake) hitabÄ±dÄ±r. Ä°nsan, Allah hakkÄ±nda konuÅŸan bir gÃ¶zlemci olmaktan Ã§Ä±kÄ±p, Allah ile konuÅŸan bir muhatap konumuna yÃ¼kselir. Bu, imanÄ±n taklitten tahkike geÃ§iÅŸidir.</p>
-                        <p><strong>Etik ve Teleolojik SonuÃ§ (Yolculuk):</strong> "Din GÃ¼nÃ¼" vurgusu, hayatÄ±n bir amacÄ± ve ahlaki bir sorumluluÄŸu olduÄŸunu hatÄ±rlatÄ±r. Ä°nsan, "Nimet verilenler"in izini sÃ¼rerek dikey bir yÃ¼kseliÅŸ gerÃ§ekleÅŸtirmek zorundadÄ±r.</p>
-                        <p><strong>SonuÃ§:</strong> Fatiha; Ä°nsanÄ±n Allah'tan geldiÄŸinin (Mebde), O'nun huzurunda olduÄŸunun (Hal) ve O'na dÃ¶neceÄŸinin (Mead) bilinciyle varoluÅŸunu anlamlandÄ±rma manifestosudur.</p>
+                        <p>Fatiha Suresi, "Varlık", "Bilinç" ve "Yolculuk" üçgeninde insanın kozmik serüveninin özetidir.</p>
+                        <p><strong>Ontolojik Başlangıç (Varlık):</strong> Varlığın kaynağının ve devamının mutlak surette Allah'a ait olduğunun ilanıdır. Alem "Rahman" isminin bir nefesi (Nefes-i Rahmani) olarak varlık sahasına çıkmıştır. Rububiyet, Allah'ın her an yaratma ve terbiye halinde olan dinamik müdahileti olduğunu gösterir.</p>
+                        <p><strong>Epistemolojik Dönüşüm (Bilinç):</strong> Surenin en kritik felsefi kırılması "Ancak Sana" (İyyake) hitabıdır. İnsan, Allah hakkında konuşan bir gözlemci olmaktan çıkıp, Allah ile konuşan bir muhatap konumuna yükselir. Bu, imanın taklitten tahkike geçişidir.</p>
+                        <p><strong>Etik ve Teleolojik Sonuç (Yolculuk):</strong> "Din Günü" vurgusu, hayatın bir amacı ve ahlaki bir sorumluluğu olduğunu hatırlatır. İnsan, "Nimet verilenler"in izini sürerek dikey bir yükseliş gerçekleştirmek zorundadır.</p>
+                        <p><strong>Sonuç:</strong> Fatiha; İnsanın Allah'tan geldiğinin (Mebde), O'nun huzurunda olduğunun (Hal) ve O'na döneceğinin (Mead) bilinciyle varoluşunu anlamlandırma manifestosudur.</p>
                     </section>
                 </div>
             `,
             source: `
-                1. Fahreddin er-RÃ¢zÃ®, TefsÃ®r-i KebÃ®r (MefÃ¢tÃ®hu'l-Gayb), Cilt 1, 9, 19, 21.
-                2. ElmalÄ±lÄ± M. Hamdi YazÄ±r, Hak Dini Kur'an Dili, Cilt 1.
-                3. ZemahÅŸerÃ®, el-KeÅŸÅŸÃ¢f, Cilt 1, 2.
-                4. TaberÃ®, TaberÃ® Tefsiri, Cilt 1.
-                5. Mukatil bin SÃ¼leyman, Tefsir-i Kebir, Cilt 1.
-                6. Muhyiddin Ä°bnÃ¼'l-Arabi, Tefsir-i Kebir Teâ€™vilÃ¢t, Cilt 1.
+                1. Fahreddin er-Râzî, Tefsîr-i Kebîr (Mefâtîhu'l-Gayb), Cilt 1, 9, 19, 21.
+                2. Elmalılı M. Hamdi Yazır, Hak Dini Kur'an Dili, Cilt 1.
+                3. Zemahşerî, el-Keşşâf, Cilt 1, 2.
+                4. Taberî, Taberî Tefsiri, Cilt 1.
+                5. Mukatil bin Süleyman, Tefsir-i Kebir, Cilt 1.
+                6. Muhyiddin İbnü'l-Arabi, Tefsir-i Kebir Te’vilât, Cilt 1.
             `
         };
     }
@@ -512,7 +512,7 @@ export async function getVerse(surahId, ayahNo, authorId) {
             translation: d.translation ? {
                 id: d.translation.id,
                 text: d.translation.text,
-                author: normalizeTranslationAuthor(d.translation.author || { id: DEFAULT_AUTHOR, name: 'Diyanet Ä°ÅŸleri' }),
+                author: normalizeTranslationAuthor(d.translation.author || { id: DEFAULT_AUTHOR, name: 'Diyanet İşleri' }),
                 footnotes: d.translation.footnotes || [],
             } : null,
             words: [], // Will be fetched separately
@@ -531,70 +531,70 @@ export async function getVerse(surahId, ayahNo, authorId) {
 // Tafsir detail
 // ========================
 export async function getTafsir(surahId, ayahNo) {
-    const FATIHA_SOURCES = `1. Fahreddin er-RÃ¢zÃ®, TefsÃ®r-i KebÃ®r (MefÃ¢tÃ®hu'l-Gayb), Cilt 1, 9, 19, 21.
-2. ElmalÄ±lÄ± M. Hamdi YazÄ±r, Hak Dini Kur'an Dili, Cilt 1.
-3. ZemahÅŸerÃ®, el-KeÅŸÅŸÃ¢f, Cilt 1, 2.
-4. TaberÃ®, TaberÃ® Tefsiri, Cilt 1.
-5. Mukatil bin SÃ¼leyman, Tefsir-i Kebir, Cilt 1.
-6. Muhyiddin Ä°bnÃ¼'l-Arabi, Tefsir-i Kebir Teâ€™vilÃ¢t, Cilt 1.`;
+    const FATIHA_SOURCES = `1. Fahreddin er-Râzî, Tefsîr-i Kebîr (Mefâtîhu'l-Gayb), Cilt 1, 9, 19, 21.
+2. Elmalılı M. Hamdi Yazır, Hak Dini Kur'an Dili, Cilt 1.
+3. Zemahşerî, el-Keşşâf, Cilt 1, 2.
+4. Taberî, Taberî Tefsiri, Cilt 1.
+5. Mukatil bin Süleyman, Tefsir-i Kebir, Cilt 1.
+6. Muhyiddin İbnü'l-Arabi, Tefsir-i Kebir Te’vilât, Cilt 1.`;
 
     // Static override for Fatiha (Surah 1)
     if (parseInt(surahId) === 1) {
         const fatihaTafsir = {
             1: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> Besmelenin Fatiha'dan bir ayet olup olmadÄ±ÄŸÄ± konusundaki mezhep gÃ¶rÃ¼ÅŸlerini tartÄ±ÅŸÄ±r. Åafii mezhebine gÃ¶re Besmele, Fatiha'nÄ±n baÅŸÄ±ndan tam bir ayettir ve namazda sesli okunur. Hanefi mezhebine gÃ¶re ise surelerin arasÄ±nÄ± ayÄ±ran mÃ¼stakil bir ayettir, Fatiha'dan sayÄ±lmaz. Razi, Besmelenin ayet sayÄ±lmasÄ± gerektiÄŸini "Fatiha yedi ayettir" hadisine ve "Allah Fatiha'yÄ± kulumla aramda ikiye bÃ¶ldÃ¼m" hadisindeki dengeye dayandÄ±rarak savunur.</p>
-                    <p><strong>ZemahÅŸerÃ® (KeÅŸÅŸÃ¢f):</strong> Medine, Basra ve Åam kurrÃ¢sÄ±na (okuyucularÄ±na) gÃ¶re Besmele Fatiha'dan bir ayet deÄŸildir. Ancak Mekke ve KÃ»fe kurrÃ¢sÄ± ile Åafii fÄ±khÄ±na gÃ¶re Fatiha'nÄ±n ve her surenin baÅŸÄ±ndan tam bir ayettir. ZemahÅŸeri, mushafa yazÄ±lmÄ±ÅŸ olmasÄ±nÄ± onun ayet olduÄŸuna en bÃ¼yÃ¼k delil olarak sunar.</p>
-                    <p><strong>Ä°bnÃ¼'l-ArabÃ® (Te'vilat):</strong> Besmeledeki "Be" harfi, varlÄ±ÄŸÄ±n zuhurunu simgeler. Besmele, "Ä°sm-i A'zam"dÄ±r ve kulun Allah'Ä±n zatÄ± ve sÄ±fatlarÄ±yla iÅŸe baÅŸlamasÄ±nÄ± ifade eder.</p>
-                    <p><strong>ElmalÄ±lÄ± Hamdi YazÄ±r:</strong> Fatiha'nÄ±n yedi ayet olduÄŸunda ittifak vardÄ±r, ancak bu sayÄ±ya Besmele'nin dahil olup olmadÄ±ÄŸÄ± ihtilaflÄ±dÄ±r. Hanefilere gÃ¶re Besmele mÃ¼stakil bir ayettir, sureye dahil deÄŸildir. Åafiilere gÃ¶re ise Fatiha'nÄ±n ilk ayetidir.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> Besmelenin Fatiha'dan bir ayet olup olmadığı konusundaki mezhep görüşlerini tartışır. Şafii mezhebine göre Besmele, Fatiha'nın başından tam bir ayettir ve namazda sesli okunur. Hanefi mezhebine göre ise surelerin arasını ayıran müstakil bir ayettir, Fatiha'dan sayılmaz. Razi, Besmelenin ayet sayılması gerektiğini "Fatiha yedi ayettir" hadisine ve "Allah Fatiha'yı kulumla aramda ikiye böldüm" hadisindeki dengeye dayandırarak savunur.</p>
+                    <p><strong>Zemahşerî (Keşşâf):</strong> Medine, Basra ve Şam kurrâsına (okuyucularına) göre Besmele Fatiha'dan bir ayet değildir. Ancak Mekke ve Kûfe kurrâsı ile Şafii fıkhına göre Fatiha'nın ve her surenin başından tam bir ayettir. Zemahşeri, mushafa yazılmış olmasını onun ayet olduğuna en büyük delil olarak sunar.</p>
+                    <p><strong>İbnü'l-Arabî (Te'vilat):</strong> Besmeledeki "Be" harfi, varlığın zuhurunu simgeler. Besmele, "İsm-i A'zam"dır ve kulun Allah'ın zatı ve sıfatlarıyla işe başlamasını ifade eder.</p>
+                    <p><strong>Elmalılı Hamdi Yazır:</strong> Fatiha'nın yedi ayet olduğunda ittifak vardır, ancak bu sayıya Besmele'nin dahil olup olmadığı ihtilaflıdır. Hanefilere göre Besmele müstakil bir ayettir, sureye dahil değildir. Şafiilere göre ise Fatiha'nın ilk ayetidir.</p>
                 </div>
             `,
             2: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> "Hamd" ve "ÅÃ¼kÃ¼r" farkÄ± Ã¼zerinde durur. ÅÃ¼kÃ¼r, verilen bir nimete karÅŸÄ±lÄ±k yapÄ±lÄ±rken; Hamd, hem nimete karÅŸÄ±lÄ±k hem de Allah'Ä±n zatÄ±ndaki mÃ¼kemmellik iÃ§in yapÄ±lÄ±r. Hamd, ÅŸÃ¼kÃ¼rden daha kapsamlÄ±dÄ±r. "Alemlerin Rabbi" ifadesindeki "Alem", Allah'Ä±n dÄ±ÅŸÄ±ndaki her varlÄ±ktÄ±r. Ã‡oÄŸul gelmesi (Alemin), her varlÄ±k tÃ¼rÃ¼nÃ¼n ayrÄ± bir alem olduÄŸunu gÃ¶sterir.</p>
-                    <p><strong>ZemahÅŸerÃ®:</strong> "El-Hamd" kelimesindeki belirlilik takÄ±sÄ± (LÃ¢m-Ä± tarif), cins veya istiÄŸrak ifade eder; yani Ã¶vgÃ¼ tÃ¼rÃ¼nÃ¼n tamamÄ± veya her Ã§eÅŸidi sadece Allah'a aittir.</p>
-                    <p><strong>TaberÃ®:</strong> Hamd, Allah'Ä±n kullarÄ±na verdiÄŸi sayÄ±sÄ±z nimetlere ve O'nun yÃ¼ce sÄ±fatlarÄ±na karÅŸÄ± yapÄ±lan Ã¶vgÃ¼dÃ¼r. Sadece O'na mahsustur.</p>
-                    <p><strong>Mukatil bin SÃ¼leyman:</strong> "Alemler" (Alemin) ifadesini, Ã¶zellikle "Cinler ve Ä°nsanlar" olarak tefsir eder.</p>
-                    <p><strong>ElmalÄ±lÄ± Hamdi YazÄ±r:</strong> Alemlerin Rabbi, bÃ¼tÃ¼n varlÄ±klarÄ± terbiye eden, geliÅŸtiren ve kemale erdiren demektir. Hamd, irade ile yapÄ±lan bir iyiliÄŸe karÅŸÄ± dil ile yapÄ±lan Ã¶vgÃ¼dÃ¼r.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> "Hamd" ve "Şükür" farkı üzerinde durur. Şükür, verilen bir nimete karşılık yapılırken; Hamd, hem nimete karşılık hem de Allah'ın zatındaki mükemmellik için yapılır. Hamd, şükürden daha kapsamlıdır. "Alemlerin Rabbi" ifadesindeki "Alem", Allah'ın dışındaki her varlıktır. Çoğul gelmesi (Alemin), her varlık türünün ayrı bir alem olduğunu gösterir.</p>
+                    <p><strong>Zemahşerî:</strong> "El-Hamd" kelimesindeki belirlilik takısı (Lâm-ı tarif), cins veya istiğrak ifade eder; yani övgü türünün tamamı veya her çeşidi sadece Allah'a aittir.</p>
+                    <p><strong>Taberî:</strong> Hamd, Allah'ın kullarına verdiği sayısız nimetlere ve O'nun yüce sıfatlarına karşı yapılan övgüdür. Sadece O'na mahsustur.</p>
+                    <p><strong>Mukatil bin Süleyman:</strong> "Alemler" (Alemin) ifadesini, özellikle "Cinler ve İnsanlar" olarak tefsir eder.</p>
+                    <p><strong>Elmalılı Hamdi Yazır:</strong> Alemlerin Rabbi, bütün varlıkları terbiye eden, geliştiren ve kemale erdiren demektir. Hamd, irade ile yapılan bir iyiliğe karşı dil ile yapılan övgüdür.</p>
                 </div>
             `,
             3: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>ZemahÅŸerÃ®:</strong> "RahmÃ¢n", mÃ¼balaÄŸa ifade eder ve rahmetin doluluÄŸunu/kuÅŸatÄ±cÄ±lÄ±ÄŸÄ±nÄ± gÃ¶sterir. "RahÃ®m" ise sÃ¼reklilik bildirir. Harf sayÄ±sÄ± arttÄ±kÃ§a mana da artar kuralÄ± gereÄŸi RahmÃ¢n daha kapsamlÄ±dÄ±r.</p>
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> "RahmÃ¢n", dÃ¼nyada mÃ¼min-kafir ayrÄ±mÄ± yapmadan herkese nimet verendir. "RahÃ®m" ise ahirette sadece mÃ¼minlere merhamet edendir.</p>
-                    <p><strong>ElmalÄ±lÄ± Hamdi YazÄ±r:</strong> RahmÃ¢n, ezeliyetle (baÅŸlangÄ±Ã§la) ilgilidir ve Allah'Ä±n zatÄ±na has bir isimdir (kimseye Rahman denmez). RahÃ®m ise ebediyetle (sonuÃ§la) ilgilidir ve fiilÃ® bir sÄ±fattÄ±r.</p>
+                    <p><strong>Zemahşerî:</strong> "Rahmân", mübalağa ifade eder ve rahmetin doluluğunu/kuşatıcılığını gösterir. "Rahîm" ise süreklilik bildirir. Harf sayısı arttıkça mana da artar kuralı gereği Rahmân daha kapsamlıdır.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> "Rahmân", dünyada mümin-kafir ayrımı yapmadan herkese nimet verendir. "Rahîm" ise ahirette sadece müminlere merhamet edendir.</p>
+                    <p><strong>Elmalılı Hamdi Yazır:</strong> Rahmân, ezeliyetle (başlangıçla) ilgilidir ve Allah'ın zatına has bir isimdir (kimseye Rahman denmez). Rahîm ise ebediyetle (sonuçla) ilgilidir ve fiilî bir sıfattır.</p>
                 </div>
             `,
             4: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> "Din" kelimesi burada "ceza, hesap, karÅŸÄ±lÄ±k" anlamÄ±ndadÄ±r. KÄ±raatlerde hem "MÃªlik" (Sahip) hem "Melik" (HÃ¼kÃ¼mdar) olarak okunmuÅŸtur. Her iki okuyuÅŸ da o gÃ¼n, Allah'tan baÅŸka hiÃ§bir otoritenin kalmayacaÄŸÄ±nÄ± gÃ¶sterir.</p>
-                    <p><strong>Mukatil bin SÃ¼leyman:</strong> Din gÃ¼nÃ¼nÃ¼, "Hesap GÃ¼nÃ¼" olarak aÃ§Ä±klar. O gÃ¼n, Allah'tan baÅŸka kimse hÃ¼kÃ¼m veremez.</p>
-                    <p><strong>ZemahÅŸerÃ®:</strong> Neden "Din gÃ¼nÃ¼"ne tahsis edildi? Ã‡Ã¼nkÃ¼ o gÃ¼n, dÃ¼nyadaki mÃ¼lk iddialarÄ±nÄ±n tamamen son bulduÄŸu ve emrin sadece Allah'a ait olduÄŸunun herkesÃ§e bilineceÄŸi gÃ¼ndÃ¼r.</p>
-                    <p><strong>ElmalÄ±lÄ± Hamdi YazÄ±r:</strong> Melik okunuÅŸu "hÃ¼kÃ¼mdarlÄ±ÄŸÄ±", MÃ¢lik okunuÅŸu "mÃ¼lkiyeti" ifade eder. Fatiha'da iki kÄ±raat ÅŸeklinin bulunmasÄ±, her iki manayÄ± hem siyasi otoriteyi hem Ã¶zel mÃ¼lkiyeti Allah'a hasretmek iÃ§indir.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> "Din" kelimesi burada "ceza, hesap, karşılık" anlamındadır. Kıraatlerde hem "Mêlik" (Sahip) hem "Melik" (Hükümdar) olarak okunmuştur. Her iki okuyuş da o gün, Allah'tan başka hiçbir otoritenin kalmayacağını gösterir.</p>
+                    <p><strong>Mukatil bin Süleyman:</strong> Din gününü, "Hesap Günü" olarak açıklar. O gün, Allah'tan başka kimse hüküm veremez.</p>
+                    <p><strong>Zemahşerî:</strong> Neden "Din günü"ne tahsis edildi? Çünkü o gün, dünyadaki mülk iddialarının tamamen son bulduğu ve emrin sadece Allah'a ait olduğunun herkesçe bilineceği gündür.</p>
+                    <p><strong>Elmalılı Hamdi Yazır:</strong> Melik okunuşu "hükümdarlığı", Mâlik okunuşu "mülkiyeti" ifade eder. Fatiha'da iki kıraat şeklinin bulunması, her iki manayı hem siyasi otoriteyi hem özel mülkiyeti Allah'a hasretmek içindir.</p>
                 </div>
             `,
             5: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> "Ä°ltifat sanatÄ±" vardÄ±r. Surenin baÅŸÄ±nda "O" (gaip) diye bahsedilen Allah'a, burada "Sen" (muhatap) diye hitap edilir. Bu, kulun Ã¶vgÃ¼lerle Allah'a manen yaklaÅŸtÄ±ÄŸÄ±nÄ± ve huzurunda konuÅŸacak makama erdiÄŸini gÃ¶sterir. Ä°badet (kulluk), yardÄ±m istemekten Ã¶nce zikredilmiÅŸtir; Ã§Ã¼nkÃ¼ kulluk vesile, yardÄ±m ise taleptir.</p>
-                    <p><strong>ZemahÅŸerÃ®:</strong> "Ä°yyÃ¢ke" (Ancak sana) kelimesinin fiilden Ã¶nce gelmesi "tahsis" (Ã¶zgÃ¼leme) ifade eder. Yani "BaÅŸkasÄ±na deÄŸil, sadece sana ibadet ederiz" demektir.</p>
-                    <p><strong>Ä°bnÃ¼'l-ArabÃ®:</strong> Fatiha, Allah ile kul arasÄ±nda ikiye ayrÄ±lmÄ±ÅŸtÄ±r. Bu ayet, Allah ile kul arasÄ±ndaki ortak noktadÄ±r (YarÄ±sÄ± Allah'Ä±n hakkÄ± olan ibadet, yarÄ±sÄ± kulun hakkÄ± olan yardÄ±m talebi).</p>
-                    <p><strong>ElmalÄ±lÄ± Hamdi YazÄ±r:</strong> "Ederiz" diyerek Ã§oÄŸul getirilmesi, ferdiyetÃ§ilikten Ã§Ä±kÄ±p toplumsal bir ÅŸuurla, bÃ¼tÃ¼n mÃ¼minlerle (veya vÃ¼cudun bÃ¼tÃ¼n zerreleriyle) birlikte Allah'a yÃ¶nelmeyi ifade eder.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> "İltifat sanatı" vardır. Surenin başında "O" (gaip) diye bahsedilen Allah'a, burada "Sen" (muhatap) diye hitap edilir. Bu, kulun övgülerle Allah'a manen yaklaştığını ve huzurunda konuşacak makama erdiğini gösterir. İbadet (kulluk), yardım istemekten önce zikredilmiştir; çünkü kulluk vesile, yardım ise taleptir.</p>
+                    <p><strong>Zemahşerî:</strong> "İyyâke" (Ancak sana) kelimesinin fiilden önce gelmesi "tahsis" (özgüleme) ifade eder. Yani "Başkasına değil, sadece sana ibadet ederiz" demektir.</p>
+                    <p><strong>İbnü'l-Arabî:</strong> Fatiha, Allah ile kul arasında ikiye ayrılmıştır. Bu ayet, Allah ile kul arasındaki ortak noktadır (Yarısı Allah'ın hakkı olan ibadet, yarısı kulun hakkı olan yardım talebi).</p>
+                    <p><strong>Elmalılı Hamdi Yazır:</strong> "Ederiz" diyerek çoğul getirilmesi, ferdiyetçilikten çıkıp toplumsal bir şuurla, bütün müminlerle (veya vücudun bütün zerreleriyle) birlikte Allah'a yönelmeyi ifade eder.</p>
                 </div>
             `,
             6: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> MÃ¼min zaten hidayettedir. Buradaki talep; hidayette sebat etmek, hidayetin artÄ±rÄ±lmasÄ± ve ahirette cennete giden yolda baÅŸarÄ± ihsan edilmesi iÃ§indir.</p>
-                    <p><strong>TaberÃ®:</strong> DosdoÄŸru yol (SÄ±rat-Ä± MÃ¼stakim); Ä°slam, Kur'an veya Hz. Peygamber'in yolu olarak tefsir edilmiÅŸtir. EÄŸriliÄŸi olmayan apaÃ§Ä±k yol demektir.</p>
-                    <p><strong>ZemahÅŸerÃ®:</strong> SÄ±rÃ¢t kelimesi "yutmak" anlamÄ±ndaki "sarat" kÃ¶kÃ¼nden gelebilir (yolcusunu iÃ§ine alÄ±p yuttuÄŸu iÃ§in). "Ä°let" (ihdina) kelimesi burada "lÃ¼tfet, baÅŸarÄ± ver, sabit kÄ±l" manalarÄ±ndadÄ±r.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> Mümin zaten hidayettedir. Buradaki talep; hidayette sebat etmek, hidayetin artırılması ve ahirette cennete giden yolda başarı ihsan edilmesi içindir.</p>
+                    <p><strong>Taberî:</strong> Dosdoğru yol (Sırat-ı Müstakim); İslam, Kur'an veya Hz. Peygamber'in yolu olarak tefsir edilmiştir. Eğriliği olmayan apaçık yol demektir.</p>
+                    <p><strong>Zemahşerî:</strong> Sırât kelimesi "yutmak" anlamındaki "sarat" kökünden gelebilir (yolcusunu içine alıp yuttuğu için). "İlet" (ihdina) kelimesi burada "lütfet, başarı ver, sabit kıl" manalarındadır.</p>
                 </div>
             `,
             7: `
                 <div class="verse-tafsir-detail">
-                    <p><strong>Mukatil bin SÃ¼leyman:</strong> "Kendilerine nimet verilenler" peygamberlerdir. "Gazaba uÄŸrayanlar" Yahudilerdir. "SapÄ±tanlar" (Dallin) ise HÄ±ristiyanlardÄ±r. Mukatil bu tefsiri rivayetlere dayandÄ±rÄ±r.</p>
-                    <p><strong>Fahreddin er-RÃ¢zÃ®:</strong> Rivayetlerde Yahudi ve HÄ±ristiyanlar olarak geÃ§se de, ayet geneldir. "Gazaba uÄŸrayanlar", hakkÄ± bildiÄŸi halde inatla reddedenler; "SapÄ±tanlar" ise cehalet yÃ¼zÃ¼nden haktan sapanlar (itikatta kusurlu olanlar) olabilir.</p>
-                    <p><strong>ZemahÅŸerÃ®:</strong> "Gayr" (DeÄŸil/BaÅŸka) kelimesi burada sÄ±fat konumundadÄ±r. Gazaba uÄŸrayanlar ve sapÄ±tanlar, nimet verilenlerin zÄ±ddÄ±dÄ±r. Nimet verilenler; peygamberler, sÄ±ddÄ±klar, ÅŸehitler ve salihlerdir.</p>
-                    <p><strong>ElmalÄ±lÄ± Hamdi YazÄ±r:</strong> "Gayri'l-maÄŸdubi..." ifadesi, nimet verilenlerin yolunun, gazaba uÄŸrayanlarÄ±n ve sapÄ±tanlarÄ±n yolundan kesin Ã§izgilerle ayrÄ±ldÄ±ÄŸÄ±nÄ± gÃ¶sterir.</p>
-                    <p><strong>TaberÃ®:</strong> "Amin" demek, "Allah'Ä±m kabul et" demektir ve surenin sonuna eklenmesi sÃ¼nnettir.</p>
+                    <p><strong>Mukatil bin Süleyman:</strong> "Kendilerine nimet verilenler" peygamberlerdir. "Gazaba uğrayanlar" Yahudilerdir. "Sapıtanlar" (Dallin) ise Hıristiyanlardır. Mukatil bu tefsiri rivayetlere dayandırır.</p>
+                    <p><strong>Fahreddin er-Râzî:</strong> Rivayetlerde Yahudi ve Hıristiyanlar olarak geçse de, ayet geneldir. "Gazaba uğrayanlar", hakkı bildiği halde inatla reddedenler; "Sapıtanlar" ise cehalet yüzünden haktan sapanlar (itikatta kusurlu olanlar) olabilir.</p>
+                    <p><strong>Zemahşerî:</strong> "Gayr" (Değil/Başka) kelimesi burada sıfat konumundadır. Gazaba uğrayanlar ve sapıtanlar, nimet verilenlerin zıddıdır. Nimet verilenler; peygamberler, sıddıklar, şehitler ve salihlerdir.</p>
+                    <p><strong>Elmalılı Hamdi Yazır:</strong> "Gayri'l-mağdubi..." ifadesi, nimet verilenlerin yolunun, gazaba uğrayanların ve sapıtanların yolundan kesin çizgilerle ayrıldığını gösterir.</p>
+                    <p><strong>Taberî:</strong> "Amin" demek, "Allah'ım kabul et" demektir ve surenin sonuna eklenmesi sünnettir.</p>
                 </div>
             `
         };
@@ -881,7 +881,3 @@ export async function getRoot(latinOrId) {
         return data.data;
     } catch { return null; }
 }
-
-
-
-
