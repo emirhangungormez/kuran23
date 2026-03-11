@@ -742,6 +742,23 @@
     color: var(--text-tertiary);
 }
 
+.tefsir-spoken-word {
+    border-radius: 4px;
+    transition: background-color 0.18s var(--ease), color 0.18s var(--ease), font-weight 0.18s var(--ease);
+}
+
+.tefsir-spoken-word.spoken {
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: color-mix(in srgb, var(--accent) 84%, var(--text-primary));
+    font-weight: 600;
+}
+
+.tefsir-spoken-word.speaking {
+    background: color-mix(in srgb, var(--accent) 24%, transparent);
+    color: color-mix(in srgb, var(--accent) 92%, var(--text-primary));
+    font-weight: 700;
+}
+
 .tefsir-flip-wrapper {
     display: flex;
     flex-direction: column;

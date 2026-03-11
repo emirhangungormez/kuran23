@@ -62,6 +62,69 @@ function buildSpeechSegmentText(parts) {
     .join('. ')
 }
 
+function highlightSpokenWordsInHtml(html, progressRatio) {
+  const source = String(html || '').trim()
+  if (!source || typeof window === 'undefined') return source
+  if (!Number.isFinite(progressRatio) || progressRatio <= 0) return source
+
+  try {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(`<div id="speech-highlight-root">${source}</div>`, 'text/html')
+    const root = doc.getElementById('speech-highlight-root')
+    if (!root) return source
+
+    const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT, null)
+    const textNodes = []
+    while (walker.nextNode()) {
+      const node = walker.currentNode
+      if (!node?.textContent?.trim()) continue
+      textNodes.push(node)
+    }
+
+    const isWordToken = (value) => /[A-Za-zÇĞİÖŞÜçğıöşü0-9\u0600-\u06FF]+/u.test(String(value || ''))
+    const wordsPerNode = textNodes.map((node) => {
+      const parts = String(node.textContent || '').split(/(\s+)/)
+      const words = parts.filter((part) => isWordToken(part))
+      return { node, parts, wordCount: words.length }
+    })
+    const totalWords = wordsPerNode.reduce((sum, entry) => sum + entry.wordCount, 0)
+    if (!totalWords) return source
+
+    const targetWordCount = Math.max(1, Math.min(totalWords, Math.floor(totalWords * Math.max(0, Math.min(1, progressRatio)))))
+    let wordCursor = 0
+
+    wordsPerNode.forEach(({ node, parts }) => {
+      const fragment = doc.createDocumentFragment()
+      parts.forEach((part) => {
+        const isWord = isWordToken(part)
+        if (!isWord) {
+          fragment.appendChild(doc.createTextNode(part))
+          return
+        }
+
+        const span = doc.createElement('span')
+        span.textContent = part
+        span.className = 'tefsir-spoken-word'
+
+        if (wordCursor < targetWordCount) {
+          span.classList.add('spoken')
+        } else if (wordCursor === targetWordCount) {
+          span.classList.add('speaking')
+        }
+
+        wordCursor += 1
+        fragment.appendChild(span)
+      })
+
+      node.parentNode?.replaceChild(fragment, node)
+    })
+
+    return root.innerHTML
+  } catch {
+    return source
+  }
+}
+
 export default function LibraryBookPage() {
   const { bookId } = useParams()
   const [activeScope, setActiveScope] = useState('verse')
@@ -73,6 +136,8 @@ export default function LibraryBookPage() {
   const playerMeta = usePlayerStore((state) => state.meta)
   const playerTrackIndex = usePlayerStore((state) => state.currentTrackIndex)
   const playerIsPlaying = usePlayerStore((state) => state.isPlaying)
+  const playerCurrentTime = usePlayerStore((state) => state.currentTime)
+  const playerDuration = usePlayerStore((state) => state.duration)
   const playTafsirPlaylist = usePlayerStore((state) => state.playTafsirPlaylist)
   const stopPlayback = usePlayerStore((state) => state.stopPlayback)
   const togglePlay = usePlayerStore((state) => state.togglePlay)
@@ -362,6 +427,12 @@ export default function LibraryBookPage() {
     && (effectiveScope !== 'verse' || Number(playerMeta?.tafsirAyahNo || 0) === Number(resolvedAyahNo))
   ), [book?.id, effectiveScope, playerMeta, playerMode, resolvedAyahNo, resolvedSurahId])
   const currentTafsirSegmentIndex = isActiveTafsirPlayback ? playerTrackIndex : -1
+  const activeTrackProgressRatio = useMemo(() => {
+    if (!isActiveTafsirPlayback || !playerDuration || playerDuration <= 0) return 0
+    const ratio = Math.max(0, Math.min(1, playerCurrentTime / playerDuration))
+    // Re-render frekansini dusurmek icin adimlayalim.
+    return Math.round(ratio * 24) / 24
+  }, [isActiveTafsirPlayback, playerCurrentTime, playerDuration])
   const canPlayTafsirSpeech = isTafsirSpeechSupported() && tafsirSpeechSegments.length > 0
   const isTafsirSpeechPaused = isActiveTafsirPlayback && !playerIsPlaying
   const tafsirVoiceRate = Number(settings.tafsirVoiceRate || 1)
@@ -654,19 +725,12 @@ export default function LibraryBookPage() {
                       onClick={handleTafsirListen}
                       disabled={!canPlayTafsirSpeech}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        {isActiveTafsirPlayback && !isTafsirSpeechPaused ? (
-                          <>
-                            <rect x="6" y="4" width="4" height="16" rx="1" />
-                            <rect x="14" y="4" width="4" height="16" rx="1" />
-                          </>
-                        ) : (
-                          <path d="M5 3l14 9-14 9V3z" />
-                        )}
-                      </svg>
-                      {isActiveTafsirPlayback
-                        ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat')
-                        : 'Tefsiri Dinle'}
+                      {isActiveTafsirPlayback && !isTafsirSpeechPaused ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                      )}
+                      {isActiveTafsirPlayback ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat') : 'Türkçe'}
                     </button>
                     <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
@@ -793,7 +857,19 @@ export default function LibraryBookPage() {
                                   </p>
                                 </div>
                               )}
-                              {block.bodyHtml && <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: block.bodyHtml }} />}
+                              {block.bodyHtml && (
+                                <div
+                                  className="tefsirler-rich"
+                                  dangerouslySetInnerHTML={{
+                                    __html: highlightSpokenWordsInHtml(
+                                      block.bodyHtml,
+                                      currentTafsirSegmentIndex === index
+                                        ? activeTrackProgressRatio
+                                        : (isActiveTafsirPlayback && index < currentTafsirSegmentIndex ? 1 : 0)
+                                    )
+                                  }}
+                                />
+                              )}
                             </article>
                           )
                         })
@@ -805,7 +881,17 @@ export default function LibraryBookPage() {
                           >
                             {section.title && <span className="tefsir-section-index">{String(index + 1).padStart(2, '0')}</span>}
                             {section.title && <h3>{section.title}</h3>}
-                            <div className="tefsirler-rich" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
+                            <div
+                              className="tefsirler-rich"
+                              dangerouslySetInnerHTML={{
+                                __html: highlightSpokenWordsInHtml(
+                                  section.bodyHtml,
+                                  currentTafsirSegmentIndex === index
+                                    ? activeTrackProgressRatio
+                                    : (isActiveTafsirPlayback && index < currentTafsirSegmentIndex ? 1 : 0)
+                                )
+                              }}
+                            />
                           </article>
                         ))}
                     </section>
