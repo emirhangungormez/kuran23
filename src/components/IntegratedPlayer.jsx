@@ -55,8 +55,11 @@ export default function IntegratedPlayer({
     context
 }) {
     const [isExpanded, setIsExpanded] = useState(false)
+    const [dragPosition, setDragPosition] = useState(null)
+    const [isDragging, setIsDragging] = useState(false)
+    const playerRef = useRef(null)
     const progressFillRef = useRef(null)
-    const swipeStartRef = useRef(null)
+    const dragStateRef = useRef(null)
     const navigate = useNavigate()
     const { settings, updateSettings } = useSettings()
     const { data: availableReciters = [] } = useQuery({
@@ -85,6 +88,7 @@ export default function IntegratedPlayer({
     const playbackBadgeClass = playingType === 'arabic' ? 'lang-ar' : 'lang-tr'
     const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
     const normalizedVolume = Math.max(0, Math.min(1, Number(volume || 0)))
+    const playerDock = settings.playerDock || 'bottom-left'
     const reciterOptions = availableReciters
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
@@ -210,45 +214,114 @@ export default function IntegratedPlayer({
         }
     }, [context, currentTime, duration, isPlaying, playbackSpeed])
 
-    const handleSwipeStart = (event) => {
-        if (typeof window !== 'undefined' && window.innerWidth > 900) return
-        if (event.touches.length !== 1) return
+    const clampDragPosition = (left, top, width, height) => {
+        const minInset = 8
+        return {
+            left: Math.min(Math.max(minInset, left), Math.max(minInset, window.innerWidth - width - minInset)),
+            top: Math.min(Math.max(minInset, top), Math.max(minInset, window.innerHeight - height - minInset))
+        }
+    }
+
+    const resolveDockFromPoint = (x, y) => {
+        const horizontal = x <= (window.innerWidth / 2) ? 'left' : 'right'
+        const vertical = y <= (window.innerHeight / 2) ? 'top' : 'bottom'
+        return `${vertical}-${horizontal}`
+    }
+
+    useEffect(() => {
+        const handlePointerMove = (event) => {
+            const drag = dragStateRef.current
+            if (!drag || event.pointerId !== drag.pointerId) return
+
+            const deltaX = event.clientX - drag.startX
+            const deltaY = event.clientY - drag.startY
+            const movement = Math.hypot(deltaX, deltaY)
+
+            if (!drag.hasMoved && movement < 8) return
+
+            drag.hasMoved = true
+            setIsDragging(true)
+
+            const nextPosition = clampDragPosition(
+                drag.originLeft + deltaX,
+                drag.originTop + deltaY,
+                drag.width,
+                drag.height
+            )
+            setDragPosition(nextPosition)
+            event.preventDefault()
+        }
+
+        const handlePointerEnd = (event) => {
+            const drag = dragStateRef.current
+            if (!drag || event.pointerId !== drag.pointerId) return
+
+            const deltaX = event.clientX - drag.startX
+            const deltaY = event.clientY - drag.startY
+
+            if (
+                event.pointerType !== 'mouse'
+                && drag.originLeft <= 28
+                && deltaX <= -96
+                && Math.abs(deltaY) < 42
+            ) {
+                updateSettings({ isPlayerVisible: false })
+                setDragPosition(null)
+                setIsDragging(false)
+                dragStateRef.current = null
+                return
+            }
+
+            if (drag.hasMoved) {
+                const finalPosition = clampDragPosition(
+                    drag.originLeft + deltaX,
+                    drag.originTop + deltaY,
+                    drag.width,
+                    drag.height
+                )
+                const nextDock = resolveDockFromPoint(
+                    finalPosition.left + (drag.width / 2),
+                    finalPosition.top + (drag.height / 2)
+                )
+
+                updateSettings({ playerDock: nextDock })
+            }
+
+            setDragPosition(null)
+            setIsDragging(false)
+            dragStateRef.current = null
+        }
+
+        window.addEventListener('pointermove', handlePointerMove, { passive: false })
+        window.addEventListener('pointerup', handlePointerEnd)
+        window.addEventListener('pointercancel', handlePointerEnd)
+
+        return () => {
+            window.removeEventListener('pointermove', handlePointerMove)
+            window.removeEventListener('pointerup', handlePointerEnd)
+            window.removeEventListener('pointercancel', handlePointerEnd)
+        }
+    }, [updateSettings])
+
+    const handleDragStart = (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return
 
         const target = event.target
-        if (target instanceof Element && target.closest('button, input, .custom-select')) return
+        if (target instanceof Element && target.closest('button, input, a, .custom-select-container')) return
 
-        const touch = event.touches[0]
-        swipeStartRef.current = {
-            x: touch.clientX,
-            y: touch.clientY
-        }
-    }
+        const playerEl = playerRef.current
+        if (!playerEl) return
 
-    const handleSwipeMove = (event) => {
-        if (!swipeStartRef.current || event.touches.length !== 1) return
-
-        const touch = event.touches[0]
-        const deltaX = touch.clientX - swipeStartRef.current.x
-        const deltaY = touch.clientY - swipeStartRef.current.y
-
-        if (Math.abs(deltaY) > 28 && Math.abs(deltaY) > Math.abs(deltaX)) {
-            swipeStartRef.current = null
-        }
-    }
-
-    const handleSwipeEnd = (event) => {
-        if (!swipeStartRef.current || event.changedTouches.length !== 1) {
-            swipeStartRef.current = null
-            return
-        }
-
-        const touch = event.changedTouches[0]
-        const deltaX = touch.clientX - swipeStartRef.current.x
-        const deltaY = touch.clientY - swipeStartRef.current.y
-        swipeStartRef.current = null
-
-        if (deltaX <= -72 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35) {
-            updateSettings({ isPlayerVisible: false })
+        const rect = playerEl.getBoundingClientRect()
+        dragStateRef.current = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            originLeft: rect.left,
+            originTop: rect.top,
+            width: rect.width,
+            height: rect.height,
+            hasMoved: false
         }
     }
 
@@ -256,13 +329,16 @@ export default function IntegratedPlayer({
 
     return (
         <div
-            className={`integrated-player ${isExpanded ? 'active' : ''}`}
-            onTouchStart={handleSwipeStart}
-            onTouchMove={handleSwipeMove}
-            onTouchEnd={handleSwipeEnd}
-            onTouchCancel={handleSwipeEnd}
+            ref={playerRef}
+            className={`integrated-player player-dock-${playerDock} ${isExpanded ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
+            style={dragPosition ? {
+                left: `${dragPosition.left}px`,
+                top: `${dragPosition.top}px`,
+                right: 'auto',
+                bottom: 'auto'
+            } : undefined}
         >
-            <div className="player-main-row">
+            <div className="player-main-row player-drag-handle" onPointerDown={handleDragStart}>
                 <div className="player-rich-info">
                     <div className="player-row-mid">
                         <span className={`player-surah-tr ${isPageContext ? '' : 'player-surah-title'}`}>

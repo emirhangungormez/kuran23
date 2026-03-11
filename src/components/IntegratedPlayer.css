@@ -1,8 +1,6 @@
 .integrated-player {
     position: fixed;
-    bottom: 24px;
-    left: 24px;
-    width: 356px;
+    width: min(356px, calc(100vw - 24px));
     padding: 14px 14px 18px;
     border-radius: 26px;
     background: var(--card-bg);
@@ -14,14 +12,56 @@
 }
 
 .integrated-player.active {
-    width: 404px;
+    width: min(404px, calc(100vw - 24px));
     padding: 16px 16px 20px;
+}
+
+.integrated-player.player-dock-bottom-left {
+    left: 24px;
+    bottom: 24px;
+    right: auto;
+    top: auto;
+}
+
+.integrated-player.player-dock-bottom-right {
+    right: 24px;
+    bottom: 24px;
+    left: auto;
+    top: auto;
+}
+
+.integrated-player.player-dock-top-left {
+    left: 24px;
+    top: 24px;
+    right: auto;
+    bottom: auto;
+}
+
+.integrated-player.player-dock-top-right {
+    right: 24px;
+    top: 24px;
+    left: auto;
+    bottom: auto;
+}
+
+.integrated-player.dragging {
+    transition: none;
+    z-index: 10010;
 }
 
 .player-main-row {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.player-drag-handle {
+    cursor: grab;
+    touch-action: none;
+}
+
+.integrated-player.dragging .player-drag-handle {
+    cursor: grabbing;
 }
 
 .player-rich-info {
@@ -615,15 +655,31 @@
 }
 
 @media (max-width: 768px) {
-    .integrated-player {
+    .integrated-player.player-dock-bottom-left {
         left: 12px;
         bottom: calc(78px + env(safe-area-inset-bottom));
-        width: calc(100% - 24px);
+    }
+
+    .integrated-player.player-dock-bottom-right {
+        right: 12px;
+        bottom: calc(78px + env(safe-area-inset-bottom));
+    }
+
+    .integrated-player.player-dock-top-left {
+        left: 12px;
+        top: 12px;
+    }
+
+    .integrated-player.player-dock-top-right {
+        right: 12px;
+        top: 12px;
+    }
+
+    .integrated-player {
         border-radius: 24px;
     }
 
     .integrated-player.active {
-        width: calc(100% - 24px);
         padding: 14px 14px 18px;
     }
 

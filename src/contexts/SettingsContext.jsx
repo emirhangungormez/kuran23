@@ -13,6 +13,7 @@ const GUEST_PROFILE_DEFAULTS = {
     profileIcon: 'muessis',
     hatimCount: 0
 }
+const VALID_PLAYER_DOCKS = new Set(['top-left', 'top-right', 'bottom-left', 'bottom-right'])
 
 function createDefaultSettings() {
     return {
@@ -41,7 +42,8 @@ function createDefaultSettings() {
         readingJourneys: [],
         recentHistory: { surahs: [], verses: [] },
         isPlayerVisible: false,
-        isPlayerMinimized: false
+        isPlayerMinimized: false,
+        playerDock: 'bottom-left'
     }
 }
 
@@ -50,10 +52,12 @@ function normalizeSettingsPayload(defaults, payload = {}) {
     const resolvedTextMode = normalizeTextMode(merged.textMode, Boolean(merged.showTajweed))
     const resolvedTafsirVerseAuthorId = Number(merged.tafsirVerseAuthorId || merged.defaultAuthorId || defaults.tafsirVerseAuthorId)
     const resolvedTurkishReciterId = Number(merged.defaultTurkishReciterId || defaults.defaultTurkishReciterId || 1014)
+    const resolvedPlayerDock = VALID_PLAYER_DOCKS.has(merged.playerDock) ? merged.playerDock : defaults.playerDock
     return {
         ...merged,
         tafsirVerseAuthorId: resolvedTafsirVerseAuthorId,
         defaultTurkishReciterId: resolvedTurkishReciterId === 1015 ? 1014 : resolvedTurkishReciterId,
+        playerDock: resolvedPlayerDock,
         textMode: resolvedTextMode,
         showTajweed: modeToLegacyTajweed(resolvedTextMode)
     }
