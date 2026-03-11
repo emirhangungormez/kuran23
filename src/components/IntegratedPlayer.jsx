@@ -81,6 +81,8 @@ export default function IntegratedPlayer({
     const isPageContext = context === 'page'
     const showRepeatControl = context === 'playlist'
     const playbackLabel = playingType ? (playingType === 'arabic' ? 'Arapça' : 'Türkçe') : ''
+    const playbackBadgeLabel = playingType ? (playingType === 'arabic' ? 'AR' : 'TR') : ''
+    const playbackBadgeClass = playingType === 'arabic' ? 'lang-ar' : 'lang-tr'
     const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
     const normalizedVolume = Math.max(0, Math.min(1, Number(volume || 0)))
     const reciterOptions = availableReciters
@@ -274,6 +276,11 @@ export default function IntegratedPlayer({
                                 {surahType}
                             </span>
                         )}
+                        {playbackBadgeLabel && (
+                            <span className={`player-badge language ${playbackBadgeClass}`}>
+                                {playbackBadgeLabel}
+                            </span>
+                        )}
                     </div>
                     <div className="player-row-bot">
                         {hasInlineArabicMeta && (
@@ -282,8 +289,8 @@ export default function IntegratedPlayer({
                         {hasInlineArabicMeta && <span className="player-meta-separator">·</span>}
                         <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
                             {isPageContext
-                                ? `${surahNameEn} · ${ayahCount} ayet${playbackLabel ? ` (${playbackLabel})` : ''}`
-                                : `${ayahCount} ayet${playbackLabel ? ` (${playbackLabel})` : ''}`
+                                ? `${surahNameEn} · ${ayahCount} ayet`
+                                : `${ayahCount} ayet`
                             }
                         </span>
                     </div>
