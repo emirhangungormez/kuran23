@@ -6,7 +6,7 @@
     background: var(--card-bg);
     border: 1px solid var(--separator);
     box-shadow: none;
-    z-index: 9991;
+    z-index: 1000000;
     overflow: visible;
     transition: border-color 0.16s ease, background-color 0.16s ease;
 }
@@ -32,21 +32,21 @@
 
 .integrated-player.player-dock-top-left {
     left: 24px;
-    top: 24px;
+    top: calc(72px + 16px + env(safe-area-inset-top));
     right: auto;
     bottom: auto;
 }
 
 .integrated-player.player-dock-top-right {
     right: 24px;
-    top: 24px;
+    top: calc(72px + 16px + env(safe-area-inset-top));
     left: auto;
     bottom: auto;
 }
 
 .integrated-player.dragging {
     transition: none;
-    z-index: 10010;
+    z-index: 1000001;
 }
 
 .player-drag-row {
@@ -688,12 +688,12 @@
 
     .integrated-player.player-dock-top-left {
         left: 12px;
-        top: 12px;
+        top: calc(64px + 12px + env(safe-area-inset-top));
     }
 
     .integrated-player.player-dock-top-right {
         right: 12px;
-        top: 12px;
+        top: calc(64px + 12px + env(safe-area-inset-top));
     }
 
     .integrated-player {

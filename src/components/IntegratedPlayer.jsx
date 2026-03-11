@@ -11,6 +11,11 @@ import './IntegratedPlayer.css'
 
 const DENSE_SEGMENT_THRESHOLD = 90
 const DENSE_SEGMENT_TARGET = 60
+const DESKTOP_PLAYER_EDGE_INSET = 24
+const MOBILE_PLAYER_EDGE_INSET = 12
+const DESKTOP_PLAYER_TOP_INSET = 88
+const MOBILE_PLAYER_TOP_INSET = 76
+const MOBILE_PLAYER_BOTTOM_INSET = 90
 
 const VerseSegment = memo(({ idx, status, onClick, ayahNo }) => {
     return (
@@ -228,11 +233,28 @@ export default function IntegratedPlayer({
         setDragPosition(settings.playerPosition || null)
     }, [settings.playerPosition])
 
-    const clampDragPosition = (left, top, width, height) => {
-        const minInset = 8
+    const getPlayerViewportInsets = () => {
+        const isMobileViewport = window.innerWidth <= 768
+
         return {
-            left: Math.min(Math.max(minInset, left), Math.max(minInset, window.innerWidth - width - minInset)),
-            top: Math.min(Math.max(minInset, top), Math.max(minInset, window.innerHeight - height - minInset))
+            left: isMobileViewport ? MOBILE_PLAYER_EDGE_INSET : DESKTOP_PLAYER_EDGE_INSET,
+            right: isMobileViewport ? MOBILE_PLAYER_EDGE_INSET : DESKTOP_PLAYER_EDGE_INSET,
+            top: isMobileViewport ? MOBILE_PLAYER_TOP_INSET : DESKTOP_PLAYER_TOP_INSET,
+            bottom: isMobileViewport ? MOBILE_PLAYER_BOTTOM_INSET : DESKTOP_PLAYER_EDGE_INSET
+        }
+    }
+
+    const clampDragPosition = (left, top, width, height) => {
+        const viewportInsets = getPlayerViewportInsets()
+        return {
+            left: Math.min(
+                Math.max(viewportInsets.left, left),
+                Math.max(viewportInsets.left, window.innerWidth - width - viewportInsets.right)
+            ),
+            top: Math.min(
+                Math.max(viewportInsets.top, top),
+                Math.max(viewportInsets.top, window.innerHeight - height - viewportInsets.bottom)
+            )
         }
     }
 
@@ -362,7 +384,9 @@ export default function IntegratedPlayer({
     }, [settings.playerPosition, updateSettings])
 
     useEffect(() => {
-        const handleResize = () => {
+        if (!isVisible) return undefined
+
+        const syncStoredPosition = () => {
             const playerEl = playerRef.current
             const storedPosition = settings.playerPosition
             if (!playerEl || !storedPosition || dragStateRef.current) return
@@ -384,9 +408,14 @@ export default function IntegratedPlayer({
             })
         }
 
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
-    }, [settings.playerPosition, updateSettings])
+        const frameId = window.requestAnimationFrame(syncStoredPosition)
+        window.addEventListener('resize', syncStoredPosition)
+
+        return () => {
+            window.cancelAnimationFrame(frameId)
+            window.removeEventListener('resize', syncStoredPosition)
+        }
+    }, [isExpanded, isVisible, settings.playerPosition, updateSettings])
 
     const handleDragStart = (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return
