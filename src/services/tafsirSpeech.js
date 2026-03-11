@@ -1,4 +1,6 @@
-﻿const PIPER_CDN_URL = 'https://cdn.jsdelivr.net/npm/piper-tts-web@1.1.2/dist/piper-tts-web.js'
+import { GENERATED_TTS_LEXICON } from '../data/generatedTtsLexicon'
+
+const PIPER_CDN_URL = 'https://cdn.jsdelivr.net/npm/piper-tts-web@1.1.2/dist/piper-tts-web.js'
 let piperModulePromise = null
 
 function getSpeechSynthesisInstance() {
@@ -166,6 +168,31 @@ const TR_PRONUNCIATION_LEXICON = [
   [/\bhalâl\b/gi, 'halaal']
 ]
 
+const MAX_GENERATED_TTS_LEXICON_ENTRIES = 200
+
+function buildEffectivePronunciationLexicon() {
+  const merged = [...TR_PRONUNCIATION_LEXICON]
+  const seenPatterns = new Set(TR_PRONUNCIATION_LEXICON.map(([pattern]) => `${pattern.source}__${pattern.flags}`))
+  const generatedEntries = Array.isArray(GENERATED_TTS_LEXICON)
+    ? GENERATED_TTS_LEXICON.slice(0, MAX_GENERATED_TTS_LEXICON_ENTRIES)
+    : []
+
+  generatedEntries.forEach((entry) => {
+    if (!Array.isArray(entry) || entry.length < 2) return
+    const [pattern, replacement] = entry
+    if (!(pattern instanceof RegExp) || typeof replacement !== 'string') return
+
+    const patternKey = `${pattern.source}__${pattern.flags}`
+    if (seenPatterns.has(patternKey)) return
+    seenPatterns.add(patternKey)
+    merged.push([pattern, replacement])
+  })
+
+  return merged
+}
+
+const EFFECTIVE_TR_PRONUNCIATION_LEXICON = buildEffectivePronunciationLexicon()
+
 const ARABIC_DIACRITIC_LEXICON = [
   ['الله', 'اللّٰه'],
   ['الرحمن', 'الرَّحْمٰن'],
@@ -221,7 +248,7 @@ function normalizeTurkishOrthography(text) {
 
 function applyTurkishPronunciationLexicon(text) {
   let next = normalizeTurkishOrthography(text)
-  TR_PRONUNCIATION_LEXICON.forEach(([pattern, value]) => {
+  EFFECTIVE_TR_PRONUNCIATION_LEXICON.forEach(([pattern, value]) => {
     next = next.replace(pattern, value)
   })
   return next
