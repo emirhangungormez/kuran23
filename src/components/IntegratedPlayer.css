@@ -178,11 +178,11 @@
 
 .player-mini-progress {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 5px;
-    border-radius: 0 0 26px 26px;
+    left: 8px;
+    right: 8px;
+    bottom: 3px;
+    height: 4px;
+    border-radius: 999px;
     background: rgba(60, 60, 67, 0.12);
     overflow: hidden;
     pointer-events: none;
@@ -555,8 +555,9 @@
     }
 
     .player-mini-progress {
-        left: 0;
-        right: 0;
+        left: 8px;
+        right: 8px;
+        bottom: 3px;
     }
 }
 
