@@ -74,6 +74,8 @@ function resolveActiveTrackIndex(state) {
 // Global Audio Element Instance
 const globalAudio = new Audio()
 globalAudio.preload = 'auto'
+const generatedPreloadAudio = new Audio()
+generatedPreloadAudio.preload = 'auto'
 let lastPageAudioRecoveryKey = ''
 let activeSpeechProgressTimer = null
 let activeSpeechStartedAt = 0
@@ -86,6 +88,7 @@ let activeGeneratedAudioUrls = []
 let activeGeneratedSegments = []
 let activeGeneratedSegmentIndex = -1
 let activeGeneratedElapsedBeforeSegment = 0
+let preloadedGeneratedSegmentIndex = -1
 
 function clearGeneratedAudioUrl() {
     activeGeneratedAudioUrls.forEach((url) => {
@@ -100,7 +103,10 @@ function clearGeneratedAudioUrl() {
     activeGeneratedSegments = []
     activeGeneratedSegmentIndex = -1
     activeGeneratedElapsedBeforeSegment = 0
+    preloadedGeneratedSegmentIndex = -1
     activeGeneratedAudioUrl = ''
+    generatedPreloadAudio.pause()
+    generatedPreloadAudio.src = ''
 }
 
 function getSpeechSynthesisEngine() {
@@ -137,6 +143,51 @@ function playGeneratedSegmentAt(index) {
     safePlayAudio(() => {
         usePlayerStore.getState().setIsPlaying(false)
     })
+    preloadGeneratedSegment(index + 1)
+    return true
+}
+
+function preloadGeneratedSegment(index) {
+    if (!Array.isArray(activeGeneratedSegments) || index < 0 || index >= activeGeneratedSegments.length) {
+        preloadedGeneratedSegmentIndex = -1
+        generatedPreloadAudio.pause()
+        generatedPreloadAudio.src = ''
+        return
+    }
+
+    const segment = activeGeneratedSegments[index]
+    const nextUrl = String(segment?.url || '')
+    if (!nextUrl) {
+        preloadedGeneratedSegmentIndex = -1
+        return
+    }
+
+    if (preloadedGeneratedSegmentIndex === index && generatedPreloadAudio.src === nextUrl) return
+    preloadedGeneratedSegmentIndex = index
+    generatedPreloadAudio.src = nextUrl
+    generatedPreloadAudio.load()
+}
+
+function playPreloadedGeneratedSegment(index) {
+    if (!Array.isArray(activeGeneratedSegments) || index < 0 || index >= activeGeneratedSegments.length) return false
+    if (preloadedGeneratedSegmentIndex !== index) return false
+
+    const segment = activeGeneratedSegments[index]
+    const preloadedUrl = generatedPreloadAudio.currentSrc || generatedPreloadAudio.src || segment?.url || ''
+    if (!preloadedUrl) return false
+
+    activeGeneratedSegmentIndex = index
+    activeGeneratedElapsedBeforeSegment = activeGeneratedSegments
+        .slice(0, index)
+        .reduce((sum, item) => sum + Number(item?.duration || 0) + ((Number(item?.pauseAfterMs || 0)) / 1000), 0)
+    activeGeneratedAudioUrl = segment.url
+    globalAudio.src = preloadedUrl
+    globalAudio.load()
+    globalAudio.playbackRate = 1
+    safePlayAudio(() => {
+        usePlayerStore.getState().setIsPlaying(false)
+    })
+    preloadGeneratedSegment(index + 1)
     return true
 }
 
@@ -395,7 +446,11 @@ const usePlayerStore = create((set, get) => ({
 
         try {
             const piperResult = await withTimeout(
-                synthesizePiperTafsirAudio(text, { rate, engine: selectedEngine }),
+                synthesizePiperTafsirAudio(text, {
+                    rate,
+                    engine: selectedEngine,
+                    useArabicDiacritics: true
+                }),
                 25000,
                 'Piper TTS timeout'
             )
@@ -555,7 +610,7 @@ const usePlayerStore = create((set, get) => ({
                 } else {
                     if (globalAudio.ended && activeGeneratedSegments.length > 0) {
                         const nextIndex = Math.min(activeGeneratedSegments.length - 1, Math.max(0, activeGeneratedSegmentIndex + 1))
-                        if (!playGeneratedSegmentAt(nextIndex)) {
+                        if (!playPreloadedGeneratedSegment(nextIndex) && !playGeneratedSegmentAt(nextIndex)) {
                             safePlayAudio(() => set({ isPlaying: false }))
                         }
                     } else {
@@ -1145,13 +1200,20 @@ export const initAudioListeners = (settingsFunction) => {
             const pauseMs = Math.max(0, Number(currentSegment?.pauseAfterMs || 0))
 
             if (nextIndex < activeGeneratedSegments.length) {
-                clearSpeechDelayTimer()
-                activeSpeechSegmentDelayTimer = window.setTimeout(() => {
-                    activeSpeechSegmentDelayTimer = null
-                    if (!playGeneratedSegmentAt(nextIndex)) {
+                const startNextSegment = () => {
+                    if (!playPreloadedGeneratedSegment(nextIndex) && !playGeneratedSegmentAt(nextIndex)) {
                         state.playNext(settings)
                     }
-                }, pauseMs)
+                }
+                clearSpeechDelayTimer()
+                if (pauseMs > 0) {
+                    activeSpeechSegmentDelayTimer = window.setTimeout(() => {
+                        activeSpeechSegmentDelayTimer = null
+                        startNextSegment()
+                    }, pauseMs)
+                } else {
+                    startNextSegment()
+                }
                 return
             }
         }
