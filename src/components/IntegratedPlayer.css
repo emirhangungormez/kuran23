@@ -598,8 +598,16 @@
     }
 
     .player-reciter-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
+    }
+
+    .player-reciter-select {
+        min-width: 0;
+    }
+
+    .player-reciter-select .trigger-label {
+        font-size: 10px;
     }
 
     .player-mini-progress {
