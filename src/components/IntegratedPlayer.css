@@ -277,7 +277,16 @@
 .player-reciter-select .custom-select-dropdown {
     top: auto;
     bottom: calc(100% + 6px);
+    border-radius: 10px;
     z-index: 12000;
+}
+
+.player-reciter-select .dropdown-scroll {
+    padding: 5px;
+}
+
+.player-reciter-select .dropdown-item {
+    border-radius: 7px;
 }
 
 .player-top-controls {
