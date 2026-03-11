@@ -80,10 +80,37 @@ const TAFSIR_SPEECH_REPLACEMENTS = [
   [/sûre/gi, 'sure'],
   [/âyet/gi, 'ayet'],
   [/teâlâ/gi, 'teala'],
-  [/şeyh/gi, 'seyh']
+  [/şeyh/gi, 'seyh'],
+  [/\bh\.\s*(\d+)\.\s*yüzyıl\b/gi, 'hicri $1. yüzyıl'],
+  [/\bm\.\s*(\d+)\.\s*yüzyıl\b/gi, 'miladi $1. yüzyıl'],
+  [/\bdr\./gi, 'doktor'],
+  [/\bprof\./gi, 'profesör']
 ]
 
-function normalizeArabicSpeechFragments(text) {
+const TR_PRONUNCIATION_LEXICON = [
+  [/\bmüteşabih\b/gi, 'müteşaabih'],
+  [/\bnüzul\b/gi, 'nüzûl'],
+  [/\bte'vil\b/gi, 'tevil'],
+  [/\btev'il\b/gi, 'tevil'],
+  [/\bfıkıh\b/gi, 'fıkıh'],
+  [/\bkelâm\b/gi, 'kelam'],
+  [/\bistiğfar\b/gi, 'istiğfar'],
+  [/\brahmân\b/gi, 'rahman'],
+  [/\brahîm\b/gi, 'rahim']
+]
+
+const ARABIC_DIACRITIC_LEXICON = [
+  [/\bالله\b/gu, 'اللّٰه'],
+  [/\bالرحمن\b/gu, 'الرَّحْمٰن'],
+  [/\bالرحيم\b/gu, 'الرَّحِيم'],
+  [/\bمالك\b/gu, 'مَالِك'],
+  [/\bيوم\b/gu, 'يَوْم'],
+  [/\bالدين\b/gu, 'الدِّين'],
+  [/\bالصراط\b/gu, 'الصِّرَاط'],
+  [/\bالمستقيم\b/gu, 'الْمُسْتَقِيم']
+]
+
+function normalizeBaseSpeechText(text) {
   let normalized = String(text || '')
 
   TAFSIR_SPEECH_REPLACEMENTS.forEach(([pattern, replacement]) => {
@@ -91,12 +118,30 @@ function normalizeArabicSpeechFragments(text) {
   })
 
   return normalized
-    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/gu, '')
+    .replace(/[ـ]+/gu, '')
     .replace(/[“”"]/g, '')
     .replace(/\(([^)]*?)\)/g, ' $1 ')
     .replace(/\/+?/g, ' ')
+    .replace(/([,:;!?])([^\s])/g, '$1 $2')
+    .replace(/([.۔،]){2,}/g, '$1')
     .replace(/\s+/g, ' ')
     .trim()
+}
+
+function applyTurkishPronunciationLexicon(text) {
+  let next = String(text || '')
+  TR_PRONUNCIATION_LEXICON.forEach(([pattern, value]) => {
+    next = next.replace(pattern, value)
+  })
+  return next
+}
+
+function applyArabicDiacritization(text) {
+  let next = String(text || '')
+  ARABIC_DIACRITIC_LEXICON.forEach(([pattern, value]) => {
+    next = next.replace(pattern, value)
+  })
+  return next
 }
 
 function detectSegmentLanguage(text) {
@@ -117,7 +162,9 @@ function splitByLanguage(text) {
   let activeLang = null
 
   for (const char of source) {
-    const nextLang = /[\u0600-\u06FF]/u.test(char) ? 'ar-SA' : 'tr-TR'
+    const isArabicChar = /[\u0600-\u06FF]/u.test(char)
+    const isLatinChar = /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(char)
+    const nextLang = isArabicChar ? 'ar-SA' : (isLatinChar ? 'tr-TR' : activeLang || 'tr-TR')
     if (!activeLang) {
       activeLang = nextLang
       buffer = char
@@ -168,7 +215,7 @@ function splitLongText(text, maxLength = 220) {
 
 export function buildTafsirSpeechQueue(text, options = {}) {
   const maxLength = Math.max(100, Math.min(320, Number(options.maxChunkLength) || 220))
-  const normalized = normalizeArabicSpeechFragments(String(text || '').trim())
+  const normalized = normalizeBaseSpeechText(String(text || '').trim())
   if (!normalized) return []
 
   const langParts = splitByLanguage(normalized)
@@ -178,15 +225,29 @@ export function buildTafsirSpeechQueue(text, options = {}) {
     splitLongText(part.text, maxLength).forEach((chunk) => {
       const trimmed = chunk.trim()
       if (!trimmed) return
+      const lang = part.lang || detectSegmentLanguage(trimmed)
+      const preparedText = lang.startsWith('ar')
+        ? applyArabicDiacritization(trimmed)
+        : applyTurkishPronunciationLexicon(trimmed)
+      const pauseMs = /[.!?؟:؛۔]$/.test(preparedText) ? 280 : 150
+      const rateMultiplier = /\b\d+\.?\s*ayet\b/i.test(preparedText) ? 0.93 : 1
       queue.push({
-        text: trimmed,
-        lang: part.lang || detectSegmentLanguage(trimmed)
+        text: preparedText,
+        lang,
+        pauseMs,
+        rateMultiplier
       })
     })
   })
 
   if (!queue.length) {
-    return [{ text: normalized, lang: detectSegmentLanguage(normalized) }]
+    const lang = detectSegmentLanguage(normalized)
+    return [{
+      text: lang.startsWith('ar') ? applyArabicDiacritization(normalized) : applyTurkishPronunciationLexicon(normalized),
+      lang,
+      pauseMs: 220,
+      rateMultiplier: 1
+    }]
   }
 
   return queue
@@ -270,10 +331,10 @@ export function stripHtmlForSpeech(html) {
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(`<div>${source}</div>`, 'text/html')
     const text = doc.body?.textContent || ''
-    return normalizeArabicSpeechFragments(text)
+    return normalizeBaseSpeechText(text)
   }
 
-  return normalizeArabicSpeechFragments(
+  return normalizeBaseSpeechText(
     source
       .replace(/<br\s*\/?>/gi, ' ')
       .replace(/<\/p>/gi, ' ')
@@ -291,7 +352,7 @@ export function estimateTafsirSpeechDuration(text, rate = 1) {
 }
 
 function pickGoogleTranslateSampleText(text, maxLength = 180) {
-  const normalized = normalizeArabicSpeechFragments(String(text || '').trim())
+  const normalized = normalizeBaseSpeechText(String(text || '').trim())
   if (!normalized) return ''
 
   const firstSentence = normalized.split(/[.!?]/).map((part) => part.trim()).find(Boolean) || normalized
@@ -371,7 +432,8 @@ function pickPiperVoice(voices, engine) {
 }
 
 export async function synthesizePiperTafsirAudio(text, options = {}) {
-  const normalizedText = normalizeArabicSpeechFragments(String(text || '').trim())
+  const queue = buildTafsirSpeechQueue(String(text || '').trim(), { maxChunkLength: 200 })
+  const normalizedText = queue.map((segment) => segment.text).join('. ').trim()
   if (!normalizedText) return null
 
   try {

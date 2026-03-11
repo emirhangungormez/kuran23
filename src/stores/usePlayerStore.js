@@ -81,6 +81,7 @@ let activeSpeechElapsed = 0
 let activeSpeechDuration = 0
 let activeGeneratedAudioUrl = ''
 let activeSpeechSessionId = 0
+let activeSpeechSegmentDelayTimer = null
 
 function clearGeneratedAudioUrl() {
     if (!activeGeneratedAudioUrl) return
@@ -104,6 +105,12 @@ function clearSpeechProgressTimer() {
     }
 }
 
+function clearSpeechDelayTimer() {
+    if (!activeSpeechSegmentDelayTimer) return
+    window.clearTimeout(activeSpeechSegmentDelayTimer)
+    activeSpeechSegmentDelayTimer = null
+}
+
 function startSpeechProgressTimer() {
     clearSpeechProgressTimer()
     activeSpeechStartedAt = Date.now()
@@ -119,6 +126,7 @@ function stopSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     activeSpeechSessionId += 1
     clearSpeechProgressTimer()
+    clearSpeechDelayTimer()
     clearGeneratedAudioUrl()
     activeSpeechStartedAt = 0
     activeSpeechElapsed = 0
@@ -129,6 +137,7 @@ function stopSpeechPlayback() {
 
 function pauseSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
+    clearSpeechDelayTimer()
     if (!synthesis || !synthesis.speaking) return
     activeSpeechElapsed += activeSpeechStartedAt ? ((Date.now() - activeSpeechStartedAt) / 1000) : 0
     activeSpeechStartedAt = 0
@@ -417,6 +426,7 @@ const usePlayerStore = create((set, get) => ({
             if (sessionId !== activeSpeechSessionId || activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
 
             clearSpeechProgressTimer()
+            clearSpeechDelayTimer()
             activeState.setCurrentTime(duration)
             if (idx < activeState.playlist.length - 1) {
                 activeState.playTafsirTrackAtIndex(idx + 1, resolvedSettings)
@@ -429,6 +439,7 @@ const usePlayerStore = create((set, get) => ({
         const failTrack = () => {
             if (sessionId !== activeSpeechSessionId) return
             clearSpeechProgressTimer()
+            clearSpeechDelayTimer()
             set({ isPlaying: false })
         }
 
@@ -443,7 +454,8 @@ const usePlayerStore = create((set, get) => ({
             const utterance = new window.SpeechSynthesisUtterance(segment.text)
             const segmentVoice = resolveTafsirVoiceByLanguage(segment.lang || fallbackLang, resolvedSettings.tafsirVoiceName)
             utterance.lang = segmentVoice?.lang || segment.lang || fallbackLang
-            utterance.rate = rate
+            const segmentRate = Math.min(1.4, Math.max(0.65, rate * Number(segment.rateMultiplier || 1)))
+            utterance.rate = segmentRate
             utterance.pitch = 1
             utterance.volume = 1
             if (segmentVoice) utterance.voice = segmentVoice
@@ -459,6 +471,14 @@ const usePlayerStore = create((set, get) => ({
             utterance.onend = () => {
                 if (sessionId !== activeSpeechSessionId) return
                 completedChars += Math.max(1, segment.text.length)
+                const delayMs = Math.max(0, Number(segment.pauseMs || 0))
+                if (delayMs > 0) {
+                    activeSpeechSegmentDelayTimer = window.setTimeout(() => {
+                        activeSpeechSegmentDelayTimer = null
+                        speakSegment(segmentIndex + 1)
+                    }, delayMs)
+                    return
+                }
                 speakSegment(segmentIndex + 1)
             }
 
