@@ -63,6 +63,12 @@ function isTurkishVoice(voice) {
   return lang.startsWith('tr') || name.includes('turk') || name.includes('türk')
 }
 
+function isArabicVoice(voice) {
+  const lang = String(voice?.lang || '').toLocaleLowerCase('tr-TR')
+  const name = normalizeVoiceName(voice?.name)
+  return lang.startsWith('ar') || name.includes('arabic') || name.includes('arap')
+}
+
 const TAFSIR_SPEECH_REPLACEMENTS = [
   [/s\.a\.v\.|sav\b/gi, 'sallallahu aleyhi ve sellem'],
   [/a\.s\.|as\b/gi, 'aleyhisselam'],
@@ -91,6 +97,99 @@ function normalizeArabicSpeechFragments(text) {
     .replace(/\/+?/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
+}
+
+function detectSegmentLanguage(text) {
+  const content = String(text || '')
+  if (!content) return 'tr-TR'
+  const arabicCount = (content.match(/[\u0600-\u06FF]/gu) || []).length
+  const latinCount = (content.match(/[A-Za-zÇĞİÖŞÜçğıöşü]/g) || []).length
+  if (arabicCount > latinCount) return 'ar-SA'
+  return 'tr-TR'
+}
+
+function splitByLanguage(text) {
+  const source = String(text || '')
+  if (!source) return []
+
+  const parts = []
+  let buffer = ''
+  let activeLang = null
+
+  for (const char of source) {
+    const nextLang = /[\u0600-\u06FF]/u.test(char) ? 'ar-SA' : 'tr-TR'
+    if (!activeLang) {
+      activeLang = nextLang
+      buffer = char
+      continue
+    }
+
+    if (nextLang === activeLang) {
+      buffer += char
+      continue
+    }
+
+    if (buffer.trim()) parts.push({ text: buffer.trim(), lang: activeLang })
+    buffer = char
+    activeLang = nextLang
+  }
+
+  if (buffer.trim()) parts.push({ text: buffer.trim(), lang: activeLang || detectSegmentLanguage(buffer) })
+  return parts
+}
+
+function splitLongText(text, maxLength = 220) {
+  const source = String(text || '').trim()
+  if (!source) return []
+  if (source.length <= maxLength) return [source]
+
+  const segments = source
+    .split(/(?<=[.!?:;۔،])\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  if (!segments.length) return [source]
+
+  const output = []
+  let current = ''
+  segments.forEach((part) => {
+    const candidate = current ? `${current} ${part}` : part
+    if (candidate.length > maxLength && current) {
+      output.push(current)
+      current = part
+      return
+    }
+    current = candidate
+  })
+  if (current) output.push(current)
+
+  return output.length ? output : [source]
+}
+
+export function buildTafsirSpeechQueue(text, options = {}) {
+  const maxLength = Math.max(100, Math.min(320, Number(options.maxChunkLength) || 220))
+  const normalized = normalizeArabicSpeechFragments(String(text || '').trim())
+  if (!normalized) return []
+
+  const langParts = splitByLanguage(normalized)
+  const queue = []
+
+  langParts.forEach((part) => {
+    splitLongText(part.text, maxLength).forEach((chunk) => {
+      const trimmed = chunk.trim()
+      if (!trimmed) return
+      queue.push({
+        text: trimmed,
+        lang: part.lang || detectSegmentLanguage(trimmed)
+      })
+    })
+  })
+
+  if (!queue.length) {
+    return [{ text: normalized, lang: detectSegmentLanguage(normalized) }]
+  }
+
+  return queue
 }
 
 export function getTafsirVoices() {
@@ -135,6 +234,32 @@ export function resolveTafsirVoice(voiceName) {
 
   const neutralMatch = voices.find((voice) => !isLikelyFemaleVoice(voice))
   return neutralMatch || null
+}
+
+export function resolveTafsirVoiceByLanguage(lang, voiceName) {
+  const synthesis = getSpeechSynthesisInstance()
+  if (!synthesis) return null
+
+  const targetLang = String(lang || 'tr-TR').toLocaleLowerCase('tr-TR')
+  const normalizedTargetName = normalizeVoiceName(voiceName)
+  const voices = synthesis.getVoices() || []
+  const filtered = voices.filter((voice) => {
+    if (targetLang.startsWith('ar')) return isArabicVoice(voice)
+    return isTurkishVoice(voice)
+  })
+
+  if (normalizedTargetName) {
+    const exact = filtered.find((voice) => normalizeVoiceName(voice.name) === normalizedTargetName && !isLikelyFemaleVoice(voice))
+    if (exact) return exact
+  }
+
+  const maleMatch = filtered.find((voice) => isLikelyMaleVoice(voice) && !isLikelyFemaleVoice(voice))
+  if (maleMatch) return maleMatch
+
+  const neutral = filtered.find((voice) => !isLikelyFemaleVoice(voice))
+  if (neutral) return neutral
+
+  return targetLang.startsWith('ar') ? resolveTafsirVoice('') : resolveTafsirVoice(voiceName)
 }
 
 export function stripHtmlForSpeech(html) {

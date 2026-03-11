@@ -3,11 +3,13 @@ import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 import {
+    buildTafsirSpeechQueue,
     estimateTafsirSpeechDuration,
     getGoogleTranslateTtsFallbackUrl,
     getGoogleTranslateTtsUrl,
     isTafsirSpeechSupported,
     resolveTafsirVoice,
+    resolveTafsirVoiceByLanguage,
     synthesizePiperTafsirAudio
 } from '../services/tafsirSpeech'
 import { normalizeTextMode } from '../utils/textMode'
@@ -80,6 +82,7 @@ let activeSpeechStartedAt = 0
 let activeSpeechElapsed = 0
 let activeSpeechDuration = 0
 let activeGeneratedAudioUrl = ''
+let activeSpeechSessionId = 0
 
 function clearGeneratedAudioUrl() {
     if (!activeGeneratedAudioUrl) return
@@ -116,6 +119,7 @@ function startSpeechProgressTimer() {
 
 function stopSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
+    activeSpeechSessionId += 1
     clearSpeechProgressTimer()
     clearGeneratedAudioUrl()
     activeSpeechStartedAt = 0
@@ -432,14 +436,19 @@ const usePlayerStore = create((set, get) => ({
             return
         }
 
-        const voice = resolveTafsirVoice(resolvedSettings.tafsirVoiceName)
+        const queue = buildTafsirSpeechQueue(text, { maxChunkLength: 220 })
+        if (!queue.length) {
+            set({ isPlaying: false })
+            return
+        }
+
         const duration = estimateTafsirSpeechDuration(text, rate)
-        const utterance = new window.SpeechSynthesisUtterance(text)
-        utterance.lang = voice?.lang || 'tr-TR'
-        utterance.rate = rate
-        utterance.pitch = 1
-        utterance.volume = 1
-        if (voice) utterance.voice = voice
+        const totalChars = queue.reduce((sum, segment) => sum + Math.max(1, segment.text.length), 0)
+        let completedChars = 0
+        const sessionId = ++activeSpeechSessionId
+        const preferredVoice = resolveTafsirVoice(resolvedSettings.tafsirVoiceName)
+        const fallbackLang = preferredVoice?.lang || 'tr-TR'
+
         activeSpeechElapsed = 0
         activeSpeechDuration = duration
 
@@ -451,16 +460,9 @@ const usePlayerStore = create((set, get) => ({
             isPlaying: true
         })
 
-        utterance.onboundary = (event) => {
+        const finishTrack = () => {
             const activeState = get()
-            if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
-            const progress = Math.max(0, Math.min(1, (event.charIndex || 0) / Math.max(text.length, 1)))
-            activeState.setCurrentTime(duration * progress)
-        }
-
-        utterance.onend = () => {
-            const activeState = get()
-            if (activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
+            if (sessionId !== activeSpeechSessionId || activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
 
             clearSpeechProgressTimer()
             activeState.setCurrentTime(duration)
@@ -472,12 +474,47 @@ const usePlayerStore = create((set, get) => ({
             set({ isPlaying: false })
         }
 
-        utterance.onerror = () => {
+        const failTrack = () => {
+            if (sessionId !== activeSpeechSessionId) return
             clearSpeechProgressTimer()
             set({ isPlaying: false })
         }
 
-        synthesis.speak(utterance)
+        const speakSegment = (segmentIndex) => {
+            if (sessionId !== activeSpeechSessionId) return
+            const segment = queue[segmentIndex]
+            if (!segment) {
+                finishTrack()
+                return
+            }
+
+            const utterance = new window.SpeechSynthesisUtterance(segment.text)
+            const segmentVoice = resolveTafsirVoiceByLanguage(segment.lang || fallbackLang, resolvedSettings.tafsirVoiceName)
+            utterance.lang = segmentVoice?.lang || segment.lang || fallbackLang
+            utterance.rate = rate
+            utterance.pitch = 1
+            utterance.volume = 1
+            if (segmentVoice) utterance.voice = segmentVoice
+
+            utterance.onboundary = (event) => {
+                const activeState = get()
+                if (sessionId !== activeSpeechSessionId || activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
+                const localChars = Math.max(0, Math.min(segment.text.length, Number(event.charIndex) || 0))
+                const progress = Math.max(0, Math.min(1, (completedChars + localChars) / Math.max(1, totalChars)))
+                activeState.setCurrentTime(duration * progress)
+            }
+
+            utterance.onend = () => {
+                if (sessionId !== activeSpeechSessionId) return
+                completedChars += Math.max(1, segment.text.length)
+                speakSegment(segmentIndex + 1)
+            }
+
+            utterance.onerror = failTrack
+            synthesis.speak(utterance)
+        }
+
+        speakSegment(0)
         startSpeechProgressTimer()
         document.dispatchEvent(new CustomEvent('playerVisible'))
     },
