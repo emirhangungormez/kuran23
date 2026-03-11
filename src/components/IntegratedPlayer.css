@@ -8,10 +8,17 @@
     border-radius: 32px;
     padding: 10px 14px;
     width: 360px;
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(50px) saturate(210%);
-    -webkit-backdrop-filter: blur(50px) saturate(210%);
+    transition:
+        width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.35s ease,
+        opacity 0.35s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease,
+        background-color 0.25s ease;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(24px) saturate(155%);
+    -webkit-backdrop-filter: blur(24px) saturate(155%);
     z-index: 9991;
     overflow: visible;
     animation: slideUpPlayer 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -162,7 +169,7 @@
 
 .player-surah-meta {
     font-size: 11px;
-    color: #8e8e93;
+    color: #64666d;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -207,6 +214,15 @@
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+}
+
+.verse-segment,
+.intro-dot,
+.playlist-segment {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    padding: 0;
 }
 
 .verse-segment::after,
@@ -288,6 +304,17 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-radius: 10px;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+
+.control-btn:hover {
+    color: #1d1d1f;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.control-btn:active {
+    transform: translateY(1px);
 }
 
 .player-expanded-content {
@@ -404,7 +431,19 @@
     justify-content: center;
     cursor: pointer;
     gap: 6px;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+    border: 1px solid transparent;
+    outline: none;
+}
+
+.speed-badge:hover,
+.repeat-badge:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.speed-badge:active,
+.repeat-badge:active {
+    transform: translateY(1px);
 }
 
 .repeat-badge {
@@ -481,8 +520,17 @@
 }
 
 .integrated-player.active .toggle-expand svg {
-    transform: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     transform: rotate(180deg);
+}
+
+.control-btn:focus-visible,
+.speed-badge:focus-visible,
+.repeat-badge:focus-visible,
+.verse-segment:focus-visible,
+.intro-dot:focus-visible,
+.playlist-segment:focus-visible {
+    outline: 2px solid var(--accent, #27ae60);
+    outline-offset: 2px;
 }
 
 .control-btn.active {
@@ -513,7 +561,7 @@
 }
 
 [data-theme='dark'] .player-surah-meta {
-    color: #a1a1a6;
+    color: #b1b5bf;
 }
 
 [data-theme='dark'] .player-badge.mekki {
@@ -585,6 +633,15 @@
 [data-theme='dark'] .repeat-badge.active {
     color: #2ecc71;
     background: rgba(46, 204, 113, 0.15);
+}
+
+[data-theme='dark'] .control-btn:focus-visible,
+[data-theme='dark'] .speed-badge:focus-visible,
+[data-theme='dark'] .repeat-badge:focus-visible,
+[data-theme='dark'] .verse-segment:focus-visible,
+[data-theme='dark'] .intro-dot:focus-visible,
+[data-theme='dark'] .playlist-segment:focus-visible {
+    outline-color: #4ade80;
 }
 
 [data-theme='dark'] .control-btn.active {
@@ -667,4 +724,19 @@
 
 [data-theme='dark'] .playlist-seg-name {
     color: #6e6e73;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .integrated-player,
+    .control-btn,
+    .toggle-expand svg,
+    .mini-progress-fill,
+    .verse-segment,
+    .intro-dot,
+    .playlist-segment,
+    .speed-badge,
+    .repeat-badge {
+        animation: none !important;
+        transition: none !important;
+    }
 }

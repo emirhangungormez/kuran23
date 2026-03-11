@@ -12,10 +12,12 @@ import './IntegratedPlayer.css'
 // Helper component for individual verse segments to optimize performance
 const VerseSegment = memo(({ idx, status, onClick, ayahNo }) => {
     return (
-        <div
+        <button
+            type="button"
             className={`verse-segment ${status}`}
             onClick={() => onClick(idx)}
             title={`Ayet ${ayahNo}`}
+            aria-label={`Ayet ${ayahNo}`}
         />
     )
 })
@@ -112,7 +114,7 @@ export default function IntegratedPlayer({
                 {/* Center Controls */}
                 <div className="player-center-controls">
                     <div className="player-main-controls">
-                        <button className="control-btn" onClick={skipPrevious} title="Önceki">
+                        <button className="control-btn" onClick={skipPrevious} title="Önceki" aria-label="Önceki">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                         </button>
 
@@ -120,6 +122,7 @@ export default function IntegratedPlayer({
                             className="control-btn play-btn"
                             onClick={onTogglePlay}
                             title={isPlaying ? 'Durdur' : 'Oynat'}
+                            aria-label={isPlaying ? 'Durdur' : 'Oynat'}
                         >
                             {isPlaying ? (
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -133,7 +136,7 @@ export default function IntegratedPlayer({
                             )}
                         </button>
 
-                        <button className="control-btn" onClick={skipNext} title="Sonraki">
+                        <button className="control-btn" onClick={skipNext} title="Sonraki" aria-label="Sonraki">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                         </button>
                     </div>
@@ -143,6 +146,7 @@ export default function IntegratedPlayer({
                             className="control-btn side-control go-to-source"
                             onClick={() => navigate(link)}
                             title="Sayfaya Git"
+                            aria-label="Sayfaya Git"
                         >
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -155,6 +159,8 @@ export default function IntegratedPlayer({
                             className="control-btn side-control toggle-expand"
                             onClick={() => setIsExpanded(!isExpanded)}
                             title={isExpanded ? 'Küçült' : 'Genişlet'}
+                            aria-expanded={isExpanded}
+                            aria-label={isExpanded ? 'Paneli küçült' : 'Paneli genişlet'}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="18 15 12 9 6 15" />
@@ -204,7 +210,14 @@ export default function IntegratedPlayer({
                         />
                     </div>
                     {!isTafsirContext && (
-                        <div className={`repeat-badge ${isRepeat ? 'active' : ''}`} onClick={onToggleRepeat} title="Sürekli Çal">
+                        <button
+                            type="button"
+                            className={`repeat-badge ${isRepeat ? 'active' : ''}`}
+                            onClick={onToggleRepeat}
+                            title="Sürekli Çal"
+                            aria-pressed={isRepeat}
+                            aria-label="Sürekli Çal"
+                        >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="17 1 21 5 17 9"></polyline>
                                 <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
@@ -212,11 +225,17 @@ export default function IntegratedPlayer({
                                 <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
                             </svg>
                             {isRepeat && <span style={{ fontSize: '10px' }}>Sürekli Çal</span>}
-                        </div>
+                        </button>
                     )}
-                    <div className="speed-badge" onClick={onSpeedChange} title="Oynatma Hızı">
+                    <button
+                        type="button"
+                        className="speed-badge"
+                        onClick={onSpeedChange}
+                        title="Oynatma Hızı"
+                        aria-label="Oynatma Hızı"
+                    >
                         {playbackSpeed}x
-                    </div>
+                    </button>
                 </div>
 
                 {showSegments && context === 'page' && (() => {
@@ -224,13 +243,15 @@ export default function IntegratedPlayer({
 
                     return (
                         <div className={`verse-segments-container ${isVeryLongSurah ? 'grid-view' : ''}`}>
-                            <div
+                            <button
+                                type="button"
                                 className={`intro-dot ${hasIntroTrack
                                     ? (currentVerseIndex === 0 ? 'active' : (currentVerseIndex > 0 ? 'played' : ''))
                                     : (currentVerseIndex === -1 ? 'active' : (currentVerseIndex > -1 ? 'played' : ''))
                                     }`}
                                 onClick={() => onSelectVerse(hasIntroTrack ? 0 : -1)}
                                 title="Başlangıç / Sure Başlığı"
+                                aria-label="Başlangıç / Sure Başlığı"
                             />
 
                             <div className="verse-segments">
@@ -280,11 +301,13 @@ export default function IntegratedPlayer({
                                         else status = 'played';
                                     }
                                     return (
-                                        <div
+                                        <button
+                                            type="button"
                                             key={seg.surahId}
                                             className={`verse-segment playlist-segment ${status}`}
                                             onClick={() => onSelectVerse(seg.startIdx)}
                                             title={seg.name}
+                                            aria-label={seg.name || `Sure ${seg.surahId}`}
                                         />
                                     );
                                 })}
@@ -316,11 +339,13 @@ export default function IntegratedPlayer({
                                 else if (idx < currentVerseIndex) status = 'played'
 
                                 return (
-                                    <div
+                                    <button
+                                        type="button"
                                         key={`${segment.title || 'segment'}-${idx}`}
                                         className={`verse-segment playlist-segment ${status}`}
                                         onClick={() => onSelectVerse(idx)}
                                         title={segment.title || `Bölüm ${idx + 1}`}
+                                        aria-label={segment.title || `Bölüm ${idx + 1}`}
                                     />
                                 )
                             })}
