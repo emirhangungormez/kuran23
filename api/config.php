@@ -24,6 +24,8 @@ define('SUPER_ADMIN_USERNAMES', ['emirhangungormez', 'emirhangungormezpro']);
 define('SUPER_ADMIN_SUPPORTER_UNTIL', '2099-12-31 23:59:59');
 define('AUTH_TOKEN_SECRET', getenv('AUTH_TOKEN_SECRET') ?: 'kuran23_super_secret_change_me_2026');
 define('AUTH_TOKEN_TTL', 60 * 60 * 24 * 14); // 14 gun
+define('GOOGLE_TTS_API_KEY', getenv('GOOGLE_TTS_API_KEY') ?: '');
+define('GOOGLE_TTS_DEFAULT_VOICE', getenv('GOOGLE_TTS_DEFAULT_VOICE') ?: 'tr-TR-Neural2-B');
 
 // CORS headers for React dev
 function setCorsHeaders() {

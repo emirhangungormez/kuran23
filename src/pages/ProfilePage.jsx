@@ -465,12 +465,12 @@ export default function ProfilePage() {
                                         <div className="tafsir-meal-setting-copy">
                                             <h4>Tefsir Seslendirmesi</h4>
                                             <p>
-                                                Tefsir dinleme Edge Neural ile başlar. Edge desteklenmeyen tarayıcılarda otomatik olarak sistem sesine geçer.
+                                                Tefsir dinleme Google Cloud TTS ile başlar. Servis erişilemezse Edge, o da olmazsa sistem sesi otomatik devreye girer.
                                             </p>
                                         </div>
                                         <div className="tafsir-voice-settings">
                                             <div className="tafsir-voice-note">
-                                                Erkek Türkçe ses önceliklenir. Tarayıcı desteğine göre en uyumlu motor otomatik seçilir.
+                                                Erkek Türkçe ses önceliklenir. Motor seçimi otomatik yapılır.
                                             </div>
 
                                             <div className="setting-item compact">

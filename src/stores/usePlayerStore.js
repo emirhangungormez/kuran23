@@ -7,6 +7,7 @@ import {
     isEdgeTafsirTtsSupported,
     isTafsirSpeechSupported,
     resolveTafsirVoice,
+    synthesizeGoogleTafsirAudio,
     synthesizeEdgeTafsirAudio
 } from '../services/tafsirSpeech'
 import { normalizeTextMode } from '../utils/textMode'
@@ -406,8 +407,59 @@ const usePlayerStore = create((set, get) => ({
         }
 
         if (!isEdgeTafsirTtsSupported()) {
+            try {
+                const googleResult = await withTimeout(
+                    synthesizeGoogleTafsirAudio(text, { rate }),
+                    13000,
+                    'Google TTS timeout'
+                )
+                if (googleResult?.url) {
+                    activeTafsirPlaybackEngine = 'google'
+                    activeEdgeAudioUrl = googleResult.url
+                    set({
+                        mode: 'tts',
+                        currentTrackIndex: idx,
+                        currentTime: 0,
+                        duration: Number(googleResult.duration || 0),
+                        isPlaying: true
+                    })
+                    globalAudio.src = googleResult.url
+                    globalAudio.load()
+                    safePlayAudio(() => set({ isPlaying: false }))
+                    document.dispatchEvent(new CustomEvent('playerVisible'))
+                    return
+                }
+            } catch {
+                // Fallback below
+            }
             fallbackToSpeech()
             return
+        }
+
+        try {
+            const googleResult = await withTimeout(
+                synthesizeGoogleTafsirAudio(text, { rate }),
+                13000,
+                'Google TTS timeout'
+            )
+            if (googleResult?.url) {
+                activeTafsirPlaybackEngine = 'google'
+                activeEdgeAudioUrl = googleResult.url
+                set({
+                    mode: 'tts',
+                    currentTrackIndex: idx,
+                    currentTime: 0,
+                    duration: Number(googleResult.duration || 0),
+                    isPlaying: true
+                })
+                globalAudio.src = googleResult.url
+                globalAudio.load()
+                safePlayAudio(() => set({ isPlaying: false }))
+                document.dispatchEvent(new CustomEvent('playerVisible'))
+                return
+            }
+        } catch {
+            // Google unavailable, continue with Edge fallback.
         }
 
         try {
@@ -465,7 +517,7 @@ const usePlayerStore = create((set, get) => ({
     togglePlay: () => {
         const state = get()
         if (state.mode === 'tts') {
-            if (activeTafsirPlaybackEngine === 'edge') {
+            if (activeTafsirPlaybackEngine === 'edge' || activeTafsirPlaybackEngine === 'google') {
                 if (state.isPlaying) {
                     globalAudio.pause()
                     set({ isPlaying: false })
