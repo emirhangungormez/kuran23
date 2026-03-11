@@ -12,7 +12,6 @@ import './IntegratedPlayer.css'
 const DENSE_SEGMENT_THRESHOLD = 90
 const DENSE_SEGMENT_TARGET = 60
 
-// Helper component for individual verse segments to optimize performance
 const VerseSegment = memo(({ idx, status, onClick, ayahNo }) => {
     return (
         <button
@@ -78,6 +77,9 @@ export default function IntegratedPlayer({
     const showDiacritics = normalizeTextMode(settings.textMode, settings.showTajweed) !== 'plain'
     const displaySurahNameAr = resolveArabicTextVisibility(surahNameAr, showDiacritics)
     const isTafsirContext = context === 'tafsir'
+    const isPageContext = context === 'page'
+    const playbackLabel = playingType ? (playingType === 'arabic' ? 'Arapça' : 'Türkçe') : ''
+    const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
     const reciterOptions = availableReciters
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
@@ -95,12 +97,12 @@ export default function IntegratedPlayer({
 
         for (let idx = firstVerseIdx; idx < verses.length; idx += 1) {
             const verse = verses[idx] || {}
-            const ayahNo = verse.ayah || verse.verse_number || (hasIntroTrack ? idx : idx + 1)
+            const resolvedAyahNo = verse.ayah || verse.verse_number || (hasIntroTrack ? idx : idx + 1)
             entries.push({
                 startIdx: idx,
                 endIdx: idx,
-                ayahNo,
-                label: `Ayet ${ayahNo}`
+                ayahNo: resolvedAyahNo,
+                label: `Ayet ${resolvedAyahNo}`
             })
         }
 
@@ -176,7 +178,7 @@ export default function IntegratedPlayer({
         const safeDuration = Math.max(0, Number(duration || 0))
         const safeCurrentTime = Math.max(0, Math.min(safeDuration, Number(currentTime || 0)))
         const baseRatio = safeDuration > 0 ? safeCurrentTime / safeDuration : 0
-        const playbackRate = context === 'tafsir' ? 1 : Math.max(0.25, Number(playbackSpeed || 1))
+        const effectivePlaybackRate = context === 'tafsir' ? 1 : Math.max(0.25, Number(playbackSpeed || 1))
 
         fillEl.style.transform = `scaleX(${baseRatio})`
 
@@ -187,7 +189,7 @@ export default function IntegratedPlayer({
 
         const render = (now) => {
             const elapsedSeconds = Math.max(0, (now - startedAt) / 1000)
-            const visualTime = Math.min(safeDuration, safeCurrentTime + (elapsedSeconds * playbackRate))
+            const visualTime = Math.min(safeDuration, safeCurrentTime + (elapsedSeconds * effectivePlaybackRate))
             const nextRatio = safeDuration > 0 ? (visualTime / safeDuration) : 0
             fillEl.style.transform = `scaleX(${nextRatio})`
 
@@ -209,12 +211,9 @@ export default function IntegratedPlayer({
         <div className={`integrated-player ${isExpanded ? 'active' : ''}`}>
             <div className="player-main-row">
                 <div className="player-rich-info">
-                    <div className="player-row-top">
-                        <span className="player-surah-ar" dir="rtl">{displaySurahNameAr}</span>
-                    </div>
                     <div className="player-row-mid">
-                        <span className="player-surah-tr">
-                            {context === 'page'
+                        <span className={`player-surah-tr ${isPageContext ? '' : 'player-surah-title'}`}>
+                            {isPageContext
                                 ? `${juzNumber}. Cüz ${pageNumber}. Sayfa`
                                 : `${surahNameTr}${ayahNo > 0 ? `:${ayahNo}` : ''}`
                             }
@@ -226,8 +225,15 @@ export default function IntegratedPlayer({
                         )}
                     </div>
                     <div className="player-row-bot">
-                        <span className="player-surah-meta">
-                            {surahNameEn} · {ayahCount} ayet {playingType && `(${playingType === 'arabic' ? 'Arapça' : 'Türkçe'})`}
+                        {hasInlineArabicMeta && (
+                            <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
+                        )}
+                        {hasInlineArabicMeta && <span className="player-meta-separator">·</span>}
+                        <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
+                            {isPageContext
+                                ? `${surahNameEn} · ${ayahCount} ayet${playbackLabel ? ` (${playbackLabel})` : ''}`
+                                : `${ayahCount} ayet${playbackLabel ? ` (${playbackLabel})` : ''}`
+                            }
                         </span>
                     </div>
                 </div>
