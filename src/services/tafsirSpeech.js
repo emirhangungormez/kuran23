@@ -165,6 +165,23 @@ export function estimateTafsirSpeechDuration(text, rate = 1) {
   return Math.max(2, safeText.length / (charsPerSecond * normalizedRate))
 }
 
+function pickGoogleTranslateSampleText(text, maxLength = 180) {
+  const normalized = normalizeArabicSpeechFragments(String(text || '').trim())
+  if (!normalized) return ''
+
+  const firstSentence = normalized.split(/[.!?]/).map((part) => part.trim()).find(Boolean) || normalized
+  return firstSentence.length > maxLength ? firstSentence.slice(0, maxLength).trim() : firstSentence
+}
+
+export function getGoogleTranslateTtsUrl(text, options = {}) {
+  const sample = pickGoogleTranslateSampleText(text, Number(options.maxLength) || 180)
+  if (!sample) return ''
+
+  const lang = String(options.lang || 'tr').toLowerCase().startsWith('ar') ? 'ar' : 'tr'
+  const query = encodeURIComponent(sample)
+  return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${query}`
+}
+
 const PIPER_ENGINE_VOICE_MAP = {
   piper: 'tr_TR-dfki-medium',
   sherpa: 'ar_JO-kareem-medium',

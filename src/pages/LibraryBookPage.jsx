@@ -675,6 +675,14 @@ export default function LibraryBookPage() {
                       >
                         Coqui
                       </button>
+                      <button
+                        type="button"
+                        className={`speed-toggle ${tafsirSpeechEngine === 'gtranslate' ? 'active' : ''}`}
+                        onClick={() => handleTafsirEngineChange('gtranslate')}
+                        title="Google Translate TTS denemesi"
+                      >
+                        Google
+                      </button>
                     </div>
                     <button
                       type="button"

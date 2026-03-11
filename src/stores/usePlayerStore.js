@@ -4,6 +4,7 @@ import { getPage } from '../services/api'
 import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
 import {
     estimateTafsirSpeechDuration,
+    getGoogleTranslateTtsUrl,
     isTafsirSpeechSupported,
     resolveTafsirVoice,
     synthesizePiperTafsirAudio
@@ -178,7 +179,7 @@ function resolveTafsirSpeechRate(settings) {
 
 function resolveTafsirSpeechEngine(settings) {
     const value = String(settings?.tafsirSpeechEngine || '').trim().toLowerCase()
-    if (value === 'sherpa' || value === 'coqui') return value
+    if (value === 'sherpa' || value === 'coqui' || value === 'gtranslate') return value
     return 'piper'
 }
 
@@ -352,6 +353,27 @@ const usePlayerStore = create((set, get) => ({
         const resolvedSettings = resolvePlaybackSettings(settings)
         const rate = resolveTafsirSpeechRate(resolvedSettings)
         const selectedEngine = resolveTafsirSpeechEngine(resolvedSettings)
+
+        if (selectedEngine === 'gtranslate') {
+            const translateUrl = getGoogleTranslateTtsUrl(text, { lang: 'tr', maxLength: 180 })
+            if (translateUrl) {
+                activeGeneratedAudioUrl = translateUrl
+                const duration = estimateTafsirSpeechDuration(text.slice(0, 180), rate)
+                set({
+                    mode: 'tts',
+                    currentTrackIndex: idx,
+                    currentTime: 0,
+                    duration,
+                    isPlaying: true
+                })
+                globalAudio.src = translateUrl
+                globalAudio.load()
+                globalAudio.playbackRate = 1
+                safePlayAudio(() => set({ isPlaying: false }))
+                document.dispatchEvent(new CustomEvent('playerVisible'))
+                return
+            }
+        }
 
         if (selectedEngine === 'piper' || selectedEngine === 'sherpa' || selectedEngine === 'coqui') {
             try {
