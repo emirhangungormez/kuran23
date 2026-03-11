@@ -138,7 +138,7 @@ export default function PlaylistsManager({
     // Track getters now read directly from the item in the playlist
     const getTrackLang = (item) => item?.lang || 'ar';
     const getTrackAr = (item) => item?.arReciterId || settings.defaultReciterId || 7;
-    const getTrackTr = (item) => item?.trReciterId || settings.defaultTurkishReciterId || 1015;
+    const getTrackTr = (item) => item?.trReciterId || settings.defaultTurkishReciterId || 1014;
 
 
     const buildSegments = (items) => {

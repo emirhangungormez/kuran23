@@ -360,7 +360,7 @@ export default function IntegratedPlayer({
                             className="player-reciter-select"
                         />
                         <CustomSelect
-                            value={settings.defaultTurkishReciterId || 1015}
+                            value={settings.defaultTurkishReciterId || 1014}
                             onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
                             options={turkishReciterOptions}
                             prefix="Türkçe: "

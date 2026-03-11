@@ -21,7 +21,7 @@ function createDefaultSettings() {
         coreAuthorIds: [77, 21], // Ana mealler
         selectedAuthorIds: DEFAULT_ACTIVE_IDS, // Diger aktif mealler
         defaultReciterId: 7, // Mishari Rashid al-`Afasy
-        defaultTurkishReciterId: 1015, // Seyfullah Kartal (Meali)
+        defaultTurkishReciterId: 1014, // Mehmet Emin Ay (Meali)
         tafsirVoiceName: '',
         tafsirSpeechEngine: 'piper',
         tafsirVoiceRate: 1,
@@ -49,9 +49,11 @@ function normalizeSettingsPayload(defaults, payload = {}) {
     const merged = { ...defaults, ...(payload && typeof payload === 'object' ? payload : {}) }
     const resolvedTextMode = normalizeTextMode(merged.textMode, Boolean(merged.showTajweed))
     const resolvedTafsirVerseAuthorId = Number(merged.tafsirVerseAuthorId || merged.defaultAuthorId || defaults.tafsirVerseAuthorId)
+    const resolvedTurkishReciterId = Number(merged.defaultTurkishReciterId || defaults.defaultTurkishReciterId || 1014)
     return {
         ...merged,
         tafsirVerseAuthorId: resolvedTafsirVerseAuthorId,
+        defaultTurkishReciterId: resolvedTurkishReciterId === 1015 ? 1014 : resolvedTurkishReciterId,
         textMode: resolvedTextMode,
         showTajweed: modeToLegacyTajweed(resolvedTextMode)
     }

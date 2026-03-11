@@ -17,7 +17,7 @@ const DEFAULT_PLAYBACK_SETTINGS = {
     coreAuthorIds: [77],
     defaultAuthorId: 77,
     defaultReciterId: 7,
-    defaultTurkishReciterId: 1015,
+    defaultTurkishReciterId: 1014,
     tafsirVoiceName: '',
     tafsirSpeechEngine: 'piper',
     tafsirVoiceRate: 1,
@@ -30,8 +30,10 @@ function resolvePlaybackSettings(settings) {
     const normalizePayload = (value) => {
         const base = withDefaults(value)
         const textMode = normalizeTextMode(base.textMode, Boolean(base.showTajweed))
+        const resolvedTurkishReciterId = Number(base.defaultTurkishReciterId || DEFAULT_PLAYBACK_SETTINGS.defaultTurkishReciterId || 1014)
         return {
             ...base,
+            defaultTurkishReciterId: resolvedTurkishReciterId === 1015 ? 1014 : resolvedTurkishReciterId,
             textMode,
             showTajweed: textMode === 'tajweed'
         }
@@ -1358,7 +1360,7 @@ export const initAudioListeners = (settingsFunction) => {
             if (surahId && ayahNo && lastPageAudioRecoveryKey !== recoveryKey) {
                 lastPageAudioRecoveryKey = recoveryKey
                 const fallback = playingType === 'turkish'
-                    ? getTurkishAudioUrl(settings?.defaultTurkishReciterId || 1015, surahId, ayahNo)
+                    ? getTurkishAudioUrl(settings?.defaultTurkishReciterId || 1014, surahId, ayahNo)
                     : getVerseAudioUrl(settings?.defaultReciterId || 7, surahId, ayahNo)
                 const normalizedFallback = normalizeAudioUrl(fallback)
                 const currentSrc = normalizeAudioUrl(globalAudio.currentSrc || globalAudio.src || '')

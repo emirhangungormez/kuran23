@@ -120,7 +120,7 @@ export function getSurahAudioUrl(reciterId, surahId) {
 
     if (reciter.source === 'diyanet') {
         // Diyanet codes: tr_seyfullahkartal, tr_mehmeteminay, ar_osmanSahin, ar_ishakdanis, ar_davutkaya
-        const code = reciter.code || 'tr_seyfullahkartal';
+        const code = reciter.code || 'tr_mehmeteminay';
         return `https://webdosya.diyanet.gov.tr/kuran/kuranikerim/Sound/${code}/${surahId}_0.mp3`;
     }
 
@@ -142,7 +142,7 @@ export function getVerseAudioUrl(reciterId, surahId, verseId) {
     const reciter = RECITER_MAP[Number(reciterId)] || DEFAULT_RECITER;
 
     if (reciter.source === 'diyanet' || reciter.isTurkish) {
-        const code = reciter.code || (reciter.isTurkish ? 'tr_seyfullahkartal' : 'ar_osmanSahin');
+        const code = reciter.code || (reciter.isTurkish ? 'tr_mehmeteminay' : 'ar_osmanSahin');
         return `https://webdosya.diyanet.gov.tr/kuran/kuranikerim/Sound/${code}/${surahId}_${verseId}.mp3`;
     }
 
@@ -171,7 +171,7 @@ export function getTurkishAudioUrl(reciterId, surahId, verseId) {
     }
 
     // Default Diyanet Verse-by-Verse logic
-    const code = (reciter && reciter.isTurkish) ? reciter.code : 'tr_seyfullahkartal';
+    const code = (reciter && reciter.isTurkish) ? reciter.code : 'tr_mehmeteminay';
 
     // If verseId is 0 or null, it's the surah intro/Bismillah
     const vId = verseId || 0;
