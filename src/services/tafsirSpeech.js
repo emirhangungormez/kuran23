@@ -76,12 +76,12 @@ const LATIN_TURKISH_CHAR_REGEX_GLOBAL = /[A-Za-zÇĞİÖŞÜçğıöşü]/g
 const ARABIC_RUN_SPLIT_REGEX = new RegExp(`[${ARABIC_CHAR_CLASS}]+|[^${ARABIC_CHAR_CLASS}]+`, 'gu')
 
 const TAFSIR_SPEECH_REPLACEMENTS = [
-  [/\bs\.a\.v\.\b|\bsav\b/gi, 'sallallahu aleyhi ve sellem'],
-  [/\ba\.s\.\b|\bas\b/gi, 'aleyhisselam'],
-  [/\br\.a\.\b|\bra\b/gi, 'radiyallahu anh'],
-  [/\br\.anh[üu]m\b/gi, 'radiyallahu anhum'],
-  [/k\.s\.|ks\b/gi, 'kuddise sirruh'],
-  [/\bc\.c\.\b|\bcc\b/gi, 'celle celaluhu'],
+  [/\bs\.a\.v\.?\b/gi, 'sallallahu aleyhi ve sellem'],
+  [/\ba\.s\.?\b/gi, 'aleyhisselam'],
+  [/\br\.a\.?\b/gi, 'radiyallahu anh'],
+  [/\br\.\s*anh[üu]m\b/gi, 'radiyallahu anhum'],
+  [/\bk\.s\.?\b/gi, 'kuddise sirruh'],
+  [/\bc\.c\.?\b/gi, 'celle celaluhu'],
   [/\bhz\.\b/gi, 'Hazreti'],
   [/\bM\.Ö\.\b/gi, 'milattan önce'],
   [/\bM\.S\.\b/gi, 'milattan sonra'],
@@ -134,14 +134,14 @@ const TR_PRONUNCIATION_LEXICON = [
 ]
 
 const ARABIC_DIACRITIC_LEXICON = [
-  [/\bالله\b/gu, 'اللّٰه'],
-  [/\bالرحمن\b/gu, 'الرَّحْمٰن'],
-  [/\bالرحيم\b/gu, 'الرَّحِيم'],
-  [/\bمالك\b/gu, 'مَالِك'],
-  [/\bيوم\b/gu, 'يَوْم'],
-  [/\bالدين\b/gu, 'الدِّين'],
-  [/\bالصراط\b/gu, 'الصِّرَاط'],
-  [/\bالمستقيم\b/gu, 'الْمُسْتَقِيم']
+  ['الله', 'اللّٰه'],
+  ['الرحمن', 'الرَّحْمٰن'],
+  ['الرحيم', 'الرَّحِيم'],
+  ['مالك', 'مَالِك'],
+  ['يوم', 'يَوْم'],
+  ['الدين', 'الدِّين'],
+  ['الصراط', 'الصِّرَاط'],
+  ['المستقيم', 'الْمُسْتَقِيم']
 ]
 
 function normalizeBaseSpeechText(text) {
@@ -156,7 +156,7 @@ function normalizeBaseSpeechText(text) {
     .replace(/[“”"]/g, '')
     .replace(/\.{3,}/g, '…')
     .replace(/\(([^)]*?)\)/g, ' $1 ')
-    .replace(/\/+?/g, ' ')
+    .replace(/(?<!\d)\/(?!\d)/g, ' ')
     .replace(/([,:;!?])([^\s])/g, '$1 $2')
     .replace(/([.۔،؟!؛:…]){2,}/g, '$1')
     .replace(/\s+/g, ' ')
@@ -194,27 +194,35 @@ function applyTurkishPronunciationLexicon(text) {
   return next
 }
 
-function normalizeArabicText(text) {
-  return String(text || '')
+function normalizeArabicText(text, options = {}) {
+  let normalized = String(text || '')
     .normalize('NFKC')
     .replace(/[ـ]+/gu, '')
-    .replace(/[ٱأإآ]/gu, 'ا')
-    .replace(/ى/gu, 'ي')
-    .replace(/ؤ/gu, 'و')
-    .replace(/ئ/gu, 'ي')
-    .replace(/[ۖۗۘۙۚۛۜ۝۞]/gu, ' ')
+
+  if (options.aggressiveArabicNormalization === true) {
+    normalized = normalized
+      .replace(/[ٱأإآ]/gu, 'ا')
+      .replace(/ى/gu, 'ي')
+      .replace(/ؤ/gu, 'و')
+      .replace(/ئ/gu, 'ي')
+      .replace(/[ۖۗۘۙۚۛۜ۝۞]/gu, ' ')
+  }
+
+  return normalized
     .replace(/\s+/g, ' ')
     .trim()
 }
 
 function applyArabicDiacritization(text, options = {}) {
   const useDiacritics = options.useArabicDiacritics !== false
-  let next = normalizeArabicText(text)
+  let next = normalizeArabicText(text, options)
 
   if (!useDiacritics) return next
 
-  ARABIC_DIACRITIC_LEXICON.forEach(([pattern, value]) => {
-    next = next.replace(pattern, value)
+  ARABIC_DIACRITIC_LEXICON.forEach(([token, replacement]) => {
+    const escapedToken = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const pattern = new RegExp(`(^|[^${ARABIC_CHAR_CLASS}])(${escapedToken})(?=$|[^${ARABIC_CHAR_CLASS}])`, 'gu')
+    next = next.replace(pattern, (_, prefix) => `${prefix}${replacement}`)
   })
   return next
 }
@@ -364,12 +372,15 @@ export function buildTafsirSpeechQueue(text, options = {}) {
   return queue
 }
 
-export function getTafsirVoices() {
+export function getTafsirVoices(lang = 'tr') {
   const synthesis = getSpeechSynthesisInstance()
   if (!synthesis) return []
 
+  const target = String(lang || 'tr').toLowerCase()
+  const filterByLang = (voice) => (target.startsWith('ar') ? isArabicVoice(voice) : isTurkishVoice(voice))
+
   return (synthesis.getVoices() || [])
-    .filter((voice) => isTurkishVoice(voice) && !isLikelyFemaleVoice(voice))
+    .filter((voice) => filterByLang(voice) && !isLikelyFemaleVoice(voice))
     .map((voice) => ({
       id: `${voice.name}__${voice.lang}`,
       name: voice.name,
@@ -378,11 +389,11 @@ export function getTafsirVoices() {
     }))
 }
 
-export function subscribeTafsirVoices(onChange) {
+export function subscribeTafsirVoices(onChange, lang = 'tr') {
   const synthesis = getSpeechSynthesisInstance()
   if (!synthesis || typeof onChange !== 'function') return () => {}
 
-  const emit = () => onChange(getTafsirVoices())
+  const emit = () => onChange(getTafsirVoices(lang))
   emit()
 
   synthesis.addEventListener?.('voiceschanged', emit)
@@ -474,7 +485,10 @@ function pickGoogleTranslateSampleText(text, maxLength = 180) {
   const normalized = normalizeBaseSpeechText(String(text || '').trim())
   if (!normalized) return ''
 
-  const firstSentence = normalized.split(/[.!?]/).map((part) => part.trim()).find(Boolean) || normalized
+  const firstSentence = normalized
+    .split(/[.!?؟؛۔…]/u)
+    .map((part) => part.trim())
+    .find(Boolean) || normalized
   return firstSentence.length > maxLength ? firstSentence.slice(0, maxLength).trim() : firstSentence
 }
 
@@ -494,6 +508,19 @@ export function getGoogleTranslateTtsFallbackUrl(text, options = {}) {
   const lang = String(options.lang || 'tr').toLowerCase().startsWith('ar') ? 'ar' : 'tr'
   const query = encodeURIComponent(sample)
   return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${query}`
+}
+
+export function releaseGeneratedTafsirAudio(generatedSegments) {
+  if (!Array.isArray(generatedSegments)) return
+  generatedSegments.forEach((segment) => {
+    const url = String(segment?.url || '')
+    if (!url || /^https?:\/\//i.test(url)) return
+    try {
+      URL.revokeObjectURL(url)
+    } catch {
+      // noop
+    }
+  })
 }
 
 const PIPER_ENGINE_VOICE_MAP = {
@@ -578,7 +605,8 @@ async function generatePiperSegment(engine, text, voice, options = {}) {
 export async function synthesizePiperTafsirAudio(text, options = {}) {
   const queue = buildTafsirSpeechQueue(String(text || '').trim(), {
     maxChunkLength: 200,
-    useArabicDiacritics: options.useArabicDiacritics !== false
+    useArabicDiacritics: options.useArabicDiacritics !== false,
+    aggressiveArabicNormalization: options.aggressiveArabicNormalization === true
   })
   if (!queue.length) return null
 

@@ -6,6 +6,7 @@ import {
     buildTafsirSpeechQueue,
     estimateTafsirSpeechDuration,
     isTafsirSpeechSupported,
+    releaseGeneratedTafsirAudio,
     resolveTafsirVoice,
     resolveTafsirVoiceByLanguage,
     synthesizePiperTafsirAudio
@@ -84,7 +85,6 @@ let activeSpeechDuration = 0
 let activeGeneratedAudioUrl = ''
 let activeSpeechSessionId = 0
 let activeSpeechSegmentDelayTimer = null
-let activeGeneratedAudioUrls = []
 let activeGeneratedSegments = []
 let activeGeneratedSegmentIndex = -1
 let preloadedGeneratedSegmentIndex = -1
@@ -111,15 +111,7 @@ function getGeneratedElapsedBefore(index) {
 }
 
 function clearGeneratedAudioUrl() {
-    activeGeneratedAudioUrls.forEach((url) => {
-        if (!url || /^https?:\/\//i.test(url)) return
-        try {
-            URL.revokeObjectURL(url)
-        } catch {
-            // noop
-        }
-    })
-    activeGeneratedAudioUrls = []
+    releaseGeneratedTafsirAudio(activeGeneratedSegments)
     activeGeneratedSegments = []
     activeGeneratedSegmentIndex = -1
     preloadedGeneratedSegmentIndex = -1
@@ -519,7 +511,6 @@ const usePlayerStore = create((set, get) => ({
 
             if (Array.isArray(piperResult) && piperResult.length > 0) {
                 activeGeneratedSegments = piperResult
-                activeGeneratedAudioUrls = piperResult.map((segment) => segment?.url).filter(Boolean)
                 const totalDuration = getGeneratedSegmentsTotalDuration()
                 set({
                     mode: 'tts',
