@@ -181,7 +181,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: 16px;
+    height: 26px;
     border-radius: 0 0 26px 26px;
     overflow: hidden;
     pointer-events: none;
@@ -571,7 +571,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        height: 14px;
+        height: 24px;
         border-radius: 0 0 24px 24px;
     }
 }
