@@ -1,4 +1,5 @@
 import { GENERATED_TTS_LEXICON } from '../data/generatedTtsLexicon'
+import { GENERATED_TTS_LEMMA_LEXICON } from '../data/generatedTtsLemmaLexicon'
 
 const PIPER_CDN_URL = 'https://cdn.jsdelivr.net/npm/piper-tts-web@1.1.2/dist/piper-tts-web.js'
 let piperModulePromise = null
@@ -216,6 +217,7 @@ const TR_FOCUSED_PRONUNCIATION_LEXICON = [
 ]
 
 const MAX_GENERATED_TTS_LEXICON_ENTRIES = 200
+const MAX_GENERATED_TTS_LEMMA_LEXICON_ENTRIES = 200
 
 function buildEffectivePronunciationLexicon() {
   const merged = [...TR_PRONUNCIATION_LEXICON, ...TR_FOCUSED_PRONUNCIATION_LEXICON]
@@ -225,6 +227,21 @@ function buildEffectivePronunciationLexicon() {
     : []
 
   generatedEntries.forEach((entry) => {
+    if (!Array.isArray(entry) || entry.length < 2) return
+    const [pattern, replacement] = entry
+    if (!(pattern instanceof RegExp) || typeof replacement !== 'string') return
+
+    const patternKey = `${pattern.source}__${pattern.flags}`
+    if (seenPatterns.has(patternKey)) return
+    seenPatterns.add(patternKey)
+    merged.push([pattern, replacement])
+  })
+
+  const generatedLemmaEntries = Array.isArray(GENERATED_TTS_LEMMA_LEXICON)
+    ? GENERATED_TTS_LEMMA_LEXICON.slice(0, MAX_GENERATED_TTS_LEMMA_LEXICON_ENTRIES)
+    : []
+
+  generatedLemmaEntries.forEach((entry) => {
     if (!Array.isArray(entry) || entry.length < 2) return
     const [pattern, replacement] = entry
     if (!(pattern instanceof RegExp) || typeof replacement !== 'string') return
