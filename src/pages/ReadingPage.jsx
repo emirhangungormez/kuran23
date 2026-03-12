@@ -406,6 +406,31 @@ export default function ReadingPage() {
                             <CustomSelect value={currentPage} onChange={handlePageChange} options={pageOptions} />
                         </div>
                         <div className="reading-actions">
+                            <div className="audio-control-group">
+                                <button className={`surah-audio-btn arabic ${isPagePlaying && isPlaying && meta.playingType === 'arabic' ? 'playing' : ''}`} onClick={() => togglePlayPage('arabic')}>
+                                    {isPagePlaying && isPlaying && meta.playingType === 'arabic' ? (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                                    ) : (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                                    )}
+                                    Arapça
+                                </button>
+                                <button className={`surah-audio-btn turkish ${isPagePlaying && isPlaying && meta.playingType === 'turkish' ? 'playing' : ''}`} onClick={() => togglePlayPage('turkish')}>
+                                    {isPagePlaying && isPlaying && meta.playingType === 'turkish' ? (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                                    ) : (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                                    )}
+                                    Türkçe
+                                </button>
+                                <button className="speed-toggle" onClick={() => {
+                                    const speeds = [1, 1.25, 1.5, 2]
+                                    const nextSpeed = speeds[(speeds.indexOf(playbackSpeed) + 1) % speeds.length] || 1
+                                    setPlaybackSpeed(nextSpeed)
+                                }}>
+                                    {playbackSpeed}x
+                                </button>
+                            </div>
                             <button
                                 className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                                 onClick={() => {
@@ -449,31 +474,6 @@ export default function ReadingPage() {
                                 onToggle={toggleDiacritics}
                                 className="diacritics-header-btn"
                             />
-                            <div className="audio-control-group">
-                                <button className={`surah-audio-btn arabic ${isPagePlaying && isPlaying && meta.playingType === 'arabic' ? 'playing' : ''}`} onClick={() => togglePlayPage('arabic')}>
-                                    {isPagePlaying && isPlaying && meta.playingType === 'arabic' ? (
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
-                                    ) : (
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-                                    )}
-                                    Arapça
-                                </button>
-                                <button className={`surah-audio-btn turkish ${isPagePlaying && isPlaying && meta.playingType === 'turkish' ? 'playing' : ''}`} onClick={() => togglePlayPage('turkish')}>
-                                    {isPagePlaying && isPlaying && meta.playingType === 'turkish' ? (
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
-                                    ) : (
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-                                    )}
-                                    Türkçe
-                                </button>
-                                <button className="speed-toggle" onClick={() => {
-                                    const speeds = [1, 1.25, 1.5, 2]
-                                    const nextSpeed = speeds[(speeds.indexOf(playbackSpeed) + 1) % speeds.length] || 1
-                                    setPlaybackSpeed(nextSpeed)
-                                }}>
-                                    {playbackSpeed}x
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </header>
