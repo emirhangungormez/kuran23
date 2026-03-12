@@ -4,13 +4,15 @@ import { useSettings } from '../contexts/SettingsContext'
 import CustomSelect from './CustomSelect'
 import { getPage } from '../services/api'
 import {
+    buildTurkishPagePlaylistTracks,
     getArabicReciters,
     getSurahAudioUrl,
     getTurkishAudioUrl,
     getTurkishReciters,
     getVerseAudioUrl,
     isReciterSupported,
-    isTurkishPlaylistSupported
+    isTurkishPlaylistSupported,
+    resolveTurkishVersePlaybackAyah
 } from '../services/audio'
 import usePlayerStore from '../stores/usePlayerStore'
 import { resolveArabicTextVisibility } from '../utils/textEncoding'
@@ -226,8 +228,13 @@ export default function IntegratedPlayer({
             }
 
             if (isTurkishPlaylistSupported(nextSettings.defaultTurkishReciterId) && safeAyahCount >= safeAyahNo) {
+                const playbackStartAyah = resolveTurkishVersePlaybackAyah(
+                    nextSettings.defaultTurkishReciterId,
+                    safeSurahId,
+                    safeAyahNo
+                )
                 const tracks = []
-                for (let ayahIndex = safeAyahNo; ayahIndex <= safeAyahCount; ayahIndex += 1) {
+                for (let ayahIndex = playbackStartAyah || safeAyahNo; ayahIndex <= safeAyahCount; ayahIndex += 1) {
                     tracks.push({
                         audio: getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, safeSurahId, ayahIndex),
                         ayah: ayahIndex,
@@ -266,19 +273,7 @@ export default function IntegratedPlayer({
             }
 
             if (isTurkishPlaylistSupported(nextSettings.defaultTurkishReciterId)) {
-                const tracks = pageTracks
-                    .map((track) => {
-                        const trackSurahId = Number(track?.surah?.id ?? track?.surahId ?? safeSurahId)
-                        const trackAyah = Number(track?.verse_number ?? track?.ayah)
-                        if (!trackSurahId || !trackAyah) return null
-                        return {
-                            ...track,
-                            audio: getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, trackSurahId, trackAyah),
-                            ayah: trackAyah,
-                            surahId: trackSurahId
-                        }
-                    })
-                    .filter(Boolean)
+                const tracks = buildTurkishPagePlaylistTracks(nextSettings.defaultTurkishReciterId, pageTracks)
 
                 const fallbackStartAyah = Number(startAyah || pageTracks[0]?.verse_number || pageTracks[0]?.ayah || 0)
                 const restartIndex = verses.length > 0

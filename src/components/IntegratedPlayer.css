@@ -659,7 +659,7 @@
 }
 
 [data-theme='dark'] .player-mini-progress {
-    background: rgba(255, 255, 255, 0.12);
+    background: transparent;
 }
 
 [data-theme='dark'] .mini-progress-fill,
@@ -720,10 +720,12 @@
     }
 
     .integrated-player {
+        width: min(404px, calc(100vw - 24px));
         border-radius: 24px;
     }
 
     .integrated-player.active {
+        width: min(404px, calc(100vw - 24px));
         padding: 14px 14px 18px;
     }
 

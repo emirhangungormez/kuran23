@@ -6,8 +6,11 @@ import {
     getVerseAudioUrl,
     getTurkishAudioUrl,
     isArabicPlaylistSupported,
+    isTurkishGroupedPlaceholderVerse,
     isTurkishPlaylistSupported,
-    normalizeArabicReciterId
+    buildTurkishPagePlaylistTracks,
+    normalizeArabicReciterId,
+    resolveTurkishPlaylistStartIndex
 } from '../services/audio'
 import {
     buildTafsirSpeechQueue,
@@ -81,6 +84,16 @@ function resolveActiveTrackIndex(state) {
     })
 
     return matchedIndex >= 0 ? matchedIndex : state.currentTrackIndex
+}
+
+function resolvePlaylistStartIndexForMeta(meta, tracks, startIndex, settings) {
+    if (!Array.isArray(tracks) || tracks.length === 0) return 0
+
+    const safeIndex = Math.min(Math.max(0, Number(startIndex) || 0), tracks.length - 1)
+    if (meta?.playingType !== 'turkish') return safeIndex
+
+    const resolvedSettings = resolvePlaybackSettings(settings)
+    return resolveTurkishPlaylistStartIndex(resolvedSettings.defaultTurkishReciterId, tracks, safeIndex)
 }
 
 // Global Audio Element Instance
@@ -449,15 +462,17 @@ const usePlayerStore = create((set, get) => ({
 
     playPlaylist: (tracks, startIndex = 0, metadata) => {
         stopSpeechPlayback()
+        const resolvedMeta = typeof metadata === 'function' ? metadata(get().meta) : metadata
+        const resolvedStartIndex = resolvePlaylistStartIndexForMeta(resolvedMeta, tracks, startIndex)
         set({
             mode: 'playlist',
             playlist: tracks,
-            currentTrackIndex: startIndex,
-            meta: typeof metadata === 'function' ? metadata(get().meta) : metadata,
+            currentTrackIndex: resolvedStartIndex,
+            meta: resolvedMeta,
             isPlaying: true
         })
 
-        const track = tracks[startIndex]
+        const track = tracks[resolvedStartIndex]
         if (track && track.audio) {
             globalAudio.src = normalizeAudioUrl(track.audio)
             globalAudio.load()
@@ -472,15 +487,17 @@ const usePlayerStore = create((set, get) => ({
 
     loadPlaylist: (tracks, startIndex = 0, metadata) => {
         stopSpeechPlayback()
+        const resolvedMeta = typeof metadata === 'function' ? metadata(get().meta) : metadata
+        const resolvedStartIndex = resolvePlaylistStartIndexForMeta(resolvedMeta, tracks, startIndex)
         set({
             mode: 'playlist',
             playlist: tracks,
-            currentTrackIndex: startIndex,
-            meta: typeof metadata === 'function' ? metadata(get().meta) : metadata,
+            currentTrackIndex: resolvedStartIndex,
+            meta: resolvedMeta,
             isPlaying: false
         })
 
-        const track = tracks[startIndex]
+        const track = tracks[resolvedStartIndex]
         if (track && track.audio) {
             globalAudio.src = normalizeAudioUrl(track.audio)
             globalAudio.load()
@@ -786,8 +803,9 @@ const usePlayerStore = create((set, get) => ({
         const state = get()
         if (idx >= 0 && idx < state.playlist.length) {
             stopSpeechPlayback()
-            set({ currentTrackIndex: idx, isPlaying: true })
-            const track = state.playlist[idx]
+            const resolvedIndex = resolvePlaylistStartIndexForMeta(state.meta, state.playlist, idx)
+            set({ currentTrackIndex: resolvedIndex, isPlaying: true })
+            const track = state.playlist[resolvedIndex]
             if (track && track.audio) {
                 globalAudio.src = normalizeAudioUrl(track.audio)
                 globalAudio.playbackRate = state.playbackSpeed
@@ -1187,17 +1205,8 @@ const usePlayerStore = create((set, get) => ({
     },
 
     constructTurkishPagePlaylist: (verses, settings) => {
-        const tracks = []
-        if (isTurkishPlaylistSupported(settings.defaultTurkishReciterId)) {
-            verses.forEach(v => {
-                tracks.push({
-                    audio: getTurkishAudioUrl(settings.defaultTurkishReciterId, v.surah.id, v.verse_number),
-                    ayah: v.verse_number,
-                    surahId: v.surah.id
-                })
-            })
-        }
-        return tracks
+        if (!isTurkishPlaylistSupported(settings.defaultTurkishReciterId)) return []
+        return buildTurkishPagePlaylistTracks(settings.defaultTurkishReciterId, verses)
     },
 
     skipNext: (settings) => {
@@ -1312,6 +1321,25 @@ export const initAudioListeners = (settingsFunction) => {
                 segment.runtimeDuration = Number(audio.duration || segment.duration || 0)
             }
             state.setDuration(Math.max(1, getGeneratedSegmentsTotalDuration()))
+            return
+        }
+
+        const resolvedSettings = resolvePlaybackSettings(settingsFunction ? settingsFunction() : null)
+        const activeTrackIndex = resolveActiveTrackIndex(state)
+        const activeTrack = state.mode === 'playlist' ? state.playlist[activeTrackIndex] : null
+        const activeTrackSurahId = Number(activeTrack?.surahId ?? activeTrack?.surah?.id ?? 0)
+        const activeTrackAyah = Number(activeTrack?.ayah ?? activeTrack?.verse_number ?? 0)
+
+        if (
+            state.mode === 'playlist' &&
+            state.meta.playingType === 'turkish' &&
+            isTurkishGroupedPlaceholderVerse(resolvedSettings.defaultTurkishReciterId, activeTrackSurahId, activeTrackAyah)
+        ) {
+            window.setTimeout(() => {
+                const latestState = usePlayerStore.getState()
+                if (latestState.mode !== 'playlist') return
+                latestState.playNext(resolvedSettings)
+            }, 0)
             return
         }
 

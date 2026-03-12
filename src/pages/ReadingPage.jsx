@@ -61,7 +61,8 @@ export default function ReadingPage() {
         playbackSpeed,
         setPlaybackSpeed,
         setMeta,
-        loadPlaylist
+        loadPlaylist,
+        constructTurkishPagePlaylist
     } = usePlayerStore(useShallow((state) => ({
         playSingle: state.playSingle,
         playPlaylist: state.playPlaylist,
@@ -74,7 +75,8 @@ export default function ReadingPage() {
         playbackSpeed: state.playbackSpeed,
         setPlaybackSpeed: state.setPlaybackSpeed,
         setMeta: state.setMeta,
-        loadPlaylist: state.loadPlaylist
+        loadPlaylist: state.loadPlaylist,
+        constructTurkishPagePlaylist: state.constructTurkishPagePlaylist
     })))
 
     // Derived state for local highlighting
@@ -101,6 +103,10 @@ export default function ReadingPage() {
     const playablePageTracks = useMemo(
         () => pageVerses.filter(v => Number(v?.verse_number) > 0 && !!v?.audio),
         [pageVerses]
+    )
+    const turkishPageTracks = useMemo(
+        () => constructTurkishPagePlaylist(pageVerses, settings),
+        [constructTurkishPagePlaylist, pageVerses, settings.defaultTurkishReciterId]
     )
     const error = queryError ? "Sayfa yüklenirken bir hata oluştu." : null
 
@@ -195,18 +201,8 @@ export default function ReadingPage() {
                 }
 
                 if (isTurkishPlaylistSupported(settings.defaultTurkishReciterId)) {
-                    const tracks = []
-                    pageVerses.forEach(v => {
-                        // Varsa diyanet playlisti
-                        tracks.push({
-                            audio: getTurkishAudioUrl(settings.defaultTurkishReciterId, v.surah.id, v.verse_number),
-                            ayah: v.verse_number,
-                            surahId: v.surah.id
-                        })
-                    })
-
-                    if (tracks.length > 0) {
-                        playPlaylist(tracks, 0, metaData)
+                    if (turkishPageTracks.length > 0) {
+                        playPlaylist(turkishPageTracks, 0, metaData)
                     }
                 } else {
                     const url = getTurkishAudioUrl(settings.defaultTurkishReciterId, currentSurahId, 0)
@@ -263,15 +259,8 @@ export default function ReadingPage() {
             }
         } else {
             if (isTurkishPlaylistSupported(settings.defaultTurkishReciterId)) {
-                const trackList = []
-                pageVerses.forEach(v => {
-                    trackList.push({
-                        audio: getTurkishAudioUrl(settings.defaultTurkishReciterId, v.surah.id, v.verse_number),
-                        ayah: v.verse_number,
-                        surahId: v.surah.id
-                    })
-                })
-                const idx = pageVerses.findIndex(v => v.verse_number === vNo && v.surah.id === sId)
+                const trackList = turkishPageTracks
+                const idx = trackList.findIndex((track) => track.ayah === vNo && track.surahId === sId)
                 if (idx !== -1) {
                     playPlaylist(trackList, idx, metaData)
                 }

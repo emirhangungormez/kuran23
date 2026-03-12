@@ -39,7 +39,12 @@ import {
 } from '../utils/typography'
 import './VersePage.css'
 
-import { getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
+import {
+    getVerseAudioUrl,
+    getTurkishAudioUrl,
+    isTurkishPlaylistSupported,
+    resolveTurkishVersePlaybackAyah
+} from '../services/audio'
 
 export default function VersePage() {
     const { surahId, ayahNo } = useParams()
@@ -242,7 +247,13 @@ export default function VersePage() {
         }
 
         const arabicUrl = getVerseAudioUrl(settings.defaultReciterId, surahId, ayahNo)
-        let turkishUrl = getTurkishAudioUrl(settings.defaultTurkishReciterId, surahId, ayahNo)
+        const requestedAyah = parseInt(ayahNo)
+        const turkishStartAyah = resolveTurkishVersePlaybackAyah(
+            settings.defaultTurkishReciterId,
+            surahId,
+            requestedAyah
+        )
+        let turkishUrl = getTurkishAudioUrl(settings.defaultTurkishReciterId, surahId, turkishStartAyah)
 
         const targetUrl = isArabic ? arabicUrl : turkishUrl
 
@@ -267,7 +278,7 @@ export default function VersePage() {
             if (!isArabic && isTurkishPlaylistSupported(settings.defaultTurkishReciterId)) {
                 // Better UX: Play from this verse to the end of the surah as a playlist
                 const tracks = []
-                const curAyah = parseInt(ayahNo)
+                const curAyah = turkishStartAyah || requestedAyah
                 const maxAyah = sData?.ayahCount || verse.surah?.verse_count || 0
 
                 for (let i = curAyah; i <= maxAyah; i++) {

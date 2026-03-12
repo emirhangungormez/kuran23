@@ -3,6 +3,8 @@
  * Supports whole surah audio (via MP3Quran.net) and verse-by-verse audio (via EveryAyah.com).
  */
 
+import { MEHMET_EMIN_AY_GROUPED_VERSE_MAP } from '../data/mehmetEminAyGroupedVerses'
+
 export const RECITER_MAP = {
     7: { // Mishari Rashid al-`Afasy
         mp3Quran: 'afs',
@@ -257,5 +259,76 @@ export function getTurkishAudioUrl(reciterId, surahId, verseId) {
 export function isTurkishPlaylistSupported(reciterId) {
     const reciter = RECITER_MAP[Number(reciterId)];
     return reciter && reciter.source === 'diyanet';
+}
+
+function getPlaylistTrackIdentity(track) {
+    return {
+        surahId: Number(track?.surahId ?? track?.surah?.id ?? 0),
+        ayah: Number(track?.ayah ?? track?.verse_number ?? 0)
+    }
+}
+
+export function resolveTurkishVersePlaybackAyah(reciterId, surahId, verseId) {
+    const numericReciterId = Number(reciterId)
+    const numericSurahId = Number(surahId)
+    const numericVerseId = Number(verseId)
+
+    if (!Number.isFinite(numericVerseId) || numericVerseId <= 0) return 0
+    if (numericReciterId !== 1014) return numericVerseId
+
+    const fallbackAyah = MEHMET_EMIN_AY_GROUPED_VERSE_MAP[`${numericSurahId}:${numericVerseId}`]
+    return Number.isFinite(Number(fallbackAyah)) && Number(fallbackAyah) > 0
+        ? Number(fallbackAyah)
+        : numericVerseId
+}
+
+export function isTurkishGroupedPlaceholderVerse(reciterId, surahId, verseId) {
+    const numericVerseId = Number(verseId)
+    if (!Number.isFinite(numericVerseId) || numericVerseId <= 0) return false
+    return resolveTurkishVersePlaybackAyah(reciterId, surahId, numericVerseId) !== numericVerseId
+}
+
+export function resolveTurkishPlaylistStartIndex(reciterId, tracks, startIndex = 0) {
+    if (!Array.isArray(tracks) || tracks.length === 0) return 0
+
+    const safeIndex = Math.min(Math.max(0, Number(startIndex) || 0), tracks.length - 1)
+    const track = tracks[safeIndex]
+    const { surahId, ayah } = getPlaylistTrackIdentity(track)
+    const fallbackAyah = resolveTurkishVersePlaybackAyah(reciterId, surahId, ayah)
+
+    if (!surahId || fallbackAyah <= 0 || fallbackAyah === ayah) return safeIndex
+
+    const fallbackIndex = tracks.findIndex((candidate, idx) => {
+        if (idx > safeIndex) return false
+        const identity = getPlaylistTrackIdentity(candidate)
+        return identity.surahId === surahId && identity.ayah === fallbackAyah
+    })
+
+    return fallbackIndex >= 0 ? fallbackIndex : safeIndex
+}
+
+export function buildTurkishPagePlaylistTracks(reciterId, verses) {
+    const safeVerses = Array.isArray(verses) ? verses.filter((verse) => Number(verse?.verse_number) > 0) : []
+    const tracks = safeVerses.map((verse) => ({
+        ...verse,
+        audio: getTurkishAudioUrl(reciterId, verse.surah.id, verse.verse_number),
+        ayah: verse.verse_number,
+        surahId: verse.surah.id
+    }))
+
+    if (!tracks.length) return tracks
+
+    const firstTrack = tracks[0]
+    const fallbackAyah = resolveTurkishVersePlaybackAyah(reciterId, firstTrack.surahId, firstTrack.ayah)
+
+    if (fallbackAyah > 0 && fallbackAyah < firstTrack.ayah) {
+        tracks.unshift({
+            audio: getTurkishAudioUrl(reciterId, firstTrack.surahId, fallbackAyah),
+            ayah: fallbackAyah,
+            surahId: firstTrack.surahId
+        })
+    }
+
+    return tracks
 }
 
