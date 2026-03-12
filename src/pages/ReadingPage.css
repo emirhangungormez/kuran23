@@ -57,13 +57,42 @@
     flex-shrink: 0;
 }
 
+.reading-secondary-actions {
+    flex-shrink: 0;
+}
+
+.reading-selectors .custom-select-trigger {
+    height: 34px;
+    border-radius: 10px;
+    padding: 0 12px;
+}
+
+.reading-selectors .trigger-label {
+    font-size: 11px;
+    font-weight: 600;
+}
+
 .reading-selectors .custom-select-dropdown {
     left: 0;
     right: auto;
     transform: none;
     width: 100%;
     min-width: 100%;
+    max-width: 100%;
+    border-radius: 10px;
     animation: readingSelectDropdownAppear 0.18s var(--ease);
+}
+
+.reading-selectors .dropdown-scroll {
+    padding: 4px;
+}
+
+.reading-selectors .dropdown-item {
+    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 600;
+    border-radius: 7px;
 }
 
 @keyframes readingSelectDropdownAppear {
@@ -437,16 +466,20 @@
     }
 
     .reading-header-center {
-        flex-direction: column;
-        align-items: stretch;
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        grid-template-areas:
+            "audio audio"
+            "secondary selectors";
+        align-items: start;
         width: 100%;
         gap: 8px;
     }
 
     .reading-actions {
-        order: 1;
+        grid-area: audio;
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
         gap: 8px;
     }
@@ -456,8 +489,9 @@
         min-width: 0;
     }
 
-    .reading-actions .reading-secondary-actions {
-        flex: 0 0 auto;
+    .reading-secondary-actions {
+        grid-area: secondary;
+        width: auto !important;
     }
 
     .reading-text-mode-toggle {
@@ -465,7 +499,7 @@
     }
 
     .reading-selectors {
-        order: 2;
+        grid-area: selectors;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         width: 100%;
@@ -479,13 +513,13 @@
     }
 
     .reading-selectors .custom-select-trigger {
-        padding: 8px 10px;
-        height: 40px;
+        padding: 0 10px;
+        height: 36px;
         gap: 4px;
     }
 
     .reading-selectors .trigger-label {
-        font-size: 12px;
+        font-size: 11px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

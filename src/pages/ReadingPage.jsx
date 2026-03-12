@@ -423,51 +423,51 @@ export default function ReadingPage() {
                                     {playbackSpeed}x
                                 </button>
                             </div>
-                            <div className="page-secondary-actions reading-secondary-actions">
-                                <button
-                                    className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
-                                    onClick={() => {
-                                        const nextState = !settings.isPlayerVisible
-                                        updateSettings({ isPlayerVisible: nextState })
+                        </div>
+                        <div className="page-secondary-actions reading-secondary-actions">
+                            <button
+                                className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
+                                onClick={() => {
+                                    const nextState = !settings.isPlayerVisible
+                                    updateSettings({ isPlayerVisible: nextState })
 
-                                        // If opening and not playing, refresh metadata to current page
-                                        if (nextState && mode === 'none' && !isPlaying && pageVerses.length > 0) {
-                                            const firstVerse = pageVerses[0]
-                                            const trackList = pageVerses.filter(v => v.audio)
-                                            const metaData = {
-                                                surahNameAr: firstVerse.surah?.name_original,
-                                                surahNameTr: firstVerse.surah?.name,
-                                                surahNameEn: firstVerse.surah?.name_en,
-                                                surahType: allSurahs.find(s => s.no === parseInt(firstVerse.surah?.id))?.type || (firstVerse.surah?.revelation_place === 'makkah' ? 'Mekki' : 'Medeni'),
-                                                ayahCount: firstVerse.surah?.verse_count,
-                                                playingType: 'arabic',
-                                                link: `/oku/${currentPage}`,
-                                                pageNumber: currentPage,
-                                                juzNumber: firstVerse.juz_number,
-                                                surahId: parseInt(firstVerse.surah?.id),
-                                                context: 'page'
-                                            }
-                                            if (trackList.length > 0) {
-                                                loadPlaylist(trackList, 0, metaData)
-                                            } else {
-                                                setMeta(metaData)
-                                            }
+                                    // If opening and not playing, refresh metadata to current page
+                                    if (nextState && mode === 'none' && !isPlaying && pageVerses.length > 0) {
+                                        const firstVerse = pageVerses[0]
+                                        const trackList = pageVerses.filter(v => v.audio)
+                                        const metaData = {
+                                            surahNameAr: firstVerse.surah?.name_original,
+                                            surahNameTr: firstVerse.surah?.name,
+                                            surahNameEn: firstVerse.surah?.name_en,
+                                            surahType: allSurahs.find(s => s.no === parseInt(firstVerse.surah?.id))?.type || (firstVerse.surah?.revelation_place === 'makkah' ? 'Mekki' : 'Medeni'),
+                                            ayahCount: firstVerse.surah?.verse_count,
+                                            playingType: 'arabic',
+                                            link: `/oku/${currentPage}`,
+                                            pageNumber: currentPage,
+                                            juzNumber: firstVerse.juz_number,
+                                            surahId: parseInt(firstVerse.surah?.id),
+                                            context: 'page'
                                         }
-                                    }}
-                                    title="Oynatıcıyı Göster/Gizle"
-                                    style={{ width: '40px', padding: 0, justifyContent: 'center' }}
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-                                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
-                                    </svg>
-                                </button>
-                                <DiacriticsToggle
-                                    enabled={showDiacritics}
-                                    onToggle={toggleDiacritics}
-                                    className="diacritics-header-btn"
-                                />
-                            </div>
+                                        if (trackList.length > 0) {
+                                            loadPlaylist(trackList, 0, metaData)
+                                        } else {
+                                            setMeta(metaData)
+                                        }
+                                    }
+                                }}
+                                title="Oynatıcıyı Göster/Gizle"
+                                style={{ width: '40px', padding: 0, justifyContent: 'center' }}
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+                                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+                                </svg>
+                            </button>
+                            <DiacriticsToggle
+                                enabled={showDiacritics}
+                                onToggle={toggleDiacritics}
+                                className="diacritics-header-btn"
+                            />
                         </div>
                     </div>
                 </header>
