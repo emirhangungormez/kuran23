@@ -48,7 +48,7 @@ export default function CustomSelect({ value, onChange, options, prefix = '', cl
                                     <span className="dropdown-item-label">{option.label}</span>
                                 </span>
                                 <span className="dropdown-item-side">
-                                    {option.featured && <span className="dropdown-item-badge" aria-hidden="true">★</span>}
+                                    {option.featured && value !== option.value && <span className="dropdown-item-badge" aria-hidden="true">★</span>}
                                     {value === option.value && (
                                         <svg className="item-check" width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M1 5L4 8L11 1" />
