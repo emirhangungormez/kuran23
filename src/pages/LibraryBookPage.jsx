@@ -1,7 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
-import DiacriticsToggle from '../components/DiacriticsToggle'
 import GlobalNav from '../components/GlobalNav'
 import { useSettings } from '../contexts/SettingsContext'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
@@ -558,13 +557,6 @@ export default function LibraryBookPage() {
     updateSettings({ tafsirVoiceRate: nextRate })
   }
 
-  const toggleDiacritics = () => {
-    updateSettings((prev) => {
-      const currentMode = normalizeTextMode(prev.textMode, prev.showTajweed)
-      return { textMode: currentMode === 'plain' ? 'uthmani' : 'plain' }
-    })
-  }
-
   const handleScopeChange = (scope) => {
     setActiveScope(scope)
     if (scope === 'verse') {
@@ -845,11 +837,6 @@ export default function LibraryBookPage() {
                     <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
                     </button>
-                    <DiacriticsToggle
-                      enabled={showDiacritics}
-                      onToggle={toggleDiacritics}
-                      className="diacritics-header-btn"
-                    />
                     {isActiveTafsirPlayback && (
                       <button type="button" className="surah-audio-btn player-toggle" onClick={handleTafsirStop} title="Durdur">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
