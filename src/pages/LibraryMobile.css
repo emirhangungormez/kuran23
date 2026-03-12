@@ -12,6 +12,7 @@
 
 .kutuphane-page .minimal-library-list .library-book-card {
   width: var(--library-card-width);
+  text-align: center;
 }
 
 .kutuphane-page .minimal-library-list .book-cover {
@@ -135,10 +136,14 @@
 }
 
 .kutuphane-page .minimal-library-list .book-cover-ar {
-  text-align: right;
+  text-align: center;
   font-size: 21px;
   min-height: 2.6em;
   max-height: 2.6em;
+}
+
+.kutuphane-page .minimal-library-list .book-caption {
+  text-align: center;
 }
 
 .kutuphane-page .minimal-library-list .book-cover-meta {
