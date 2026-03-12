@@ -1106,7 +1106,7 @@ button {
     width: 100%;
     min-width: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
     gap: 4px;
     padding: 4px;
     height: 40px;
@@ -1127,14 +1127,16 @@ button {
   .verse-page .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(6, 36px);
+    justify-content: space-between;
+    gap: 0;
   }
 
   .reading-view .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 36px);
+    justify-content: start;
     gap: 8px;
   }
 
@@ -1152,16 +1154,32 @@ button {
   .verse-page .page-secondary-actions>.bookmark-btn,
   .surah-page .page-secondary-actions>.diacritics-header-btn,
   .verse-page .page-secondary-actions>.diacritics-header-btn,
-  .surah-page .page-secondary-actions>.speed-toggle,
-  .verse-page .page-secondary-actions>.speed-toggle,
   .reading-view .page-secondary-actions>.surah-audio-btn.player-toggle,
   .reading-view .page-secondary-actions>.diacritics-header-btn,
-  .reading-view .page-secondary-actions>.speed-toggle {
-    width: 100% !important;
-    min-width: 0;
+  .reading-view .page-secondary-actions>.bookmark-btn {
+    width: 36px !important;
+    min-width: 36px;
+    max-width: 36px;
     height: 36px !important;
     justify-content: center;
     padding: 0 !important;
+  }
+
+  .surah-page .audio-control-group .speed-toggle,
+  .verse-page .audio-control-group .speed-toggle,
+  .reading-view .audio-control-group .speed-toggle {
+    min-width: 42px;
+    width: 42px;
+    height: 32px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+
+  .surah-page .page-secondary-actions > *,
+  .verse-page .page-secondary-actions > *,
+  .reading-view .page-secondary-actions > * {
+    margin: 0;
+    border-radius: 10px;
   }
 }
 

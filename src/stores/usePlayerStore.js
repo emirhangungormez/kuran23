@@ -428,11 +428,18 @@ const usePlayerStore = create((set, get) => ({
     setLoadingNextPage: (loading) => set({ loadingNextPage: loading }),
     stopPlayback: ({ resetMode = false } = {}) => {
         globalAudio.pause()
+        globalAudio.currentTime = 0
+        globalAudio.src = ''
+        globalAudio.load()
         stopSpeechPlayback()
         set((state) => ({
             isPlaying: false,
             currentTime: 0,
             duration: 0,
+            playlist: resetMode ? [] : state.playlist,
+            singleSource: resetMode ? null : state.singleSource,
+            currentTrackIndex: resetMode ? 0 : state.currentTrackIndex,
+            meta: resetMode ? {} : state.meta,
             mode: resetMode ? 'none' : state.mode
         }))
     },

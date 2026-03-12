@@ -412,8 +412,6 @@ export default function ReadingPage() {
                                     )}
                                     Türkçe
                                 </button>
-                            </div>
-                            <div className="page-secondary-actions reading-secondary-actions">
                                 <button className="speed-toggle" onClick={() => {
                                     const speeds = [1, 1.25, 1.5, 2]
                                     const nextSpeed = speeds[(speeds.indexOf(playbackSpeed) + 1) % speeds.length] || 1
@@ -421,6 +419,8 @@ export default function ReadingPage() {
                                 }}>
                                     {playbackSpeed}x
                                 </button>
+                            </div>
+                            <div className="page-secondary-actions reading-secondary-actions">
                                 <button
                                     className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                                     onClick={() => {
