@@ -1124,16 +1124,18 @@ button {
   }
 
   .surah-page .page-secondary-actions,
-  .verse-page .page-secondary-actions,
-  .reading-view .page-secondary-actions {
+  .verse-page .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
   }
 
   .reading-view .page-secondary-actions {
+    width: 100%;
+    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .surah-page .page-header-actions>.surah-audio-btn.player-toggle,
@@ -1157,8 +1159,9 @@ button {
   .reading-view .page-secondary-actions>.speed-toggle {
     width: 100% !important;
     min-width: 0;
-    height: 40px !important;
+    height: 36px !important;
     justify-content: center;
+    padding: 0 !important;
   }
 }
 
