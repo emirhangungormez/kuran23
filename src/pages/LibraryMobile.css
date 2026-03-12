@@ -42,9 +42,9 @@
 .kutuphane-page .minimal-library-list .book-cover::after {
   content: '';
   position: absolute;
-  inset: 10px 10px 10px 18px;
+  inset: 8px 8px 8px 16px;
   background: url('../assets/book-cover-ornament.svg') center/100% 100% no-repeat;
-  opacity: 0.84;
+  opacity: 0.58;
   z-index: 0;
 }
 
