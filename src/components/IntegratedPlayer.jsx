@@ -26,6 +26,7 @@ const MOBILE_PLAYER_EDGE_INSET = 12
 const DESKTOP_PLAYER_TOP_INSET = 88
 const MOBILE_PLAYER_TOP_INSET = 76
 const MOBILE_PLAYER_BOTTOM_INSET = 90
+const MOBILE_PLAYER_DRAG_EXCLUDE_SELECTOR = '.player-reciter-select, .custom-select-trigger, .custom-select-dropdown, input[type="range"]'
 
 function normalizeReciterLabel(label) {
     return String(label || '')
@@ -509,6 +510,11 @@ export default function IntegratedPlayer({
         playerEl.style.willChange = ''
     }
 
+    const canStartMobileDragFromTarget = (target) => {
+        if (!(target instanceof Element)) return true
+        return !target.closest(MOBILE_PLAYER_DRAG_EXCLUDE_SELECTOR)
+    }
+
     useEffect(() => {
         const handlePointerMove = (event) => {
             const drag = dragStateRef.current
@@ -698,6 +704,18 @@ export default function IntegratedPlayer({
         }
     }
 
+    const handleContainerPointerDown = (event) => {
+        if (event.pointerType === 'mouse' || window.innerWidth > 768) return
+        if (!canStartMobileDragFromTarget(event.target)) return
+        handleDragStart(event)
+    }
+
+    const handleGripPointerDown = (event) => {
+        event.stopPropagation()
+        if (event.pointerType !== 'mouse' && window.innerWidth <= 768) return
+        handleDragStart(event)
+    }
+
     if (!isVisible) return null
 
     return (
@@ -710,11 +728,12 @@ export default function IntegratedPlayer({
                 right: 'auto',
                 bottom: 'auto'
             } : undefined}
+            onPointerDown={handleContainerPointerDown}
         >
             <div className="player-drag-row">
                 <div
                     className="player-drag-handle"
-                    onPointerDown={handleDragStart}
+                    onPointerDown={handleGripPointerDown}
                     role="presentation"
                     aria-hidden="true"
                 />

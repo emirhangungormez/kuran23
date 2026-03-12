@@ -734,7 +734,7 @@
     }
 
     .player-drag-row {
-        margin: -1px 0 8px;
+        display: none;
     }
 
     .player-drag-handle {
