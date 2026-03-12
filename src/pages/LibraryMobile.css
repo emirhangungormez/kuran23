@@ -2,7 +2,7 @@
   --library-card-width: 154px;
   --library-book-radius: 14px;
   --library-book-ratio: 0.78;
-  --library-book-optical-shift: 5px;
+  --library-book-optical-shift: 8px;
 }
 
 .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
@@ -175,7 +175,7 @@
 @media (max-width: 768px) {
   .kutuphane-page {
     --library-card-width: 168px;
-    --library-book-optical-shift: 4px;
+    --library-book-optical-shift: 7px;
   }
 
   .kutuphane-page .minimal-library-list {
