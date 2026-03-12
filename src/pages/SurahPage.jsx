@@ -38,7 +38,7 @@ import {
 } from '../utils/typography'
 import './SurahPage.css'
 
-import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported, RECITER_MAP } from '../services/audio'
+import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isArabicPlaylistSupported, isTurkishPlaylistSupported } from '../services/audio'
 
 export default function SurahPage() {
     const { id } = useParams()
@@ -235,7 +235,7 @@ export default function SurahPage() {
             }
             if (isArabic) {
                 const reciterId = settings.defaultReciterId
-                if (RECITER_MAP[reciterId]?.source === 'diyanet') {
+                if (isArabicPlaylistSupported(reciterId)) {
                     const tracks = []
                     const idNum = parseInt(id)
                     tracks.push({ audio: getVerseAudioUrl(reciterId, idNum, 0), ayah: 0 })

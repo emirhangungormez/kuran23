@@ -172,6 +172,13 @@ export function isReciterSupported(reciterId) {
     return !!RECITER_MAP[numericId] && !DISABLED_ARABIC_RECITERS.has(numericId);
 }
 
+export function isArabicPlaylistSupported(reciterId) {
+    const resolvedId = resolveReciterId(reciterId);
+    const reciter = RECITER_MAP[resolvedId];
+    if (!reciter || reciter.isTurkish || DISABLED_ARABIC_RECITERS.has(resolvedId)) return false;
+    return reciter.source === 'diyanet' || Boolean(reciter.everyAyah);
+}
+
 export function getArabicReciters() {
     return ARABIC_RECITER_CATALOG
         .filter((reciter) => isReciterSupported(reciter.id))

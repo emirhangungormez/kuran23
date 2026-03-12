@@ -1,7 +1,14 @@
 ﻿import { create } from 'zustand'
 import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
-import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported, normalizeArabicReciterId } from '../services/audio'
+import {
+    getSurahAudioUrl,
+    getVerseAudioUrl,
+    getTurkishAudioUrl,
+    isArabicPlaylistSupported,
+    isTurkishPlaylistSupported,
+    normalizeArabicReciterId
+} from '../services/audio'
 import {
     buildTafsirSpeechQueue,
     estimateTafsirSpeechDuration,
@@ -902,8 +909,17 @@ const usePlayerStore = create((set, get) => ({
                 state.playSingle(url, newMeta)
             }
         } else {
-            const url = getSurahAudioUrl(settings.defaultReciterId, nextId)
-            state.playSingle(url, newMeta)
+            if (isArabicPlaylistSupported(settings.defaultReciterId)) {
+                const tracks = []
+                tracks.push({ audio: getVerseAudioUrl(settings.defaultReciterId, nextId, 0), ayah: 0 })
+                for (let i = 1; i <= nextSurah.ayahCount; i++) {
+                    tracks.push({ audio: getVerseAudioUrl(settings.defaultReciterId, nextId, i), ayah: i })
+                }
+                state.playPlaylist(tracks, 0, newMeta)
+            } else {
+                const url = getSurahAudioUrl(settings.defaultReciterId, nextId)
+                state.playSingle(url, newMeta)
+            }
         }
     },
 
@@ -946,8 +962,17 @@ const usePlayerStore = create((set, get) => ({
                 state.playSingle(url, newMeta)
             }
         } else {
-            const url = getSurahAudioUrl(settings.defaultReciterId, prevId)
-            state.playSingle(url, newMeta)
+            if (isArabicPlaylistSupported(settings.defaultReciterId)) {
+                const tracks = []
+                tracks.push({ audio: getVerseAudioUrl(settings.defaultReciterId, prevId, 0), ayah: 0 })
+                for (let i = 1; i <= prevSurah.ayahCount; i++) {
+                    tracks.push({ audio: getVerseAudioUrl(settings.defaultReciterId, prevId, i), ayah: i })
+                }
+                state.playPlaylist(tracks, 0, newMeta)
+            } else {
+                const url = getSurahAudioUrl(settings.defaultReciterId, prevId)
+                state.playSingle(url, newMeta)
+            }
         }
     },
 
