@@ -1,0 +1,214 @@
+{
+  "generatedAt": "2026-03-12T22:29:37.900Z",
+  "methodology": {
+    "source": "public/tafsir-library/*/001.json",
+    "booksAnalyzed": 16,
+    "note": "Her kitap icin Fatiha suresi surahHtml metni uzerinden batch analiz yapildi. Pasajlar hassas token yogunluguna gore secildi."
+  },
+  "summary": {
+    "booksAnalyzed": 16,
+    "sensitiveOccurrences": 22392,
+    "candidateOccurrences": 1700,
+    "coveredOccurrences": 1697,
+    "unresolvedOccurrences": 3,
+    "candidateCoverageRatio": 0.9982,
+    "unresolvedUniqueTokens": 2,
+    "issueCounts": {
+      "exception_needed": 3
+    }
+  },
+  "samples": [
+    {
+      "bookId": "suyuti_durrul_mensur",
+      "bookTitle": "ed-Dürrü’l-Mensûr",
+      "author": "Süyûtî",
+      "surahId": 1,
+      "sampleText": "Fatiha suresi nazil olduğu zaman İblis çığlık attı. Fâtiha suresi Medine'de nazil oldu. . Vekî , Tefsîr'de ve Firyâbî , Tefsîr'de, Ebû Nuaym, Hilye ve Fadâilu'l- Kur'ân'da, İbn Ebî Şeybe , Musannef’te, Abd b. Humeyd , İbnu'l-Münzir , Tefsîr'de, Ebû Bekr el-Enbârî Mesâhifte, Ebu'ş-seyh , el-Azame'de Mücâhid'den bildiriyor: . Fâtiha suresi, Medine'de nazil olmuştur. . Vekî , Tefsîr'de Mücâhid'den bildiriyor: . Fâtiha suresi, Medine'de nazil olmuştur. . Ebû Bekr b. el-Enbârî Mesâhifte Katâde'den bildiriyor: . Fâtiha suresi, Mekke'de nazil olmuştur. .",
+      "speechReadyText": "Fatiha Suuresi naazil olduğu zaman İblis çığlık attı. Faatiha Suuresi Medinede naazil oldu. . Vekii , Tefsiirde ve Firyaabii , Tefsiirde, Ebuu Nuaym, Hilye ve Fadaailul- Kuraanda, İbn Ebii Şeybe , Musannefte, Abd b. Humeyd , İbnul-Münzir , Tefsiirde, Ebuu Bekr el-Enbaarii Mesaahifte, Ebuuş-seyh , el-Azamede Mücaahidden bildiriyor: . Faatiha Suuresi, Medinede naazil olmuştur. . Vekii , Tefsiirde Mücaahidden bildiriyor: . Faatiha Suuresi, Medinede naazil olmuştur. . Ebuu Bekr b. el-Enbaarii Mesaahifte Kataadeden bildiriyor: . Faatiha Suuresi, Mekkede naazil olmuştur. .",
+      "sensitiveTokenCount": 2606,
+      "unresolvedTokenCount": 2,
+      "candidateCoverageRatio": 0.9938,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "kurtubi",
+      "bookTitle": "Kurtubî Tefsiri",
+      "author": "Kurtubî",
+      "surahId": 1,
+      "sampleText": "Hazret-i Peygamber 'in: Her kimin İmâmı varsa, İmâmın kıraati onun için kıraattir hadisine gelince, zayıf bir hadistir. Bunu el-Hasen b. Umare müsned olarak rivayet etmiştir. Ancak el-Hasen metruk ve zayıf bir ravidir. . Her ikisi de bunu Mûsa b. Ebî Âişe 'den o Abdullah b. Şeddad'dan, o Cabir'den rivayet etmişlerdir. Dârakutnî de bu hadisi rivayet edip şöyle demiştir: Bunu Süfyan es-Sevri, Şu'be, İsrail b. Yûnus, Şerik, Ebû Halid ed-Dalani, Ebû'l-Ahvas, Süfyan b. Uyeyne , Cerir b. Abdulhamid ve başkaları Mûsa b. Ebi Âişe 'den o, Abdillah b.",
+      "speechReadyText": "Hazreti Peygamber 'in: Her kimin İmaamı varsa, İmaamın kıraati onun için kıraattir hadisine gelince, zayıf bir hadistir. Bunu el-Hasen b. Umare müsned olarak rivaayet etmiştir. Ancak el-Hasen metruk ve zayıf bir ravidir. . Her ikisi de bunu Muusa b. Ebii aaişe 'den o Abdullah b. Şeddaddan, o Cabirden rivaayet etmişlerdir. Daarakutnii de bu hadisi rivaayet edip şöyle demiştir: Bunu Süfyan es-Sevri, Şube, İsrail b. Yuunus, Şerik, Ebuu Halid ed-Dalani, Ebuul-Ahvas, Süfyan b. Uyeyne , Ceriir b. Abdulhamid ve başkaları Muusa b. Ebii aaişe 'den o, Abdillah b.",
+      "sensitiveTokenCount": 3402,
+      "unresolvedTokenCount": 1,
+      "candidateCoverageRatio": 0.9959,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "besairul_kuran",
+      "bookTitle": "Beşâirü’l-Kur’ân",
+      "author": "Çağdaş Derleme",
+      "surahId": 1,
+      "sampleText": "-1-. FÂTİHA sureSİ. Mushaf’taki sıralamaya göre bi-rinci, nüzûl sırasına göre beşinci sure-dir. ayetlerinin sayısı yedidir. Mekke’de nâzil olmuştur. Rahmân ve Rahîm olan Allah'ın adıyla. Hamd âlemlerin Rabbi olan Allah’a aittir. Salât ve selâm Allah’ın Rasûlü-ne, âline ve ashabına olsun. Rabbimiz bizden kabul buyur. Çünkü sen duala­rımızı işiten ve her şeyi hak­kıyla bilen­sin. 1: Rahmân ve Rahîm olan Allah’ın adıyla. 2: Hamd Âlemlerin Rabbine mahsustur. 3: O, Rahmân ve Rahîmdir.",
+      "speechReadyText": "-1-. FaaTİHA sureSİ. Mushaftaki sıralamaya göre bi-rinci, nüzuul sırasına göre beşinci Suure-dir. ayetlerinin sayısı yedidir. Mekkede naazil olmuştur. Rahmaan ve Rahiim olan Allahın adıyla. Hamd aalemlerin Rabbi olan Allaha aittir. salaat ve selaam Allahın Rasuulü-ne, aaline ve ashabına olsun. Rabbimiz bizden kabul buyur. Çünkü sen duala­rımızı işiten ve her şeyi hak­kıyla bilen­sin. 1: Rahmaan ve Rahiim olan Allahın adıyla. 2: Hamd aalemlerin Rabbine mahsustur. 3: O, Rahmaan ve Rahiimdir.",
+      "sensitiveTokenCount": 179,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "taberi",
+      "bookTitle": "Câmiu’l-Beyân",
+      "author": "Taberî",
+      "surahId": 1,
+      "sampleText": "Zeyd , İbn-i Sem'an el-Ensari Sıratel müstakimden maksadın İslam olduğunu söylemişlerdir. Muhammed b. el-Hanefiyye ve Abdullah b. Abbas 'tan nakledilen diğer bir görüşe göre Sıratel müstakimden maksat. Allah'ın dinidir. Ebul Aliye ve Hasan-ı Basri den nakledilen başka bir görüşe göre, sıratel müstakim'den maksat, Resûlüllah sallallahü aleyhi ve sellem ve kendisinden sonra Halife olan iki sahabisi Hazret-i Ebubekir ve Hazret-i Ömer dir. Hazret-i Ali 'den. Resûlüllah 'ın 'Sıratel müstakim! . Kur'an olarak, Nüvvaz b.",
+      "speechReadyText": "Zeyd , İbni Seman el-Ensari Sıratel müstakimden maksadın İslam olduğunu söylemişlerdir. Muhammed b. el-Hanefiyye ve Abdullah b. Abbaas 'tan nakledilen diğer bir görüşe göre Sıratel müstakimden maksat. Allahın dinidir. Ebul Aliye ve Hasan-ı Basrii den nakledilen başka bir görüşe göre, sıratel müstakimden maksat, Resuulüllah sallallahü aleyhi ve sellem ve kendisinden sonra Halife olan iki sahabisi Hazreti Ebubekir ve Hazreti Ömer dir. Hazreti Ali 'den. Resuulüllah 'ın 'Sıratel müstakim! . Kuran olarak, Nüvvaz b.",
+      "sensitiveTokenCount": 1449,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "celaleyn",
+      "bookTitle": "Celâleyn Tefsiri",
+      "author": "Mahallî - Süyûtî",
+      "surahId": 1,
+      "sampleText": "CELÂLEYN TEFSİRİ . Celâlü’d-dîn Muhammed b. Ahmed . El-Mahallî eş- Şâfiî ö.864 bölü 1460 . Bakara suresinin başından İsrâ suresinin sonuna kadar . ve . Celâlü’d-dîn Abdurrahmân b. Ebî Bekr . es-Suyûtî eş- Şâfiî ö.911 bölü 1505 . Kehf suresinin başından Nâs suresinin sonuna kadar ve Fâtiha suresi ile birlikte . 1 - FÂTİHA sureSİ . Mekke'de nâzil olup 7 ayet-i kerîmedir. . 1 . Rahmân ve Rahîm olan Allah'ın ismiyle. . 2 . Hamd, yüce Allah'a mahsustur. Bütün yaratıklarca yapılan hamdlerin tamamının sâhibi veya mahlûkatın hamdlerine müstahak O’dur.",
+      "speechReadyText": "CElaaLEYN TEFSİRİ . Celaalüd-diin Muhammed b. Ahmed . El-Mahallii eş- Şaafiii ö.864 bölü 1460 . Bakara suresinin başından İsraa suresinin sonuna kadar . ve . Celaalüd-diin Abdurrahmaan b. Ebii Bekr . es-Suyuutii eş- Şaafiii ö.911 bölü 1505 . Kehf suresinin başından Naas suresinin sonuna kadar ve Faatiha Suuresi ile birlikte . 1 - FaaTİHA sureSİ . Mekkede naazil olup 7 aayeti keriimedir. . 1 . Rahmaan ve Rahiim olan Allahın ismiyle. . 2 . Hamd, yüce Allaha mahsustur. Bütün yaratıklarca yapılan hamdlerin tamamının saahibi veya mahluukatın hamdlerine müstahak Odur.",
+      "sensitiveTokenCount": 99,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "beydavi",
+      "bookTitle": "Envârü’t-Tenzîl",
+      "author": "Beydâvî",
+      "surahId": 1,
+      "sampleText": "BEYDÂVÎ TEFSİRİ: . Envâru't - Tenzîl ve Esrâru't-Te'vîl . Kâdî Beydâvî , . Ebû Sa’îd Abdullah b. Ömer b. Muhammed b. Ali, Şîrâzî, . Şâfiî ö. 685 bölü 1286 . Hamd O Allah'a mahsustur ki, Furkân'ı Kur'ân-ı Kerîm’i âlemleri uyarması için kuluna indirdi. Öz Arapların hatiplerine en kısa suresi nin bir benzerini getirmeleri için meydan okudu da buna gücü yeten biri çıkmadı. Adnanların en güzel konuşanlarından ve Kahtanların en iyi hatiplerinden buna kalkışmak isteyenleri susturdu, öyle ki, bunun karşısında kendilerini büyülenmiş gibi gördüler. .",
+      "speechReadyText": "BEYDaaVii TEFSİRİ: . Envaarut - Tenziil ve Esraarut-Teviil . kaadii Beydaavii , . Ebuu Saiid Abdullah b. Ömer b. Muhammed b. Ali, Şiiraazii, . Şaafiii ö. 685 bölü 1286 . Hamd O Allaha mahsustur ki, Furkaanı Kuraan-ı Keriimi aalemleri uyarması için kuluna indirdi. Öz Arapların hatiplerine en kısa Suuresi nin bir benzerini getirmeleri için meydan okudu da buna gücü yeten biri çıkmadı. Adnanların en güzel konuşanlarından ve Kahtanların en iyi hatiplerinden buna kalkışmak isteyenleri susturdu, öyle ki, bunun karşısında kendilerini büyülenmiş gibi gördüler. .",
+      "sensitiveTokenCount": 619,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "fizilalil_kuran",
+      "bookTitle": "Fî Zılâli’l-Kur’ân",
+      "author": "Seyyid Kutub",
+      "surahId": 1,
+      "sampleText": "Fatiha süresi.",
+      "speechReadyText": "Fatiha süresi.",
+      "sensitiveTokenCount": 0,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "elmalili_orijinal",
+      "bookTitle": "Hak Dini Kur’an Dili",
+      "author": "Elmalılı Hamdi Yazır",
+      "surahId": 1,
+      "sampleText": "Bazıları ise daha ileri giderek Arapça «lâh» isminin Süryanîce olduğu söylenen «Lâha» isminden muarreb olduğunu zannetmişlerdir, nitekim Ebuyezidi Belhî «lâh» demiş a'cemîdir. Çünkü Yehud ve Nesara «lâha» derler. Arap bu lâfzı alıp tasarruf ederek «Allah» demişler, bunun gibi lâhüm ile alâkadar olarak İbranîde «elûhim» vardır. Lâkin tarihen Araptaki «lâh» mı mukaddem, yoksa Süryanîdeki «lâha» mı mukaddem, bunu tayin etmek gayri mümkin olduğu gibi iki lisan beyninde böyle bir kelime münasebeti bulunmak behemehal birinin diğerinden nakline delil olamaz.",
+      "speechReadyText": "Bazıları ise daha ileri giderek Arapça «laah» isminin Süryaniice olduğu söylenen «laaha» isminden muarreb olduğunu zannetmişlerdir, nitekim Ebuyezidi Belhii «laah» demiş acemiidir. Çünkü Yehud ve Nesara «laaha» derler. Arap bu laafzı alıp tasarruf ederek «Allah» demişler, bunun gibi laahüm ile alaakadar olarak İbraniide «eluuhim» vardır. laakin tarihen Araptaki «laah» mı mukaddem, yoksa Süryaniideki «laaha» mı mukaddem, bunu tayin etmek gayri mümkin olduğu gibi iki lisan beyninde böyle bir kelime münasebeti bulunmak behemehal birinin diğerinden nakline delil olamaz.",
+      "sensitiveTokenCount": 4027,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "elmalili_sadelestirilmis",
+      "bookTitle": "Hak Dini Kur’an Dili (Sade)",
+      "author": "Elmalılı Hamdi Yazır",
+      "surahId": 1,
+      "sampleText": "Bunun için biz de bu iki mânâyı zayi etmemek için mealinde din gününün sahibi demeliyiz. . KIRÂET: Burada iki kırâet okuma tarzı vardır. On kırâet imamından yani Nafi, İbn-i Kesir, Ebû Amr, İbnü Âmir, Hamza ve Ebû Ca'-fer kırâetlerinde elifsiz olarak okunur. yani Âsım, Kısâî, Yakub, Halef-i Aşir kırâetlerinde de okunur ki, bizim kırâetimiz de budur. Ve Fâtiha'da mânâ ile ilgili Kur'ân-ı Kerim'in türlü türlü okunma şekilleri ancak buradadır.",
+      "speechReadyText": "Bunun için biz de bu iki maanaayı zayi etmemek için mealinde din gününün saahibi demeliyiz. . KIRaaET: Burada iki kıraaet okuma tarzı vardır. On kıraaet İmaamından yani Naafi, İbni Kesiir, Ebuu Amr, İbnü aamir, Hamza ve Ebuu Ca'-fer kıraaetlerinde elifsiz olarak okunur. yani aasım, Kısaaii, Yakuub, Halefi Aşir kıraaetlerinde de okunur ki, bizim kıraaetimiz de budur. Ve Faatihada maanaa ile ilgili Kuraan-ı Kerimin türlü türlü okunma şekilleri ancak buradadır.",
+      "sensitiveTokenCount": 1669,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "ibn_kesir",
+      "bookTitle": "İbn Kesîr Tefsiri",
+      "author": "İbn Kesîr",
+      "surahId": 1,
+      "sampleText": "Mekkede nazil olmuştur, yedi ayettir .",
+      "speechReadyText": "Mekkede naazil olmuştur, yedi ayettir .",
+      "sensitiveTokenCount": 0,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "ebussuud",
+      "bookTitle": "İrşâdü’l-Aklis-Selîm",
+      "author": "Ebussuûd Efendi",
+      "surahId": 1,
+      "sampleText": "Mâlik radıyallahü anh ve Ebû Hüreyre radıyallahü anh de bu konuda Resûlüllah sallallahü aleyhi ve sellem namazda kıraate el-Hamdü lillâhi rabbi'l-âlemîn ile başlardı Kâne Resûlüllah sallallahü aleyhi ve sellem yeftetıhu'l-kıraate bi el-Hamdü lillâhi rabbil âlemîn diyorlar. İbn-i Mâce: Cilt: 3. Sayfa, 20-21 Hadîs No: 812. 813. 814. . Andolsun ki Resûlüm Biz sana, Seb'an mine'l-Mesanî'yı verdik mealindeki 87. ayeti kesin olarak Mekke'de vahyedilmiştir. surenin mânâsı . 1 .",
+      "speechReadyText": "Maalik radıyallahü anh ve Ebuu Hüreyre radıyallahü anh de bu konuda Resuulüllah sallallahü aleyhi ve sellem namazda kıraate el-Hamdü lillaahi rabbil-aalemiin ile başlardı kaane Resuulüllah sallallahü aleyhi ve sellem yeftetıhul-kıraate bi el-Hamdü lillaahi rabbil aalemiin diyorlar. İbni Maace: Cilt: 3. Sayfa, 20-21 Hadiis No: 812. 813. 814. . Andolsun ki Resuulüm Biz sana, Seban minel-Mesaniiyı verdik mealindeki 87. aayeti kesin olarak Mekkede vahyedilmiştir. suurenin maanaası . 1 .",
+      "sensitiveTokenCount": 760,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "nesefi",
+      "bookTitle": "Medârikü’t-Tenzîl",
+      "author": "Nesefî",
+      "surahId": 1,
+      "sampleText": "Mekke'de veya Medine'de nâzil olmuştur 7 ayetten müteşekkildir. . Bu sure Mekke'de veya Medine'de nâzil olmuştur. Ancak en doğru görüşe göre bu surenin hem Mekke ve hem Medine'de nâzil olduğudur. Namaz farz kılındığı zaman Mekke'de ve kıble Kudüs'deki Mescid-i Aksa'dan Mekke'deki Kâ'be'ye çevrildiğinde de Medine'de nâzil olmuştur. . Fâtiha suresinin İsimleri. . Ümmü'l-Kur'ân : Kur'ân'ın temeli, aslı, anası. Çünkü, bir hadiste Rasûlüllah sallallahü aleyhi ve sellem şöyle buyurmuşlar: .",
+      "speechReadyText": "Mekkede veya Medinede naazil olmuştur 7 ayetten müteşekkildir. . Bu Suure Mekkede veya Medinede naazil olmuştur. Ancak en doğru görüşe göre bu suurenin hem Mekke ve hem Medinede naazil olduğudur. Namaz farz kılındığı zaman Mekkede ve kıble Kudüsdeki Mescidi Aksadan Mekkedeki kaabeye çevrildiğinde de Medinede naazil olmuştur. . Faatiha suresinin İsimleri. . Ümmül-Kuraan : Kuraanın temeli, aslı, anası. Çünkü, bir hadiste Rasuulüllah sallallahü aleyhi ve sellem şöyle buyurmuşlar: .",
+      "sensitiveTokenCount": 569,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "razi",
+      "bookTitle": "Mefâtîhu’l-Gayb",
+      "author": "Fahreddîn er-Râzî",
+      "surahId": 1,
+      "sampleText": "129 diyerek, Cenâb-ı Allah 'tan böyle bir peygamberin sana gönderilmesini isteyen İbrahîm aleyhisselâm 'dır. Öyleyse, ona vereceğin hediyen nedir? denilir Buna karşılık sen, İbrahim aleyhisselâm ve O'nun âl-ü ashabina rahmet ettiğin gibi de! Sana, şöyle denilir: Bütün bu hayırlar, Muhammed sallallahü aleyhi ve sellem 'den, veya İbrahim aleyhisselâm 'dan ya da Cenâb-ı Allah 'dandir. Öyle mi, ne dersin? Buna karşı, sen: Hayır, doğrusu bunların hepsi hamde yegâne lâyık ve yüce Hamîd ve Mecîd olan Cenâb-ı Allah 'dandır Ya Rabbî. Sen Hamîd ve Mecîdsin de.",
+      "speechReadyText": "129 diyerek, Cenaab-ı Allah 'tan böyle bir peygamberin sana gönderilmesini isteyen İbrahiim aleyhisselaam 'dır. Öyleyse, ona vereceğin hediyen nedir? denilir Buna karşılık sen, İbrahim aleyhisselaam ve Onun aal-ü ashabina rahmet ettiğin gibi de! Sana, şöyle denilir: Bütün bu hayırlar, Muhammed sallallahü aleyhi ve sellem 'den, veya İbrahim aleyhisselaam 'dan ya da Cenaab-ı Allah 'dandir. Öyle mi, ne dersin? Buna karşı, sen: Hayır, doğrusu bunların hepsi hamde yegaane laayık ve yüce Hamiid ve Meciid olan Cenaab-ı Allah 'dandır Ya Rabbii. Sen Hamiid ve Meciidsin de.",
+      "sensitiveTokenCount": 6047,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "ruhulbeyan",
+      "bookTitle": "Rûhu’l-Beyân",
+      "author": "İsmail Hakkı Bursevî",
+      "surahId": 1,
+      "sampleText": "MUHTASAR . RÛHU'L-BEYÂN TEFSİRİ: . Tenvîru'l-Ezhân . min . TEFSÎRİ RÛHU'L-BEYÂN . İhtisar Eden: . Muhammed Ali Sâbûnî doğumu: 1930 - … . RÛHU'L-BEYÂN TEFSİRİ . İsmâil Hakkı Bursevî, Hanefî ö.1137 bölü 1725 . MUKADDİME . Kovulmuş şeytandan Allah'a sığınırım . İstiâze, yani eûzü çekmekdeki hikmet, izin istemek ve kapıyı çalmaktır. Çünkü harhangi bir devlet büyüğünün kapısına gelen kimse, onun izni olmaksızın içeri giremez. Kur’an okumak isteyen kimse de, sevgili ile başbaşa konuşmaya girmek istemektedir. Dolayısıyla dilini temizlemek ihtiyacındadır.",
+      "speechReadyText": "MUHTASAR . RuuHUL-beyaan TEFSİRİ: . Tenviirul-Ezhaan . min . TEFSiiRİ RuuHUL-beyaan . İhtisar Eden: . Muhammed Ali Saabuunii doğumu: 1930 - ... . RuuHUL-beyaan TEFSİRİ . İsmaail Hakkı Bursevii, Hanefii ö.1137 bölü 1725 . MUKADDİME . Kovulmuş şeytandan Allaha sığınırım . İstiaaze, yani euuzü çekmekdeki hikmet, izin istemek ve kapıyı çalmaktır. Çünkü harhangi bir devlet büyüğünün kapısına gelen kimse, onun izni olmaksızın içeri giremez. Kuran okumak isteyen kimse de, sevgili ile başbaşa konuşmaya girmek istemektedir. Dolayısıyla dilini temizlemek ihtiyacındadır.",
+      "sensitiveTokenCount": 514,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "tefhimul_kuran",
+      "bookTitle": "Tefhîmu’l-Kur’ân",
+      "author": "Mevdûdî",
+      "surahId": 1,
+      "sampleText": "Okuyucuya şu dersi öğretmek için Kitab'ın en başına yerleştirilmiştir: Eğer samimi olarak Kur'an'dan yararlanmak istiyorsan, Alemlerin Rabbi'ne bu şekilde dua etmelisin. Bu önsöz, okuyucunun kalbinde Alemlerin Rabbi'nden hidayet dileme -hidayeti ancak O verebilir- konusunda kuvvetli bir istek uyandırmayı amaçlar. O halde Fatiha, dolaylı olarak incelemek ve Alemlerin Rabbi'nin, bilginin tek kaynağı olduğu gerçeğini kabul etmek olduğunu öğretmektedir. Bu nedenle, kişi Kur'an'ı incelemeye, O'ndan Hidayet dileyerek başlamalıdır.",
+      "speechReadyText": "Okuyucuya şu dersi öğretmek için Kitabın en başına yerleştirilmiştir: Eğer samimi olarak Kurandan yararlanmak istiyorsan, aalemlerin Rabbine bu şekilde duaa etmelisin. Bu önsöz, okuyucunun kalbinde aalemlerin Rabbinden hidaayet dileme -hidayeti ancak O verebilir- konusunda kuvvetli bir istek uyandırmayı amaçlar. O haalde Fatiha, dolaylı olarak incelemek ve aalemlerin Rabbinin, bilginin tek kaynağı olduğu gerçeğini kabul etmek olduğunu öğretmektedir. Bu nedenle, kişi Kuranı incelemeye, Ondan hidaayet dileyerek başlamalıdır.",
+      "sensitiveTokenCount": 20,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "ibn_cevzi",
+      "bookTitle": "Zâdü’l-Mesîr",
+      "author": "İbnü’l-Cevzî",
+      "surahId": 1,
+      "sampleText": "Bunu da Ebû Salih , İbn Abbâs ’tan rivayet etmiştir. Üçüncüsü: Bunlar cinlerle insanlardır. Yine bu da İbn Abbâs ’tan rivayet edilmiştir. Mücâhid ile Mukatil de böyle demişlerdir. Dördüncüsü: Bunlar cinler, insanlar ve meleklerdir. Bu da İbn Abbâs ’tan rivayet edilmiştir. . İbn Kuteybe de bunu tercih etmiştir. Beşincisi: Bunlar meleklerdir, bu da İbn Abbâs ’tan rivayet edilmiştir. 3 . Rahmandır, Rahimdir. . Rahman ’dır, Rahîm ’dir. Ebû’l - Âliyye , İbn Semeyfa’ ve İsa b. Ömer bunları nasb ile okumuştur. Ebû Rezin el - Ukayli, Rebi’ b.",
+      "speechReadyText": "Bunu da Ebuu saalih , İbn Abbaas 'tan rivaayet etmiştir. Üçüncüsü: Bunlar cinlerle insanlardır. Yine bu da İbn Abbaas 'tan rivaayet edilmiştir. Mücaahid ile Mukaatil de böyle demişlerdir. Dördüncüsü: Bunlar cinler, insanlar ve meleklerdir. Bu da İbn Abbaas 'tan rivaayet edilmiştir. . İbn Kuteybe de bunu tercih etmiştir. Beşincisi: Bunlar meleklerdir, bu da İbn Abbaas 'tan rivaayet edilmiştir. 3 . Rahmandır, Rahimdir. . Rahmaan 'dır, Rahiim 'dir. Ebuul - aaliyye , İbn Semeyfa' ve İsa b. Ömer bunları nasb ile okumuştur. Ebuu Rezin el - Ukayli, Rebi' b.",
+      "sensitiveTokenCount": 432,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    }
+  ]
+}

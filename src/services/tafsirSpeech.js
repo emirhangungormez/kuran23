@@ -1,5 +1,5 @@
-import { GENERATED_TTS_LEXICON } from '../data/generatedTtsLexicon'
-import { GENERATED_TTS_LEMMA_LEXICON } from '../data/generatedTtsLemmaLexicon'
+import { GENERATED_TTS_LEXICON } from '../data/generatedTtsLexicon.js'
+import { GENERATED_TTS_LEMMA_LEXICON } from '../data/generatedTtsLemmaLexicon.js'
 
 const PIPER_CDN_URL = 'https://cdn.jsdelivr.net/npm/piper-tts-web@1.1.2/dist/piper-tts-web.js'
 let piperModulePromise = null
