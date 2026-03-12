@@ -454,7 +454,7 @@ export default function IntegratedPlayer({
         }
     }
 
-    const getMobileCollapsedTop = (height) => {
+    const getMobileAnchoredTop = (height) => {
         const viewportInsets = getPlayerViewportInsets()
         return Math.max(
             viewportInsets.top,
@@ -544,7 +544,7 @@ export default function IntegratedPlayer({
             const isMobileSwipeDrag = event.pointerType !== 'mouse' && window.innerWidth <= 768
             const nextPosition = clampDragPosition(
                 drag.originLeft + deltaX,
-                isMobileSwipeDrag ? drag.originTop : (drag.originTop + deltaY),
+                isMobileSwipeDrag ? getMobileAnchoredTop(drag.height) : (drag.originTop + deltaY),
                 drag.width,
                 drag.height,
                 { allowHorizontalOverflow: isMobileSwipeDrag }
@@ -571,7 +571,7 @@ export default function IntegratedPlayer({
             const rawFinalPosition = drag.hasMoved
                 ? clampDragPosition(
                     drag.originLeft + deltaX,
-                    isMobileSwipeDrag ? drag.originTop : (drag.originTop + deltaY),
+                    isMobileSwipeDrag ? getMobileAnchoredTop(drag.height) : (drag.originTop + deltaY),
                     drag.width,
                     drag.height,
                     { allowHorizontalOverflow: isMobileSwipeDrag }
@@ -580,14 +580,14 @@ export default function IntegratedPlayer({
             const finalPosition = drag.hasMoved
                 ? clampDragPosition(
                     drag.originLeft + deltaX,
-                    isMobileSwipeDrag ? drag.originTop : (drag.originTop + deltaY),
+                    isMobileSwipeDrag ? getMobileAnchoredTop(drag.height) : (drag.originTop + deltaY),
                     drag.width,
                     drag.height
                 )
                 : { left: drag.originLeft, top: drag.originTop }
             const normalizedFinalPosition = (
-                !isExpanded && isMobileSwipeDrag
-                    ? { ...finalPosition, top: getMobileCollapsedTop(drag.height) }
+                isMobileSwipeDrag
+                    ? { ...finalPosition, top: getMobileAnchoredTop(drag.height) }
                     : finalPosition
             )
 
@@ -650,10 +650,10 @@ export default function IntegratedPlayer({
 
             const currentDisplayPosition = dragPosition || storedPosition
             const rect = playerEl.getBoundingClientRect()
-            const isMobileCollapsed = window.innerWidth <= 768 && !isExpanded
+            const isMobileViewport = window.innerWidth <= 768
             const nextPosition = clampDragPosition(
                 storedPosition.left,
-                isMobileCollapsed ? getMobileCollapsedTop(rect.height) : storedPosition.top,
+                isMobileViewport ? getMobileAnchoredTop(rect.height) : storedPosition.top,
                 rect.width,
                 rect.height
             )
@@ -672,7 +672,7 @@ export default function IntegratedPlayer({
                 setDragPosition(nextPosition)
             }
 
-            if ((!persistPosition && !isMobileCollapsed) || isStoredPositionUnchanged) return
+            if ((!persistPosition && !isMobileViewport) || isStoredPositionUnchanged) return
 
             const nextDock = resolveDockFromPoint(
                 nextPosition.left + (rect.width / 2),
@@ -702,7 +702,13 @@ export default function IntegratedPlayer({
         if (!playerEl) return
 
         const rect = playerEl.getBoundingClientRect()
-        const originPosition = clampDragPosition(rect.left, rect.top, rect.width, rect.height)
+        const isMobileViewport = event.pointerType !== 'mouse' && window.innerWidth <= 768
+        const originPosition = clampDragPosition(
+            rect.left,
+            isMobileViewport ? getMobileAnchoredTop(rect.height) : rect.top,
+            rect.width,
+            rect.height
+        )
 
         setDragPosition(originPosition)
         playerEl.style.willChange = 'transform'
