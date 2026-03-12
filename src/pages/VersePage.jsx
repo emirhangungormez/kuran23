@@ -368,11 +368,6 @@ export default function VersePage() {
                         <span>{verse.surah?.name || `Sure ${surahId}`}</span>
                     </Link>
                     <div className="page-header-actions">
-                        <DiacriticsToggle
-                            enabled={showDiacritics}
-                            onToggle={toggleDiacritics}
-                            className="diacritics-header-btn"
-                        />
                         <button
                             className={`surah-audio-btn player-toggle ${settings.isPlayerVisible ? 'bg-active' : ''}`}
                             onClick={() => {
@@ -386,6 +381,11 @@ export default function VersePage() {
                                 <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
                             </svg>
                         </button>
+                        <DiacriticsToggle
+                            enabled={showDiacritics}
+                            onToggle={toggleDiacritics}
+                            className="diacritics-header-btn"
+                        />
                         <div className="audio-control-group">
                             <button
                                 className={`surah-audio-btn arabic ${isVersePlaying && playingType === 'arabic' && isPlaying ? 'playing' : ''}`}
