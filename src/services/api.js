@@ -214,7 +214,8 @@ export async function getReciters() {
         id: reciter.id,
         name: reciter.name,
         style: '',
-        translatedName: reciter.name
+        translatedName: reciter.name,
+        featured: Boolean(reciter.featured)
     }))
 }
 

@@ -105,6 +105,28 @@
     transition: all 0.15s;
 }
 
+.dropdown-item-main {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dropdown-item-label {
+    min-width: 0;
+}
+
+.dropdown-item.featured .dropdown-item-label {
+    color: var(--accent);
+}
+
+.dropdown-item-badge {
+    flex: 0 0 auto;
+    color: var(--accent);
+    font-size: 11px;
+    line-height: 1;
+}
+
 .dropdown-item:hover {
     background: var(--fill);
     color: var(--text-primary);

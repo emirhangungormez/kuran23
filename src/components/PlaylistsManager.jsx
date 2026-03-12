@@ -12,6 +12,7 @@ import {
     getTurkishAudioUrl,
     getTurkishReciters,
     isTurkishPlaylistSupported,
+    normalizeArabicReciterId
 } from '../services/audio';
 import { normalizeArabicDisplayText } from '../utils/textEncoding';
 import './PlaylistsManager.css';
@@ -65,7 +66,10 @@ export default function PlaylistsManager({
     const searchBtnRef = useRef(null);
 
     const turkishReciters = getTurkishReciters();
-    const arOptions = useMemo(() => getArabicReciters().map(r => ({ value: r.id, label: r.name })), []);
+    const arOptions = useMemo(
+        () => getArabicReciters().map(r => ({ value: r.id, label: r.name, featured: Boolean(r.featured) })),
+        []
+    );
     const trOptions = turkishReciters.map(r => ({ value: r.id, label: r.name }));
     const canCreatePlaylist = isSupporter || playlists.length < playlistLimit;
 
@@ -129,7 +133,7 @@ export default function PlaylistsManager({
     // Removed local trackSettings
     // Track getters now read directly from the item in the playlist
     const getTrackLang = (item) => item?.lang || 'ar';
-    const getTrackAr = (item) => item?.arReciterId || settings.defaultReciterId || 7;
+    const getTrackAr = (item) => normalizeArabicReciterId(item?.arReciterId || settings.defaultReciterId || 7);
     const getTrackTr = (item) => item?.trReciterId || settings.defaultTurkishReciterId || 1014;
 
 

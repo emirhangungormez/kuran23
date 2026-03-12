@@ -127,7 +127,8 @@ export default function IntegratedPlayer({
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
             value: r.id,
-            label: normalizeReciterLabel(r.name)
+            label: normalizeReciterLabel(r.name),
+            featured: Boolean(r.featured)
         }))
     const turkishReciterOptions = getTurkishReciters().map(r => ({
         value: r.id,

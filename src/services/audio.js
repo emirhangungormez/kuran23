@@ -126,33 +126,50 @@ export const RECITER_MAP = {
 };
 
 const DEFAULT_RECITER = RECITER_MAP[7];
+const RECITER_FALLBACKS = {
+    12: 6
+};
+const DISABLED_ARABIC_RECITERS = new Set([12]);
 
 const ARABIC_RECITER_CATALOG = [
-    { id: 7, name: 'Mishari Rashid Alafasy' },
+    { id: 7, name: 'Mishari Rashid Alafasy', featured: true },
+    { id: 17, name: 'Yasser Ad-Dossari', featured: true },
+    { id: 4, name: 'Abu Bakr al-Shatri', featured: true },
+    { id: 15, name: 'Nasser Al-Qatami', featured: true },
+    { id: 10, name: "Sa'ud ash-Shuraym", featured: true },
     { id: 13, name: 'Maher Al-Muaiqly' },
-    { id: 17, name: 'Yasser Ad-Dossari' },
-    { id: 15, name: 'Nasser Al-Qatami' },
     { id: 16, name: 'Salah Al-Budair' },
-    { id: 14, name: 'Mahmoud Ali Al-Banna' },
-    { id: 4, name: 'Abu Bakr al-Shatri' },
     { id: 2, name: 'AbdulBaset AbdulSamad - Murattal' },
     { id: 1, name: 'AbdulBaset AbdulSamad - Mujawwad' },
     { id: 3, name: 'Abdur-Rahman as-Sudais' },
-    { id: 10, name: "Sa'ud ash-Shuraym" },
+    { id: 14, name: 'Mahmoud Ali Al-Banna' },
     { id: 5, name: 'Hani ar-Rifai' },
     { id: 6, name: 'Mahmoud Khalil Al-Husary' },
-    { id: 12, name: 'Mahmoud Khalil Al-Husary - Muallim' },
     { id: 9, name: 'Mohamed Siddiq al-Minshawi - Murattal' },
     { id: 8, name: 'Mohamed Siddiq al-Minshawi - Mujawwad' },
     { id: 11, name: 'Mohamed al-Tablawi' }
 ];
+
+function resolveReciterId(reciterId) {
+    const numericId = Number(reciterId);
+    if (!Number.isFinite(numericId)) return 7;
+    return RECITER_FALLBACKS[numericId] || numericId;
+}
+
+export function normalizeArabicReciterId(reciterId) {
+    const resolvedId = resolveReciterId(reciterId);
+    const reciter = RECITER_MAP[resolvedId];
+    if (!reciter || reciter.isTurkish) return 7;
+    return resolvedId;
+}
 
 /**
  * Check if a reciter ID is supported by our audio service
  * @param {number|string} reciterId 
  */
 export function isReciterSupported(reciterId) {
-    return !!RECITER_MAP[Number(reciterId)];
+    const numericId = Number(reciterId);
+    return !!RECITER_MAP[numericId] && !DISABLED_ARABIC_RECITERS.has(numericId);
 }
 
 export function getArabicReciters() {
@@ -167,7 +184,7 @@ export function getArabicReciters() {
  * @param {number|string} surahId 
  */
 export function getSurahAudioUrl(reciterId, surahId) {
-    const reciter = RECITER_MAP[Number(reciterId)] || DEFAULT_RECITER;
+    const reciter = RECITER_MAP[resolveReciterId(reciterId)] || DEFAULT_RECITER;
 
     if (reciter.source === 'diyanet') {
         // Diyanet codes: tr_seyfullahkartal, tr_mehmeteminay, ar_osmanSahin, ar_ishakdanis, ar_davutkaya
@@ -190,7 +207,7 @@ export function getSurahAudioUrl(reciterId, surahId) {
  * @param {number|string} verseId 
  */
 export function getVerseAudioUrl(reciterId, surahId, verseId) {
-    const reciter = RECITER_MAP[Number(reciterId)] || DEFAULT_RECITER;
+    const reciter = RECITER_MAP[resolveReciterId(reciterId)] || DEFAULT_RECITER;
 
     if (reciter.source === 'diyanet' || reciter.isTurkish) {
         const code = reciter.code || (reciter.isTurkish ? 'tr_mehmeteminay' : 'ar_osmanSahin');

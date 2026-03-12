@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { useAuth } from './AuthContext'
 import { getArabicFontFamily, getArabicPrimaryFont } from '../utils/typography'
 import { supabase } from '../infrastructure/supabaseClient'
+import { normalizeArabicReciterId } from '../services/audio'
 import { modeToLegacyTajweed, normalizeTextMode } from '../utils/textMode'
 
 const SettingsContext = createContext()
@@ -51,6 +52,7 @@ function createDefaultSettings() {
 function normalizeSettingsPayload(defaults, payload = {}) {
     const merged = { ...defaults, ...(payload && typeof payload === 'object' ? payload : {}) }
     const resolvedTextMode = normalizeTextMode(merged.textMode, Boolean(merged.showTajweed))
+    const resolvedArabicReciterId = normalizeArabicReciterId(merged.defaultReciterId || defaults.defaultReciterId || 7)
     const resolvedTafsirVerseAuthorId = Number(merged.tafsirVerseAuthorId || merged.defaultAuthorId || defaults.tafsirVerseAuthorId)
     const resolvedTurkishReciterId = Number(merged.defaultTurkishReciterId || defaults.defaultTurkishReciterId || 1014)
     const resolvedPlayerDock = VALID_PLAYER_DOCKS.has(merged.playerDock) ? merged.playerDock : defaults.playerDock
@@ -64,6 +66,7 @@ function normalizeSettingsPayload(defaults, payload = {}) {
         : null
     return {
         ...merged,
+        defaultReciterId: resolvedArabicReciterId,
         tafsirVerseAuthorId: resolvedTafsirVerseAuthorId,
         defaultTurkishReciterId: resolvedTurkishReciterId === 1015 ? 1014 : resolvedTurkishReciterId,
         playerDock: resolvedPlayerDock,
@@ -205,8 +208,10 @@ export function SettingsProvider({ children }) {
                 merged.textMode,
                 typeof nextUpdates?.showTajweed === 'boolean' ? nextUpdates.showTajweed : merged.showTajweed
             )
+            const defaultReciterId = normalizeArabicReciterId(merged.defaultReciterId || prev.defaultReciterId || 7)
             return {
                 ...merged,
+                defaultReciterId,
                 textMode,
                 showTajweed: modeToLegacyTajweed(textMode)
             }

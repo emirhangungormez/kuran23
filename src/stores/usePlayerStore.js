@@ -1,7 +1,7 @@
 ﻿import { create } from 'zustand'
 import { surahs } from '../data/quranData'
 import { getPage } from '../services/api'
-import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported } from '../services/audio'
+import { getSurahAudioUrl, getVerseAudioUrl, getTurkishAudioUrl, isTurkishPlaylistSupported, normalizeArabicReciterId } from '../services/audio'
 import {
     buildTafsirSpeechQueue,
     estimateTafsirSpeechDuration,
@@ -30,9 +30,11 @@ function resolvePlaybackSettings(settings) {
     const normalizePayload = (value) => {
         const base = withDefaults(value)
         const textMode = normalizeTextMode(base.textMode, Boolean(base.showTajweed))
+        const resolvedArabicReciterId = normalizeArabicReciterId(base.defaultReciterId || DEFAULT_PLAYBACK_SETTINGS.defaultReciterId || 7)
         const resolvedTurkishReciterId = Number(base.defaultTurkishReciterId || DEFAULT_PLAYBACK_SETTINGS.defaultTurkishReciterId || 1014)
         return {
             ...base,
+            defaultReciterId: resolvedArabicReciterId,
             defaultTurkishReciterId: resolvedTurkishReciterId === 1015 ? 1014 : resolvedTurkishReciterId,
             textMode,
             showTajweed: textMode === 'tajweed'
