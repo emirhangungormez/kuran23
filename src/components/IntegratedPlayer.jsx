@@ -452,18 +452,39 @@ export default function IntegratedPlayer({
         }
     }
 
-    const clampDragPosition = (left, top, width, height) => {
+    const clampDragPosition = (left, top, width, height, options = {}) => {
+        const { allowHorizontalOverflow = false } = options
         const viewportInsets = getPlayerViewportInsets()
         return {
-            left: Math.min(
-                Math.max(viewportInsets.left, left),
-                Math.max(viewportInsets.left, window.innerWidth - width - viewportInsets.right)
-            ),
+            left: allowHorizontalOverflow
+                ? Math.min(
+                    window.innerWidth + width,
+                    Math.max(-width, left)
+                )
+                : Math.min(
+                    Math.max(viewportInsets.left, left),
+                    Math.max(viewportInsets.left, window.innerWidth - width - viewportInsets.right)
+                ),
             top: Math.min(
                 Math.max(viewportInsets.top, top),
                 Math.max(viewportInsets.top, window.innerHeight - height - viewportInsets.bottom)
             )
         }
+    }
+
+    const shouldDismissPlayerOnSwipe = (rawLeft, width, deltaX, deltaY, pointerType) => {
+        if (pointerType === 'mouse' || window.innerWidth > 768) return false
+
+        const horizontalDistance = Math.abs(deltaX)
+        const verticalDistance = Math.abs(deltaY)
+        if (horizontalDistance < 72 || horizontalDistance <= (verticalDistance * 1.2)) return false
+
+        const visibleLeft = Math.max(0, rawLeft)
+        const visibleRight = Math.min(window.innerWidth, rawLeft + width)
+        const visibleWidth = Math.max(0, visibleRight - visibleLeft)
+        const visibleRatio = width > 0 ? (visibleWidth / width) : 1
+
+        return visibleRatio <= 0.62
     }
 
     const resolveDockFromPoint = (x, y) => {
@@ -505,11 +526,13 @@ export default function IntegratedPlayer({
                 setIsDragging(true)
             }
 
+            const allowHorizontalOverflow = event.pointerType !== 'mouse' && window.innerWidth <= 768
             const nextPosition = clampDragPosition(
                 drag.originLeft + deltaX,
                 drag.originTop + deltaY,
                 drag.width,
-                drag.height
+                drag.height,
+                { allowHorizontalOverflow }
             )
             drag.currentLeft = nextPosition.left
             drag.currentTop = nextPosition.top
@@ -529,6 +552,16 @@ export default function IntegratedPlayer({
 
             const deltaX = event.clientX - drag.startX
             const deltaY = event.clientY - drag.startY
+            const allowHorizontalOverflow = event.pointerType !== 'mouse' && window.innerWidth <= 768
+            const rawFinalPosition = drag.hasMoved
+                ? clampDragPosition(
+                    drag.originLeft + deltaX,
+                    drag.originTop + deltaY,
+                    drag.width,
+                    drag.height,
+                    { allowHorizontalOverflow }
+                )
+                : { left: drag.originLeft, top: drag.originTop }
             const finalPosition = drag.hasMoved
                 ? clampDragPosition(
                     drag.originLeft + deltaX,
@@ -544,12 +577,7 @@ export default function IntegratedPlayer({
             }
             clearDragTransform()
 
-            if (
-                event.pointerType !== 'mouse'
-                && drag.originLeft <= 28
-                && deltaX <= -96
-                && Math.abs(deltaY) < 42
-            ) {
+            if (shouldDismissPlayerOnSwipe(rawFinalPosition.left, drag.width, deltaX, deltaY, event.pointerType)) {
                 updateSettings({ isPlayerVisible: false })
                 setDragPosition(settings.playerPosition || null)
                 setIsDragging(false)
