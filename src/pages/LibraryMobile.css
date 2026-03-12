@@ -1,5 +1,5 @@
 .kutuphane-page {
-  --library-card-width: 156px;
+  --library-card-width: 154px;
 }
 
 .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
@@ -13,7 +13,7 @@
 }
 
 .kutuphane-page .minimal-library-list .book-cover {
-  min-height: 196px;
+  min-height: 192px;
 }
 
 .library-section-head {
