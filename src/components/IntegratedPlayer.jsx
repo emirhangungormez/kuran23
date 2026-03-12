@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../contexts/SettingsContext'
 import CustomSelect from './CustomSelect'
-import { getPage, getReciters } from '../services/api'
+import { getPage } from '../services/api'
 import {
+    getArabicReciters,
     getSurahAudioUrl,
     getTurkishAudioUrl,
     getTurkishReciters,
@@ -88,11 +88,6 @@ export default function IntegratedPlayer({
     const playSingle = usePlayerStore((state) => state.playSingle)
     const playPlaylist = usePlayerStore((state) => state.playPlaylist)
     const loadPlaylist = usePlayerStore((state) => state.loadPlaylist)
-    const { data: availableReciters = [] } = useQuery({
-        queryKey: ['reciters'],
-        queryFn: getReciters,
-        staleTime: 1000 * 60 * 60 * 24
-    })
 
     const formatTime = (time) => {
         if (isNaN(time)) return '0:00'
@@ -123,7 +118,7 @@ export default function IntegratedPlayer({
     const playerMetaText = isPageContext
         ? [surahNameEn, resolvedAyahCount ? `${resolvedAyahCount} ayet` : null].filter(Boolean).join(' / ')
         : (resolvedAyahCount ? `${resolvedAyahCount} ayet` : '')
-    const reciterOptions = availableReciters
+    const reciterOptions = getArabicReciters()
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
             value: r.id,
