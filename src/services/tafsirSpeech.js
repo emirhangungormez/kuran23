@@ -92,6 +92,12 @@ const TAFSIR_SPEECH_REPLACEMENTS = [
   [/\bdr\./gi, 'doktor'],
   [/\bprof\./gi, 'profesör'],
   [/\bdoç\./gi, 'doçent'],
+  [/\bbkz?\./gi, 'bak\u0131n\u0131z'],
+  [/\bkr\u015f\./gi, 'kar\u015f\u0131la\u015ft\u0131r\u0131n\u0131z'],
+  [/\bv\.\s*d\./gi, 've devam\u0131'],
+  [/\bv\.\s*s\./gi, 've saire'],
+  [/\byy\./gi, 'y\u00fczy\u0131l'],
+  [/\bno\./gi, 'numara'],
   [/(\d+)\s*\/\s*(\d+)/g, '$1 bölü $2'],
   [/sûre/gi, 'sure'],
   [/âyet/gi, 'ayet'],
@@ -168,11 +174,52 @@ const TR_PRONUNCIATION_LEXICON = [
   [/\bhalâl\b/gi, 'halaal']
 ]
 
+const TR_FOCUSED_PRONUNCIATION_LEXICON = [
+  [/\bresulullah\b/gi, 'resuulullah'],
+  [/\brasulullah\b/gi, 'rasuulullah'],
+  [/\bcenab\b/gi, 'cenaab'],
+  [/\baleyhisselam\b/gi, 'aleyhisselaam'],
+  [/\bteala\b/gi, 'teaalaa'],
+  [/\bcelaluhu\b/gi, 'celaaluhu'],
+  [/\bbinaenaleyh\b/gi, 'binaaenaleyh'],
+  [/\brivayet\b/gi, 'rivaayet'],
+  [/\bdelalet\b/gi, 'delaalet'],
+  [/\bmucize\b/gi, 'muucize'],
+  [/\bmucizeler\b/gi, 'muucizeler'],
+  [/\bmesela\b/gi, 'meselaa'],
+  [/\bahiret\b/gi, 'aahiret'],
+  [/\bahirette\b/gi, 'aahirette'],
+  [/\bilah\b/gi, 'ilaah'],
+  [/\bilahi\b/gi, 'ilaahii'],
+  [/\bkatade\b/gi, 'kataade'],
+  [/\bm[\u00fcu]cahid\b/gi, 'm\u00fccaahid'],
+  [/\bbeyhaki\b/gi, 'beyhakii'],
+  [/\btirmizi\b/gi, 'tirmizii'],
+  [/\bbuhari\b/gi, 'buhaarii'],
+  [/\btaberani\b/gi, 'taberaanii'],
+  [/\btaberi\b/gi, 'taberii'],
+  [/\bbeydavi\b/gi, 'beydaavii'],
+  [/\bnesefi\b/gi, 'nesefii'],
+  [/\bs[\u00fcu]yuti\b/gi, 's\u00fcyuutii'],
+  [/\bzemah[s\u015f]eri\b/gi, 'zemah\u015ferii'],
+  [/\bmaturidi\b/gi, 'maatuuridii'],
+  [/\bmukatil\b/gi, 'mukaatil'],
+  [/\bmusa\b/gi, 'muusa'],
+  [/\bisa\b/gi, 'iisa'],
+  [/\byusuf\b/gi, 'yuusuf'],
+  [/\byakub\b/gi, 'yakuub'],
+  [/\bnuh\b/gi, 'nuuh'],
+  [/\blut\b/gi, 'luut'],
+  [/\bharun\b/gi, 'haaruun'],
+  [/\bdavud\b/gi, 'daavuud'],
+  [/\beyyub\b/gi, 'eyyuub']
+]
+
 const MAX_GENERATED_TTS_LEXICON_ENTRIES = 200
 
 function buildEffectivePronunciationLexicon() {
-  const merged = [...TR_PRONUNCIATION_LEXICON]
-  const seenPatterns = new Set(TR_PRONUNCIATION_LEXICON.map(([pattern]) => `${pattern.source}__${pattern.flags}`))
+  const merged = [...TR_PRONUNCIATION_LEXICON, ...TR_FOCUSED_PRONUNCIATION_LEXICON]
+  const seenPatterns = new Set(merged.map(([pattern]) => `${pattern.source}__${pattern.flags}`))
   const generatedEntries = Array.isArray(GENERATED_TTS_LEXICON)
     ? GENERATED_TTS_LEXICON.slice(0, MAX_GENERATED_TTS_LEXICON_ENTRIES)
     : []
@@ -194,6 +241,16 @@ function buildEffectivePronunciationLexicon() {
 const EFFECTIVE_TR_PRONUNCIATION_LEXICON = buildEffectivePronunciationLexicon()
 
 const ARABIC_DIACRITIC_LEXICON = [
+  ['\u0628\u0633\u0645 \u0627\u0644\u0644\u0647 \u0627\u0644\u0631\u062d\u0645\u0646 \u0627\u0644\u0631\u062d\u064a\u0645', '\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u064e\u0647\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645\u0650'],
+  ['\u0623\u0639\u0648\u0630 \u0628\u0627\u0644\u0644\u0647 \u0645\u0646 \u0627\u0644\u0634\u064a\u0637\u0627\u0646 \u0627\u0644\u0631\u062c\u064a\u0645', '\u0623\u064e\u0639\u064f\u0648\u0630\u064f \u0628\u0650\u0627\u0644\u0644\u0651\u064e\u0647\u0650 \u0645\u0650\u0646\u064e \u0627\u0644\u0634\u0651\u064e\u064a\u0652\u0637\u064e\u0627\u0646\u0650 \u0627\u0644\u0631\u0651\u064e\u062c\u0650\u064a\u0645\u0650'],
+  ['\u0627\u0639\u0648\u0630 \u0628\u0627\u0644\u0644\u0647 \u0645\u0646 \u0627\u0644\u0634\u064a\u0637\u0627\u0646 \u0627\u0644\u0631\u062c\u064a\u0645', '\u0623\u064e\u0639\u064f\u0648\u0630\u064f \u0628\u0650\u0627\u0644\u0644\u0651\u064e\u0647\u0650 \u0645\u0650\u0646\u064e \u0627\u0644\u0634\u0651\u064e\u064a\u0652\u0637\u064e\u0627\u0646\u0650 \u0627\u0644\u0631\u0651\u064e\u062c\u0650\u064a\u0645\u0650'],
+  ['\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 \u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645', '\u0635\u064e\u0644\u0651\u064e\u0649 \u0627\u0644\u0644\u0651\u064e\u0647\u064f \u0639\u064e\u0644\u064e\u064a\u0652\u0647\u0650 \u0648\u064e\u0633\u064e\u0644\u0651\u064e\u0645\u064e'],
+  ['\u0631\u0636\u064a \u0627\u0644\u0644\u0647 \u0639\u0646\u0647', '\u0631\u064e\u0636\u0650\u064a\u064e \u0627\u0644\u0644\u0651\u064e\u0647\u064f \u0639\u064e\u0646\u0652\u0647\u064f'],
+  ['\u0631\u0636\u064a \u0627\u0644\u0644\u0647 \u0639\u0646\u0647\u0627', '\u0631\u064e\u0636\u0650\u064a\u064e \u0627\u0644\u0644\u0651\u064e\u0647\u064f \u0639\u064e\u0646\u0652\u0647\u064e\u0627'],
+  ['\u0631\u0636\u064a \u0627\u0644\u0644\u0647 \u0639\u0646\u0647\u0645', '\u0631\u064e\u0636\u0650\u064a\u064e \u0627\u0644\u0644\u0651\u064e\u0647\u064f \u0639\u064e\u0646\u0652\u0647\u064f\u0645\u0652'],
+  ['\u0633\u0628\u062d\u0627\u0646\u0647 \u0648\u062a\u0639\u0627\u0644\u0649', '\u0633\u064f\u0628\u0652\u062d\u064e\u0627\u0646\u064e\u0647\u064f \u0648\u064e\u062a\u064e\u0639\u064e\u0627\u0644\u064e\u0649'],
+  ['\u062c\u0644 \u062c\u0644\u0627\u0644\u0647', '\u062c\u064e\u0644\u0651\u064e \u062c\u064e\u0644\u064e\u0627\u0644\u064f\u0647\u064f'],
+  ['\u0627\u0644\u0642\u0631\u0622\u0646', '\u0627\u0644\u0652\u0642\u064f\u0631\u0652\u0622\u0646'],
   ['الله', 'اللّٰه'],
   ['الرحمن', 'الرَّحْمٰن'],
   ['الرحيم', 'الرَّحِيم'],
@@ -203,6 +260,15 @@ const ARABIC_DIACRITIC_LEXICON = [
   ['الصراط', 'الصِّرَاط'],
   ['المستقيم', 'الْمُسْتَقِيم']
 ]
+
+const ARABIC_QURANIC_PAUSE_REPLACEMENTS = [
+  [/[\u06D6\u06DA]/gu, '\u060c '],
+  [/[\u06D7\u06D9\u06DB\u06DC]/gu, '. '],
+  [/[\u06DD\u06DE]/gu, '. '],
+  [/[\uFD3E\uFD3F]/gu, ' ']
+]
+const ARABIC_QURANIC_ANNOTATION_REGEX = /[\u06D6-\u06ED]/gu
+const ARABIC_STANDALONE_NUMBER_REGEX = /(^|[^\p{L}])(?:[\u0660-\u0669\u06F0-\u06F90-9]+)(?=$|[^\p{L}])/gu
 
 function normalizeBaseSpeechText(text) {
   let normalized = String(text || '')
@@ -257,7 +323,18 @@ function applyTurkishPronunciationLexicon(text) {
 function normalizeArabicText(text, options = {}) {
   let normalized = String(text || '')
     .normalize('NFKC')
-    .replace(/[ـ]+/gu, '')
+    .replace(/[\u0640]+/gu, '')
+
+  ARABIC_QURANIC_PAUSE_REPLACEMENTS.forEach(([pattern, replacement]) => {
+    normalized = normalized.replace(pattern, replacement)
+  })
+
+  normalized = normalized
+    .replace(ARABIC_QURANIC_ANNOTATION_REGEX, ' ')
+    .replace(ARABIC_STANDALONE_NUMBER_REGEX, '$1')
+    .replace(/[\u060C]+/gu, '\u060C ')
+    .replace(/[\u061B]+/gu, '\u061B ')
+    .replace(/[\u061F]+/gu, '\u061F ')
 
   if (options.aggressiveArabicNormalization === true) {
     normalized = normalized
@@ -360,13 +437,13 @@ function getPauseMs(text, lang) {
   if (!safeText) return 150
 
   if (String(lang || '').toLowerCase().startsWith('ar')) {
-    if (/[۝﴿﴾]$/.test(safeText)) return 420
-    if (/…$/.test(safeText)) return 340
-    if (/[؟]$/.test(safeText)) return 320
-    if (/[؛]$/.test(safeText)) return 280
-    if (/[،]$/.test(safeText)) return 220
-    if (/[.!:]$/.test(safeText)) return 280
-    return 170
+    if (/[\u06DD\uFD3E\uFD3F]$/.test(safeText)) return 420
+    if (/\u2026$/.test(safeText)) return 360
+    if (/[\u061F]$/.test(safeText)) return 340
+    if (/[\u061B]$/.test(safeText)) return 300
+    if (/[\u060C]$/.test(safeText)) return 240
+    if (/[.!:]$/.test(safeText)) return 320
+    return 190
   }
 
   if (/…$/.test(safeText)) return 340
@@ -380,7 +457,10 @@ function getRateMultiplier(text, lang) {
   if (!safeText) return 1
 
   if (String(lang || '').toLowerCase().startsWith('ar')) {
-    return 0.82
+    const arabicCharCount = (safeText.match(ARABIC_CHAR_REGEX_GLOBAL) || []).length
+    if (arabicCharCount > 100) return 0.76
+    if (arabicCharCount > 56) return 0.8
+    return 0.84
   }
 
   if (/\b\d+\.?\s*ayet\b/i.test(safeText)) return 0.93
@@ -399,7 +479,8 @@ export function buildTafsirSpeechQueue(text, options = {}) {
   const queue = []
 
   langParts.forEach((part) => {
-    splitLongText(part.text, maxLength).forEach((chunk) => {
+    const chunkMaxLength = part.lang?.startsWith('ar') ? Math.min(maxLength, 160) : maxLength
+    splitLongText(part.text, chunkMaxLength).forEach((chunk) => {
       const trimmed = chunk.trim()
       if (!trimmed) return
       const lang = part.lang || detectSegmentLanguage(trimmed)
