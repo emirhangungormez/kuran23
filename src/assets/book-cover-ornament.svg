@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" fill="none">
+  <defs>
+    <g id="cornerOrnament" stroke="#E8C588" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 54C6 26 22 9 52 2" stroke-opacity=".7" stroke-width="1.8"/>
+      <path d="M14 48C17 31 29 18 46 14" stroke-opacity=".58" stroke-width="1.4"/>
+      <path d="M4 35C15 34 23 29 29 18C34 28 42 33 53 34" stroke-opacity=".55" stroke-width="1.2"/>
+      <path d="M12 12C23 18 31 27 36 39" stroke-opacity=".52" stroke-width="1.2"/>
+      <path d="M24 4C34 10 43 20 49 31" stroke-opacity=".46" stroke-width="1"/>
+      <circle cx="27" cy="26" r="2.2" fill="#E8C588" fill-opacity=".32" stroke="none"/>
+      <circle cx="16" cy="40" r="1.6" fill="#E8C588" fill-opacity=".26" stroke="none"/>
+    </g>
+
+    <g id="centerMedallion" stroke="#E8C588" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M100 72C117 82 133 97 141 124C133 151 117 166 100 176C83 166 67 151 59 124C67 97 83 82 100 72Z" stroke-opacity=".74" stroke-width="1.8"/>
+      <path d="M100 87C112 95 122 107 126 124C122 141 112 153 100 161C88 153 78 141 74 124C78 107 88 95 100 87Z" stroke-opacity=".56" stroke-width="1.2"/>
+      <path d="M100 95C105 104 113 110 121 114C113 117 105 123 100 133C95 123 87 117 79 114C87 110 95 104 100 95Z" stroke-opacity=".56" stroke-width="1.1"/>
+      <path d="M100 115C106 122 112 128 118 131" stroke-opacity=".5" stroke-width="1"/>
+      <path d="M100 115C94 122 88 128 82 131" stroke-opacity=".5" stroke-width="1"/>
+      <path d="M100 133C106 126 112 120 118 117" stroke-opacity=".5" stroke-width="1"/>
+      <path d="M100 133C94 126 88 120 82 117" stroke-opacity=".5" stroke-width="1"/>
+      <path d="M100 60L108 68L100 76L92 68L100 60Z" stroke-opacity=".62" stroke-width="1.2"/>
+      <path d="M100 172L108 180L100 188L92 180L100 172Z" stroke-opacity=".62" stroke-width="1.2"/>
+      <path d="M62 124H78" stroke-opacity=".34" stroke-width="1"/>
+      <path d="M122 124H138" stroke-opacity=".34" stroke-width="1"/>
+      <circle cx="70" cy="124" r="1.7" fill="#E8C588" fill-opacity=".32" stroke="none"/>
+      <circle cx="130" cy="124" r="1.7" fill="#E8C588" fill-opacity=".32" stroke="none"/>
+    </g>
+  </defs>
+
+  <rect x="8" y="8" width="184" height="264" rx="18" stroke="#E8C588" stroke-opacity=".34" stroke-width="2"/>
+  <rect x="18" y="18" width="164" height="244" rx="14" stroke="#E8C588" stroke-opacity=".18" stroke-width="1.2"/>
+  <rect x="28" y="28" width="144" height="224" rx="10" stroke="#E8C588" stroke-opacity=".14" stroke-width="1"/>
+
+  <use href="#cornerOrnament" transform="translate(24 24)"/>
+  <use href="#cornerOrnament" transform="translate(176 24) scale(-1 1)"/>
+  <use href="#cornerOrnament" transform="translate(24 256) scale(1 -1)"/>
+  <use href="#cornerOrnament" transform="translate(176 256) scale(-1 -1)"/>
+
+  <use href="#centerMedallion"/>
+</svg>
