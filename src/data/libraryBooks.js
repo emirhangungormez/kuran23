@@ -18,7 +18,7 @@ export const MEAL_BOOKS = [
     titleTr: 'Hak Dini Kur’an Dili (Meal)',
     titleAr: 'حق ديني قرآن ديلي',
     authorTr: 'Elmalılı Hamdi Yazır',
-    authorAr: 'ألماليللي حمدي يازر',
+    authorAr: 'ألماللي حمدي يازر',
     hasTrTranslation: true,
     description: 'Klasik Osmanlıca üslubun modern aktarımı'
   },

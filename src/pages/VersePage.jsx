@@ -337,7 +337,10 @@ export default function VersePage() {
     }
 
     const toggleDiacritics = () => {
-        updateSettings({ textMode: showDiacritics ? 'plain' : 'uthmani' })
+        updateSettings((prev) => {
+            const currentMode = normalizeTextMode(prev.textMode, prev.showTajweed)
+            return { textMode: currentMode === 'plain' ? 'uthmani' : 'plain' }
+        })
     }
 
     if (loading && !verse) {

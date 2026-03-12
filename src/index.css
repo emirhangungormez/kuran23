@@ -1179,7 +1179,9 @@ button {
   .verse-page .page-secondary-actions > *,
   .reading-view .page-secondary-actions > * {
     margin: 0;
+    aspect-ratio: 1 / 1;
     border-radius: 10px;
+    touch-action: manipulation;
   }
 }
 

@@ -10,6 +10,8 @@
   color: var(--text-secondary);
   transition: all 0.2s var(--ease);
   flex-shrink: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .diacritics-toggle:hover {
@@ -61,4 +63,21 @@
 [data-theme='dark'] .diacritics-toggle.active {
   background: color-mix(in srgb, var(--accent) 30%, transparent);
   color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .diacritics-toggle.diacritics-header-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .diacritics-toggle-mark-only {
+    width: 18px;
+    height: 18px;
+  }
+
+  .diacritics-toggle-mark-only::before {
+    font-size: 72px;
+  }
 }

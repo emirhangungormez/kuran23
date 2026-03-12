@@ -701,12 +701,12 @@
 @media (max-width: 768px) {
     .integrated-player.player-dock-bottom-left {
         left: 12px;
-        bottom: calc(78px + env(safe-area-inset-bottom));
+        bottom: calc(70px + env(safe-area-inset-bottom));
     }
 
     .integrated-player.player-dock-bottom-right {
         right: 12px;
-        bottom: calc(78px + env(safe-area-inset-bottom));
+        bottom: calc(70px + env(safe-area-inset-bottom));
     }
 
     .integrated-player.player-dock-top-left {

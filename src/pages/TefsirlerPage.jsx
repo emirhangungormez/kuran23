@@ -1,15 +1,33 @@
-﻿import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import GlobalNav from '../components/GlobalNav'
 import { ALL_BOOKS } from '../data/libraryBooks'
 import './TefsirlerPage.css'
+import './LibraryMobile.css'
+
+const LIBRARY_SECTIONS = {
+  tefsir: {
+    title: 'Tefsirler',
+    description: 'Klasik ve modern tefsir seçkileri'
+  },
+  meal: {
+    title: 'Mealler',
+    description: 'Türkçe meal ve karşılaştırmalı çeviri kitapları'
+  }
+}
 
 export default function TefsirlerPage() {
   const [activeFilter, setActiveFilter] = useState('all')
 
-  const filteredBooks = useMemo(() => {
-    if (activeFilter === 'all') return ALL_BOOKS
-    return ALL_BOOKS.filter((book) => book.category === activeFilter)
+  const sections = useMemo(() => {
+    const orderedKeys = ['tefsir', 'meal']
+    return orderedKeys
+      .filter((key) => activeFilter === 'all' || activeFilter === key)
+      .map((key) => ({
+        key,
+        ...LIBRARY_SECTIONS[key],
+        books: ALL_BOOKS.filter((book) => book.category === key)
+      }))
   }, [activeFilter])
 
   const renderCard = (book) => (
@@ -49,11 +67,21 @@ export default function TefsirlerPage() {
           </div>
         </section>
 
-        <section className="library-section minimal-library-list">
-          <div className="library-books-grid compact-grid">
-            {filteredBooks.map(renderCard)}
-          </div>
-        </section>
+        {sections.map((section) => (
+          <section key={section.key} className={`library-section minimal-library-list category-${section.key}`}>
+            <div className="library-section-head">
+              <div className="library-section-copy">
+                <span className="library-section-kicker">Kütüphane</span>
+                <h2>{section.title}</h2>
+                <p>{section.description}</p>
+              </div>
+              <span className="library-section-count">{section.books.length} kitap</span>
+            </div>
+            <div className="library-books-grid compact-grid">
+              {section.books.map(renderCard)}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   )

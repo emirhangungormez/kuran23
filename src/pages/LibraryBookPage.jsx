@@ -1,10 +1,11 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
+import DiacriticsToggle from '../components/DiacriticsToggle'
 import GlobalNav from '../components/GlobalNav'
 import { useSettings } from '../contexts/SettingsContext'
 import { formatTafsirRichText } from '../utils/tafsirFormatting'
-import { normalizeArabicDisplayText } from '../utils/textEncoding'
+import { normalizeArabicDisplayText, resolveArabicTextVisibility } from '../utils/textEncoding'
 import { getVerseTextByMode, normalizeTextMode } from '../utils/textMode'
 import {
   getArabicFontFamily,
@@ -29,6 +30,7 @@ import {
 import { isTafsirSpeechSupported, stripHtmlForSpeech } from '../services/tafsirSpeech'
 import usePlayerStore from '../stores/usePlayerStore'
 import './TefsirlerPage.css'
+import './LibraryMobile.css'
 
 function getPlainSurahTitleLabel(surahId) {
   return getSurahTitle(surahId).replace(/\s*\(\d+\)$/, '')
@@ -348,6 +350,7 @@ export default function LibraryBookPage() {
     return effectiveScope === 'verse' ? [resolvedSurahId] : []
   }, [effectiveScope, expandedSurahIds, resolvedSurahId])
   const textMode = normalizeTextMode(settings.textMode, settings.showTajweed)
+  const showDiacritics = textMode !== 'plain'
   const arabicFontFamily = getArabicFontFamily(settings.arabicFont)
   const arabicFontSize = getArabicFontSize(settings)
   const transcriptionFontSize = getTranscriptionFontSize(settings)
@@ -553,6 +556,13 @@ export default function LibraryBookPage() {
   const cycleTafsirVoiceRate = () => {
     const nextRate = tafsirVoiceRate === 1 ? 1.15 : tafsirVoiceRate === 1.15 ? 1.3 : tafsirVoiceRate === 1.3 ? 1.5 : 1
     updateSettings({ tafsirVoiceRate: nextRate })
+  }
+
+  const toggleDiacritics = () => {
+    updateSettings((prev) => {
+      const currentMode = normalizeTextMode(prev.textMode, prev.showTajweed)
+      return { textMode: currentMode === 'plain' ? 'uthmani' : 'plain' }
+    })
   }
 
   const handleScopeChange = (scope) => {
@@ -793,7 +803,9 @@ export default function LibraryBookPage() {
                     <span className="reader-surah-summary-no">{readerSurahDetails.surahNo}</span>
                     <div className="reader-surah-summary-content">
                       {readerSurahDetails.surahNameAr && (
-                        <p className="reader-surah-summary-ar" dir="rtl">{readerSurahDetails.surahNameAr}</p>
+                        <p className="reader-surah-summary-ar" dir="rtl">
+                          {resolveArabicTextVisibility(readerSurahDetails.surahNameAr, showDiacritics)}
+                        </p>
                       )}
                       <div className="reader-surah-summary-row">
                         <h3 className="reader-surah-summary-tr">{readerSurahDetails.surahNameTr}</h3>
@@ -833,6 +845,11 @@ export default function LibraryBookPage() {
                     <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
                     </button>
+                    <DiacriticsToggle
+                      enabled={showDiacritics}
+                      onToggle={toggleDiacritics}
+                      className="diacritics-header-btn"
+                    />
                     {isActiveTafsirPlayback && (
                       <button type="button" className="surah-audio-btn player-toggle" onClick={handleTafsirStop} title="Durdur">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -844,11 +861,11 @@ export default function LibraryBookPage() {
                 </div>
 
                 <div className="reader-toolbar">
-                  <span className="reader-sidebar-title">G?r?n?m</span>
+                  <span className="reader-sidebar-title">Görünüm</span>
                   <div
                     className={`reader-scope-toggle ${effectiveScope === 'verse' ? 'scope-verse' : 'scope-surah'}`}
                     role="tablist"
-                    aria-label="G?r?n?m se?imi"
+                    aria-label="Görünüm seçimi"
                   >
                     <span className="reader-scope-toggle-indicator" aria-hidden="true" />
                     <button
@@ -863,7 +880,7 @@ export default function LibraryBookPage() {
                       className={effectiveScope === 'surah' ? 'active' : ''}
                       onClick={() => handleScopeChange('surah')}
                     >
-                      S?re
+                      Sûre
                     </button>
                   </div>
                 </div>
