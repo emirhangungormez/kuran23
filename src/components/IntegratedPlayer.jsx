@@ -25,7 +25,7 @@ const DESKTOP_PLAYER_EDGE_INSET = 24
 const MOBILE_PLAYER_EDGE_INSET = 12
 const DESKTOP_PLAYER_TOP_INSET = 88
 const MOBILE_PLAYER_TOP_INSET = 76
-const MOBILE_PLAYER_BOTTOM_INSET = 70
+const MOBILE_PLAYER_BOTTOM_INSET = 76
 const MOBILE_PLAYER_DRAG_EXCLUDE_SELECTOR = '.custom-select-dropdown, input[type="range"]'
 
 function normalizeReciterLabel(label) {
