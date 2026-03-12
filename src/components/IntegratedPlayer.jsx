@@ -728,7 +728,7 @@ export default function IntegratedPlayer({
                 right: 'auto',
                 bottom: 'auto'
             } : undefined}
-            onPointerDown={handleContainerPointerDown}
+            onPointerDownCapture={handleContainerPointerDown}
         >
             <div className="player-drag-row">
                 <div
