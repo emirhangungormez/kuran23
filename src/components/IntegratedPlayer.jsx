@@ -3,8 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../contexts/SettingsContext'
 import CustomSelect from './CustomSelect'
-import { getReciters } from '../services/api'
-import { isReciterSupported, getTurkishReciters } from '../services/audio'
+import { getPage, getReciters } from '../services/api'
+import {
+    getSurahAudioUrl,
+    getTurkishAudioUrl,
+    getTurkishReciters,
+    getVerseAudioUrl,
+    isReciterSupported,
+    isTurkishPlaylistSupported
+} from '../services/audio'
+import usePlayerStore from '../stores/usePlayerStore'
 import { resolveArabicTextVisibility } from '../utils/textEncoding'
 import { normalizeTextMode } from '../utils/textMode'
 import './IntegratedPlayer.css'
@@ -16,6 +24,13 @@ const MOBILE_PLAYER_EDGE_INSET = 12
 const DESKTOP_PLAYER_TOP_INSET = 88
 const MOBILE_PLAYER_TOP_INSET = 76
 const MOBILE_PLAYER_BOTTOM_INSET = 90
+
+function normalizeReciterLabel(label) {
+    return String(label || '')
+        .replace(/\s*\([^)]*\)/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+}
 
 const VerseSegment = memo(({ idx, status, onClick, ayahNo }) => {
     return (
@@ -55,8 +70,10 @@ export default function IntegratedPlayer({
     skipNext,
     skipPrevious,
     ayahNo,
+    surahId,
     pageNumber,
     juzNumber,
+    startAyah,
     context
 }) {
     const [isExpanded, setIsExpanded] = useState(false)
@@ -68,6 +85,9 @@ export default function IntegratedPlayer({
     const dragFrameRef = useRef(0)
     const navigate = useNavigate()
     const { settings, updateSettings } = useSettings()
+    const playSingle = usePlayerStore((state) => state.playSingle)
+    const playPlaylist = usePlayerStore((state) => state.playPlaylist)
+    const loadPlaylist = usePlayerStore((state) => state.loadPlaylist)
     const { data: availableReciters = [] } = useQuery({
         queryKey: ['reciters'],
         queryFn: getReciters,
@@ -107,9 +127,206 @@ export default function IntegratedPlayer({
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
             value: r.id,
-            label: r.name
+            label: normalizeReciterLabel(r.name)
         }))
-    const turkishReciterOptions = getTurkishReciters().map(r => ({ value: r.id, label: r.name }))
+    const turkishReciterOptions = getTurkishReciters().map(r => ({
+        value: r.id,
+        label: normalizeReciterLabel(r.name)
+    }))
+
+    const playPlaylistForCurrentState = (tracks, startIndex, metaData) => {
+        if (!Array.isArray(tracks) || tracks.length === 0) return
+        const safeIndex = Math.min(Math.max(0, startIndex), tracks.length - 1)
+        if (isPlaying) {
+            playPlaylist(tracks, safeIndex, metaData)
+        } else {
+            loadPlaylist(tracks, safeIndex, metaData)
+        }
+    }
+
+    const buildPlayerMeta = (nextPlayingType, extra = {}) => ({
+        surahNameAr,
+        surahNameTr,
+        surahNameEn,
+        surahType,
+        ayahCount: resolvedAyahCount || Number(ayahCount || 0),
+        playingType: nextPlayingType,
+        link,
+        surahId: Number(surahId || 0),
+        ayahNo: Number(ayahNo || 0),
+        pageNumber: Number(pageNumber || 0),
+        juzNumber: Number(juzNumber || 0),
+        context,
+        ...(Number(startAyah || 0) > 0 ? { startAyah: Number(startAyah) } : {}),
+        ...extra
+    })
+
+    const restartPlaybackForReciterChange = async (targetType, nextSettings) => {
+        if (isTafsirContext || context === 'playlist' || playingType !== targetType) return
+
+        const safeSurahId = Number(surahId || 0)
+        const safeAyahNo = Number(ayahNo || 0)
+        const safeAyahCount = Number(resolvedAyahCount || ayahCount || 0)
+        const safeCurrentIndex = Math.max(0, Number(currentVerseIndex || 0))
+        const primaryAuthorId = nextSettings.coreAuthorIds?.[0] || nextSettings.defaultAuthorId || 77
+
+        if (context === 'surah') {
+            if (targetType === 'arabic') {
+                if (verses.length > 0) {
+                    const tracks = verses
+                        .map((track, index) => {
+                            const trackAyah = Number(track?.ayah ?? track?.verse_number ?? index)
+                            const trackSurahId = Number(track?.surahId ?? track?.surah?.id ?? safeSurahId)
+                            if (!trackSurahId || !Number.isFinite(trackAyah)) return null
+                            return { ...track, audio: getVerseAudioUrl(nextSettings.defaultReciterId, trackSurahId, trackAyah) }
+                        })
+                        .filter(Boolean)
+
+                    playPlaylistForCurrentState(tracks, safeCurrentIndex, buildPlayerMeta('arabic'))
+                    return
+                }
+
+                if (safeSurahId) {
+                    playSingle(getSurahAudioUrl(nextSettings.defaultReciterId, safeSurahId), buildPlayerMeta('arabic'))
+                }
+                return
+            }
+
+            if (isTurkishPlaylistSupported(nextSettings.defaultTurkishReciterId)) {
+                const tracks = verses.length > 0
+                    ? verses
+                        .map((track, index) => {
+                            const trackAyah = Number(track?.ayah ?? track?.verse_number ?? index)
+                            const trackSurahId = Number(track?.surahId ?? track?.surah?.id ?? safeSurahId)
+                            if (!trackSurahId || !Number.isFinite(trackAyah)) return null
+                            return { ...track, audio: getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, trackSurahId, trackAyah) }
+                        })
+                        .filter(Boolean)
+                    : Array.from({ length: Math.max(0, safeAyahCount) + 1 }, (_, index) => ({
+                        audio: getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, safeSurahId, index),
+                        ayah: index,
+                        surahId: safeSurahId
+                    }))
+
+                playPlaylistForCurrentState(tracks, safeCurrentIndex, buildPlayerMeta('turkish'))
+                return
+            }
+
+            if (safeSurahId) {
+                playSingle(
+                    getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, safeSurahId, 0),
+                    buildPlayerMeta('turkish', { startAyah: 0 })
+                )
+            }
+            return
+        }
+
+        if (context === 'verse') {
+            if (!safeSurahId || !safeAyahNo) return
+
+            if (targetType === 'arabic') {
+                playSingle(getVerseAudioUrl(nextSettings.defaultReciterId, safeSurahId, safeAyahNo), buildPlayerMeta('arabic'))
+                return
+            }
+
+            if (isTurkishPlaylistSupported(nextSettings.defaultTurkishReciterId) && safeAyahCount >= safeAyahNo) {
+                const tracks = []
+                for (let ayahIndex = safeAyahNo; ayahIndex <= safeAyahCount; ayahIndex += 1) {
+                    tracks.push({
+                        audio: getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, safeSurahId, ayahIndex),
+                        ayah: ayahIndex,
+                        surahId: safeSurahId
+                    })
+                }
+                playPlaylistForCurrentState(tracks, 0, buildPlayerMeta('turkish'))
+                return
+            }
+
+            playSingle(getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, safeSurahId, safeAyahNo), buildPlayerMeta('turkish'))
+            return
+        }
+
+        if (context === 'page' && pageNumber) {
+            let pageTracks = Array.isArray(verses) ? verses : []
+
+            if (pageTracks.length === 0) {
+                pageTracks = await getPage(pageNumber, primaryAuthorId, nextSettings.defaultReciterId, nextSettings.textMode)
+            }
+
+            if (!Array.isArray(pageTracks) || pageTracks.length === 0) return
+
+            if (targetType === 'arabic') {
+                const tracks = pageTracks
+                    .map((track) => {
+                        const trackSurahId = Number(track?.surah?.id ?? track?.surahId ?? safeSurahId)
+                        const trackAyah = Number(track?.verse_number ?? track?.ayah)
+                        if (!trackSurahId || !trackAyah) return null
+                        return { ...track, audio: getVerseAudioUrl(nextSettings.defaultReciterId, trackSurahId, trackAyah) }
+                    })
+                    .filter(Boolean)
+
+                playPlaylistForCurrentState(tracks, safeCurrentIndex, buildPlayerMeta('arabic', { startAyah: 0 }))
+                return
+            }
+
+            if (isTurkishPlaylistSupported(nextSettings.defaultTurkishReciterId)) {
+                const tracks = pageTracks
+                    .map((track) => {
+                        const trackSurahId = Number(track?.surah?.id ?? track?.surahId ?? safeSurahId)
+                        const trackAyah = Number(track?.verse_number ?? track?.ayah)
+                        if (!trackSurahId || !trackAyah) return null
+                        return {
+                            ...track,
+                            audio: getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, trackSurahId, trackAyah),
+                            ayah: trackAyah,
+                            surahId: trackSurahId
+                        }
+                    })
+                    .filter(Boolean)
+
+                const fallbackStartAyah = Number(startAyah || pageTracks[0]?.verse_number || pageTracks[0]?.ayah || 0)
+                const restartIndex = verses.length > 0
+                    ? safeCurrentIndex
+                    : Math.max(0, pageTracks.findIndex((track) => Number(track?.verse_number ?? track?.ayah) === fallbackStartAyah))
+
+                playPlaylistForCurrentState(
+                    tracks,
+                    restartIndex,
+                    buildPlayerMeta('turkish', { startAyah: fallbackStartAyah, autoAdvance: true })
+                )
+                return
+            }
+
+            const fallbackSurahId = Number(pageTracks[0]?.surah?.id ?? pageTracks[0]?.surahId ?? safeSurahId)
+            const fallbackStartAyah = Number(startAyah || pageTracks[0]?.verse_number || pageTracks[0]?.ayah || 0)
+            if (fallbackSurahId) {
+                playSingle(
+                    getTurkishAudioUrl(nextSettings.defaultTurkishReciterId, fallbackSurahId, 0),
+                    buildPlayerMeta('turkish', { startAyah: fallbackStartAyah, autoAdvance: true })
+                )
+            }
+        }
+    }
+
+    const handleArabicReciterChange = async (value) => {
+        const nextSettings = { ...settings, defaultReciterId: value }
+        updateSettings({ defaultReciterId: value })
+        try {
+            await restartPlaybackForReciterChange('arabic', nextSettings)
+        } catch (error) {
+            console.error('Arabic reciter switch failed:', error)
+        }
+    }
+
+    const handleTurkishReciterChange = async (value) => {
+        const nextSettings = { ...settings, defaultTurkishReciterId: value }
+        updateSettings({ defaultTurkishReciterId: value })
+        try {
+            await restartPlaybackForReciterChange('turkish', nextSettings)
+        } catch (error) {
+            console.error('Turkish reciter switch failed:', error)
+        }
+    }
 
     const pageSegmentsModel = useMemo(() => {
         if (context !== 'page' || !showSegments || verses.length === 0) return null
@@ -583,14 +800,14 @@ export default function IntegratedPlayer({
                     <div className="player-reciter-row">
                         <CustomSelect
                             value={settings.defaultReciterId}
-                            onChange={(val) => updateSettings({ defaultReciterId: val })}
+                            onChange={(val) => { void handleArabicReciterChange(val) }}
                             options={reciterOptions}
                             prefix="Arapça: "
                             className="player-reciter-select"
                         />
                         <CustomSelect
                             value={settings.defaultTurkishReciterId || 1014}
-                            onChange={(val) => updateSettings({ defaultTurkishReciterId: val })}
+                            onChange={(val) => { void handleTurkishReciterChange(val) }}
                             options={turkishReciterOptions}
                             prefix="Türkçe: "
                             className="player-reciter-select"

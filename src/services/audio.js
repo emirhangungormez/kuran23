@@ -106,19 +106,19 @@ export const RECITER_MAP = {
         code: 'ar_davutkaya'
     },
     1014: {
-        name: 'Mehmet Emin Ay (Meali)',
+        name: 'Mehmet Emin Ay',
         source: 'diyanet',
         code: 'tr_mehmeteminay',
         isTurkish: true
     },
     1015: {
-        name: 'Seyfullah Kartal (Meali)',
+        name: 'Seyfullah Kartal',
         source: 'diyanet',
         code: 'tr_seyfullahkartal',
         isTurkish: true
     },
     1016: {
-        name: 'AçıkKuran (Tüm Sure Sesi)',
+        name: 'AçıkKuran',
         source: 'acikkuran',
         code: 'tr_acikkuran',
         isTurkish: true

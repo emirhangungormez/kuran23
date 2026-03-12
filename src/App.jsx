@@ -107,8 +107,10 @@ function GlobalPlayerWrapper() {
       skipNext={() => skipNext(settings)}
       skipPrevious={() => skipPrevious(settings)}
       ayahNo={meta.ayahNo}
+      surahId={meta.surahId}
       pageNumber={meta.pageNumber}
       juzNumber={meta.juzNumber}
+      startAyah={meta.startAyah}
       context={meta.context}
     />
   )
