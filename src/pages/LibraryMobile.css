@@ -2,6 +2,7 @@
   --library-card-width: 154px;
   --library-book-radius: 14px;
   --library-book-ratio: 0.78;
+  --library-book-optical-shift: 5px;
 }
 
 .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
@@ -140,6 +141,7 @@
   font-size: 21px;
   min-height: 2.6em;
   max-height: 2.6em;
+  transform: translateX(var(--library-book-optical-shift));
 }
 
 .kutuphane-page .minimal-library-list .book-caption {
@@ -148,6 +150,7 @@
 
 .kutuphane-page .minimal-library-list .book-cover-meta {
   gap: 6px;
+  transform: translateX(var(--library-book-optical-shift));
 }
 
 .kutuphane-page .minimal-library-list .book-cover-tr {
@@ -166,11 +169,13 @@
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.06);
   letter-spacing: 0.04em;
+  transform: translateX(var(--library-book-optical-shift));
 }
 
 @media (max-width: 768px) {
   .kutuphane-page {
     --library-card-width: 168px;
+    --library-book-optical-shift: 4px;
   }
 
   .kutuphane-page .minimal-library-list {
