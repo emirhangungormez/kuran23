@@ -410,7 +410,7 @@
 @media (max-width: 768px) {
     .reading-nav-header {
         margin-bottom: 20px;
-        padding-top: 10px;
+        padding-top: 4px;
     }
 
     .reading-header-center {
@@ -458,49 +458,7 @@
     }
 
     .reading-actions {
-        width: 100%;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 40px 40px;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .reading-actions>.diacritics-header-btn,
-    .reading-actions>.surah-audio-btn.player-toggle {
-        width: 40px !important;
-        min-width: 40px !important;
-        height: 40px !important;
-        padding: 0 !important;
-    }
-
-    .reading-actions .audio-control-group {
-        min-width: 0;
-        width: 100%;
-        gap: 4px;
-        height: 40px;
-        padding: 4px;
-    }
-
-    .reading-actions .audio-control-group .surah-audio-btn,
-    .reading-actions .audio-control-group .speed-toggle {
-        height: 32px;
-        min-width: 0;
-        justify-content: center;
-        padding: 0 8px;
-        font-size: 11px;
-    }
-
-    .reading-actions .audio-control-group .surah-audio-btn {
-        flex: 1 1 0;
-    }
-
-    .surah-audio-btn svg {
-        width: 12px;
-        height: 12px;
-    }
-
-    .reading-actions .audio-control-group .speed-toggle {
-        min-width: 42px;
+        gap: 8px;
     }
 }
 

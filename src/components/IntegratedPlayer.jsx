@@ -701,9 +701,6 @@ export default function IntegratedPlayer({
             isVisualDrag: false
         }
 
-        if (event.currentTarget.setPointerCapture) {
-            event.currentTarget.setPointerCapture(event.pointerId)
-        }
     }
 
     const handleContainerPointerDown = (event) => {
