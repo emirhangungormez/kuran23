@@ -89,27 +89,24 @@ export default function InstallAppBanner() {
   const showNativeInstall = !!deferredPrompt
 
   return (
-    <aside className="install-app-banner" role="dialog" aria-live="polite" aria-label="Uygulamayı yükle">
+    <aside className="install-app-banner" role="dialog" aria-live="polite" aria-label={'Uygulamay\u0131 y\u00fckle'}>
       <div className="install-app-banner-text">
-        <strong>Mobil Uygulama</strong>
-        {showNativeInstall ? (
-          <span>Kuran23&apos;ü telefonuna yükleyip uygulama gibi kullan.</span>
-        ) : (
-          <span>Paylaş menüsünden <em>Ana Ekrana Ekle</em> ile hızlı erişim sağla.</span>
-        )}
+        <strong>
+          {showNativeInstall
+            ? "Kuran23'\u00fc cihaz\u0131n\u0131za y\u00fckleyin"
+            : "Kuran23'\u00fc ana ekran\u0131n\u0131za ekleyin"}
+        </strong>
       </div>
       <div className="install-app-banner-actions">
-        {showNativeInstall ? (
-          <button className="install-app-primary" onClick={installApp} disabled={installing}>
-            {installing ? 'Yükleniyor...' : 'Yükle'}
-          </button>
-        ) : (
-          <button className="install-app-primary" onClick={closeBanner}>
-            Anladım
-          </button>
-        )}
         <button className="install-app-secondary" onClick={closeBanner} aria-label="Kapat">
-          Daha Sonra
+          Kapat
+        </button>
+        <button
+          className="install-app-primary"
+          onClick={showNativeInstall ? installApp : closeBanner}
+          disabled={installing}
+        >
+          {showNativeInstall ? (installing ? 'Y\u00fckleniyor...' : 'Y\u00fckle') : 'Ekle'}
         </button>
       </div>
     </aside>
