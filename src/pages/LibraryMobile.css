@@ -2,7 +2,7 @@
   --library-card-width: 154px;
   --library-book-radius: 14px;
   --library-book-ratio: 0.78;
-  --library-book-optical-shift: 8px;
+  --library-book-spine-width: 16px;
 }
 
 .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
@@ -22,7 +22,7 @@
   overflow: hidden;
   min-height: calc(var(--library-card-width) * 1.28);
   aspect-ratio: var(--library-book-ratio);
-  padding: 16px 14px 12px 18px;
+  padding: 16px 10px 12px calc(var(--library-book-spine-width) + 10px);
   border-radius: var(--library-book-radius);
   box-shadow:
     0 12px 26px rgba(0, 0, 0, 0.14),
@@ -33,7 +33,7 @@
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 16px;
+  width: var(--library-book-spine-width);
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(255, 255, 255, 0.06)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%, rgba(0, 0, 0, 0.14));
@@ -44,7 +44,7 @@
 .kutuphane-page .minimal-library-list .book-cover::after {
   content: '';
   position: absolute;
-  inset: 8px 8px 8px 16px;
+  inset: 8px 8px 8px calc(var(--library-book-spine-width) + 8px);
   background: url('../assets/book-cover-ornament.svg') center/100% 100% no-repeat;
   opacity: 0.58;
   z-index: 0;
@@ -141,7 +141,6 @@
   font-size: 21px;
   min-height: 2.6em;
   max-height: 2.6em;
-  transform: translateX(var(--library-book-optical-shift));
 }
 
 .kutuphane-page .minimal-library-list .book-caption {
@@ -150,7 +149,6 @@
 
 .kutuphane-page .minimal-library-list .book-cover-meta {
   gap: 6px;
-  transform: translateX(var(--library-book-optical-shift));
 }
 
 .kutuphane-page .minimal-library-list .book-cover-tr {
@@ -169,13 +167,11 @@
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.06);
   letter-spacing: 0.04em;
-  transform: translateX(var(--library-book-optical-shift));
 }
 
 @media (max-width: 768px) {
   .kutuphane-page {
     --library-card-width: 168px;
-    --library-book-optical-shift: 7px;
   }
 
   .kutuphane-page .minimal-library-list {
@@ -233,7 +229,7 @@
     min-height: calc(var(--library-card-width) * 1.28);
     aspect-ratio: var(--library-book-ratio);
     border-radius: var(--library-book-radius);
-    padding: 14px 12px 11px 16px;
+    padding: 14px 10px 11px calc(var(--library-book-spine-width) + 10px);
   }
 
   .kutuphane-page .minimal-library-list .book-cover-ar {
