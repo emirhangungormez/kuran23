@@ -386,36 +386,51 @@ export default function IntegratedPlayer({
     useEffect(() => {
         if (!isVisible) return undefined
 
-        const syncStoredPosition = () => {
+        const syncViewportPosition = (persistPosition = false) => {
             const playerEl = playerRef.current
             const storedPosition = settings.playerPosition
             if (!playerEl || !storedPosition || dragStateRef.current) return
 
+            const currentDisplayPosition = dragPosition || storedPosition
             const rect = playerEl.getBoundingClientRect()
             const nextPosition = clampDragPosition(storedPosition.left, storedPosition.top, rect.width, rect.height)
+            const isDisplayPositionUnchanged = (
+                nextPosition.left === currentDisplayPosition.left
+                && nextPosition.top === currentDisplayPosition.top
+            )
+            const isStoredPositionUnchanged = (
+                nextPosition.left === storedPosition.left
+                && nextPosition.top === storedPosition.top
+            )
 
-            if (nextPosition.left === storedPosition.left && nextPosition.top === storedPosition.top) return
+            if (isDisplayPositionUnchanged && (!persistPosition || isStoredPositionUnchanged)) return
+
+            if (!isDisplayPositionUnchanged) {
+                setDragPosition(nextPosition)
+            }
+
+            if (!persistPosition || isStoredPositionUnchanged) return
 
             const nextDock = resolveDockFromPoint(
                 nextPosition.left + (rect.width / 2),
                 nextPosition.top + (rect.height / 2)
             )
 
-            setDragPosition(nextPosition)
             updateSettings({
                 playerDock: nextDock,
                 playerPosition: nextPosition
             })
         }
 
-        const frameId = window.requestAnimationFrame(syncStoredPosition)
-        window.addEventListener('resize', syncStoredPosition)
+        const frameId = window.requestAnimationFrame(() => syncViewportPosition(false))
+        const handleResize = () => syncViewportPosition(true)
+        window.addEventListener('resize', handleResize)
 
         return () => {
             window.cancelAnimationFrame(frameId)
-            window.removeEventListener('resize', syncStoredPosition)
+            window.removeEventListener('resize', handleResize)
         }
-    }, [isExpanded, isVisible, settings.playerPosition, updateSettings])
+    }, [dragPosition, isExpanded, isVisible, settings.playerPosition, updateSettings])
 
     const handleDragStart = (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return
