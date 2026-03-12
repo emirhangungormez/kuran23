@@ -1,5 +1,7 @@
 .kutuphane-page {
   --library-card-width: 154px;
+  --library-book-radius: 14px;
+  --library-book-ratio: 0.78;
 }
 
 .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
@@ -13,7 +15,50 @@
 }
 
 .kutuphane-page .minimal-library-list .book-cover {
-  min-height: 192px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(var(--library-card-width) * 1.28);
+  aspect-ratio: var(--library-book-ratio);
+  padding: 16px 14px 12px 18px;
+  border-radius: var(--library-book-radius);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.kutuphane-page .minimal-library-list .book-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 16px;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(255, 255, 255, 0.06)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%, rgba(0, 0, 0, 0.14));
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 0;
+}
+
+.kutuphane-page .minimal-library-list .book-cover::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 10px;
+  height: calc(100% - 20px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08)),
+    repeating-linear-gradient(180deg,
+      rgba(255, 255, 255, 0.24) 0 2px,
+      rgba(255, 255, 255, 0.08) 2px 4px);
+  opacity: 0.38;
+  border-radius: 0 10px 10px 0;
+  z-index: 0;
+}
+
+.kutuphane-page .minimal-library-list .book-cover > * {
+  position: relative;
+  z-index: 1;
 }
 
 .library-section-head {
@@ -81,9 +126,54 @@
   min-width: 52px;
 }
 
+.kutuphane-page .minimal-library-list .tefsir-cover {
+  background:
+    radial-gradient(circle at top right, rgba(255, 231, 195, 0.16), transparent 28%),
+    linear-gradient(180deg, #9b7043 0%, #764d2c 44%, #4b2b1a 100%);
+  border-color: rgba(90, 54, 28, 0.9);
+  color: #f8efe1;
+}
+
+.kutuphane-page .minimal-library-list .meal-cover {
+  background:
+    radial-gradient(circle at top right, rgba(216, 255, 242, 0.16), transparent 28%),
+    linear-gradient(180deg, #1f907e 0%, #147364 46%, #0b5248 100%);
+  border-color: rgba(8, 79, 68, 0.92);
+  color: #ebfffa;
+}
+
+.kutuphane-page .minimal-library-list .book-cover-ar {
+  text-align: right;
+  font-size: 21px;
+  min-height: 2.6em;
+  max-height: 2.6em;
+}
+
+.kutuphane-page .minimal-library-list .book-cover-meta {
+  gap: 6px;
+}
+
+.kutuphane-page .minimal-library-list .book-cover-tr {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.kutuphane-page .minimal-library-list .book-cover-author {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.kutuphane-page .minimal-library-list .book-cover-badge {
+  min-height: 24px;
+  padding: 0 9px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  letter-spacing: 0.04em;
+}
+
 @media (max-width: 768px) {
   .kutuphane-page {
-    --library-card-width: 220px;
+    --library-card-width: 168px;
   }
 
   .kutuphane-page .minimal-library-list {
@@ -138,15 +228,13 @@
   }
 
   .kutuphane-page .minimal-library-list .book-cover {
-    min-height: 154px;
-    aspect-ratio: 1.46 / 1;
-    border-radius: 12px;
-    padding: 12px 12px 10px;
+    min-height: calc(var(--library-card-width) * 1.28);
+    aspect-ratio: var(--library-book-ratio);
+    border-radius: var(--library-book-radius);
+    padding: 14px 12px 11px 16px;
   }
 
   .kutuphane-page .minimal-library-list .book-cover-ar {
-    min-height: 2.5em;
-    max-height: 2.5em;
     font-size: 18px;
   }
 
