@@ -107,7 +107,7 @@ export default function IntegratedPlayer({
         .filter(r => isReciterSupported(r.id))
         .map(r => ({
             value: r.id,
-            label: `${r.name} (${r.style || 'Standart'})`
+            label: r.name
         }))
     const turkishReciterOptions = getTurkishReciters().map(r => ({ value: r.id, label: r.name }))
 
