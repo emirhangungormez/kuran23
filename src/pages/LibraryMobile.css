@@ -1,3 +1,21 @@
+.kutuphane-page {
+  --library-card-width: 156px;
+}
+
+.kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
+  grid-template-columns: repeat(auto-fill, minmax(var(--library-card-width), var(--library-card-width)));
+  justify-content: start;
+  gap: 14px;
+}
+
+.kutuphane-page .minimal-library-list .library-book-card {
+  width: var(--library-card-width);
+}
+
+.kutuphane-page .minimal-library-list .book-cover {
+  min-height: 196px;
+}
+
 .library-section-head {
   display: flex;
   align-items: flex-end;
@@ -64,6 +82,10 @@
 }
 
 @media (max-width: 768px) {
+  .kutuphane-page {
+    --library-card-width: 220px;
+  }
+
   .kutuphane-page .minimal-library-list {
     margin-top: 0;
   }
@@ -94,7 +116,7 @@
   .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(220px, 78vw);
+    grid-auto-columns: minmax(var(--library-card-width), 78vw);
     grid-template-columns: none;
     gap: 12px;
     overflow-x: auto;
@@ -111,6 +133,7 @@
 
   .kutuphane-page .minimal-library-list .library-book-card {
     min-width: 0;
+    width: auto;
     scroll-snap-align: start;
   }
 
