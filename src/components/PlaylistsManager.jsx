@@ -12,6 +12,7 @@ import {
     getTurkishReciters,
     isTurkishPlaylistSupported,
 } from '../services/audio';
+import { normalizeArabicDisplayText } from '../utils/textEncoding';
 import './PlaylistsManager.css';
 
 const PencilIcon = ({ size = 13 }) => (
@@ -543,7 +544,7 @@ export default function PlaylistsManager({
                                                         <div className="pl-search-num">{s.no}</div>
                                                         <div className="pl-search-row-info">
                                                             <span className="pl-search-row-name">{s.nameTr}</span>
-                                                            <span className="pl-search-row-sub">{s.nameAr} · {s.ayahCount} ayet · {s.type}</span>
+                                                            <span className="pl-search-row-sub">{normalizeArabicDisplayText(s.nameAr)} · {s.ayahCount} ayet · {s.type}</span>
                                                         </div>
                                                         {isAdded ? (
                                                             <span className="pl-search-added" title="Eklendi">
@@ -650,7 +651,7 @@ export default function PlaylistsManager({
                                                 <span className={`pl-tc-name ${isActive ? 'accent' : ''}`}>{item.name}</span>
                                                 {s && <span className={`pl-tc-type ${s.type === 'Mekki' ? 'mekki' : 'medeni'}`}>{s.type}</span>}
                                                 <span className="pl-tc-dot">·</span>
-                                                <span className="pl-tc-ar">{s?.nameAr}</span>
+                                                <span className="pl-tc-ar">{normalizeArabicDisplayText(s?.nameAr || '')}</span>
                                                 <span className="pl-tc-dot">·</span>
                                                 <span className="pl-tc-meta">{s?.ayahCount} ayet</span>
                                                 <span className="pl-tc-dot">·</span>

@@ -61,7 +61,7 @@ export default function SavedItems() {
                                 <div className="rs-ios-left">
                                     <div className="rs-ios-number">{s.id}</div>
                                     <div className="rs-ios-names">
-                                        <span className="rs-ios-name-ar">{s.name_original}</span>
+                                        <span className="rs-ios-name-ar">{normalizeArabicDisplayText(s.name_original)}</span>
                                         <span className="rs-ios-name-tr">{s.name}</span>
                                     </div>
                                 </div>

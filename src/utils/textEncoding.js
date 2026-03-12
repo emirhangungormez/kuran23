@@ -127,6 +127,11 @@ export function resolveArabicTextVisibility(value, showDiacritics = true, option
   return showDiacritics ? normalized : stripArabicDiacritics(normalized)
 }
 
+function shouldStripGlobalArabicDiacritics(options = {}) {
+  if (options.respectGlobalTextMode === false || typeof document === 'undefined') return false
+  return document.documentElement?.getAttribute('data-text-mode') === 'plain'
+}
+
 export function normalizeArabicDisplayText(value, options = {}) {
   if (typeof value !== 'string' || !value) return value || ''
 
@@ -142,6 +147,10 @@ export function normalizeArabicDisplayText(value, options = {}) {
 
   if (stripVerseOrnaments) {
     output = output.replace(ARABIC_VERSE_ORNAMENTS_REGEX, '')
+  }
+
+  if (shouldStripGlobalArabicDiacritics(options)) {
+    output = stripArabicDiacritics(output)
   }
 
   return output

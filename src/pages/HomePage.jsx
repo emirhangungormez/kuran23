@@ -7,6 +7,7 @@ import SearchResults from '../components/SearchResults'
 import DailyVerse from '../components/DailyVerse'
 import { popularTopics } from '../data/topicsData'
 import { sanitizeSearchInput } from '../utils/security'
+import { normalizeArabicDisplayText } from '../utils/textEncoding'
 import './HomePage.css'
 
 import GlobalNav from '../components/GlobalNav'
@@ -194,7 +195,7 @@ export default function HomePage() {
                                         <Link key={s.no} to={`/sure/${s.no}`} className="popular-card" style={{ animationDelay: `${i * 0.05}s` }}>
                                             <div className="popular-no">{s.no}</div>
                                             <div className="popular-info">
-                                                <span className="popular-name-ar">{s.nameAr}</span>
+                                                <span className="popular-name-ar">{normalizeArabicDisplayText(s.nameAr)}</span>
                                                 <span className="popular-name-tr">{s.nameTr}</span>
                                             </div>
                                             <div className="popular-meta">

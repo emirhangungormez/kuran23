@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { normalizeArabicDisplayText } from '../utils/textEncoding'
 import './SearchResults.css'
 
 const ARABIC_RE = /[\u0600-\u06FF]/
@@ -120,7 +121,7 @@ export default function SearchResults({ results, query, onLoadMore, isLoadingMor
                             <div className="sr-surah-body">
                                 <div className="sr-surah-top">
                                     <span className="sr-surah-name">{highlightText(s.nameTr, query)}</span>
-                                    <span className="sr-surah-ar" dir="rtl">{s.nameAr}</span>
+                                    <span className="sr-surah-ar" dir="rtl">{normalizeArabicDisplayText(s.nameAr)}</span>
                                 </div>
                                 <div className="sr-surah-meta">
                                     {s.nameEn && <><span>{s.nameEn}</span><span>·</span></>}
@@ -149,7 +150,7 @@ export default function SearchResults({ results, query, onLoadMore, isLoadingMor
                                     </span>
                                 )}
                             </div>
-                            <p className="sr-verse-ar" dir="rtl">{highlightText(v.textAr, query)}</p>
+                            <p className="sr-verse-ar" dir="rtl">{highlightText(normalizeArabicDisplayText(v.textAr), query)}</p>
                             <p className="sr-verse-tr">{highlightText(v.textTr, query)}</p>
                         </Link>
                     ))}

@@ -164,6 +164,7 @@ export function SettingsProvider({ children }) {
         localStorage.setItem(SETTINGS_STORAGE_KEY_BASE, JSON.stringify(settings))
 
         document.documentElement.setAttribute('data-theme', settings.theme)
+        document.documentElement.setAttribute('data-text-mode', settings.textMode)
         document.documentElement.style.setProperty('--arabic-font-family', getArabicFontFamily(settings.arabicFont))
         document.documentElement.setAttribute('data-arabic-font', settings.arabicFont)
         const themeMeta = document.querySelector('meta[name="theme-color"]')

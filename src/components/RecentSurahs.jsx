@@ -3,6 +3,7 @@ import { useBookmarks } from '../contexts/BookmarksContext'
 import './RecentSurahs.css'
 
 import { surahs as allSurahs } from '../data/quranData'
+import { normalizeArabicDisplayText } from '../utils/textEncoding'
 
 export default function RecentSurahs() {
     const { bookmarks, clearHistory } = useBookmarks()
@@ -61,7 +62,7 @@ export default function RecentSurahs() {
                             <div className="rs-ios-left">
                                 <div className="rs-ios-number">{s.no}</div>
                                 <div className="rs-ios-names">
-                                    <span className="rs-ios-name-ar">{meta.nameAr || s.nameAr}</span>
+                                    <span className="rs-ios-name-ar">{normalizeArabicDisplayText(meta.nameAr || s.nameAr)}</span>
                                     <span className="rs-ios-name-tr">{meta.nameTr || s.nameTr}</span>
                                 </div>
                             </div>
