@@ -26,7 +26,7 @@ const MOBILE_PLAYER_EDGE_INSET = 12
 const DESKTOP_PLAYER_TOP_INSET = 88
 const MOBILE_PLAYER_TOP_INSET = 76
 const MOBILE_PLAYER_BOTTOM_INSET = 90
-const MOBILE_PLAYER_DRAG_EXCLUDE_SELECTOR = '.player-reciter-select, .custom-select-trigger, .custom-select-dropdown, input[type="range"]'
+const MOBILE_PLAYER_DRAG_EXCLUDE_SELECTOR = '.custom-select-dropdown, input[type="range"]'
 
 function normalizeReciterLabel(label) {
     return String(label || '')
@@ -91,6 +91,7 @@ export default function IntegratedPlayer({
     const playSingle = usePlayerStore((state) => state.playSingle)
     const playPlaylist = usePlayerStore((state) => state.playPlaylist)
     const loadPlaylist = usePlayerStore((state) => state.loadPlaylist)
+    const stopPlayback = usePlayerStore((state) => state.stopPlayback)
 
     const formatTime = (time) => {
         if (isNaN(time)) return '0:00'
@@ -532,13 +533,13 @@ export default function IntegratedPlayer({
                 setIsDragging(true)
             }
 
-            const allowHorizontalOverflow = event.pointerType !== 'mouse' && window.innerWidth <= 768
+            const isMobileSwipeDrag = event.pointerType !== 'mouse' && window.innerWidth <= 768
             const nextPosition = clampDragPosition(
                 drag.originLeft + deltaX,
-                drag.originTop + deltaY,
+                isMobileSwipeDrag ? drag.originTop : (drag.originTop + deltaY),
                 drag.width,
                 drag.height,
-                { allowHorizontalOverflow }
+                { allowHorizontalOverflow: isMobileSwipeDrag }
             )
             drag.currentLeft = nextPosition.left
             drag.currentTop = nextPosition.top
@@ -558,20 +559,20 @@ export default function IntegratedPlayer({
 
             const deltaX = event.clientX - drag.startX
             const deltaY = event.clientY - drag.startY
-            const allowHorizontalOverflow = event.pointerType !== 'mouse' && window.innerWidth <= 768
+            const isMobileSwipeDrag = event.pointerType !== 'mouse' && window.innerWidth <= 768
             const rawFinalPosition = drag.hasMoved
                 ? clampDragPosition(
                     drag.originLeft + deltaX,
-                    drag.originTop + deltaY,
+                    isMobileSwipeDrag ? drag.originTop : (drag.originTop + deltaY),
                     drag.width,
                     drag.height,
-                    { allowHorizontalOverflow }
+                    { allowHorizontalOverflow: isMobileSwipeDrag }
                 )
                 : { left: drag.originLeft, top: drag.originTop }
             const finalPosition = drag.hasMoved
                 ? clampDragPosition(
                     drag.originLeft + deltaX,
-                    drag.originTop + deltaY,
+                    isMobileSwipeDrag ? drag.originTop : (drag.originTop + deltaY),
                     drag.width,
                     drag.height
                 )
@@ -584,6 +585,7 @@ export default function IntegratedPlayer({
             clearDragTransform()
 
             if (shouldDismissPlayerOnSwipe(rawFinalPosition.left, drag.width, deltaX, deltaY, event.pointerType)) {
+                stopPlayback({ resetMode: true })
                 updateSettings({ isPlayerVisible: false })
                 setDragPosition(settings.playerPosition || null)
                 setIsDragging(false)

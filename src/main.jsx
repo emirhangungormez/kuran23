@@ -5,6 +5,14 @@ import { registerSW } from 'virtual:pwa-register'
 import './index.css'
 import App from './App.jsx'
 
+if (typeof document !== 'undefined') {
+  document.documentElement.lang = 'tr'
+  document.documentElement.setAttribute('translate', 'no')
+  document.documentElement.classList.add('notranslate')
+  document.body?.setAttribute('translate', 'no')
+  document.body?.classList.add('notranslate')
+}
+
 if (import.meta.env.PROD) {
   const noop = () => {}
   console.log = noop
