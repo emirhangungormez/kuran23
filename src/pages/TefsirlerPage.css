@@ -402,7 +402,7 @@
     position: absolute;
     top: 4px;
     left: 4px;
-    width: calc(50% - 4px);
+    width: calc((100% - 12px) / 2);
     height: calc(100% - 8px);
     border-radius: 999px;
     background: color-mix(in srgb, var(--accent) 12%, transparent);
