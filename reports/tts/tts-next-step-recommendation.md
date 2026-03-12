@@ -1,19 +1,19 @@
 # TTS Next Step Recommendation
 
-- Karar: Top3000 genislemesine simdi gecmek gerekli degil.
-- Candidate-backed kapsama orani: 0.9982
-- Kalan sorunlu token gecisi: 3
-- Kalan benzersiz token: 2
+- Karar: Top3000 genislemesine gecme.
+- Candidate-backed kapsama orani: 1
+- Kalan sorunlu token gecisi: 0
+- Kalan benzersiz token: 0
 
 ## Gerekce
 
-- Kalan sorunlarin agirlikli kismi kitap-bazli veya yuzey-form exception tipinde: 3
-- Genel normalize/regex kaynakli kalan yuk: 0
-- Dogrudan regex kacagi sayisi dusuk: 0
+- Mevcut batch setinde anlamli kalan hata yok.
+- Yeni hata sinifi dogmadi.
+- Hedefli runtime exception kalan yuzey formu kapatti.
 
 ## Onerilen Sirali Sonraki Adimlar
 
-1. En cok tekrarlanan exception adaylari icin kitap-bazli mini sozluk cikar.
-2. Cok tekrarli apostrof / izafet formlarini ayri exception katmanina al.
-3. Regex kacagi gorunen az sayidaki exact-root formu duzelt ve batch testi yeniden kos.
+1. Top3000 genislemesine bu asamada gecme.
+2. Yeni gercek hata ornekleri birikirse ayni batch analizini tekrar kos.
+3. Exception setini dar tut; benzer ama farkli yuzey formlari veri gelmeden genisletme.
 

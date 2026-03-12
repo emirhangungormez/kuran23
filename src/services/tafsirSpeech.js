@@ -1,5 +1,6 @@
 import { GENERATED_TTS_LEXICON } from '../data/generatedTtsLexicon.js'
 import { GENERATED_TTS_LEMMA_LEXICON } from '../data/generatedTtsLemmaLexicon.js'
+import { RUNTIME_TTS_EXCEPTIONS } from '../data/runtimeTtsExceptions.js'
 
 const PIPER_CDN_URL = 'https://cdn.jsdelivr.net/npm/piper-tts-web@1.1.2/dist/piper-tts-web.js'
 let piperModulePromise = null
@@ -220,7 +221,7 @@ const MAX_GENERATED_TTS_LEXICON_ENTRIES = 200
 const MAX_GENERATED_TTS_LEMMA_LEXICON_ENTRIES = 200
 
 function buildEffectivePronunciationLexicon() {
-  const merged = [...TR_PRONUNCIATION_LEXICON, ...TR_FOCUSED_PRONUNCIATION_LEXICON]
+  const merged = [...RUNTIME_TTS_EXCEPTIONS, ...TR_PRONUNCIATION_LEXICON, ...TR_FOCUSED_PRONUNCIATION_LEXICON]
   const seenPatterns = new Set(merged.map(([pattern]) => `${pattern.source}__${pattern.flags}`))
   const generatedEntries = Array.isArray(GENERATED_TTS_LEXICON)
     ? GENERATED_TTS_LEXICON.slice(0, MAX_GENERATED_TTS_LEXICON_ENTRIES)

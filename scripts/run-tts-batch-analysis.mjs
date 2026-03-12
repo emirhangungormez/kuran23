@@ -589,7 +589,9 @@ function buildMisreadReport(summary, samples, unresolved, bookExceptions) {
     '',
     '## Hata Tipi Siniflandirmasi',
     '',
-    ...Object.entries(summary.issueCounts).map(([key, value]) => `- ${issueTypeLabel(key)}: ${value}`),
+    ...(Object.keys(summary.issueCounts).length
+      ? Object.entries(summary.issueCounts).map(([key, value]) => `- ${issueTypeLabel(key)}: ${value}`)
+      : ['- Kalan anlamli hata yok.']),
     '',
     '## Temsili Test Pasajlari',
     '',
@@ -637,6 +639,32 @@ function buildNextStepRecommendation(summary, unresolved) {
     .filter((item) => item.issueType === 'normalize_miss' || item.issueType === 'regex_miss')
     .reduce((sum, item) => sum + item.localCount, 0)
   const regexMissCount = unresolved.filter((item) => item.issueType === 'regex_miss').length
+
+  if (summary.unresolvedOccurrences === 0) {
+    const lines = [
+      '# TTS Next Step Recommendation',
+      '',
+      '- Karar: Top3000 genislemesine gecme.',
+      `- Candidate-backed kapsama orani: ${summary.candidateCoverageRatio}`,
+      '- Kalan sorunlu token gecisi: 0',
+      '- Kalan benzersiz token: 0',
+      '',
+      '## Gerekce',
+      '',
+      '- Mevcut batch setinde anlamli kalan hata yok.',
+      '- Yeni hata sinifi dogmadi.',
+      '- Hedefli runtime exception kalan yuzey formu kapatti.',
+      '',
+      '## Onerilen Sirali Sonraki Adimlar',
+      '',
+      '1. Top3000 genislemesine bu asamada gecme.',
+      '2. Yeni gercek hata ornekleri birikirse ayni batch analizini tekrar kos.',
+      '3. Exception setini dar tut; benzer ama farkli yuzey formlari veri gelmeden genisletme.',
+      ''
+    ]
+
+    return `${lines.join('\n')}\n`
+  }
 
   const shouldDelayTop3000 = weightedTargeted >= weightedGeneral && regexMissCount <= 3
   const verdict = shouldDelayTop3000

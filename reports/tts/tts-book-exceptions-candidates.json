@@ -1,55 +1,8 @@
 {
-  "generatedAt": "2026-03-12T22:29:37.902Z",
+  "generatedAt": "2026-03-12T22:59:38.544Z",
   "summary": {
-    "booksWithCandidates": 2,
-    "totalCandidates": 2
+    "booksWithCandidates": 0,
+    "totalCandidates": 0
   },
-  "books": [
-    {
-      "bookId": "suyuti_durrul_mensur",
-      "bookTitle": "ed-Dürrü’l-Mensûr",
-      "author": "Süyûtî",
-      "candidates": [
-        {
-          "token": "Tefsir'inde",
-          "issueType": "exception_needed",
-          "issueLabel": "Lemma yerine exception gerek",
-          "localCount": 2,
-          "globalCount": 91,
-          "globalFileCount": 36,
-          "suggestedPronunciation": "tefsiir",
-          "actualSpeech": "Tefsirinde",
-          "expectedSpeech": "tefsiirinde",
-          "normalizeOnly": "Tefsirinde",
-          "reasons": [
-            "apostrophe"
-          ],
-          "excerpt": "ân b. Uyeyne Tefsîr'inde, Ebû Ubeyd , Fadâil'de, İbn Ebî Şeybe , Ahmed , Müsned'de, Abd b. Humeyd , Tefsir'inde, Buhârî , Cuzu'l-Kirâa'da, İbn Cerîr , İbnu'l-Enbârî , Mesâhifte, İbn Hibbân , Dârakutnî ve Beyhakî"
-        }
-      ]
-    },
-    {
-      "bookId": "kurtubi",
-      "bookTitle": "Kurtubî Tefsiri",
-      "author": "Kurtubî",
-      "candidates": [
-        {
-          "token": "Tefsir'inde",
-          "issueType": "exception_needed",
-          "issueLabel": "Lemma yerine exception gerek",
-          "localCount": 1,
-          "globalCount": 91,
-          "globalFileCount": 36,
-          "suggestedPronunciation": "tefsiir",
-          "actualSpeech": "Tefsirinde",
-          "expectedSpeech": "tefsiirinde",
-          "normalizeOnly": "Tefsirinde",
-          "reasons": [
-            "apostrophe"
-          ],
-          "excerpt": "n bereketinden mahrum kalanlar oldukları da söylenmiştir. Bunu es- Sülemi Hakaikinde el- Maverdi de Tefsir'inde zikretmiş ise de bunun doğrulukla ilgisi yoktur. el- Maverdi der ki: Bu reddedilen bir açıklama şek"
-        }
-      ]
-    }
-  ]
+  "books": []
 }

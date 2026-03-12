@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T22:29:37.900Z",
+  "generatedAt": "2026-03-12T22:59:38.541Z",
   "methodology": {
     "source": "public/tafsir-library/*/001.json",
     "booksAnalyzed": 16,
@@ -9,39 +9,13 @@
     "booksAnalyzed": 16,
     "sensitiveOccurrences": 22392,
     "candidateOccurrences": 1700,
-    "coveredOccurrences": 1697,
-    "unresolvedOccurrences": 3,
-    "candidateCoverageRatio": 0.9982,
-    "unresolvedUniqueTokens": 2,
-    "issueCounts": {
-      "exception_needed": 3
-    }
+    "coveredOccurrences": 1700,
+    "unresolvedOccurrences": 0,
+    "candidateCoverageRatio": 1,
+    "unresolvedUniqueTokens": 0,
+    "issueCounts": {}
   },
   "samples": [
-    {
-      "bookId": "suyuti_durrul_mensur",
-      "bookTitle": "ed-Dürrü’l-Mensûr",
-      "author": "Süyûtî",
-      "surahId": 1,
-      "sampleText": "Fatiha suresi nazil olduğu zaman İblis çığlık attı. Fâtiha suresi Medine'de nazil oldu. . Vekî , Tefsîr'de ve Firyâbî , Tefsîr'de, Ebû Nuaym, Hilye ve Fadâilu'l- Kur'ân'da, İbn Ebî Şeybe , Musannef’te, Abd b. Humeyd , İbnu'l-Münzir , Tefsîr'de, Ebû Bekr el-Enbârî Mesâhifte, Ebu'ş-seyh , el-Azame'de Mücâhid'den bildiriyor: . Fâtiha suresi, Medine'de nazil olmuştur. . Vekî , Tefsîr'de Mücâhid'den bildiriyor: . Fâtiha suresi, Medine'de nazil olmuştur. . Ebû Bekr b. el-Enbârî Mesâhifte Katâde'den bildiriyor: . Fâtiha suresi, Mekke'de nazil olmuştur. .",
-      "speechReadyText": "Fatiha Suuresi naazil olduğu zaman İblis çığlık attı. Faatiha Suuresi Medinede naazil oldu. . Vekii , Tefsiirde ve Firyaabii , Tefsiirde, Ebuu Nuaym, Hilye ve Fadaailul- Kuraanda, İbn Ebii Şeybe , Musannefte, Abd b. Humeyd , İbnul-Münzir , Tefsiirde, Ebuu Bekr el-Enbaarii Mesaahifte, Ebuuş-seyh , el-Azamede Mücaahidden bildiriyor: . Faatiha Suuresi, Medinede naazil olmuştur. . Vekii , Tefsiirde Mücaahidden bildiriyor: . Faatiha Suuresi, Medinede naazil olmuştur. . Ebuu Bekr b. el-Enbaarii Mesaahifte Kataadeden bildiriyor: . Faatiha Suuresi, Mekkede naazil olmuştur. .",
-      "sensitiveTokenCount": 2606,
-      "unresolvedTokenCount": 2,
-      "candidateCoverageRatio": 0.9938,
-      "flaggedIssues": []
-    },
-    {
-      "bookId": "kurtubi",
-      "bookTitle": "Kurtubî Tefsiri",
-      "author": "Kurtubî",
-      "surahId": 1,
-      "sampleText": "Hazret-i Peygamber 'in: Her kimin İmâmı varsa, İmâmın kıraati onun için kıraattir hadisine gelince, zayıf bir hadistir. Bunu el-Hasen b. Umare müsned olarak rivayet etmiştir. Ancak el-Hasen metruk ve zayıf bir ravidir. . Her ikisi de bunu Mûsa b. Ebî Âişe 'den o Abdullah b. Şeddad'dan, o Cabir'den rivayet etmişlerdir. Dârakutnî de bu hadisi rivayet edip şöyle demiştir: Bunu Süfyan es-Sevri, Şu'be, İsrail b. Yûnus, Şerik, Ebû Halid ed-Dalani, Ebû'l-Ahvas, Süfyan b. Uyeyne , Cerir b. Abdulhamid ve başkaları Mûsa b. Ebi Âişe 'den o, Abdillah b.",
-      "speechReadyText": "Hazreti Peygamber 'in: Her kimin İmaamı varsa, İmaamın kıraati onun için kıraattir hadisine gelince, zayıf bir hadistir. Bunu el-Hasen b. Umare müsned olarak rivaayet etmiştir. Ancak el-Hasen metruk ve zayıf bir ravidir. . Her ikisi de bunu Muusa b. Ebii aaişe 'den o Abdullah b. Şeddaddan, o Cabirden rivaayet etmişlerdir. Daarakutnii de bu hadisi rivaayet edip şöyle demiştir: Bunu Süfyan es-Sevri, Şube, İsrail b. Yuunus, Şerik, Ebuu Halid ed-Dalani, Ebuul-Ahvas, Süfyan b. Uyeyne , Ceriir b. Abdulhamid ve başkaları Muusa b. Ebii aaişe 'den o, Abdillah b.",
-      "sensitiveTokenCount": 3402,
-      "unresolvedTokenCount": 1,
-      "candidateCoverageRatio": 0.9959,
-      "flaggedIssues": []
-    },
     {
       "bookId": "besairul_kuran",
       "bookTitle": "Beşâirü’l-Kur’ân",
@@ -74,6 +48,18 @@
       "sampleText": "CELÂLEYN TEFSİRİ . Celâlü’d-dîn Muhammed b. Ahmed . El-Mahallî eş- Şâfiî ö.864 bölü 1460 . Bakara suresinin başından İsrâ suresinin sonuna kadar . ve . Celâlü’d-dîn Abdurrahmân b. Ebî Bekr . es-Suyûtî eş- Şâfiî ö.911 bölü 1505 . Kehf suresinin başından Nâs suresinin sonuna kadar ve Fâtiha suresi ile birlikte . 1 - FÂTİHA sureSİ . Mekke'de nâzil olup 7 ayet-i kerîmedir. . 1 . Rahmân ve Rahîm olan Allah'ın ismiyle. . 2 . Hamd, yüce Allah'a mahsustur. Bütün yaratıklarca yapılan hamdlerin tamamının sâhibi veya mahlûkatın hamdlerine müstahak O’dur.",
       "speechReadyText": "CElaaLEYN TEFSİRİ . Celaalüd-diin Muhammed b. Ahmed . El-Mahallii eş- Şaafiii ö.864 bölü 1460 . Bakara suresinin başından İsraa suresinin sonuna kadar . ve . Celaalüd-diin Abdurrahmaan b. Ebii Bekr . es-Suyuutii eş- Şaafiii ö.911 bölü 1505 . Kehf suresinin başından Naas suresinin sonuna kadar ve Faatiha Suuresi ile birlikte . 1 - FaaTİHA sureSİ . Mekkede naazil olup 7 aayeti keriimedir. . 1 . Rahmaan ve Rahiim olan Allahın ismiyle. . 2 . Hamd, yüce Allaha mahsustur. Bütün yaratıklarca yapılan hamdlerin tamamının saahibi veya mahluukatın hamdlerine müstahak Odur.",
       "sensitiveTokenCount": 99,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "suyuti_durrul_mensur",
+      "bookTitle": "ed-Dürrü’l-Mensûr",
+      "author": "Süyûtî",
+      "surahId": 1,
+      "sampleText": "Fatiha suresi nazil olduğu zaman İblis çığlık attı. Fâtiha suresi Medine'de nazil oldu. . Vekî , Tefsîr'de ve Firyâbî , Tefsîr'de, Ebû Nuaym, Hilye ve Fadâilu'l- Kur'ân'da, İbn Ebî Şeybe , Musannef’te, Abd b. Humeyd , İbnu'l-Münzir , Tefsîr'de, Ebû Bekr el-Enbârî Mesâhifte, Ebu'ş-seyh , el-Azame'de Mücâhid'den bildiriyor: . Fâtiha suresi, Medine'de nazil olmuştur. . Vekî , Tefsîr'de Mücâhid'den bildiriyor: . Fâtiha suresi, Medine'de nazil olmuştur. . Ebû Bekr b. el-Enbârî Mesâhifte Katâde'den bildiriyor: . Fâtiha suresi, Mekke'de nazil olmuştur. .",
+      "speechReadyText": "Fatiha Suuresi naazil olduğu zaman İblis çığlık attı. Faatiha Suuresi Medinede naazil oldu. . Vekii , Tefsiirde ve Firyaabii , Tefsiirde, Ebuu Nuaym, Hilye ve Fadaailul- Kuraanda, İbn Ebii Şeybe , Musannefte, Abd b. Humeyd , İbnul-Münzir , Tefsiirde, Ebuu Bekr el-Enbaarii Mesaahifte, Ebuuş-seyh , el-Azamede Mücaahidden bildiriyor: . Faatiha Suuresi, Medinede naazil olmuştur. . Vekii , Tefsiirde Mücaahidden bildiriyor: . Faatiha Suuresi, Medinede naazil olmuştur. . Ebuu Bekr b. el-Enbaarii Mesaahifte Kataadeden bildiriyor: . Faatiha Suuresi, Mekkede naazil olmuştur. .",
+      "sensitiveTokenCount": 2606,
       "unresolvedTokenCount": 0,
       "candidateCoverageRatio": 1,
       "flaggedIssues": []
@@ -146,6 +132,18 @@
       "sampleText": "Mâlik radıyallahü anh ve Ebû Hüreyre radıyallahü anh de bu konuda Resûlüllah sallallahü aleyhi ve sellem namazda kıraate el-Hamdü lillâhi rabbi'l-âlemîn ile başlardı Kâne Resûlüllah sallallahü aleyhi ve sellem yeftetıhu'l-kıraate bi el-Hamdü lillâhi rabbil âlemîn diyorlar. İbn-i Mâce: Cilt: 3. Sayfa, 20-21 Hadîs No: 812. 813. 814. . Andolsun ki Resûlüm Biz sana, Seb'an mine'l-Mesanî'yı verdik mealindeki 87. ayeti kesin olarak Mekke'de vahyedilmiştir. surenin mânâsı . 1 .",
       "speechReadyText": "Maalik radıyallahü anh ve Ebuu Hüreyre radıyallahü anh de bu konuda Resuulüllah sallallahü aleyhi ve sellem namazda kıraate el-Hamdü lillaahi rabbil-aalemiin ile başlardı kaane Resuulüllah sallallahü aleyhi ve sellem yeftetıhul-kıraate bi el-Hamdü lillaahi rabbil aalemiin diyorlar. İbni Maace: Cilt: 3. Sayfa, 20-21 Hadiis No: 812. 813. 814. . Andolsun ki Resuulüm Biz sana, Seban minel-Mesaniiyı verdik mealindeki 87. aayeti kesin olarak Mekkede vahyedilmiştir. suurenin maanaası . 1 .",
       "sensitiveTokenCount": 760,
+      "unresolvedTokenCount": 0,
+      "candidateCoverageRatio": 1,
+      "flaggedIssues": []
+    },
+    {
+      "bookId": "kurtubi",
+      "bookTitle": "Kurtubî Tefsiri",
+      "author": "Kurtubî",
+      "surahId": 1,
+      "sampleText": "Hazret-i Peygamber 'in: Her kimin İmâmı varsa, İmâmın kıraati onun için kıraattir hadisine gelince, zayıf bir hadistir. Bunu el-Hasen b. Umare müsned olarak rivayet etmiştir. Ancak el-Hasen metruk ve zayıf bir ravidir. . Her ikisi de bunu Mûsa b. Ebî Âişe 'den o Abdullah b. Şeddad'dan, o Cabir'den rivayet etmişlerdir. Dârakutnî de bu hadisi rivayet edip şöyle demiştir: Bunu Süfyan es-Sevri, Şu'be, İsrail b. Yûnus, Şerik, Ebû Halid ed-Dalani, Ebû'l-Ahvas, Süfyan b. Uyeyne , Cerir b. Abdulhamid ve başkaları Mûsa b. Ebi Âişe 'den o, Abdillah b.",
+      "speechReadyText": "Hazreti Peygamber 'in: Her kimin İmaamı varsa, İmaamın kıraati onun için kıraattir hadisine gelince, zayıf bir hadistir. Bunu el-Hasen b. Umare müsned olarak rivaayet etmiştir. Ancak el-Hasen metruk ve zayıf bir ravidir. . Her ikisi de bunu Muusa b. Ebii aaişe 'den o Abdullah b. Şeddaddan, o Cabirden rivaayet etmişlerdir. Daarakutnii de bu hadisi rivaayet edip şöyle demiştir: Bunu Süfyan es-Sevri, Şube, İsrail b. Yuunus, Şerik, Ebuu Halid ed-Dalani, Ebuul-Ahvas, Süfyan b. Uyeyne , Ceriir b. Abdulhamid ve başkaları Muusa b. Ebii aaişe 'den o, Abdillah b.",
+      "sensitiveTokenCount": 3402,
       "unresolvedTokenCount": 0,
       "candidateCoverageRatio": 1,
       "flaggedIssues": []
