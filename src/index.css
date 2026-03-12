@@ -1127,16 +1127,16 @@ button {
   .verse-page .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    justify-content: stretch;
+    grid-template-columns: repeat(6, 44px);
+    justify-content: center;
     gap: 6px;
   }
 
   .reading-view .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    justify-content: stretch;
+    grid-template-columns: repeat(2, 40px);
+    justify-content: start;
     gap: 6px;
   }
 
@@ -1158,8 +1158,8 @@ button {
   .reading-view .page-secondary-actions>.diacritics-header-btn,
   .reading-view .page-secondary-actions>.bookmark-btn {
     width: 100% !important;
-    min-width: 0;
-    max-width: none;
+    min-width: 40px;
+    max-width: 44px;
     height: auto !important;
     justify-content: center;
     padding: 0 !important;
@@ -1182,6 +1182,19 @@ button {
     aspect-ratio: 1 / 1;
     border-radius: 10px;
     touch-action: manipulation;
+  }
+
+  .surah-page .page-secondary-actions > *,
+  .verse-page .page-secondary-actions > * {
+    width: 44px !important;
+    min-width: 44px;
+    max-width: 44px;
+  }
+
+  .reading-view .page-secondary-actions > * {
+    width: 40px !important;
+    min-width: 40px;
+    max-width: 40px;
   }
 }
 
