@@ -834,7 +834,7 @@ export default function LibraryBookPage() {
                       )}
                       {isActiveTafsirPlayback ? (isTafsirSpeechPaused ? 'Devam Et' : 'Duraklat') : 'Türkçe'}
                     </button>
-                    <button type="button" className="speed-toggle active" onClick={cycleTafsirVoiceRate}>
+                    <button type="button" className="speed-toggle" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
                     </button>
                     {isActiveTafsirPlayback && (

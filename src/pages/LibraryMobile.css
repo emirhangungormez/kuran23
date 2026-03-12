@@ -116,7 +116,7 @@
 }
 
 .tafsir-audio-controls .speed-toggle {
-  min-width: 52px;
+  min-width: 44px;
 }
 
 .kutuphane-page .minimal-library-list .tefsir-cover {
@@ -269,6 +269,14 @@
   .book-detail-page .tafsir-audio-controls .surah-audio-btn.turkish {
     flex: 1 1 140px;
     min-width: 0;
+  }
+
+  .book-detail-page .tafsir-audio-controls .speed-toggle {
+    min-width: 42px;
+    width: 42px;
+    height: 32px;
+    padding: 0 6px;
+    font-size: 10px;
   }
 }
 
