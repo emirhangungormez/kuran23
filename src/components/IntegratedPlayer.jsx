@@ -454,6 +454,14 @@ export default function IntegratedPlayer({
         }
     }
 
+    const getMobileCollapsedTop = (height) => {
+        const viewportInsets = getPlayerViewportInsets()
+        return Math.max(
+            viewportInsets.top,
+            window.innerHeight - height - viewportInsets.bottom
+        )
+    }
+
     const clampDragPosition = (left, top, width, height, options = {}) => {
         const { allowHorizontalOverflow = false } = options
         const viewportInsets = getPlayerViewportInsets()
@@ -577,6 +585,11 @@ export default function IntegratedPlayer({
                     drag.height
                 )
                 : { left: drag.originLeft, top: drag.originTop }
+            const normalizedFinalPosition = (
+                !isExpanded && isMobileSwipeDrag
+                    ? { ...finalPosition, top: getMobileCollapsedTop(drag.height) }
+                    : finalPosition
+            )
 
             if (dragFrameRef.current) {
                 window.cancelAnimationFrame(dragFrameRef.current)
@@ -595,14 +608,14 @@ export default function IntegratedPlayer({
 
             if (drag.hasMoved) {
                 const nextDock = resolveDockFromPoint(
-                    finalPosition.left + (drag.width / 2),
-                    finalPosition.top + (drag.height / 2)
+                    normalizedFinalPosition.left + (drag.width / 2),
+                    normalizedFinalPosition.top + (drag.height / 2)
                 )
 
-                setDragPosition(finalPosition)
+                setDragPosition(normalizedFinalPosition)
                 updateSettings({
                     playerDock: nextDock,
-                    playerPosition: finalPosition
+                    playerPosition: normalizedFinalPosition
                 })
             } else {
                 setDragPosition(settings.playerPosition || null)
@@ -637,7 +650,13 @@ export default function IntegratedPlayer({
 
             const currentDisplayPosition = dragPosition || storedPosition
             const rect = playerEl.getBoundingClientRect()
-            const nextPosition = clampDragPosition(storedPosition.left, storedPosition.top, rect.width, rect.height)
+            const isMobileCollapsed = window.innerWidth <= 768 && !isExpanded
+            const nextPosition = clampDragPosition(
+                storedPosition.left,
+                isMobileCollapsed ? getMobileCollapsedTop(rect.height) : storedPosition.top,
+                rect.width,
+                rect.height
+            )
             const isDisplayPositionUnchanged = (
                 nextPosition.left === currentDisplayPosition.left
                 && nextPosition.top === currentDisplayPosition.top
@@ -653,7 +672,7 @@ export default function IntegratedPlayer({
                 setDragPosition(nextPosition)
             }
 
-            if (!persistPosition || isStoredPositionUnchanged) return
+            if ((!persistPosition && !isMobileCollapsed) || isStoredPositionUnchanged) return
 
             const nextDock = resolveDockFromPoint(
                 nextPosition.left + (rect.width / 2),
