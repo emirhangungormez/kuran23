@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import './CustomSelect.css'
 
-export default function CustomSelect({ value, onChange, options, prefix = "", className = "" }) {
+export default function CustomSelect({ value, onChange, options, prefix = '', className = '' }) {
     const [isOpen, setIsOpen] = useState(false)
     const containerRef = useRef(null)
 
@@ -45,14 +45,16 @@ export default function CustomSelect({ value, onChange, options, prefix = "", cl
                                 }}
                             >
                                 <span className="dropdown-item-main">
-                                    {option.featured && <span className="dropdown-item-badge" aria-hidden="true">★</span>}
                                     <span className="dropdown-item-label">{option.label}</span>
                                 </span>
-                                {value === option.value && (
-                                    <svg className="item-check" width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M1 5L4 8L11 1" />
-                                    </svg>
-                                )}
+                                <span className="dropdown-item-side">
+                                    {option.featured && <span className="dropdown-item-badge" aria-hidden="true">★</span>}
+                                    {value === option.value && (
+                                        <svg className="item-check" width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M1 5L4 8L11 1" />
+                                        </svg>
+                                    )}
+                                </span>
                             </div>
                         ))}
                     </div>
