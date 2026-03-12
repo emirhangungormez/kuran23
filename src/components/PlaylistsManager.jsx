@@ -7,6 +7,7 @@ import { useSupporter } from '../contexts/SupporterContext';
 import { surahs } from '../data/quranData';
 import CustomSelect from './CustomSelect';
 import {
+    getArabicReciters,
     getVerseAudioUrl,
     getTurkishAudioUrl,
     getTurkishReciters,
@@ -22,16 +23,6 @@ const PencilIcon = ({ size = 13 }) => (
         </svg>
     </span>
 );
-
-const ARABIC_RECITERS = [
-    { id: 7, name: 'Alafasy' },
-    { id: 2, name: 'AbdulBaset (Murattal)' },
-    { id: 3, name: 'As-Sudais' },
-    { id: 5, name: 'Hani ar-Rifai' },
-    { id: 6, name: 'Al-Husary' },
-    { id: 9, name: 'Al-Minshawi' },
-    { id: 4, name: 'Abu Bakr al-Shatri' },
-];
 
 export default function PlaylistsManager({
     onPlaylistOpen,
@@ -74,7 +65,7 @@ export default function PlaylistsManager({
     const searchBtnRef = useRef(null);
 
     const turkishReciters = getTurkishReciters();
-    const arOptions = ARABIC_RECITERS.map(r => ({ value: r.id, label: r.name }));
+    const arOptions = useMemo(() => getArabicReciters().map(r => ({ value: r.id, label: r.name })), []);
     const trOptions = turkishReciters.map(r => ({ value: r.id, label: r.name }));
     const canCreatePlaylist = isSupporter || playlists.length < playlistLimit;
 

@@ -64,6 +64,31 @@ export const RECITER_MAP = {
         everyAyah: 'Mohammad_al_Tablaway_128kbps',
         server: '12'
     },
+    13: { // Maher Al-Muaiqly
+        mp3Quran: 'maher',
+        everyAyah: 'MaherAlMuaiqly128kbps',
+        server: '12'
+    },
+    14: { // Mahmoud Ali Al-Banna
+        mp3Quran: 'bna',
+        everyAyah: 'mahmoud_ali_al_banna_32kbps',
+        server: '8'
+    },
+    15: { // Nasser Al-Qatami
+        mp3Quran: 'qtm',
+        everyAyah: 'Nasser_Alqatami_128kbps',
+        server: '6'
+    },
+    16: { // Salah Al-Budair
+        mp3Quran: 's_bud',
+        everyAyah: 'Salah_Al_Budair_128kbps',
+        server: '6'
+    },
+    17: { // Yasser Ad-Dossari
+        mp3Quran: 'yasser',
+        everyAyah: 'Yasser_Ad-Dussary_128kbps',
+        server: '11'
+    },
     // Diyanet Sources (IDs prefixed with 1000 to avoid conflicts)
     1001: {
         name: 'Osman Şahin',
@@ -102,12 +127,38 @@ export const RECITER_MAP = {
 
 const DEFAULT_RECITER = RECITER_MAP[7];
 
+const ARABIC_RECITER_CATALOG = [
+    { id: 7, name: 'Mishari Rashid Alafasy' },
+    { id: 13, name: 'Maher Al-Muaiqly' },
+    { id: 17, name: 'Yasser Ad-Dossari' },
+    { id: 15, name: 'Nasser Al-Qatami' },
+    { id: 16, name: 'Salah Al-Budair' },
+    { id: 14, name: 'Mahmoud Ali Al-Banna' },
+    { id: 4, name: 'Abu Bakr al-Shatri' },
+    { id: 2, name: 'AbdulBaset AbdulSamad - Murattal' },
+    { id: 1, name: 'AbdulBaset AbdulSamad - Mujawwad' },
+    { id: 3, name: 'Abdur-Rahman as-Sudais' },
+    { id: 10, name: "Sa'ud ash-Shuraym" },
+    { id: 5, name: 'Hani ar-Rifai' },
+    { id: 6, name: 'Mahmoud Khalil Al-Husary' },
+    { id: 12, name: 'Mahmoud Khalil Al-Husary - Muallim' },
+    { id: 9, name: 'Mohamed Siddiq al-Minshawi - Murattal' },
+    { id: 8, name: 'Mohamed Siddiq al-Minshawi - Mujawwad' },
+    { id: 11, name: 'Mohamed al-Tablawi' }
+];
+
 /**
  * Check if a reciter ID is supported by our audio service
  * @param {number|string} reciterId 
  */
 export function isReciterSupported(reciterId) {
     return !!RECITER_MAP[Number(reciterId)];
+}
+
+export function getArabicReciters() {
+    return ARABIC_RECITER_CATALOG
+        .filter((reciter) => isReciterSupported(reciter.id))
+        .map((reciter) => ({ ...reciter }));
 }
 
 /**

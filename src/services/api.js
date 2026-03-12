@@ -2,7 +2,7 @@
 // Falls back to acikkuran-api directly when our backend is unavailable (local dev)
 
 import { surahs as mockSurahs, searchQuran as mockSearch } from '../data/quranData'
-import { getVerseAudioUrl } from './audio'
+import { getArabicReciters, getVerseAudioUrl } from './audio'
 import { sanitizeSearchInput } from '../utils/security'
 import { buildTextModesFromVerse, getVerseTextByMode } from '../utils/textMode'
 
@@ -207,33 +207,15 @@ async function fetchJson(url, timeout = 8000) {
 }
 
 /**
- * Get all available reciters from Quran.com API
+ * Get supported Arabic reciters for the app player
  */
 export async function getReciters() {
-    try {
-        const data = await fetchJson('https://api.quran.com/api/v4/resources/recitations?language=tr');
-        const reciters = data.recitations.map(r => ({
-            id: r.id,
-            name: r.reciter_name,
-            style: r.style,
-            translatedName: r.translated_name?.name
-        }));
-
-        // Provide a curated list of reciters in the requested order
-        const stableOptions = [
-            { id: 7, name: "Mishari Rashid Alafasy", style: "Modern & Net" },
-            { id: 4, name: "Abu Bakr al-Shatri", style: "Akıcı & Derin" },
-            { id: 2, name: "AbdulBaset AbdulSamad", style: "Hızlı / Murattal" },
-            { id: 10, name: "Sa'ud ash-Shuraym", style: "Hızlı & Net" }
-        ];
-
-        // Combine stable options at the top
-        const otherReciters = reciters.filter(r => !stableOptions.find(s => s.id === r.id));
-        return [...stableOptions, ...otherReciters];
-    } catch (e) {
-        console.warn('getReciters failed:', e);
-        return [];
-    }
+    return getArabicReciters().map((reciter) => ({
+        id: reciter.id,
+        name: reciter.name,
+        style: '',
+        translatedName: reciter.name
+    }))
 }
 
 export async function getTranslationsList() {
