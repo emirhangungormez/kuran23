@@ -70,16 +70,35 @@
 }
 
 @media (max-width: 768px) {
+    .daily-verse-card {
+        margin-bottom: 8px;
+        border-radius: 18px;
+    }
+
     .daily-verse-overlay {
-        padding: 24px;
+        padding: 18px;
+    }
+
+    .daily-badge {
+        margin-bottom: 14px;
+        padding: 5px 10px;
+        font-size: 10px;
     }
 
     .daily-ar {
-        font-size: 24px;
+        font-size: 20px;
+        line-height: 1.45;
+        margin-bottom: 12px;
     }
 
     .daily-tr {
-        font-size: 14px;
+        font-size: 13px;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+
+    .daily-ref {
+        font-size: 11px;
     }
 }
 

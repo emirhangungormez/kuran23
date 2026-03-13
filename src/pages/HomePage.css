@@ -858,6 +858,7 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 22px;
+    min-width: 0;
     animation: fadeUp 0.35s var(--ease) both;
     transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
@@ -922,6 +923,7 @@
     font-weight: 800;
     letter-spacing: -0.02em;
     margin-bottom: 8px;
+    overflow-wrap: anywhere;
 }
 
 .quick-link-body p {
@@ -930,6 +932,7 @@
     line-height: 1.45;
     color: var(--text-secondary);
     max-width: 26ch;
+    overflow-wrap: anywhere;
 }
 
 .popular-grid {
@@ -949,6 +952,7 @@
     display: flex;
     align-items: center;
     gap: 14px;
+    min-width: 0;
     animation: fadeUp 0.35s var(--ease) both;
     transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
@@ -996,6 +1000,10 @@
     font-weight: 500;
     line-height: 1.2;
     color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .popular-meta {
@@ -1035,16 +1043,98 @@
 }
 
 @media (max-width: 720px) {
+    .home {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 12px;
+        margin-bottom: calc(-58px - env(safe-area-inset-bottom));
+    }
+
+    .home-content {
+        padding-bottom: 8px;
+    }
+
     .popular-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .popular-card {
-        padding: 14px;
+        gap: 10px;
+        padding: 12px 10px;
+    }
+
+    .popular-no {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+    }
+
+    .popular-name-ar {
+        font-size: 15px;
+        line-height: 1.2;
+    }
+
+    .popular-name-tr {
+        font-size: 11px;
+        line-height: 1.15;
+    }
+
+    .popular-card .surah-type-badge {
+        padding: 3px 6px;
+        font-size: 9px;
+        letter-spacing: 0.03em;
+    }
+
+    .popular-meta {
+        gap: 6px;
+    }
+
+    .popular-ayah {
+        font-size: 10px;
+    }
+
+    .quick-links-grid {
+        gap: 10px;
+    }
+
+    .quick-link-card {
+        min-height: 138px;
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .quick-link-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+    }
+
+    .quick-link-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .quick-link-badge {
+        padding: 5px 8px;
+        font-size: 9px;
+    }
+
+    .quick-link-body h3 {
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
+
+    .quick-link-body p {
+        font-size: 12px;
+        line-height: 1.35;
     }
 }
 
 @media (max-width: 359px) {
+    .home {
+        margin-bottom: calc(-44px - env(safe-area-inset-bottom));
+    }
+
     .popular-grid {
         grid-template-columns: 1fr;
     }
