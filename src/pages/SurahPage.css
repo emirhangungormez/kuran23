@@ -78,6 +78,7 @@
 }
 
 .verse-row {
+    --verse-meta-offset: 44px;
     display: flex;
     align-items: flex-start;
     gap: 16px;
@@ -91,6 +92,7 @@
 
 @media (max-width: 768px) {
     .verse-row {
+        --verse-meta-offset: 48px;
         padding: 16px 12px;
         gap: 14px;
     }
@@ -494,7 +496,8 @@
 }
 
 .verse-row-transcription {
-    margin: 0 0 8px;
+    width: calc(100% + var(--verse-meta-offset));
+    margin: 0 0 8px calc(var(--verse-meta-offset) * -1);
     color: var(--text-tertiary);
     font-style: italic;
     line-height: 1.45;
@@ -505,6 +508,8 @@
 }
 
 .verse-row-tr {
+    width: calc(100% + var(--verse-meta-offset));
+    margin-left: calc(var(--verse-meta-offset) * -1);
     font-size: 14px;
     color: #1d1d1f;
     line-height: 1.6;
