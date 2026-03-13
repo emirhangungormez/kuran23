@@ -772,12 +772,20 @@ export default function IntegratedPlayer({
                             }
                         </span>
                     </div>
-                    {hasInlineArabicMeta && (
+                    {(hasInlineArabicMeta || playerMetaText) && (
                         <div className="player-row-bot">
-                            <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
+                            {hasInlineArabicMeta && (
+                                <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
+                            )}
+                            {hasInlineArabicMeta && playerMetaText && <span className="player-meta-separator">&middot;</span>}
+                            {playerMetaText && (
+                                <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
+                                    {playerMetaText}
+                                </span>
+                            )}
                         </div>
                     )}
-                    {(surahType || playbackBadgeLabel || playerMetaText) && (
+                    {(surahType || playbackBadgeLabel) && (
                         <div className="player-row-submeta">
                             {surahType && (
                                 <span className={`player-badge ${surahType.toLowerCase()}`}>
@@ -787,11 +795,6 @@ export default function IntegratedPlayer({
                             {playbackBadgeLabel && (
                                 <span className={`player-badge language ${playbackBadgeClass}`}>
                                     {playbackBadgeLabel}
-                                </span>
-                            )}
-                            {playerMetaText && (
-                                <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
-                                    {playerMetaText}
                                 </span>
                             )}
                         </div>
