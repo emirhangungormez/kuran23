@@ -935,21 +935,21 @@
 .popular-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
 }
 
 .popular-card {
-    min-height: 104px;
-    padding: 14px 12px;
+    min-height: 154px;
+    padding: 16px;
     border: 1px solid var(--separator);
-    border-radius: 18px;
+    border-radius: 20px;
     background: white;
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 14px;
     animation: fadeUp 0.35s var(--ease) both;
     transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
@@ -960,37 +960,72 @@
     background: var(--fill);
 }
 
+.popular-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 .popular-no {
-    width: 28px;
-    height: 28px;
-    border-radius: 9px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: var(--fill);
     color: var(--text-tertiary);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+}
+
+.popular-card .surah-type-badge {
+    padding: 4px 8px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+}
+
+.popular-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.popular-name-ar {
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--text-primary);
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    display: block;
+    min-width: 0;
 }
 
 .popular-name-tr {
     font-size: 14px;
     font-weight: 700;
-    line-height: 1.2;
-    color: var(--text-primary);
+    line-height: 1.25;
+    color: var(--text-secondary);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.popular-name-ar {
-    margin-top: auto;
-    font-size: 15px;
-    line-height: 1.2;
-    color: var(--text-secondary);
-    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+.popular-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+}
+
+.popular-ayah {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary);
 }
 
 .daily-verse-home-section .daily-verse-card {
@@ -1009,23 +1044,27 @@
 }
 
 @media (max-width: 720px) {
-    .popular-card {
-        min-height: 88px;
-        gap: 8px;
+    .popular-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .popular-name-tr {
-        font-size: 12px;
+    .popular-card {
+        min-height: 144px;
+        gap: 12px;
     }
 
     .popular-name-ar {
-        display: none;
+        font-size: 20px;
+    }
+
+    .popular-name-tr {
+        font-size: 13px;
     }
 }
 
 @media (max-width: 359px) {
     .popular-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 }
 
