@@ -13,6 +13,72 @@ import './HomePage.css'
 import GlobalNav from '../components/GlobalNav'
 import ArabicKeyboard from '../components/ArabicKeyboard'
 
+const HOME_SHORTCUTS = [
+    {
+        key: 'reading',
+        to: '/oku/1',
+        badge: 'MUSHAF',
+        title: 'Kuran-ı Kerim',
+        description: 'Sayfa düzeninde okumaya hemen başla.',
+        tone: 'emerald',
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M20 22H6.5A2.5 2.5 0 0 1 4 19.5V4a2 2 0 0 1 2-2h14z" />
+            </svg>
+        )
+    },
+    {
+        key: 'library',
+        to: '/kutuphane',
+        badge: 'TEFSIR',
+        title: 'Tefsir Kütüphanesi',
+        description: 'Tefsir ve meal kitaplarını tek yerden aç.',
+        tone: 'sand',
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 4.5h4a2 2 0 0 1 2 2V20H7a2 2 0 0 0-2 2z" />
+                <path d="M19 4.5h-4a2 2 0 0 0-2 2V20h4a2 2 0 0 1 2 2z" />
+                <path d="M9 7.5H7.5" />
+                <path d="M16.5 7.5H15" />
+            </svg>
+        )
+    },
+    {
+        key: 'fihrist',
+        to: '/fihrist',
+        badge: 'REHBER',
+        title: 'Fihrist',
+        description: 'Sure ve konu başlıklarına doğrudan geç.',
+        tone: 'slate',
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M8 6h12" />
+                <path d="M8 12h12" />
+                <path d="M8 18h12" />
+                <path d="M3 6h.01" />
+                <path d="M3 12h.01" />
+                <path d="M3 18h.01" />
+            </svg>
+        )
+    },
+    {
+        key: 'moon',
+        to: '/ay-evresi',
+        badge: 'GÖKYÜZÜ',
+        title: 'Ay Mertebesi',
+        description: 'Güncel ay evresini tek bakışta gör.',
+        tone: 'ink',
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.79Z" />
+            </svg>
+        )
+    }
+]
+
+const FEATURED_SURAH_IDS = [1, 2, 3, 18, 19, 20, 36, 44, 55, 56, 67, 78, 87, 97, 112, 114]
+
 export default function HomePage() {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState(null)
@@ -106,9 +172,7 @@ export default function HomePage() {
         }
     }
 
-    const popularSurahs = allSurahs.filter(s =>
-        [1, 2, 18, 36, 55, 56, 67, 112].includes(s.no)
-    )
+    const featuredSurahs = allSurahs.filter((surah) => FEATURED_SURAH_IDS.includes(surah.no))
 
     return (
         <div className="home">
@@ -186,88 +250,98 @@ export default function HomePage() {
                 ) : (
                     <>
                         <div className="home-sections-grid">
-                            <DailyVerse verse={dailyVerse} />
-
-                            <div className="popular-section">
-                                <h2 className="section-title">Popüler Sureler</h2>
-                                <div className="popular-grid">
-                                    {popularSurahs.map((s, i) => (
-                                        <Link key={s.no} to={`/sure/${s.no}`} className="popular-card" style={{ animationDelay: `${i * 0.05}s` }}>
-                                            <div className="popular-no">{s.no}</div>
-                                            <div className="popular-info">
-                                                <span className="popular-name-ar">{normalizeArabicDisplayText(s.nameAr)}</span>
-                                                <span className="popular-name-tr">{s.nameTr}</span>
+                            <section className="quick-links-section">
+                                <div className="section-head">
+                                    <div>
+                                        <h2 className="section-title">Hızlı Erişim</h2>
+                                        <p className="section-note">Ana akışlar ilk ekranda.</p>
+                                    </div>
+                                </div>
+                                <div className="quick-links-grid">
+                                    {HOME_SHORTCUTS.map((item, index) => (
+                                        <Link
+                                            key={item.key}
+                                            to={item.to}
+                                            className={`quick-link-card tone-${item.tone}`}
+                                            style={{ animationDelay: `${index * 0.04}s` }}
+                                        >
+                                            <div className="quick-link-head">
+                                                <span className="quick-link-icon">{item.icon}</span>
+                                                <span className="quick-link-badge">{item.badge}</span>
                                             </div>
-                                            <div className="popular-meta">
-                                                <span className="popular-ayah">{s.ayahCount} Ayet</span>
-                                                <span className={`surah-type-badge ${s.type?.toLowerCase()}`}>{s.type}</span>
+                                            <div className="quick-link-body">
+                                                <h3>{item.title}</h3>
+                                                <p>{item.description}</p>
                                             </div>
                                         </Link>
                                     ))}
                                 </div>
-                            </div>
+                            </section>
 
-                            <section className="quick-links-section">
-                                <h2 className="section-title">Hızlı Erişim</h2>
-                                <div className="home-promo-row">
-                                <Link to="/ay-evresi" className="moon-promo-card">
-                                    <div className="moon-promo-overlay">
-                                            <span className="moon-promo-badge">GÖKYÜZÜ</span>
-                                        <div className="moon-promo-content">
-                                            <h3>Ay Mertebesi</h3>
-                                            <p>Mevcut ay evresini takip edin.</p>
-                                        </div>
+                            <section className="popular-section">
+                                <div className="section-head">
+                                    <div>
+                                        <h2 className="section-title">Sık Açılan Sureler</h2>
+                                        <p className="section-note">Okumaya hızlı başlamak için seçili sureler.</p>
                                     </div>
-                                </Link>
-
-                                <Link to="/oku/1" className="quran-promo-card">
-                                    <div className="quran-promo-overlay">
-                                        <span className="quran-promo-badge">MUSHAF</span>
-                                            <div className="quran-promo-content">
-                                                <h3>Kuran-ı Kerim</h3>
-                                                <p>Baştan sona düzenli Kur'an okuma.</p>
-                                            </div>
-                                        </div>
-                                    </Link>
-
-                                <Link to="/kutuphane" className="tafsir-promo-card">
-                                    <div className="tafsir-promo-overlay">
-                                        <span className="tafsir-promo-badge">KÜTÜPHANE</span>
-                                        <div className="tafsir-promo-content">
-                                            <h3>Kütüphane</h3>
-                                            <p>Tefsir ve meal kitaplarını kitap rafından seçin.</p>
-                                        </div>
-                                    </div>
-                                </Link>
-
+                                    <Link to="/fihrist" className="section-link">Tüm sureler</Link>
+                                </div>
+                                <div className="popular-grid">
+                                    {featuredSurahs.map((surah, index) => (
+                                        <Link
+                                            key={surah.no}
+                                            to={`/sure/${surah.no}`}
+                                            className="popular-card"
+                                            style={{ animationDelay: `${index * 0.03}s` }}
+                                        >
+                                            <span className="popular-no">{surah.no}</span>
+                                            <span className="popular-name-tr">{surah.nameTr}</span>
+                                            <span className="popular-name-ar">{normalizeArabicDisplayText(surah.nameAr)}</span>
+                                        </Link>
+                                    ))}
                                 </div>
                             </section>
-                        </div>
 
-                        <div className="explore-topics-section">
-                            <h2 className="section-title">Konuları Keşfedin</h2>
-                            <div className="horizontal-topics">
-                                {popularTopics.map((topic) => {
-                                    const label = typeof topic === 'string' ? topic : topic.label
-                                    const searchQuery = sanitizeSearchInput(typeof topic === 'string' ? topic : (topic.query || topic.label))
-                                    const isArabic = typeof topic === 'object' && topic.lang === 'ar'
-                                    return (
-                                    <button
-                                        key={searchQuery}
-                                        className={`topic-tag-chip ${isArabic ? 'topic-tag-chip-ar' : ''}`}
-                                        dir={isArabic ? 'rtl' : 'ltr'}
-                                        onClick={() => {
-                                            setQuery(searchQuery);
-                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                            inputRef.current?.focus();
-                                        }}
-                                    >
-                                        {isArabic ? label : `#${label}`}
-                                    </button>
-                                    )
-                                })}
-                                <Link to="/fihrist" className="topic-tag-chip all-topics">Tümünü Gör</Link>
+                            <div className="explore-topics-section">
+                                <div className="section-head">
+                                    <div>
+                                        <h2 className="section-title">Konuları Keşfedin</h2>
+                                        <p className="section-note">Aramaya tek dokunuşla başlayın.</p>
+                                    </div>
+                                </div>
+                                <div className="horizontal-topics">
+                                    {popularTopics.map((topic) => {
+                                        const label = typeof topic === 'string' ? topic : topic.label
+                                        const searchQuery = sanitizeSearchInput(typeof topic === 'string' ? topic : (topic.query || topic.label))
+                                        const isArabic = typeof topic === 'object' && topic.lang === 'ar'
+                                        return (
+                                        <button
+                                            key={searchQuery}
+                                            className={`topic-tag-chip ${isArabic ? 'topic-tag-chip-ar' : ''}`}
+                                            dir={isArabic ? 'rtl' : 'ltr'}
+                                            onClick={() => {
+                                                setQuery(searchQuery);
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                inputRef.current?.focus();
+                                            }}
+                                        >
+                                            {isArabic ? label : `#${label}`}
+                                        </button>
+                                        )
+                                    })}
+                                    <Link to="/fihrist" className="topic-tag-chip all-topics">Tümünü Gör</Link>
+                                </div>
                             </div>
+
+                            <section className="daily-verse-home-section">
+                                <div className="section-head">
+                                    <div>
+                                        <h2 className="section-title">Günün Ayeti</h2>
+                                        <p className="section-note">İsterseniz en sonda günlük bir durak.</p>
+                                    </div>
+                                </div>
+                                <DailyVerse verse={dailyVerse} />
+                            </section>
                         </div>
                     </>
                 )}
