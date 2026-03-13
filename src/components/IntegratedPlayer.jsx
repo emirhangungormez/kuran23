@@ -771,22 +771,29 @@ export default function IntegratedPlayer({
                                 : `${surahNameTr}${ayahNo > 0 ? `:${ayahNo}` : ''}`
                             }
                         </span>
-                        {surahType && (
-                            <span className={`player-badge ${surahType.toLowerCase()}`}>
-                                {surahType}
-                            </span>
-                        )}
-                        {playbackBadgeLabel && (
-                            <span className={`player-badge language ${playbackBadgeClass}`}>
-                                {playbackBadgeLabel}
-                            </span>
-                        )}
                     </div>
                     <div className="player-row-bot">
-                        {hasInlineArabicMeta && (
-                            <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
+                        {(hasInlineArabicMeta || surahType || playbackBadgeLabel) && (
+                            <div className="player-meta-stack">
+                                {hasInlineArabicMeta && (
+                                    <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
+                                )}
+                                {(surahType || playbackBadgeLabel) && (
+                                    <div className="player-inline-badges">
+                                        {surahType && (
+                                            <span className={`player-badge ${surahType.toLowerCase()}`}>
+                                                {surahType}
+                                            </span>
+                                        )}
+                                        {playbackBadgeLabel && (
+                                            <span className={`player-badge language ${playbackBadgeClass}`}>
+                                                {playbackBadgeLabel}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         )}
-                        {hasInlineArabicMeta && playerMetaText && <span className="player-meta-separator">&middot;</span>}
                         {playerMetaText && (
                             <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
                                 {playerMetaText}
@@ -1045,3 +1052,4 @@ export default function IntegratedPlayer({
         </div>
     )
 }
+
