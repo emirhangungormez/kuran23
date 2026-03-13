@@ -340,12 +340,6 @@ export default function HomePage() {
                             </div>
 
                             <section className="daily-verse-home-section">
-                                <div className="section-head">
-                                    <div>
-                                        <h2 className="section-title">Günün Ayeti</h2>
-                                        <p className="section-note">İsterseniz en sonda günlük bir durak.</p>
-                                    </div>
-                                </div>
                                 <DailyVerse verse={dailyVerse} />
                             </section>
                         </div>
