@@ -111,6 +111,7 @@ export default function IntegratedPlayer({
     const playbackLabel = playingType ? (playingType === 'arabic' ? 'Arapça' : 'Türkçe') : ''
     const playbackBadgeLabel = playingType ? (playingType === 'arabic' ? 'AR' : 'TR') : ''
     const playbackBadgeClass = playingType === 'arabic' ? 'lang-ar' : 'lang-tr'
+    void playbackLabel
     const hasInlineArabicMeta = !isPageContext && Boolean(displaySurahNameAr)
     const normalizedVolume = Math.max(0, Math.min(1, Number(volume || 0)))
     const playerDock = settings.playerDock || 'bottom-left'
@@ -785,18 +786,11 @@ export default function IntegratedPlayer({
                             )}
                         </div>
                     )}
-                    {(surahType || playbackBadgeLabel) && (
+                    {playbackBadgeLabel && (
                         <div className="player-row-submeta">
-                            {surahType && (
-                                <span className={`player-badge ${surahType.toLowerCase()}`}>
-                                    {surahType}
-                                </span>
-                            )}
-                            {playbackBadgeLabel && (
-                                <span className={`player-badge language ${playbackBadgeClass}`}>
-                                    {playbackBadgeLabel}
-                                </span>
-                            )}
+                            <span className={`player-badge language ${playbackBadgeClass}`}>
+                                {playbackBadgeLabel}
+                            </span>
                         </div>
                     )}
                 </div>
