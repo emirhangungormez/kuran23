@@ -294,16 +294,14 @@ export default function HomePage() {
                                             className="popular-card"
                                             style={{ animationDelay: `${index * 0.03}s` }}
                                         >
-                                            <div className="popular-card-head">
-                                                <span className="popular-no">{surah.no}</span>
-                                                <span className={`surah-type-badge ${surah.type?.toLowerCase()}`}>{surah.type}</span>
-                                            </div>
-                                            <div className="popular-card-body">
+                                            <span className="popular-no">{surah.no}</span>
+                                            <div className="popular-info">
                                                 <span className="popular-name-ar">{normalizeArabicDisplayText(surah.nameAr)}</span>
                                                 <span className="popular-name-tr">{surah.nameTr}</span>
                                             </div>
                                             <div className="popular-meta">
                                                 <span className="popular-ayah">{surah.ayahCount} Ayet</span>
+                                                <span className={`surah-type-badge ${surah.type?.toLowerCase()}`}>{surah.type}</span>
                                             </div>
                                         </Link>
                                     ))}
