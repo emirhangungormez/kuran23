@@ -135,6 +135,23 @@ export default function ReadingPage() {
     }, [page, currentPage, navigate])
 
     useEffect(() => {
+        const nextPlayingPage = Number(meta?.pageNumber || 0)
+        const shouldFollowPlaybackPage =
+            isPlaying &&
+            meta?.context === 'page' &&
+            (mode === 'playlist' || mode === 'single') &&
+            Number.isInteger(nextPlayingPage) &&
+            nextPlayingPage >= 1 &&
+            nextPlayingPage <= 604 &&
+            nextPlayingPage !== currentPage
+
+        if (!shouldFollowPlaybackPage) return
+
+        window.scrollTo({ top: 0, behavior: 'auto' })
+        navigate(`/oku/${nextPlayingPage}`, { replace: true })
+    }, [currentPage, isPlaying, meta?.context, meta?.pageNumber, mode, navigate])
+
+    useEffect(() => {
         if (pageVerses.length > 0) {
             saveLastPage({
                 pageNumber: currentPage,
