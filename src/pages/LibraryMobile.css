@@ -2,6 +2,7 @@
   --library-card-width: 154px;
   --library-book-radius: 14px;
   --library-book-ratio: 0.78;
+  --library-book-spine-width: 16px;
 }
 
 .kutuphane-page .minimal-library-list .library-books-grid.compact-grid {
@@ -32,7 +33,7 @@
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 16px;
+  width: var(--library-book-spine-width);
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(255, 255, 255, 0.06)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%, rgba(0, 0, 0, 0.14));
@@ -43,7 +44,7 @@
 .kutuphane-page .minimal-library-list .book-cover::after {
   content: '';
   position: absolute;
-  inset: 8px 8px 8px 16px;
+  inset: 8px 8px 8px calc(var(--library-book-spine-width) + 8px);
   background: url('../assets/book-cover-ornament.svg') center/100% 100% no-repeat;
   opacity: 0.58;
   z-index: 0;
