@@ -571,7 +571,7 @@ button {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 88px 32px 80px;
+  padding: 84px 28px 72px;
   animation: fadeIn 0.35s var(--ease);
   box-sizing: border-box;
 }
@@ -588,13 +588,13 @@ button {
 
   .page,
   .home {
-    padding: 72px 16px 80px !important;
+    padding: 68px 14px 72px !important;
   }
 
   .page-header-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
   }
 }
 
@@ -602,7 +602,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   animation: fadeUp 0.3s var(--ease);
 }
 
@@ -901,23 +901,23 @@ button {
 .audio-control-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: var(--fill);
-  padding: 4px;
-  border-radius: 12px;
-  height: 40px;
+  padding: 3px;
+  border-radius: 11px;
+  height: 38px;
   /* Standardize height */
 }
 
 .surah-audio-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 16px;
-  height: 40px;
+  gap: 6px;
+  padding: 0 14px;
+  height: 38px;
   color: var(--text-primary);
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   transition: all 0.2s var(--ease);
 }
@@ -942,8 +942,8 @@ button {
 }
 
 .surah-audio-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .surah-audio-btn.player-toggle {
@@ -977,15 +977,15 @@ button {
 }
 
 .speed-toggle {
-  height: 40px;
-  min-width: 44px;
-  padding: 0 10px;
+  height: 38px;
+  min-width: 42px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   border-radius: 10px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.02em;
   transition: all 0.2s;
@@ -1009,36 +1009,36 @@ button {
 .page-header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .page-secondary-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .audio-reciter-selects {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .audio-mini-select {
-  width: 132px;
-  min-width: 132px;
-  max-width: 132px;
+  width: 124px;
+  min-width: 124px;
+  max-width: 124px;
 }
 
 .audio-mini-select .custom-select-trigger {
-  height: 40px;
-  padding: 0 12px;
+  height: 38px;
+  padding: 0 10px;
   border-radius: 10px;
 }
 
 .audio-mini-select .trigger-label {
-  font-size: 12px;
+  font-size: 11.5px;
 }
 
 @media (max-width: 1024px) {
@@ -1051,7 +1051,7 @@ button {
 @media (max-width: 768px) {
   .page-header-actions {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
   }
 
   .audio-mini-select {
@@ -1081,7 +1081,7 @@ button {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 6px;
     width: 100%;
     min-width: 0;
     order: 0;
@@ -1107,9 +1107,9 @@ button {
     min-width: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-    gap: 4px;
-    padding: 4px;
-    height: 40px;
+    gap: 3px;
+    padding: 3px;
+    height: 36px;
   }
 
   .surah-page .audio-control-group .surah-audio-btn,
@@ -1117,17 +1117,17 @@ button {
   .reading-view .audio-control-group .surah-audio-btn {
     width: 100%;
     min-width: 0;
-    height: 32px;
-    padding: 0 8px;
+    height: 30px;
+    padding: 0 7px;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10.5px;
   }
 
   .surah-page .page-secondary-actions,
   .verse-page .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(6, 44px);
+    grid-template-columns: repeat(6, 40px);
     justify-content: center;
     gap: 6px;
   }
@@ -1135,7 +1135,7 @@ button {
   .reading-view .page-secondary-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 40px);
+    grid-template-columns: repeat(2, 36px);
     justify-content: start;
     gap: 6px;
   }
@@ -1158,8 +1158,8 @@ button {
   .reading-view .page-secondary-actions>.diacritics-header-btn,
   .reading-view .page-secondary-actions>.bookmark-btn {
     width: 100% !important;
-    min-width: 40px;
-    max-width: 44px;
+    min-width: 36px;
+    max-width: 40px;
     height: auto !important;
     justify-content: center;
     padding: 0 !important;
@@ -1168,11 +1168,11 @@ button {
   .surah-page .audio-control-group .speed-toggle,
   .verse-page .audio-control-group .speed-toggle,
   .reading-view .audio-control-group .speed-toggle {
-    min-width: 42px;
-    width: 42px;
-    height: 32px;
+    min-width: 38px;
+    width: 38px;
+    height: 30px;
     padding: 0 6px;
-    font-size: 10px;
+    font-size: 9.5px;
   }
 
   .surah-page .page-secondary-actions > *,
