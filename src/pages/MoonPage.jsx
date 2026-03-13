@@ -25,6 +25,34 @@ const SYNODIC_MONTH_DAYS = 29.530588853;
 const pad = (n) => String(n).padStart(2, '0');
 const formatHour = (date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 
+const readLocalStorage = (key, fallback = null) => {
+    if (typeof window === 'undefined') return fallback;
+    try {
+        const value = window.localStorage.getItem(key);
+        return value ?? fallback;
+    } catch {
+        return fallback;
+    }
+};
+
+const writeLocalStorage = (key, value) => {
+    if (typeof window === 'undefined') return;
+    try {
+        window.localStorage.setItem(key, value);
+    } catch {
+        // Ignore storage access failures in private mode / restricted webviews.
+    }
+};
+
+const createAudioElement = () => {
+    if (typeof Audio === 'undefined') return null;
+    try {
+        return new Audio();
+    } catch {
+        return null;
+    }
+};
+
 const formatRemaining = (daysFloat) => {
     const totalHours = Math.round(daysFloat * 24);
     const days = Math.floor(totalHours / 24);
@@ -46,7 +74,7 @@ const nextByAge = (currentAgeDays, targetAgeDays) => {
 
 async function geocodeCity(city) {
     const cacheKey = `moon_city_coords_${city}`;
-    const cached = localStorage.getItem(cacheKey);
+    const cached = readLocalStorage(cacheKey);
     if (cached) {
         try {
             return JSON.parse(cached);
@@ -64,7 +92,7 @@ async function geocodeCity(city) {
     if (!first) throw new Error('city not found');
 
     const coords = { lat: first.latitude, lng: first.longitude, source: 'city', label: city };
-    localStorage.setItem(cacheKey, JSON.stringify(coords));
+    writeLocalStorage(cacheKey, JSON.stringify(coords));
     return coords;
 }
 
@@ -93,17 +121,17 @@ export default function MoonPage() {
     const [playingType, setPlayingType] = useState(null);
     const [audioNotice, setAudioNotice] = useState('');
     const [verseData, setVerseData] = useState(null);
-    const [selectedCity, setSelectedCity] = useState(() => localStorage.getItem('selectedCity') || 'Bursa');
+    const [selectedCity, setSelectedCity] = useState(() => readLocalStorage('selectedCity', 'Bursa') || 'Bursa');
     const [coords, setCoords] = useState(FALLBACK_COORDS);
     const [coordLoading, setCoordLoading] = useState(true);
-    const audioRef = useRef(new Audio());
+    const audioRef = useRef(createAudioElement());
     const triedGpsRef = useRef(false);
     const moonVerseArabic = normalizeArabicDisplayText(getVerseTextByMode(verseData, settings.textMode));
 
     const globalIsPlaying = usePlayerStore((state) => state.isPlaying);
 
     useEffect(() => {
-        const syncCity = () => setSelectedCity(localStorage.getItem('selectedCity') || 'Bursa');
+        const syncCity = () => setSelectedCity(readLocalStorage('selectedCity', 'Bursa') || 'Bursa');
         window.addEventListener('storage', syncCity);
         window.addEventListener('selectedCityChanged', syncCity);
         return () => {
@@ -169,8 +197,10 @@ export default function MoonPage() {
     }, [selectedCity]);
 
     useEffect(() => {
-        const audioUrl = getVerseAudioUrl(settings.defaultReciterId || 7, verseRef.surah, verseRef.ayah);
         const audio = audioRef.current;
+        if (!audio) return undefined;
+
+        const audioUrl = getVerseAudioUrl(settings.defaultReciterId || 7, verseRef.surah, verseRef.ayah);
 
         audio.pause();
         audio.src = audioUrl;
@@ -198,6 +228,10 @@ export default function MoonPage() {
 
         setAudioNotice('');
         const audio = audioRef.current;
+        if (!audio) {
+            setAudioNotice('Tarayıcı bu ses önizlemesini desteklemiyor.');
+            return;
+        }
         if (playingType === 'arabic') {
             audio.pause();
             setPlayingType(null);
