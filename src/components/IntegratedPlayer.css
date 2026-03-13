@@ -126,27 +126,17 @@
 }
 
 .player-row-bot {
-    gap: 6px;
     min-width: 0;
-    justify-content: space-between;
-    align-items: flex-end;
+    margin-top: 1px;
 }
 
-.player-meta-stack {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-}
-
-.player-inline-badges {
+.player-row-submeta {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     min-width: 0;
     flex-wrap: wrap;
+    margin-top: 4px;
 }
 
 .player-surah-ar-inline {
@@ -753,8 +743,8 @@
         gap: 10px;
     }
 
-    .player-row-bot {
-        gap: 8px;
+    .player-row-submeta {
+        gap: 4px;
     }
 
     .player-drag-row {

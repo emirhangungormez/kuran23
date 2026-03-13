@@ -772,34 +772,30 @@ export default function IntegratedPlayer({
                             }
                         </span>
                     </div>
-                    <div className="player-row-bot">
-                        {(hasInlineArabicMeta || surahType || playbackBadgeLabel) && (
-                            <div className="player-meta-stack">
-                                {hasInlineArabicMeta && (
-                                    <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
-                                )}
-                                {(surahType || playbackBadgeLabel) && (
-                                    <div className="player-inline-badges">
-                                        {surahType && (
-                                            <span className={`player-badge ${surahType.toLowerCase()}`}>
-                                                {surahType}
-                                            </span>
-                                        )}
-                                        {playbackBadgeLabel && (
-                                            <span className={`player-badge language ${playbackBadgeClass}`}>
-                                                {playbackBadgeLabel}
-                                            </span>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        {playerMetaText && (
-                            <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
-                                {playerMetaText}
-                            </span>
-                        )}
-                    </div>
+                    {hasInlineArabicMeta && (
+                        <div className="player-row-bot">
+                            <span className="player-surah-ar-inline" dir="rtl">{displaySurahNameAr}</span>
+                        </div>
+                    )}
+                    {(surahType || playbackBadgeLabel || playerMetaText) && (
+                        <div className="player-row-submeta">
+                            {surahType && (
+                                <span className={`player-badge ${surahType.toLowerCase()}`}>
+                                    {surahType}
+                                </span>
+                            )}
+                            {playbackBadgeLabel && (
+                                <span className={`player-badge language ${playbackBadgeClass}`}>
+                                    {playbackBadgeLabel}
+                                </span>
+                            )}
+                            {playerMetaText && (
+                                <span className={isPageContext ? 'player-surah-meta' : 'player-surah-meta-info'}>
+                                    {playerMetaText}
+                                </span>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="player-center-controls">
