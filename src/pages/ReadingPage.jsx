@@ -9,7 +9,6 @@ import { useSettings } from '../contexts/SettingsContext'
 import { useAuth } from '../contexts/AuthContext'
 import CustomSelect from '../components/CustomSelect'
 import DiacriticsToggle from '../components/DiacriticsToggle'
-import RamadanStatus from '../components/RamadanStatus'
 import GlobalNav from '../components/GlobalNav'
 import usePlayerStore from '../stores/usePlayerStore'
 import { useShallow } from 'zustand/react/shallow'
@@ -81,7 +80,17 @@ export default function ReadingPage() {
 
     // Derived state for local highlighting
     const isPagePlaying = (mode === 'playlist' || mode === 'single') && meta.pageNumber === currentPage && meta.context === 'page'
-    const currentVerseAudio = isPagePlaying && playlist[currentTrackIndex] ? playlist[currentTrackIndex].audio : null
+    const activeTrack = isPagePlaying && playlist[currentTrackIndex] ? playlist[currentTrackIndex] : null
+    const currentVerseAudio = activeTrack?.audio || null
+    const activeVerseKey = useMemo(() => {
+        if (!isPagePlaying || !activeTrack) return ''
+
+        const surahId = Number(activeTrack?.surahId ?? activeTrack?.surah?.id ?? meta?.surahId ?? 0)
+        const ayahNo = Number(activeTrack?.ayah ?? activeTrack?.verse_number ?? 0)
+        if (surahId <= 0 || ayahNo <= 0) return ''
+
+        return `${surahId}-${ayahNo}`
+    }, [activeTrack, isPagePlaying, meta?.surahId])
 
 
     const primaryAuthorId = settings.coreAuthorIds[0] || settings.defaultAuthorId
@@ -105,7 +114,9 @@ export default function ReadingPage() {
         [pageVerses]
     )
     const turkishPageTracks = useMemo(
-        () => constructTurkishPagePlaylist(pageVerses, settings),
+        () => constructTurkishPagePlaylist(pageVerses, {
+            defaultTurkishReciterId: settings.defaultTurkishReciterId
+        }),
         [constructTurkishPagePlaylist, pageVerses, settings.defaultTurkishReciterId]
     )
     const error = queryError ? "Sayfa yüklenirken bir hata oluştu." : null
@@ -139,6 +150,22 @@ export default function ReadingPage() {
         const timer = setTimeout(() => setCopiedVerseKey(''), 1800)
         return () => clearTimeout(timer)
     }, [copiedVerseKey])
+
+    useEffect(() => {
+        if (!isPlaying || !isPagePlaying || !activeVerseKey || pageVerses.length === 0) return
+        if (typeof window === 'undefined' || !window.matchMedia?.('(max-width: 900px)').matches) return
+
+        const frameId = window.requestAnimationFrame(() => {
+            const activeRow = document.querySelector(`[data-verse-key="${activeVerseKey}"]`)
+            activeRow?.scrollIntoView?.({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            })
+        })
+
+        return () => window.cancelAnimationFrame(frameId)
+    }, [activeVerseKey, isPagePlaying, isPlaying, pageVerses.length])
 
     // Isolated Idle Prep
     useEffect(() => {
@@ -512,8 +539,8 @@ export default function ReadingPage() {
                                         const verseDisplayHtml = normalizeArabicDisplayText(getVerseTextByMode(v, textMode))
                                         const isActiveAr = meta?.playingType === 'arabic' && v.audio && v.audio === currentVerseAudio
                                         const isActiveTr = meta?.playingType === 'turkish' && currentVerseAudio === trAudioUrl
-                                        const isActiveRow = (isActiveAr || isActiveTr)
                                         const verseKey = `${v.surah.id}-${v.verse_number}`
+                                        const isActiveRow = verseKey === activeVerseKey || isActiveAr || isActiveTr
                                         const isCopied = copiedVerseKey === verseKey
                                         const isSaved = isVerseBookmarked(v.surah.id, v.verse_number)
                                         const isFallback = Boolean(v.isFallback)
@@ -523,6 +550,7 @@ export default function ReadingPage() {
                                             <div
                                                 key={v.id}
                                                 className={`split-verse-row ${isActiveRow ? 'active-verse' : ''}`}
+                                                data-verse-key={verseKey}
                                             >
                                                 <div className="arabic-side" dir="rtl">
                                                     <div className="verse-ar-wrap">

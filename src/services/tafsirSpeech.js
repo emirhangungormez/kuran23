@@ -38,6 +38,7 @@ const FEMALE_VOICE_MARKERS = [
 const MALE_VOICE_MARKERS = [
   'male',
   'man',
+  'erkek',
   'ahmet',
   'mehmet',
   'ali',
@@ -48,7 +49,12 @@ const MALE_VOICE_MARKERS = [
   'hakan',
   'fatih',
   'onur',
-  'ocal'
+  'ocal',
+  'fahrettin',
+  'fettah',
+  'tolga',
+  'yusuf',
+  'mustafa'
 ]
 
 function isLikelyFemaleVoice(voice) {
@@ -535,11 +541,17 @@ export function getTafsirVoices(lang = 'tr') {
   const synthesis = getSpeechSynthesisInstance()
   if (!synthesis) return []
 
-  const target = String(lang || 'tr').toLowerCase()
-  const filterByLang = (voice) => (target.startsWith('ar') ? isArabicVoice(voice) : isTurkishVoice(voice))
+  const target = String(lang || 'tr').toLocaleLowerCase('tr-TR')
+  const filterByLang = (voice) => {
+    if (target.startsWith('ar')) {
+      return isArabicVoice(voice) && !isLikelyFemaleVoice(voice)
+    }
+
+    return isTurkishVoice(voice) && isLikelyMaleVoice(voice) && !isLikelyFemaleVoice(voice)
+  }
 
   return (synthesis.getVoices() || [])
-    .filter((voice) => filterByLang(voice) && !isLikelyFemaleVoice(voice))
+    .filter(filterByLang)
     .map((voice) => ({
       id: `${voice.name}__${voice.lang}`,
       name: voice.name,
@@ -567,15 +579,18 @@ export function resolveTafsirVoice(voiceName) {
   const normalizedTarget = normalizeVoiceName(voiceName)
 
   if (normalizedTarget) {
-    const exactMatch = voices.find((voice) => normalizeVoiceName(voice.name) === normalizedTarget && !isLikelyFemaleVoice(voice))
+    const exactMatch = voices.find((voice) => (
+      normalizeVoiceName(voice.name) === normalizedTarget
+      && isLikelyMaleVoice(voice)
+      && !isLikelyFemaleVoice(voice)
+    ))
     if (exactMatch) return exactMatch
   }
 
   const maleMatch = voices.find((voice) => isLikelyMaleVoice(voice) && !isLikelyFemaleVoice(voice))
   if (maleMatch) return maleMatch
 
-  const neutralMatch = voices.find((voice) => !isLikelyFemaleVoice(voice))
-  return neutralMatch || null
+  return null
 }
 
 export function resolveTafsirVoiceByLanguage(lang, voiceName) {
@@ -583,19 +598,29 @@ export function resolveTafsirVoiceByLanguage(lang, voiceName) {
   if (!synthesis) return null
 
   const targetLang = String(lang || 'tr-TR').toLocaleLowerCase('tr-TR')
+  const isArabicTarget = targetLang.startsWith('ar')
   const normalizedTargetName = normalizeVoiceName(voiceName)
   const voices = synthesis.getVoices() || []
-  const filtered = voices.filter((voice) => targetLang.startsWith('ar') ? isArabicVoice(voice) : isTurkishVoice(voice))
+  const filtered = voices.filter((voice) => (isArabicTarget ? isArabicVoice(voice) : isTurkishVoice(voice)))
 
   if (normalizedTargetName) {
-    const exact = filtered.find((voice) => normalizeVoiceName(voice.name) === normalizedTargetName && !isLikelyFemaleVoice(voice))
+    const exact = filtered.find((voice) => {
+      if (normalizeVoiceName(voice.name) !== normalizedTargetName) return false
+      if (isLikelyFemaleVoice(voice)) return false
+      return isArabicTarget ? true : isLikelyMaleVoice(voice)
+    })
     if (exact) return exact
   }
+
+  const allowed = filtered.filter((voice) => (
+    !isLikelyFemaleVoice(voice)
+    && (isArabicTarget || isLikelyMaleVoice(voice))
+  ))
 
   const scoreVoice = (voice) => {
     const voiceLang = String(voice?.lang || '').toLowerCase()
     let score = 0
-    if (targetLang.startsWith('ar')) {
+    if (isArabicTarget) {
       if (voiceLang.startsWith('ar')) score += 50
       if (/ar-(sa|eg|jo|ae)\b/.test(voiceLang)) score += 10
     } else if (voiceLang.startsWith('tr')) {
@@ -607,13 +632,13 @@ export function resolveTafsirVoiceByLanguage(lang, voiceName) {
     return score
   }
 
-  if (filtered.length) {
-    return filtered
+  if (allowed.length) {
+    return allowed
       .slice()
       .sort((a, b) => scoreVoice(b) - scoreVoice(a))[0]
   }
 
-  return targetLang.startsWith('ar') ? resolveTafsirVoice('') : resolveTafsirVoice(voiceName)
+  return null
 }
 
 export function stripHtmlForSpeech(html) {
@@ -682,13 +707,20 @@ export function releaseGeneratedTafsirAudio(generatedSegments) {
   })
 }
 
+const PIPER_TR_MALE_VOICES = [
+  'tr_TR-fahrettin-medium',
+  'tr_TR-fettah-medium',
+  'tr_TR-fahrettin-low',
+  'tr_TR-fettah-low'
+]
+
 const PIPER_ENGINE_VOICE_MAP = {
-  piper: 'tr_TR-dfki-medium',
+  piper: 'tr_TR-fahrettin-medium',
   sherpa: 'ar_JO-kareem-medium',
   coqui: 'ar_JO-kareem-low'
 }
 const PIPER_LANG_VOICE_MAP = {
-  tr: 'tr_TR-dfki-medium',
+  tr: 'tr_TR-fahrettin-medium',
   ar: 'ar_JO-kareem-medium'
 }
 
@@ -735,7 +767,11 @@ async function getPiperVoiceMap() {
 function pickPiperVoice(voices, engine) {
   const preferred = PIPER_ENGINE_VOICE_MAP[resolveTafsirEngine(engine)]
   if (preferred && voices[preferred]) return preferred
-  if (voices['tr_TR-dfki-medium']) return 'tr_TR-dfki-medium'
+
+  for (const voiceId of PIPER_TR_MALE_VOICES) {
+    if (voices[voiceId]) return voiceId
+  }
+
   const first = Object.keys(voices)[0]
   return first || null
 }
@@ -744,6 +780,14 @@ function pickPiperVoiceByLanguage(voices, lang, engine) {
   const isArabic = String(lang || '').toLowerCase().startsWith('ar')
   const preferred = isArabic ? PIPER_LANG_VOICE_MAP.ar : PIPER_LANG_VOICE_MAP.tr
   if (preferred && voices[preferred]) return preferred
+
+  if (!isArabic) {
+    for (const voiceId of PIPER_TR_MALE_VOICES) {
+      if (voices[voiceId]) return voiceId
+    }
+    return null
+  }
+
   return pickPiperVoice(voices, engine)
 }
 

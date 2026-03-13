@@ -646,6 +646,12 @@ const usePlayerStore = create((set, get) => ({
 
             const utterance = new window.SpeechSynthesisUtterance(segment.text)
             const segmentVoice = resolveTafsirVoiceByLanguage(segment.lang || fallbackLang, resolvedSettings.tafsirVoiceName)
+            const isTurkishSegment = !String(segment.lang || fallbackLang || 'tr-TR').toLowerCase().startsWith('ar')
+            if (isTurkishSegment && !segmentVoice) {
+                failTrack()
+                return
+            }
+
             utterance.lang = segmentVoice?.lang || segment.lang || fallbackLang
             const segmentRate = Math.min(1.4, Math.max(0.65, rate * Number(segment.rateMultiplier || 1)))
             utterance.rate = segmentRate

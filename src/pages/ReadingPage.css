@@ -245,6 +245,8 @@
     animation: fadeUp 0.4s var(--ease) both;
     transition: background 0.3s;
     border-radius: 12px;
+    scroll-margin-top: 22vh;
+    scroll-margin-bottom: 26vh;
 }
 
 .split-verse-row.active-verse {

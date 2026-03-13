@@ -29,21 +29,16 @@ const items = [
     )
   },
   {
-    key: 'theme',
-    type: 'theme-toggle',
-    label: 'Tema',
-    isActive: () => false,
+    key: 'library',
+    to: '/kutuphane',
+    label: 'Kütüphane',
+    isActive: (pathname) => pathname.startsWith('/kutuphane') || pathname.startsWith('/tefsirler'),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="4.2" />
-        <path d="M12 2.8v2.4" />
-        <path d="M12 18.8v2.4" />
-        <path d="m4.9 4.9 1.7 1.7" />
-        <path d="m17.4 17.4 1.7 1.7" />
-        <path d="M2.8 12h2.4" />
-        <path d="M18.8 12h2.4" />
-        <path d="m4.9 19.1 1.7-1.7" />
-        <path d="m17.4 6.6 1.7-1.7" />
+        <path d="M5 4.5h4a2 2 0 0 1 2 2V20H7a2 2 0 0 0-2 2z" />
+        <path d="M19 4.5h-4a2 2 0 0 0-2 2V20h4a2 2 0 0 1 2 2z" />
+        <path d="M9 7.5H7.5" />
+        <path d="M16.5 7.5H15" />
       </svg>
     )
   },
@@ -67,56 +62,33 @@ export default function BottomNav() {
   const playerMode = usePlayerStore((state) => state.mode)
   const hasPlayer = playerMode !== 'none'
   const isPlayerActive = hasPlayer && settings.isPlayerVisible
-
-  const handleToggleTheme = () => {
-    const nextTheme = settings.theme === 'dark' ? 'light' : 'dark'
-    updateSettings({ theme: nextTheme })
-  }
+  const profileItem = items.find((item) => item.key === 'profile')
+  const leadingItems = items.filter((item) => item.key !== 'profile')
 
   const handleTogglePlayer = () => {
     if (!hasPlayer) return
     updateSettings({ isPlayerVisible: !settings.isPlayerVisible })
   }
 
+  const renderNavItem = (item) => {
+    const active = item.isActive(location.pathname)
+
+    return (
+      <Link
+        key={item.key}
+        to={item.to}
+        className={`bottom-nav-item${active ? ' active' : ''}`}
+        aria-current={active ? 'page' : undefined}
+      >
+        <span className="bottom-nav-icon">{item.icon}</span>
+        <span className="bottom-nav-label">{item.label}</span>
+      </Link>
+    )
+  }
+
   return (
     <nav className="bottom-nav" aria-label="Alt gezinme">
-      {items.map((item) => {
-        const active = item.isActive(location.pathname)
-        if (item.type === 'theme-toggle') {
-          const isDark = settings.theme === 'dark'
-          return (
-            <button
-              key={item.key}
-              type="button"
-              className="bottom-nav-item"
-              onClick={handleToggleTheme}
-              aria-label={isDark ? 'Aydınlık temaya geç' : 'Karanlık temaya geç'}
-              aria-pressed={isDark}
-            >
-              <span className="bottom-nav-icon">
-                {isDark ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M21 12.79A9 9 0 1 1 11.2 3a7 7 0 1 0 9.8 9.79Z" />
-                  </svg>
-                ) : item.icon}
-              </span>
-              <span className="bottom-nav-label">{item.label}</span>
-            </button>
-          )
-        }
-
-        return (
-          <Link
-            key={item.key}
-            to={item.to}
-            className={`bottom-nav-item${active ? ' active' : ''}`}
-            aria-current={active ? 'page' : undefined}
-          >
-            <span className="bottom-nav-icon">{item.icon}</span>
-            <span className="bottom-nav-label">{item.label}</span>
-          </Link>
-        )
-      })}
+      {leadingItems.map(renderNavItem)}
       <button
         type="button"
         className={`bottom-nav-item player-toggle${isPlayerActive ? ' active' : ''}`}
@@ -133,6 +105,7 @@ export default function BottomNav() {
         </span>
         <span className="bottom-nav-label">Player</span>
       </button>
+      {profileItem ? renderNavItem(profileItem) : null}
     </nav>
   )
 }
