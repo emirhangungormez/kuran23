@@ -934,7 +934,7 @@
 
 .popular-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -1025,6 +1025,12 @@
     .section-head {
         align-items: flex-start;
         flex-direction: column;
+    }
+}
+
+@media (max-width: 980px) {
+    .popular-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
