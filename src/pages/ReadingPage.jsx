@@ -292,7 +292,9 @@ export default function ReadingPage() {
             juzNumber: pageVerses[0].juz_number,
             surahId: sData?.no || parseInt(sId),
             ayahNo: 0,
-            context: 'page'
+            context: 'page',
+            startAyah: type === 'turkish' ? vNo : 0,
+            autoAdvance: type === 'turkish'
         }
 
         if (type === 'arabic') {
@@ -312,6 +314,31 @@ export default function ReadingPage() {
                 const url = getTurkishAudioUrl(settings.defaultTurkishReciterId, sId, 0)
                 playSingle(url, metaData)
             }
+        }
+    }
+
+    const toggleVersePlayback = (audioSrc, vNo, sId, type = 'arabic') => {
+        const verseKey = `${sId}-${vNo}`
+        const isSamePageContext =
+            meta?.context === 'page' &&
+            meta?.pageNumber === currentPage &&
+            meta?.playingType === type &&
+            (mode === 'playlist' || mode === 'single')
+
+        const isSameTrackedVerse = activeVerseKey === verseKey
+        const isSameSingleTurkishVerse =
+            type === 'turkish' &&
+            mode === 'single' &&
+            Number(meta?.surahId || 0) === Number(sId) &&
+            Number(meta?.startAyah || 0) === Number(vNo)
+
+        if (isSamePageContext && (isSameTrackedVerse || isSameSingleTurkishVerse)) {
+            togglePlay()
+            return
+        }
+
+        if (audioSrc) {
+            playVerse(audioSrc, vNo, sId, type)
         }
     }
 
@@ -582,7 +609,7 @@ export default function ReadingPage() {
                                                         <div className="verse-ar-actions">
                                                             <button
                                                                 className={`verse-play-btn ${isActiveAr && isPlaying ? 'playing' : ''}`}
-                                                                onClick={() => v.audio && playVerse(v.audio, v.verse_number, v.surah.id, 'arabic')}
+                                                                onClick={() => toggleVersePlayback(v.audio, v.verse_number, v.surah.id, 'arabic')}
                                                             >
                                                                 {isActiveAr && isPlaying ? (
                                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
@@ -621,7 +648,7 @@ export default function ReadingPage() {
                                                         <div className="meal-actions pointer-events-auto display-flex gap-2">
                                                             <button
                                                                 className={`verse-play-btn ${isActiveTr && isPlaying ? 'playing' : ''}`}
-                                                                onClick={(e) => { e.preventDefault(); playVerse(trAudioUrl, v.verse_number, v.surah.id, 'turkish'); }}
+                                                                onClick={(e) => { e.preventDefault(); toggleVersePlayback(trAudioUrl, v.verse_number, v.surah.id, 'turkish'); }}
                                                                 title="Türkçe Mealini Dinle"
                                                             >
                                                                 {isActiveTr && isPlaying ? (
