@@ -848,10 +848,22 @@
 }
 
 .quick-link-card {
+    --quick-card-accent: #0f7a56;
+    --quick-card-bg-start: rgba(16, 185, 129, 0.18);
+    --quick-card-bg-end: rgba(5, 150, 105, 0.05);
+    --quick-card-border: rgba(5, 150, 105, 0.18);
+    --quick-card-glow: rgba(5, 150, 105, 0.28);
+    --quick-card-icon-bg: rgba(236, 253, 245, 0.84);
+    --quick-card-badge-bg: rgba(236, 253, 245, 0.78);
     min-height: 168px;
     padding: 20px;
     border-radius: 22px;
-    border: 1px solid var(--separator);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid var(--quick-card-border);
+    background: linear-gradient(155deg, var(--quick-card-bg-start) 0%, var(--quick-card-bg-end) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56);
     text-decoration: none;
     color: var(--text-primary);
     display: flex;
@@ -860,28 +872,72 @@
     gap: 22px;
     min-width: 0;
     animation: fadeUp 0.35s var(--ease) both;
-    transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+    transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.quick-link-card::after {
+    content: '';
+    position: absolute;
+    top: -26px;
+    right: -18px;
+    width: 124px;
+    height: 124px;
+    border-radius: 999px;
+    background: radial-gradient(circle, var(--quick-card-glow) 0%, transparent 72%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.quick-link-head,
+.quick-link-body {
+    position: relative;
+    z-index: 1;
 }
 
 .quick-link-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(60, 60, 67, 0.18);
+    border-color: color-mix(in srgb, var(--quick-card-accent) 24%, rgba(60, 60, 67, 0.1));
+    box-shadow: 0 18px 38px -28px var(--quick-card-glow), inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
 .quick-link-card.tone-emerald {
-    background: linear-gradient(180deg, rgba(29, 122, 95, 0.1) 0%, rgba(29, 122, 95, 0.03) 100%);
+    --quick-card-accent: #0f7a56;
+    --quick-card-bg-start: rgba(16, 185, 129, 0.2);
+    --quick-card-bg-end: rgba(5, 150, 105, 0.06);
+    --quick-card-border: rgba(5, 150, 105, 0.18);
+    --quick-card-glow: rgba(16, 185, 129, 0.28);
+    --quick-card-icon-bg: rgba(236, 253, 245, 0.86);
+    --quick-card-badge-bg: rgba(236, 253, 245, 0.8);
 }
 
 .quick-link-card.tone-sand {
-    background: linear-gradient(180deg, rgba(112, 82, 48, 0.12) 0%, rgba(112, 82, 48, 0.04) 100%);
+    --quick-card-accent: #a16207;
+    --quick-card-bg-start: rgba(245, 158, 11, 0.22);
+    --quick-card-bg-end: rgba(161, 98, 7, 0.06);
+    --quick-card-border: rgba(180, 83, 9, 0.2);
+    --quick-card-glow: rgba(245, 158, 11, 0.3);
+    --quick-card-icon-bg: rgba(255, 247, 237, 0.88);
+    --quick-card-badge-bg: rgba(255, 247, 237, 0.8);
 }
 
 .quick-link-card.tone-slate {
-    background: linear-gradient(180deg, rgba(41, 45, 50, 0.08) 0%, rgba(41, 45, 50, 0.02) 100%);
+    --quick-card-accent: #1d4ed8;
+    --quick-card-bg-start: rgba(59, 130, 246, 0.2);
+    --quick-card-bg-end: rgba(37, 99, 235, 0.05);
+    --quick-card-border: rgba(37, 99, 235, 0.18);
+    --quick-card-glow: rgba(59, 130, 246, 0.28);
+    --quick-card-icon-bg: rgba(239, 246, 255, 0.88);
+    --quick-card-badge-bg: rgba(239, 246, 255, 0.8);
 }
 
 .quick-link-card.tone-ink {
-    background: linear-gradient(180deg, rgba(17, 17, 17, 0.12) 0%, rgba(17, 17, 17, 0.03) 100%);
+    --quick-card-accent: #1e3a8a;
+    --quick-card-bg-start: rgba(30, 64, 175, 0.18);
+    --quick-card-bg-end: rgba(30, 41, 59, 0.06);
+    --quick-card-border: rgba(30, 64, 175, 0.18);
+    --quick-card-glow: rgba(37, 99, 235, 0.24);
+    --quick-card-icon-bg: rgba(239, 246, 255, 0.84);
+    --quick-card-badge-bg: rgba(239, 246, 255, 0.76);
 }
 
 .quick-link-head {
@@ -898,9 +954,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.78);
-    color: var(--text-primary);
-    border: 1px solid rgba(60, 60, 67, 0.08);
+    background: var(--quick-card-icon-bg);
+    color: var(--quick-card-accent);
+    border: 1px solid rgba(255, 255, 255, 0.44);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.54);
 }
 
 .quick-link-icon svg {
@@ -911,11 +968,12 @@
 .quick-link-badge {
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.68);
-    color: var(--text-secondary);
+    background: var(--quick-card-badge-bg);
+    color: var(--quick-card-accent);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.08em;
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .quick-link-body h3 {
@@ -930,7 +988,7 @@
     margin: 0;
     font-size: 14px;
     line-height: 1.45;
-    color: var(--text-secondary);
+    color: color-mix(in srgb, var(--quick-card-accent) 34%, var(--text-secondary));
     max-width: 26ch;
     overflow-wrap: anywhere;
 }
