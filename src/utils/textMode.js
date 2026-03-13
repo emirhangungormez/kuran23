@@ -22,22 +22,23 @@ export function modeToLegacyTajweed(mode) {
 }
 
 export function buildTextModesFromVerse(verse = {}) {
+  const safeVerse = verse && typeof verse === 'object' ? verse : {}
   const uthmani =
-    verse.text_modes?.uthmani ||
-    verse.verse_text_uthmani ||
-    verse.verse ||
-    verse.verse_text ||
+    safeVerse.text_modes?.uthmani ||
+    safeVerse.verse_text_uthmani ||
+    safeVerse.verse ||
+    safeVerse.verse_text ||
     ''
   const plain =
-    verse.text_modes?.plain ||
-    verse.verse_text_plain ||
-    verse.verse_without_vowel ||
-    verse.verse_simplified ||
+    safeVerse.text_modes?.plain ||
+    safeVerse.verse_text_plain ||
+    safeVerse.verse_without_vowel ||
+    safeVerse.verse_simplified ||
     uthmani
   const tajweed =
-    verse.text_modes?.tajweed ||
-    verse.verse_text_tajweed ||
-    verse.verse_tajweed ||
+    safeVerse.text_modes?.tajweed ||
+    safeVerse.verse_text_tajweed ||
+    safeVerse.verse_tajweed ||
     uthmani
 
   return { uthmani, plain, tajweed }
