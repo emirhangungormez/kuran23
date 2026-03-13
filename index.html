@@ -24,7 +24,47 @@
 
 <body class="notranslate" translate="no">
   <div id="root" class="notranslate" translate="no"></div>
-  <script type="module" src="./src/main.jsx"></script>
+  <script type="module">
+    const BOOT_BUILD_ID = '20260313-v2'
+    const BOOT_BUILD_KEY = 'kuran23-boot-build-id'
+
+    async function bootApp() {
+      let shouldRefresh = false
+
+      try {
+        const previousBuild = window.localStorage.getItem(BOOT_BUILD_KEY)
+        if (previousBuild !== BOOT_BUILD_ID) {
+          window.localStorage.setItem(BOOT_BUILD_KEY, BOOT_BUILD_ID)
+          shouldRefresh = true
+        }
+      } catch {
+        // If storage is blocked, continue without forced refresh.
+      }
+
+      if (shouldRefresh) {
+        try {
+          if ('caches' in window) {
+            const cacheKeys = await caches.keys()
+            await Promise.all(cacheKeys.map((key) => caches.delete(key)))
+          }
+
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations()
+            await Promise.all(registrations.map((registration) => registration.unregister()))
+          }
+        } catch {
+          // Keep boot flow resilient even if browser blocks cache APIs.
+        }
+
+        window.location.replace(window.location.href)
+        return
+      }
+
+      await import('./src/main.jsx')
+    }
+
+    bootApp()
+  </script>
 </body>
 
 </html>

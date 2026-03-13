@@ -23,7 +23,7 @@ if (import.meta.env.PROD) {
 
 const updateSW = registerSW({ immediate: true })
 
-const CACHE_REFRESH_KEY = 'kuran23-cache-refresh-20260311-v1'
+const CACHE_REFRESH_KEY = 'kuran23-cache-refresh-20260313-v2'
 
 async function refreshCachesOnce() {
   if (typeof window === 'undefined') return
@@ -41,7 +41,7 @@ async function refreshCachesOnce() {
 
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations()
-      await Promise.all(registrations.map((registration) => registration.update()))
+      await Promise.all(registrations.map((registration) => registration.unregister()))
       shouldReload = shouldReload || registrations.length > 0
     }
   } catch {
