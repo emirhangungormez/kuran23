@@ -1,0 +1,37 @@
+{
+  "started_at": "2026-03-07T18:58:57.766Z",
+  "project_ref": "whygnejlhitfbmsiczaa",
+  "options": {
+    "dryRun": false,
+    "skipSchema": false,
+    "truncateFirst": false,
+    "createMissingAuth": true,
+    "batchSize": 300,
+    "projectName": "kuran23",
+    "projectRef": null
+  },
+  "counts": {
+    "surahs": 0,
+    "verses": 0,
+    "authors": 0,
+    "translations": 0,
+    "footnotes": 0,
+    "roots": 0,
+    "verse_words": 0,
+    "users_legacy": 3,
+    "users_migrated": 3,
+    "user_settings": 3,
+    "user_bookmarks": 3,
+    "user_notes": 0,
+    "user_playlists": 1,
+    "user_support_stats": 1,
+    "rewarded_ad_callbacks": 0,
+    "user_daily_pro_ad_usage": 0,
+    "user_pro_access_grants": 0
+  },
+  "skipped": {},
+  "unresolved_users": [],
+  "created_auth_users": [],
+  "success": true,
+  "finished_at": "2026-03-07T18:59:00.357Z"
+}

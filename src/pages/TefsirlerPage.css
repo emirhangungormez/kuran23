@@ -233,6 +233,65 @@
     line-height: 1.45;
 }
 
+.reader-surah-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--separator-light);
+}
+
+.reader-surah-summary-no {
+    width: 52px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--fill);
+    color: var(--text-tertiary);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.reader-surah-summary-content {
+    min-width: 0;
+}
+
+.reader-surah-summary-ar {
+    margin: 0 0 4px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    font-size: 40px;
+    line-height: 1.06;
+    color: var(--text-primary);
+}
+
+.reader-surah-summary-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.reader-surah-summary-tr {
+    margin: 0;
+    font-size: 35px;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+}
+
+.reader-surah-summary-meta {
+    margin: 4px 0 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
 .reader-kicker {
     min-width: 160px;
     padding-top: 8px;
@@ -1031,6 +1090,19 @@
         font-size: 15px;
     }
 
+    .reader-surah-summary {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+    }
+
+    .reader-surah-summary-ar {
+        font-size: 34px;
+    }
+
+    .reader-surah-summary-tr {
+        font-size: 30px;
+    }
+
     .reader-verse-meta {
         flex-direction: column;
         align-items: flex-start;
@@ -1102,5 +1174,28 @@
 
     .reader-toolbar {
         grid-template-columns: 1fr;
+    }
+
+    .reader-surah-summary {
+        gap: 12px;
+    }
+
+    .reader-surah-summary-no {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        font-size: 22px;
+    }
+
+    .reader-surah-summary-ar {
+        font-size: 30px;
+    }
+
+    .reader-surah-summary-tr {
+        font-size: 28px;
+    }
+
+    .reader-surah-summary-meta {
+        font-size: 13px;
     }
 }

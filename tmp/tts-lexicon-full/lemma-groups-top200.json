@@ -1,0 +1,3400 @@
+{
+  "meta": {
+    "kaliteModu": "strict",
+    "kaynak": "C:\\xampp\\htdocs\\kuran.emirhangungormez.com.tr\\tmp\\tts-lexicon-full\\lexicon-candidates.json",
+    "secilenAdaySayisi": 200,
+    "toplamGrupSayisi": 138,
+    "kabulEdilenKuralSayisi": 90,
+    "reddedilenKuralSayisi": 48
+  },
+  "groups": [
+    {
+      "temsilKok": "Ebû",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[eê]b[uû]\\b/giu",
+      "onerilenOkunus": "Ebuu",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Kök çok kısa"
+      ],
+      "toplamFrekans": 61482,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Ebû"
+      ],
+      "adaylar": [
+        {
+          "token": "Ebû",
+          "count": 61482,
+          "suggestedPronunciation": "Ebuu"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "teâlâ",
+      "altGrup": "kok",
+      "regexKurali": "/\\bt[eê][aâ]l[aâ]\\b/giu",
+      "onerilenOkunus": "teaalaa",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 58074,
+      "yuzeyFormSayisi": 4,
+      "yuzeyFormlar": [
+        "teâlâ",
+        "Teâlâ",
+        "teâlâ'nın",
+        "teâlâ'ya"
+      ],
+      "adaylar": [
+        {
+          "token": "teâlâ",
+          "count": 50949,
+          "suggestedPronunciation": "teaalaa"
+        },
+        {
+          "token": "Teâlâ",
+          "count": 3692,
+          "suggestedPronunciation": "Teaalaa"
+        },
+        {
+          "token": "teâlâ'nın",
+          "count": 2694,
+          "suggestedPronunciation": "teaalaanın"
+        },
+        {
+          "token": "teâlâ'ya",
+          "count": 739,
+          "suggestedPronunciation": "teaalaaya"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyet",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t\\b/giu",
+      "onerilenOkunus": "aayet",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 50040,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "âyet",
+        "Âyet"
+      ],
+      "adaylar": [
+        {
+          "token": "âyet",
+          "count": 37368,
+          "suggestedPronunciation": "aayet"
+        },
+        {
+          "token": "Âyet",
+          "count": 12672,
+          "suggestedPronunciation": "aayet"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Resûlüllah",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[eê][sş][uû]l[üuû]ll[aâ]h\\b/giu",
+      "onerilenOkunus": "Resuulüllah",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 48325,
+      "yuzeyFormSayisi": 4,
+      "yuzeyFormlar": [
+        "Resûlullah",
+        "Resûlüllah",
+        "Resûlüllah'a",
+        "Resûlüllah'ın"
+      ],
+      "adaylar": [
+        {
+          "token": "Resûlüllah",
+          "count": 23292,
+          "suggestedPronunciation": "Resuulüllah"
+        },
+        {
+          "token": "Resûlullah",
+          "count": 22730,
+          "suggestedPronunciation": "Resuulullah"
+        },
+        {
+          "token": "Resûlüllah'ın",
+          "count": 1348,
+          "suggestedPronunciation": "Resuulüllahın"
+        },
+        {
+          "token": "Resûlüllah'a",
+          "count": 955,
+          "suggestedPronunciation": "Resuulüllaha"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Cenâb",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[cç][eê]n[aâ]b\\b/giu",
+      "onerilenOkunus": "Cenaab",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 37301,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Cenâb"
+      ],
+      "adaylar": [
+        {
+          "token": "Cenâb",
+          "count": 37301,
+          "suggestedPronunciation": "Cenaab"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Abbâs",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]bb[aâ][sş]\\b/giu",
+      "onerilenOkunus": "Abbaas",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 35159,
+      "yuzeyFormSayisi": 4,
+      "yuzeyFormlar": [
+        "Abbâs",
+        "Abbâs'a",
+        "Abbâs'ın",
+        "Abbâs'tan"
+      ],
+      "adaylar": [
+        {
+          "token": "Abbâs",
+          "count": 29019,
+          "suggestedPronunciation": "Abbaas"
+        },
+        {
+          "token": "Abbâs'tan",
+          "count": 4349,
+          "suggestedPronunciation": "Abbaastan"
+        },
+        {
+          "token": "Abbâs'a",
+          "count": 965,
+          "suggestedPronunciation": "Abbaasa"
+        },
+        {
+          "token": "Abbâs'ın",
+          "count": 826,
+          "suggestedPronunciation": "Abbaasın"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Ebî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[eê]b[iî]\\b/giu",
+      "onerilenOkunus": "Ebii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Kök çok kısa"
+      ],
+      "toplamFrekans": 34887,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Ebî"
+      ],
+      "adaylar": [
+        {
+          "token": "Ebî",
+          "count": 34887,
+          "suggestedPronunciation": "Ebii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyeti",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]\\b/giu",
+      "onerilenOkunus": "aayeti",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 30723,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyeti"
+      ],
+      "adaylar": [
+        {
+          "token": "âyeti",
+          "count": 30723,
+          "suggestedPronunciation": "aayeti"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetini",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]n[iî]\\b/giu",
+      "onerilenOkunus": "aayetini",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 29345,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetini"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetini",
+          "count": 29345,
+          "suggestedPronunciation": "aayetini"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetin",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]n\\b/giu",
+      "onerilenOkunus": "aayetin",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 27058,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "âyetin",
+        "Âyetin"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetin",
+          "count": 15036,
+          "suggestedPronunciation": "aayetin"
+        },
+        {
+          "token": "Âyetin",
+          "count": 12022,
+          "suggestedPronunciation": "aayetin"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "aleyhisselâm",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]l[eê]yh[iî][sş][sş][eê]l[aâ]m\\b/giu",
+      "onerilenOkunus": "aleyhisselaam",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 25338,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "aleyhisselâm"
+      ],
+      "adaylar": [
+        {
+          "token": "aleyhisselâm",
+          "count": 25338,
+          "suggestedPronunciation": "aleyhisselaam"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Cerîr",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[cç][eê]r[iî]r\\b/giu",
+      "onerilenOkunus": "Ceriir",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 22429,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Cerîr"
+      ],
+      "adaylar": [
+        {
+          "token": "Cerîr",
+          "count": 22429,
+          "suggestedPronunciation": "Ceriir"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyette",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]tt[eê]\\b/giu",
+      "onerilenOkunus": "aayette",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 20091,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "âyette",
+        "Âyette"
+      ],
+      "adaylar": [
+        {
+          "token": "âyette",
+          "count": 13980,
+          "suggestedPronunciation": "aayette"
+        },
+        {
+          "token": "Âyette",
+          "count": 6111,
+          "suggestedPronunciation": "aayette"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "rivâyet",
+      "altGrup": "kok",
+      "regexKurali": "/\\br[iî]v[aâ]y[eê]t\\b/giu",
+      "onerilenOkunus": "rivaayet",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 18913,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "rivâyet",
+        "Rivâyet"
+      ],
+      "adaylar": [
+        {
+          "token": "rivâyet",
+          "count": 15903,
+          "suggestedPronunciation": "aayet"
+        },
+        {
+          "token": "Rivâyet",
+          "count": 3010,
+          "suggestedPronunciation": "aayet"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "inkâr",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]nk[aâ]r\\b/giu",
+      "onerilenOkunus": "inkaar",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 16914,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "inkâr"
+      ],
+      "adaylar": [
+        {
+          "token": "inkâr",
+          "count": 16914,
+          "suggestedPronunciation": "inkaar"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Kur'ân",
+      "altGrup": "ekli",
+      "regexKurali": "/\\bK[uû]r['’]?[aâ]n['’](?:dan|dır|da|ın|a|ı)\\b/giu",
+      "onerilenOkunus": "Kuraanın",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Geniş kural parçalanarak üretildi"
+      ],
+      "toplamFrekans": 16884,
+      "yuzeyFormSayisi": 6,
+      "yuzeyFormlar": [
+        "Kur'ân'a",
+        "Kur'ân'da",
+        "Kur'ân'dan",
+        "Kur'ân'dır",
+        "Kur'ân'ı",
+        "Kur'ân'ın"
+      ],
+      "adaylar": [
+        {
+          "token": "Kur'ân'ın",
+          "count": 5297,
+          "suggestedPronunciation": "Kuraanın"
+        },
+        {
+          "token": "Kur'ân'ı",
+          "count": 4713,
+          "suggestedPronunciation": "Kuraanı"
+        },
+        {
+          "token": "Kur'ân'da",
+          "count": 2921,
+          "suggestedPronunciation": "Kuraanda"
+        },
+        {
+          "token": "Kur'ân'a",
+          "count": 1658,
+          "suggestedPronunciation": "Kuraana"
+        },
+        {
+          "token": "Kur'ân'dan",
+          "count": 1453,
+          "suggestedPronunciation": "Kuraandan"
+        },
+        {
+          "token": "Kur'ân'dır",
+          "count": 842,
+          "suggestedPronunciation": "Kuraandır"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "îman",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]m[aâ]n\\b/giu",
+      "onerilenOkunus": "iiman",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 16875,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "îman",
+        "îman'da"
+      ],
+      "adaylar": [
+        {
+          "token": "îman",
+          "count": 15880,
+          "suggestedPronunciation": "iiman"
+        },
+        {
+          "token": "îman'da",
+          "count": 995,
+          "suggestedPronunciation": "iimanda"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Binâenaleyh",
+      "altGrup": "kok",
+      "regexKurali": "/\\bB[iî]n[aâ][eê]n[aâ]l[eê]yh\\b/giu",
+      "onerilenOkunus": "Binaaenaleyh",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 14427,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Binâenaleyh"
+      ],
+      "adaylar": [
+        {
+          "token": "Binâenaleyh",
+          "count": 14427,
+          "suggestedPronunciation": "Binaaenaleyh"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Kur'ân",
+      "altGrup": "kok",
+      "regexKurali": "/\\bK[uû]r['’]?[aâ]n\\b/giu",
+      "onerilenOkunus": "Kuraan",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Geniş kural parçalanarak üretildi"
+      ],
+      "toplamFrekans": 13047,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Kur'ân"
+      ],
+      "adaylar": [
+        {
+          "token": "Kur'ân",
+          "count": 13047,
+          "suggestedPronunciation": "Kuraan"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "delâlet",
+      "altGrup": "kok",
+      "regexKurali": "/\\bd[eê]l[aâ]l[eê]t\\b/giu",
+      "onerilenOkunus": "delaalet",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 12641,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "delâlet"
+      ],
+      "adaylar": [
+        {
+          "token": "delâlet",
+          "count": 12641,
+          "suggestedPronunciation": "delaalet"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Katâde",
+      "altGrup": "kok",
+      "regexKurali": "/\\bK[aâ]t[aâ]d[eê]\\b/giu",
+      "onerilenOkunus": "Kataade",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 10686,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Katâde",
+        "Katâde'den"
+      ],
+      "adaylar": [
+        {
+          "token": "Katâde",
+          "count": 9451,
+          "suggestedPronunciation": "Kataade"
+        },
+        {
+          "token": "Katâde'den",
+          "count": 1235,
+          "suggestedPronunciation": "Kataadeden"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Mücâhid",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[üuû][cç][aâ]h[iî]d\\b/giu",
+      "onerilenOkunus": "Mücaahid",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 10188,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Mücâhid",
+        "Mücâhid'den"
+      ],
+      "adaylar": [
+        {
+          "token": "Mücâhid",
+          "count": 8890,
+          "suggestedPronunciation": "Mücaahid"
+        },
+        {
+          "token": "Mücâhid'den",
+          "count": 1298,
+          "suggestedPronunciation": "Mücaahidden"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Beyhakî",
+      "altGrup": "kok",
+      "regexKurali": "/\\bB[eê]yh[aâ]k[iî]\\b/giu",
+      "onerilenOkunus": "Beyhakii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 9430,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Beyhakî"
+      ],
+      "adaylar": [
+        {
+          "token": "Beyhakî",
+          "count": 9430,
+          "suggestedPronunciation": "Beyhakii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Merdûye",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[eê]rd[uû]y[eê]\\b/giu",
+      "onerilenOkunus": "Merduuye",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 8889,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Merdûye"
+      ],
+      "adaylar": [
+        {
+          "token": "Merdûye",
+          "count": 8889,
+          "suggestedPronunciation": "Merduuye"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetinde",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]nd[eê]\\b/giu",
+      "onerilenOkunus": "aayetinde",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 8698,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetinde"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetinde",
+          "count": 8698,
+          "suggestedPronunciation": "aayetinde"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Âdem",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]d[eê]m\\b/giu",
+      "onerilenOkunus": "aadem",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 8696,
+      "yuzeyFormSayisi": 4,
+      "yuzeyFormlar": [
+        "Âdem",
+        "Âdem'e",
+        "Âdem'i",
+        "Âdem'in"
+      ],
+      "adaylar": [
+        {
+          "token": "Âdem",
+          "count": 5089,
+          "suggestedPronunciation": "aadem"
+        },
+        {
+          "token": "Âdem'in",
+          "count": 1839,
+          "suggestedPronunciation": "aademin"
+        },
+        {
+          "token": "Âdem'e",
+          "count": 988,
+          "suggestedPronunciation": "aademe"
+        },
+        {
+          "token": "Âdem'i",
+          "count": 780,
+          "suggestedPronunciation": "aademi"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "celâlühü",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[cç][eê]l[aâ]l[üuû]h[üuû]\\b/giu",
+      "onerilenOkunus": "celaal",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 8512,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "celâlühü"
+      ],
+      "adaylar": [
+        {
+          "token": "celâlühü",
+          "count": 8512,
+          "suggestedPronunciation": "celaal"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Meselâ",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[eê][sş][eê]l[aâ]\\b/giu",
+      "onerilenOkunus": "Meselaa",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 8059,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "meselâ",
+        "Meselâ"
+      ],
+      "adaylar": [
+        {
+          "token": "Meselâ",
+          "count": 5225,
+          "suggestedPronunciation": "Meselaa"
+        },
+        {
+          "token": "meselâ",
+          "count": 2834,
+          "suggestedPronunciation": "meselaa"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "İslâm",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî][sş]l[aâ]m\\b/giu",
+      "onerilenOkunus": "İslaam",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 7908,
+      "yuzeyFormSayisi": 5,
+      "yuzeyFormlar": [
+        "İslâm",
+        "İslâm'a",
+        "İslâm'dan",
+        "İslâm'ı",
+        "İslâm'ın"
+      ],
+      "adaylar": [
+        {
+          "token": "İslâm",
+          "count": 3737,
+          "suggestedPronunciation": "İslaam"
+        },
+        {
+          "token": "İslâm'a",
+          "count": 1969,
+          "suggestedPronunciation": "İslaama"
+        },
+        {
+          "token": "İslâm'ın",
+          "count": 1095,
+          "suggestedPronunciation": "İslaamın"
+        },
+        {
+          "token": "İslâm'ı",
+          "count": 612,
+          "suggestedPronunciation": "İslaamı"
+        },
+        {
+          "token": "İslâm'dan",
+          "count": 495,
+          "suggestedPronunciation": "İslaamdan"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Tirmizî",
+      "altGrup": "kok",
+      "regexKurali": "/\\bT[iî]rm[iî]z[iî]\\b/giu",
+      "onerilenOkunus": "Tirmizii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 7772,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Tirmizî"
+      ],
+      "adaylar": [
+        {
+          "token": "Tirmizî",
+          "count": 7772,
+          "suggestedPronunciation": "Tirmizii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Zeccâc",
+      "altGrup": "kok",
+      "regexKurali": "/\\bZ[eê][cç][cç][aâ][cç]\\b/giu",
+      "onerilenOkunus": "Zeccaac",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 7604,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Zeccâc"
+      ],
+      "adaylar": [
+        {
+          "token": "Zeccâc",
+          "count": 7604,
+          "suggestedPronunciation": "Zeccaac"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Buhârî",
+      "altGrup": "kok",
+      "regexKurali": "/\\bB[uû]h[aâ]r[iî]\\b/giu",
+      "onerilenOkunus": "Buhaarii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 7310,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Buhârî"
+      ],
+      "adaylar": [
+        {
+          "token": "Buhârî",
+          "count": 7310,
+          "suggestedPronunciation": "Buhaarii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "ifâde",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]f[aâ]d[eê]\\b/giu",
+      "onerilenOkunus": "ifaade",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 7107,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ifâde"
+      ],
+      "adaylar": [
+        {
+          "token": "ifâde",
+          "count": 7107,
+          "suggestedPronunciation": "ifaade"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Saîd",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][aâ][iî]d\\b/giu",
+      "onerilenOkunus": "Saiid",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 6678,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Saîd"
+      ],
+      "adaylar": [
+        {
+          "token": "Saîd",
+          "count": 6678,
+          "suggestedPronunciation": "Saiid"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "helâk",
+      "altGrup": "kok",
+      "regexKurali": "/\\bh[eê]l[aâ]k\\b/giu",
+      "onerilenOkunus": "helaak",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 6509,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "helâk"
+      ],
+      "adaylar": [
+        {
+          "token": "helâk",
+          "count": 6509,
+          "suggestedPronunciation": "helaak"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "kerîme",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[eê]r[iî]m[eê]\\b/giu",
+      "onerilenOkunus": "keriime",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 6351,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "kerîme",
+        "kerîme'de"
+      ],
+      "adaylar": [
+        {
+          "token": "kerîme",
+          "count": 3659,
+          "suggestedPronunciation": "keriime"
+        },
+        {
+          "token": "kerîme'de",
+          "count": 2692,
+          "suggestedPronunciation": "keriimede"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Mes'ûd",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[eê][sş]['’]?[uû]d\\b/giu",
+      "onerilenOkunus": "Mesuud",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5786,
+      "yuzeyFormSayisi": 3,
+      "yuzeyFormlar": [
+        "Mes'ûd",
+        "Mes'ûd'dan",
+        "Mes'ûd'un"
+      ],
+      "adaylar": [
+        {
+          "token": "Mes'ûd",
+          "count": 4133,
+          "suggestedPronunciation": "Mesuud"
+        },
+        {
+          "token": "Mes'ûd'dan",
+          "count": 1112,
+          "suggestedPronunciation": "Mesuuddan"
+        },
+        {
+          "token": "Mes'ûd'un",
+          "count": 541,
+          "suggestedPronunciation": "Mesuudun"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "helâl",
+      "altGrup": "kok",
+      "regexKurali": "/\\bh[eê]l[aâ]l\\b/giu",
+      "onerilenOkunus": "helaal",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5731,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "helâl"
+      ],
+      "adaylar": [
+        {
+          "token": "helâl",
+          "count": 5731,
+          "suggestedPronunciation": "helaal"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "ilâh",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]l[aâ]h\\b/giu",
+      "onerilenOkunus": "ilaah",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5665,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ilâh"
+      ],
+      "adaylar": [
+        {
+          "token": "ilâh",
+          "count": 5665,
+          "suggestedPronunciation": "ilaah"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Resûlü",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[eê][sş][uû]l[üuû]\\b/giu",
+      "onerilenOkunus": "Resuulü",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5655,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Resûlü"
+      ],
+      "adaylar": [
+        {
+          "token": "Resûlü",
+          "count": 5655,
+          "suggestedPronunciation": "Resuulü"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Rasûlüllah",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[aâ][sş][uû]l[üuû]ll[aâ]h\\b/giu",
+      "onerilenOkunus": "Rasuulüllah",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5539,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Rasûlullah",
+        "Rasûlüllah"
+      ],
+      "adaylar": [
+        {
+          "token": "Rasûlüllah",
+          "count": 3136,
+          "suggestedPronunciation": "Rasuulüllah"
+        },
+        {
+          "token": "Rasûlullah",
+          "count": 2403,
+          "suggestedPronunciation": "Rasuulullah"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetteki",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]tt[eê]k[iî]\\b/giu",
+      "onerilenOkunus": "aayetteki",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5343,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "âyetteki",
+        "Âyetteki"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetteki",
+          "count": 2727,
+          "suggestedPronunciation": "aayetteki"
+        },
+        {
+          "token": "Âyetteki",
+          "count": 2616,
+          "suggestedPronunciation": "aayetteki"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âhirette",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]h[iî]r[eê]tt[eê]\\b/giu",
+      "onerilenOkunus": "aahirette",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5211,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âhirette"
+      ],
+      "adaylar": [
+        {
+          "token": "âhirette",
+          "count": 5211,
+          "suggestedPronunciation": "aahirette"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetleri",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]tl[eê]r[iî]\\b/giu",
+      "onerilenOkunus": "aayetleri",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 5016,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetleri"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetleri",
+          "count": 5016,
+          "suggestedPronunciation": "aayetleri"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "ilâhî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]l[aâ]h[iî]\\b/giu",
+      "onerilenOkunus": "ilaahii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4918,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ilâhî"
+      ],
+      "adaylar": [
+        {
+          "token": "ilâhî",
+          "count": 4918,
+          "suggestedPronunciation": "ilaahii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetlerini",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]tl[eê]r[iî]n[iî]\\b/giu",
+      "onerilenOkunus": "aayetlerini",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4910,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetlerini"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetlerini",
+          "count": 4910,
+          "suggestedPronunciation": "aayetlerini"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetinin",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]n[iî]n\\b/giu",
+      "onerilenOkunus": "aayetinin",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4882,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetinin"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetinin",
+          "count": 4882,
+          "suggestedPronunciation": "aayetinin"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Mukâtil",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[uû]k[aâ]t[iî]l\\b/giu",
+      "onerilenOkunus": "Mukaatil",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4710,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Mukâtil"
+      ],
+      "adaylar": [
+        {
+          "token": "Mukâtil",
+          "count": 4710,
+          "suggestedPronunciation": "Mukaatil"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Nesâî",
+      "altGrup": "kok",
+      "regexKurali": "/\\bN[eê][sş][aâ][iî]\\b/giu",
+      "onerilenOkunus": "Nesaaii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4666,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Nesâî"
+      ],
+      "adaylar": [
+        {
+          "token": "Nesâî",
+          "count": 4666,
+          "suggestedPronunciation": "Nesaaii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Âişe",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ][iî][şs][eê]\\b/giu",
+      "onerilenOkunus": "aaişe",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4533,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Âişe",
+        "Âişe'den"
+      ],
+      "adaylar": [
+        {
+          "token": "Âişe",
+          "count": 3753,
+          "suggestedPronunciation": "aaişe"
+        },
+        {
+          "token": "Âişe'den",
+          "count": 780,
+          "suggestedPronunciation": "aaişeden"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetler",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]tl[eê]r\\b/giu",
+      "onerilenOkunus": "aayetler",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4495,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetler"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetler",
+          "count": 4495,
+          "suggestedPronunciation": "aayetler"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "İbrâhîm",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]br[aâ]h[iî]m\\b/giu",
+      "onerilenOkunus": "İbraahiim",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4437,
+      "yuzeyFormSayisi": 3,
+      "yuzeyFormlar": [
+        "İbrâhîm",
+        "İbrâhîm'e",
+        "İbrâhîm'in"
+      ],
+      "adaylar": [
+        {
+          "token": "İbrâhîm",
+          "count": 2788,
+          "suggestedPronunciation": "İbraahiim"
+        },
+        {
+          "token": "İbrâhîm'in",
+          "count": 1072,
+          "suggestedPronunciation": "İbraahiimin"
+        },
+        {
+          "token": "İbrâhîm'e",
+          "count": 577,
+          "suggestedPronunciation": "İbraahiime"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Taberânî",
+      "altGrup": "kok",
+      "regexKurali": "/\\bT[aâ]b[eê]r[aâ]n[iî]\\b/giu",
+      "onerilenOkunus": "Taberaanii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4429,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Taberânî"
+      ],
+      "adaylar": [
+        {
+          "token": "Taberânî",
+          "count": 4429,
+          "suggestedPronunciation": "Taberaanii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Dahhâk",
+      "altGrup": "kok",
+      "regexKurali": "/\\bD[aâ]hh[aâ]k\\b/giu",
+      "onerilenOkunus": "Dahhaak",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4423,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Dahhâk",
+        "Dahhâk'tan"
+      ],
+      "adaylar": [
+        {
+          "token": "Dahhâk",
+          "count": 3907,
+          "suggestedPronunciation": "Dahhaak"
+        },
+        {
+          "token": "Dahhâk'tan",
+          "count": 516,
+          "suggestedPronunciation": "Dahhaaktan"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "mânâ",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[aâ]n[aâ]\\b/giu",
+      "onerilenOkunus": "manaa",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4403,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "ma'nâ",
+        "mânâ"
+      ],
+      "adaylar": [
+        {
+          "token": "mânâ",
+          "count": 3410,
+          "suggestedPronunciation": "maanaa"
+        },
+        {
+          "token": "ma'nâ",
+          "count": 993,
+          "suggestedPronunciation": "manaa"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âhiret",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]h[iî]r[eê]t\\b/giu",
+      "onerilenOkunus": "aahiret",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4391,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âhiret"
+      ],
+      "adaylar": [
+        {
+          "token": "âhiret",
+          "count": 4391,
+          "suggestedPronunciation": "aahiret"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "selâm",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][eê]l[aâ]m\\b/giu",
+      "onerilenOkunus": "selaam",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4360,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "selâm"
+      ],
+      "adaylar": [
+        {
+          "token": "selâm",
+          "count": 4360,
+          "suggestedPronunciation": "selaam"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Rasûlüm",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[aâ][sş][uû]l[üuû]m\\b/giu",
+      "onerilenOkunus": "Rasuulüm",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4328,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Rasûlüm"
+      ],
+      "adaylar": [
+        {
+          "token": "Rasûlüm",
+          "count": 4328,
+          "suggestedPronunciation": "Rasuulüm"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Abdurrezzâk",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]bd[uû]rr[eê]zz[aâ]k\\b/giu",
+      "onerilenOkunus": "Abdurrezzaak",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4224,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Abdurrezzâk"
+      ],
+      "adaylar": [
+        {
+          "token": "Abdurrezzâk",
+          "count": 4224,
+          "suggestedPronunciation": "Abdurrezzaak"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Basrî",
+      "altGrup": "kok",
+      "regexKurali": "/\\bB[aâ][sş]r[iî]\\b/giu",
+      "onerilenOkunus": "Basrii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 4190,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Basrî"
+      ],
+      "adaylar": [
+        {
+          "token": "Basrî",
+          "count": 4190,
+          "suggestedPronunciation": "Basrii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "ebedî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[eê]b[eê]d[iî]\\b/giu",
+      "onerilenOkunus": "ebedii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3860,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ebedî"
+      ],
+      "adaylar": [
+        {
+          "token": "ebedî",
+          "count": 3860,
+          "suggestedPronunciation": "ebedii"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Âmir",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]m[iî]r\\b/giu",
+      "onerilenOkunus": "aamir",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3754,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Âmir"
+      ],
+      "adaylar": [
+        {
+          "token": "Âmir",
+          "count": 3754,
+          "suggestedPronunciation": "aamir"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Resûlallah",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[eê][sş][uû]l[aâ]ll[aâ]h\\b/giu",
+      "onerilenOkunus": "Resuulallah",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3492,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Resûlallah"
+      ],
+      "adaylar": [
+        {
+          "token": "Resûlallah",
+          "count": 3492,
+          "suggestedPronunciation": "Resuulallah"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Atâ",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]t[aâ]\\b/giu",
+      "onerilenOkunus": "Ataa",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Kök çok kısa"
+      ],
+      "toplamFrekans": 3412,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Atâ",
+        "Atâ'"
+      ],
+      "adaylar": [
+        {
+          "token": "Atâ",
+          "count": 2354,
+          "suggestedPronunciation": "Ataa"
+        },
+        {
+          "token": "Atâ'",
+          "count": 1058,
+          "suggestedPronunciation": "Ataa'"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "mânâsına",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[aâ]n[aâ][sş][ıiî]n[aâ]\\b/giu",
+      "onerilenOkunus": "manaasına",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3386,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "ma'nâsına",
+        "mânâsına"
+      ],
+      "adaylar": [
+        {
+          "token": "mânâsına",
+          "count": 2681,
+          "suggestedPronunciation": "maanaasına"
+        },
+        {
+          "token": "ma'nâsına",
+          "count": 705,
+          "suggestedPronunciation": "manaasına"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Süddî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][üuû]dd[iî]\\b/giu",
+      "onerilenOkunus": "Süddii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3367,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Süddî",
+        "Süddî'den"
+      ],
+      "adaylar": [
+        {
+          "token": "Süddî",
+          "count": 2786,
+          "suggestedPronunciation": "Süddii"
+        },
+        {
+          "token": "Süddî'den",
+          "count": 581,
+          "suggestedPronunciation": "Süddiiden"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Âsım",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ][sş][ıiî]m\\b/giu",
+      "onerilenOkunus": "aasım",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3333,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Âsım"
+      ],
+      "adaylar": [
+        {
+          "token": "Âsım",
+          "count": 3333,
+          "suggestedPronunciation": "aasım"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Resûlüm",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[eê][sş][uû]l[üuû]m\\b/giu",
+      "onerilenOkunus": "Resuulüm",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3283,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Resûlüm"
+      ],
+      "adaylar": [
+        {
+          "token": "Resûlüm",
+          "count": 3283,
+          "suggestedPronunciation": "Resuulüm"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "beyân",
+      "altGrup": "kok",
+      "regexKurali": "/\\bb[eê]y[aâ]n\\b/giu",
+      "onerilenOkunus": "beyaan",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3198,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "beyân"
+      ],
+      "adaylar": [
+        {
+          "token": "beyân",
+          "count": 3198,
+          "suggestedPronunciation": "beyaan"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "azâb",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]z[aâ]b\\b/giu",
+      "onerilenOkunus": "azaab",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3184,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "azâb"
+      ],
+      "adaylar": [
+        {
+          "token": "azâb",
+          "count": 3184,
+          "suggestedPronunciation": "azaab"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "ibâdet",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]b[aâ]d[eê]t\\b/giu",
+      "onerilenOkunus": "ibaadet",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3176,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ibâdet"
+      ],
+      "adaylar": [
+        {
+          "token": "ibâdet",
+          "count": 3176,
+          "suggestedPronunciation": "ibaadet"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetindeki",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]nd[eê]k[iî]\\b/giu",
+      "onerilenOkunus": "aayetindeki",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3117,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetindeki"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetindeki",
+          "count": 3117,
+          "suggestedPronunciation": "aayetindeki"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "hidâyet",
+      "altGrup": "kok",
+      "regexKurali": "/\\bh[iî]d[aâ]y[eê]t\\b/giu",
+      "onerilenOkunus": "hidaayet",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 3016,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "hidâyet"
+      ],
+      "adaylar": [
+        {
+          "token": "hidâyet",
+          "count": 3016,
+          "suggestedPronunciation": "aayet"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "kelâm",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[eê]l[aâ]m\\b/giu",
+      "onerilenOkunus": "kelaam",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2952,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kelâm"
+      ],
+      "adaylar": [
+        {
+          "token": "kelâm",
+          "count": 2952,
+          "suggestedPronunciation": "kelaam"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "ifâdesi",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]f[aâ]d[eê][sş][iî]\\b/giu",
+      "onerilenOkunus": "ifaadesi",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2795,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ifâdesi"
+      ],
+      "adaylar": [
+        {
+          "token": "ifâdesi",
+          "count": 2795,
+          "suggestedPronunciation": "ifaadesi"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "azâbı",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]z[aâ]b[ıiî]\\b/giu",
+      "onerilenOkunus": "azaabı",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2786,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "azâbı"
+      ],
+      "adaylar": [
+        {
+          "token": "azâbı",
+          "count": 2786,
+          "suggestedPronunciation": "azaabı"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "mükâfat",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[üuû]k[aâ]f[aâ]t\\b/giu",
+      "onerilenOkunus": "mükaafat",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2686,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "mükâfat"
+      ],
+      "adaylar": [
+        {
+          "token": "mükâfat",
+          "count": 2686,
+          "suggestedPronunciation": "mükaafat"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Ebû'l",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[eê]b[uû]['’]?l\\b/giu",
+      "onerilenOkunus": "Ebuul",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2685,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Ebû'l"
+      ],
+      "adaylar": [
+        {
+          "token": "Ebû'l",
+          "count": 2685,
+          "suggestedPronunciation": "Ebuul"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Mansûr",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[aâ]n[sş][uû]r\\b/giu",
+      "onerilenOkunus": "Mansuur",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2608,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Mansûr"
+      ],
+      "adaylar": [
+        {
+          "token": "Mansûr",
+          "count": 2608,
+          "suggestedPronunciation": "Mansuur"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "rivâyete",
+      "altGrup": "kok",
+      "regexKurali": "/\\br[iî]v[aâ]y[eê]t[eê]\\b/giu",
+      "onerilenOkunus": "rivaayete",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2566,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "rivâyete"
+      ],
+      "adaylar": [
+        {
+          "token": "rivâyete",
+          "count": 2566,
+          "suggestedPronunciation": "rivaayete"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âlimler",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]l[iî]ml[eê]r\\b/giu",
+      "onerilenOkunus": "aalimler",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2540,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âlimler"
+      ],
+      "adaylar": [
+        {
+          "token": "âlimler",
+          "count": 2540,
+          "suggestedPronunciation": "aalimler"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "duâ",
+      "altGrup": "kok",
+      "regexKurali": "/\\bd[uû][aâ]\\b/giu",
+      "onerilenOkunus": "duaa",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Kök çok kısa"
+      ],
+      "toplamFrekans": 2413,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "duâ"
+      ],
+      "adaylar": [
+        {
+          "token": "duâ",
+          "count": 2413,
+          "suggestedPronunciation": "duaa"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Nehhâs",
+      "altGrup": "kok",
+      "regexKurali": "/\\bN[eê]hh[aâ][sş]\\b/giu",
+      "onerilenOkunus": "Nehhaas",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2391,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Nehhâs"
+      ],
+      "adaylar": [
+        {
+          "token": "Nehhâs",
+          "count": 2391,
+          "suggestedPronunciation": "Nehhaas"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "âyetine",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]y[eê]t[iî]n[eê]\\b/giu",
+      "onerilenOkunus": "aayetine",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2390,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "âyetine"
+      ],
+      "adaylar": [
+        {
+          "token": "âyetine",
+          "count": 2390,
+          "suggestedPronunciation": "aayetine"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "imkânsız",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]mk[aâ]n[sş][ıiî]z\\b/giu",
+      "onerilenOkunus": "imkaansız",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2291,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "imkânsız"
+      ],
+      "adaylar": [
+        {
+          "token": "imkânsız",
+          "count": 2291,
+          "suggestedPronunciation": "imkaansız"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Ya'kûb",
+      "altGrup": "kok",
+      "regexKurali": "/\\bY[aâ]['’]?k[uû]b\\b/giu",
+      "onerilenOkunus": "Yakuub",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 2163,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Ya'kûb"
+      ],
+      "adaylar": [
+        {
+          "token": "Ya'kûb",
+          "count": 2163,
+          "suggestedPronunciation": "Yakuub"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "mef'ûl",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[eê]f['’]?[uû]l\\b/giu",
+      "onerilenOkunus": "mefuul",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 1634,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "mef'ûl"
+      ],
+      "adaylar": [
+        {
+          "token": "mef'ûl",
+          "count": 1634,
+          "suggestedPronunciation": "mefuul"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "En'âm",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[eê]n['’]?[aâ]m\\b/giu",
+      "onerilenOkunus": "Enaam",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 1223,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "En'âm"
+      ],
+      "adaylar": [
+        {
+          "token": "En'âm",
+          "count": 1223,
+          "suggestedPronunciation": "Enaam"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Delâil",
+      "altGrup": "kok",
+      "regexKurali": "/\\bD[eê]l[aâ][iî]l\\b/giu",
+      "onerilenOkunus": "Delaailde",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 1154,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Delâil'de"
+      ],
+      "adaylar": [
+        {
+          "token": "Delâil'de",
+          "count": 1154,
+          "suggestedPronunciation": "Delaailde"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Kerîm",
+      "altGrup": "kok",
+      "regexKurali": "/\\bK[eê]r[iî]m\\b/giu",
+      "onerilenOkunus": "Keriimde",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [],
+      "toplamFrekans": 1114,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Kerîm'de",
+        "Kerîm'in"
+      ],
+      "adaylar": [
+        {
+          "token": "Kerîm'de",
+          "count": 630,
+          "suggestedPronunciation": "Keriimde"
+        },
+        {
+          "token": "Kerîm'in",
+          "count": 484,
+          "suggestedPronunciation": "Keriimin"
+        }
+      ],
+      "kuralDurumu": "Kabul"
+    },
+    {
+      "temsilKok": "Hâtim",
+      "altGrup": "kok",
+      "regexKurali": "/\\bH[aâ]t[iî]m\\b/giu",
+      "onerilenOkunus": "Haatim",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 22611,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Hâtim"
+      ],
+      "adaylar": [
+        {
+          "token": "Hâtim",
+          "count": 22611,
+          "suggestedPronunciation": "Haatim"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Mûsa",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[uû][sş][aâ]\\b/giu",
+      "onerilenOkunus": "Muusa",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 20531,
+      "yuzeyFormSayisi": 5,
+      "yuzeyFormlar": [
+        "Mûsa",
+        "Mûsa'dan",
+        "Mûsa'nın",
+        "Mûsa'ya",
+        "Mûsa'yı"
+      ],
+      "adaylar": [
+        {
+          "token": "Mûsa",
+          "count": 13934,
+          "suggestedPronunciation": "Muusa"
+        },
+        {
+          "token": "Mûsa'nın",
+          "count": 2951,
+          "suggestedPronunciation": "Muusanın"
+        },
+        {
+          "token": "Mûsa'ya",
+          "count": 2369,
+          "suggestedPronunciation": "Muusaya"
+        },
+        {
+          "token": "Mûsa'yı",
+          "count": 729,
+          "suggestedPronunciation": "Muusayı"
+        },
+        {
+          "token": "Mûsa'dan",
+          "count": 548,
+          "suggestedPronunciation": "Muusadan"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Sûresi",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][uû]r[eê][sş][iî]\\b/giu",
+      "onerilenOkunus": "Suuresi",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 11860,
+      "yuzeyFormSayisi": 5,
+      "yuzeyFormlar": [
+        "sûresi",
+        "Sûresi",
+        "Sûresi'nde",
+        "Sûresi'ni",
+        "Sûresi'nin"
+      ],
+      "adaylar": [
+        {
+          "token": "Sûresi'nde",
+          "count": 4641,
+          "suggestedPronunciation": "Suuresinde"
+        },
+        {
+          "token": "Sûresi",
+          "count": 2713,
+          "suggestedPronunciation": "Suuresi"
+        },
+        {
+          "token": "sûresi",
+          "count": 2692,
+          "suggestedPronunciation": "suuresi"
+        },
+        {
+          "token": "Sûresi'nin",
+          "count": 1099,
+          "suggestedPronunciation": "Suuresinin"
+        },
+        {
+          "token": "Sûresi'ni",
+          "count": 715,
+          "suggestedPronunciation": "Suuresini"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Dâvûd",
+      "altGrup": "kok",
+      "regexKurali": "/\\bD[aâ]v[uû]d\\b/giu",
+      "onerilenOkunus": "Daavuud",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 8376,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Dâvud",
+        "Dâvûd"
+      ],
+      "adaylar": [
+        {
+          "token": "Dâvûd",
+          "count": 4703,
+          "suggestedPronunciation": "Daavuud"
+        },
+        {
+          "token": "Dâvud",
+          "count": 3673,
+          "suggestedPronunciation": "Daavud"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "kâfir",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[aâ]f[iî]r\\b/giu",
+      "onerilenOkunus": "kaafir",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 8205,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kâfir"
+      ],
+      "adaylar": [
+        {
+          "token": "kâfir",
+          "count": 8205,
+          "suggestedPronunciation": "kaafir"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Yûsuf",
+      "altGrup": "kok",
+      "regexKurali": "/\\bY[uû][sş][uû]f\\b/giu",
+      "onerilenOkunus": "Yuusuf",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 8069,
+      "yuzeyFormSayisi": 4,
+      "yuzeyFormlar": [
+        "Yûsuf",
+        "Yûsuf'a",
+        "Yûsuf'u",
+        "Yûsuf'un"
+      ],
+      "adaylar": [
+        {
+          "token": "Yûsuf",
+          "count": 4765,
+          "suggestedPronunciation": "Yuusuf"
+        },
+        {
+          "token": "Yûsuf'un",
+          "count": 1844,
+          "suggestedPronunciation": "Yuusufun"
+        },
+        {
+          "token": "Yûsuf'a",
+          "count": 758,
+          "suggestedPronunciation": "Yuusufa"
+        },
+        {
+          "token": "Yûsuf'u",
+          "count": 702,
+          "suggestedPronunciation": "Yuusufu"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "kâfirler",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[aâ]f[iî]rl[eê]r\\b/giu",
+      "onerilenOkunus": "kaafirler",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 7632,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kâfirler"
+      ],
+      "adaylar": [
+        {
+          "token": "kâfirler",
+          "count": 7632,
+          "suggestedPronunciation": "kaafirler"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Sûre",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][uû]r[eê]\\b/giu",
+      "onerilenOkunus": "Suure",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 7332,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "sûre",
+        "Sûre"
+      ],
+      "adaylar": [
+        {
+          "token": "Sûre",
+          "count": 3703,
+          "suggestedPronunciation": "suure"
+        },
+        {
+          "token": "sûre",
+          "count": 3629,
+          "suggestedPronunciation": "suure"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "kâfirlerin",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[aâ]f[iî]rl[eê]r[iî]n\\b/giu",
+      "onerilenOkunus": "kaafirlerin",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 6744,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kâfirlerin"
+      ],
+      "adaylar": [
+        {
+          "token": "kâfirlerin",
+          "count": 6744,
+          "suggestedPronunciation": "kaafirlerin"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "hâlde",
+      "altGrup": "kok",
+      "regexKurali": "/\\bh[aâ]ld[eê]\\b/giu",
+      "onerilenOkunus": "haalde",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 5434,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "hâlde"
+      ],
+      "adaylar": [
+        {
+          "token": "hâlde",
+          "count": 5434,
+          "suggestedPronunciation": "haalde"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Mâlik",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[aâ]l[iî]k\\b/giu",
+      "onerilenOkunus": "Maalik",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 5409,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Mâlik",
+        "Mâlik'in"
+      ],
+      "adaylar": [
+        {
+          "token": "Mâlik",
+          "count": 4879,
+          "suggestedPronunciation": "Maalik"
+        },
+        {
+          "token": "Mâlik'in",
+          "count": 530,
+          "suggestedPronunciation": "Maalikin"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "lâfzı",
+      "altGrup": "kok",
+      "regexKurali": "/\\bl[aâ]fz[ıiî]\\b/giu",
+      "onerilenOkunus": "laafzı",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 5173,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "lâfzı"
+      ],
+      "adaylar": [
+        {
+          "token": "lâfzı",
+          "count": 5173,
+          "suggestedPronunciation": "laafzı"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "câiz",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[cç][aâ][iî]z\\b/giu",
+      "onerilenOkunus": "caaiz",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4837,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "câiz"
+      ],
+      "adaylar": [
+        {
+          "token": "câiz",
+          "count": 4837,
+          "suggestedPronunciation": "caaiz"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Hâkim",
+      "altGrup": "kok",
+      "regexKurali": "/\\bH[aâ]k[iî]m\\b/giu",
+      "onerilenOkunus": "Haakim",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4711,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Hâkim"
+      ],
+      "adaylar": [
+        {
+          "token": "Hâkim",
+          "count": 4711,
+          "suggestedPronunciation": "Haakim"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Nûh",
+      "altGrup": "kok",
+      "regexKurali": "/\\bN[uû]h\\b/giu",
+      "onerilenOkunus": "Nuuh",
+      "riskSeviyesi": "Yüksek",
+      "riskNedenleri": [
+        "Kök çok kısa",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4455,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Nûh",
+        "Nûh'un"
+      ],
+      "adaylar": [
+        {
+          "token": "Nûh",
+          "count": 3806,
+          "suggestedPronunciation": "Nuuh"
+        },
+        {
+          "token": "Nûh'un",
+          "count": 649,
+          "suggestedPronunciation": "Nuuhun"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Mâce",
+      "altGrup": "kok",
+      "regexKurali": "/\\bM[aâ][cç][eê]\\b/giu",
+      "onerilenOkunus": "Maace",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4354,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Mâce"
+      ],
+      "adaylar": [
+        {
+          "token": "Mâce",
+          "count": 4354,
+          "suggestedPronunciation": "Maace"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "kâfirlere",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[aâ]f[iî]rl[eê]r[eê]\\b/giu",
+      "onerilenOkunus": "kaafirlere",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4322,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kâfirlere"
+      ],
+      "adaylar": [
+        {
+          "token": "kâfirlere",
+          "count": 4322,
+          "suggestedPronunciation": "kaafirlere"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "mânâsındadır",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[aâ]n[aâ][sş][ıiî]nd[aâ]d[ıiî]r\\b/giu",
+      "onerilenOkunus": "maanaasındadır",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4192,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "mânâsındadır"
+      ],
+      "adaylar": [
+        {
+          "token": "mânâsındadır",
+          "count": 4192,
+          "suggestedPronunciation": "maanaasındadır"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Ferrâ'",
+      "altGrup": "kok",
+      "regexKurali": "/\\bF[eê]rr[aâ]['’]?\\b/giu",
+      "onerilenOkunus": "Ferraa'",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 4190,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Ferrâ'",
+        "Ferrâ''"
+      ],
+      "adaylar": [
+        {
+          "token": "Ferrâ'",
+          "count": 3585,
+          "suggestedPronunciation": "Ferraa'"
+        },
+        {
+          "token": "Ferrâ''",
+          "count": 605,
+          "suggestedPronunciation": "Ferraa''"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Nâfi",
+      "altGrup": "kok",
+      "regexKurali": "/\\bN[aâ]f[iî]\\b/giu",
+      "onerilenOkunus": "Naafi",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3963,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Nâfi",
+        "Nâfi'"
+      ],
+      "adaylar": [
+        {
+          "token": "Nâfi",
+          "count": 3190,
+          "suggestedPronunciation": "Naafi"
+        },
+        {
+          "token": "Nâfi'",
+          "count": 773,
+          "suggestedPronunciation": "Naafi'"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "mânâsı",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[aâ]n[aâ][sş][ıiî]\\b/giu",
+      "onerilenOkunus": "maanaası",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3830,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "mânâsı"
+      ],
+      "adaylar": [
+        {
+          "token": "mânâsı",
+          "count": 3830,
+          "suggestedPronunciation": "maanaası"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "nâzil",
+      "altGrup": "kok",
+      "regexKurali": "/\\bn[aâ]z[iî]l\\b/giu",
+      "onerilenOkunus": "naazil",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3737,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "nâzil"
+      ],
+      "adaylar": [
+        {
+          "token": "nâzil",
+          "count": 3737,
+          "suggestedPronunciation": "naazil"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Lût",
+      "altGrup": "kok",
+      "regexKurali": "/\\bL[uû]t\\b/giu",
+      "onerilenOkunus": "Luut",
+      "riskSeviyesi": "Yüksek",
+      "riskNedenleri": [
+        "Kök çok kısa",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3686,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Lût",
+        "Lût'un"
+      ],
+      "adaylar": [
+        {
+          "token": "Lût",
+          "count": 2945,
+          "suggestedPronunciation": "Luut"
+        },
+        {
+          "token": "Lût'un",
+          "count": 741,
+          "suggestedPronunciation": "Luutun"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "bâtıl",
+      "altGrup": "kok",
+      "regexKurali": "/\\bb[aâ]t[ıiî]l\\b/giu",
+      "onerilenOkunus": "baatıl",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3646,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "bâtıl"
+      ],
+      "adaylar": [
+        {
+          "token": "bâtıl",
+          "count": 3646,
+          "suggestedPronunciation": "baatıl"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "tâbi",
+      "altGrup": "kok",
+      "regexKurali": "/\\bt[aâ]b[iî]\\b/giu",
+      "onerilenOkunus": "taabi",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3222,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "tâbi"
+      ],
+      "adaylar": [
+        {
+          "token": "tâbi",
+          "count": 3222,
+          "suggestedPronunciation": "taabi"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "lâm",
+      "altGrup": "kok",
+      "regexKurali": "/\\bl[aâ]m\\b/giu",
+      "onerilenOkunus": "laam",
+      "riskSeviyesi": "Yüksek",
+      "riskNedenleri": [
+        "Kök çok kısa",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3174,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "lâm"
+      ],
+      "adaylar": [
+        {
+          "token": "lâm",
+          "count": 3174,
+          "suggestedPronunciation": "laam"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "kâfirleri",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[aâ]f[iî]rl[eê]r[iî]\\b/giu",
+      "onerilenOkunus": "kaafirleri",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3113,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kâfirleri"
+      ],
+      "adaylar": [
+        {
+          "token": "kâfirleri",
+          "count": 3113,
+          "suggestedPronunciation": "kaafirleri"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Şâfiî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[şs][aâ]f[iî][iî]\\b/giu",
+      "onerilenOkunus": "Şaafiii",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 3028,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Şâfiî"
+      ],
+      "adaylar": [
+        {
+          "token": "Şâfiî",
+          "count": 3028,
+          "suggestedPronunciation": "Şaafiii"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "lâzım",
+      "altGrup": "kok",
+      "regexKurali": "/\\bl[aâ]z[ıiî]m\\b/giu",
+      "onerilenOkunus": "laazım",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 2988,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "lâzım"
+      ],
+      "adaylar": [
+        {
+          "token": "lâzım",
+          "count": 2988,
+          "suggestedPronunciation": "laazım"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "sûrenin",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][uû]r[eê]n[iî]n\\b/giu",
+      "onerilenOkunus": "suurenin",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 2697,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "sûrenin"
+      ],
+      "adaylar": [
+        {
+          "token": "sûrenin",
+          "count": 2697,
+          "suggestedPronunciation": "suurenin"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "itâat",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[iî]t[aâ][aâ]t\\b/giu",
+      "onerilenOkunus": "itaaat",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 2472,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "itâat"
+      ],
+      "adaylar": [
+        {
+          "token": "itâat",
+          "count": 2472,
+          "suggestedPronunciation": "itaaat"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "câizdir",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[cç][aâ][iî]zd[iî]r\\b/giu",
+      "onerilenOkunus": "caaizdir",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 2335,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "câizdir"
+      ],
+      "adaylar": [
+        {
+          "token": "câizdir",
+          "count": 2335,
+          "suggestedPronunciation": "caaizdir"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "sâlih",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][aâ]l[iî]h\\b/giu",
+      "onerilenOkunus": "saalih",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 2287,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "sâlih"
+      ],
+      "adaylar": [
+        {
+          "token": "sâlih",
+          "count": 2287,
+          "suggestedPronunciation": "saalih"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Kâbe",
+      "altGrup": "kok",
+      "regexKurali": "/\\bK[aâ]b[eê]\\b/giu",
+      "onerilenOkunus": "Kaabe",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 1045,
+      "yuzeyFormSayisi": 2,
+      "yuzeyFormlar": [
+        "Kâbe'nin",
+        "Kâbe'yi"
+      ],
+      "adaylar": [
+        {
+          "token": "Kâbe'yi",
+          "count": 554,
+          "suggestedPronunciation": "kaabeyi"
+        },
+        {
+          "token": "Kâbe'nin",
+          "count": 491,
+          "suggestedPronunciation": "kaabenin"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "şer'î",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[şs][eê]r['’]?[iî]\\b/giu",
+      "onerilenOkunus": "şerii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 994,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "şer'î"
+      ],
+      "adaylar": [
+        {
+          "token": "şer'î",
+          "count": 994,
+          "suggestedPronunciation": "şerii"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "hâl",
+      "altGrup": "kok",
+      "regexKurali": "/\\bh[aâ]l\\b/giu",
+      "onerilenOkunus": "haal",
+      "riskSeviyesi": "Yüksek",
+      "riskNedenleri": [
+        "Kök çok kısa",
+        "Frekans düşük",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 958,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "hâl'dir"
+      ],
+      "adaylar": [
+        {
+          "token": "hâl'dir",
+          "count": 958,
+          "suggestedPronunciation": "haaldir"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Şa'bî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[şs][aâ]['’]?b[iî]\\b/giu",
+      "onerilenOkunus": "Şabii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 933,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Şa'bî"
+      ],
+      "adaylar": [
+        {
+          "token": "Şa'bî",
+          "count": 933,
+          "suggestedPronunciation": "Şabii"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Ya'lâ",
+      "altGrup": "kok",
+      "regexKurali": "/\\bY[aâ]['’]?l[aâ]\\b/giu",
+      "onerilenOkunus": "Yalaa",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 915,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Ya'lâ"
+      ],
+      "adaylar": [
+        {
+          "token": "Ya'lâ",
+          "count": 915,
+          "suggestedPronunciation": "Yalaa"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Sa'lebî",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][aâ]['’]?l[eê]b[iî]\\b/giu",
+      "onerilenOkunus": "Salebii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 786,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Sa'lebî"
+      ],
+      "adaylar": [
+        {
+          "token": "Sa'lebî",
+          "count": 786,
+          "suggestedPronunciation": "Salebii"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "A'râf",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[aâ]['’]?r[aâ]f\\b/giu",
+      "onerilenOkunus": "Araaf",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 752,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "A'râf"
+      ],
+      "adaylar": [
+        {
+          "token": "A'râf",
+          "count": 752,
+          "suggestedPronunciation": "Araaf"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "ma'lûm",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[aâ]['’]?l[uû]m\\b/giu",
+      "onerilenOkunus": "maluum",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 744,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ma'lûm"
+      ],
+      "adaylar": [
+        {
+          "token": "ma'lûm",
+          "count": 744,
+          "suggestedPronunciation": "maluum"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Kâ'b",
+      "altGrup": "kok",
+      "regexKurali": "/\\bK[aâ]['’]?b\\b/giu",
+      "onerilenOkunus": "Kaa'b",
+      "riskSeviyesi": "Yüksek",
+      "riskNedenleri": [
+        "Kök çok kısa",
+        "Frekans düşük",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 689,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Kâ'b"
+      ],
+      "adaylar": [
+        {
+          "token": "Kâ'b",
+          "count": 689,
+          "suggestedPronunciation": "kaab"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "ma'tûf",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[aâ]['’]?t[uû]f\\b/giu",
+      "onerilenOkunus": "matuuf",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 608,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "ma'tûf"
+      ],
+      "adaylar": [
+        {
+          "token": "ma'tûf",
+          "count": 608,
+          "suggestedPronunciation": "matuuf"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Rahmân",
+      "altGrup": "kok",
+      "regexKurali": "/\\bR[aâ]hm[aâ]n\\b/giu",
+      "onerilenOkunus": "rahmaan",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 567,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Rahmân'ın"
+      ],
+      "adaylar": [
+        {
+          "token": "Rahmân'ın",
+          "count": 567,
+          "suggestedPronunciation": "rahmaan"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "kat'î",
+      "altGrup": "kok",
+      "regexKurali": "/\\bk[aâ]t['’]?[iî]\\b/giu",
+      "onerilenOkunus": "katii",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 543,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "kat'î"
+      ],
+      "adaylar": [
+        {
+          "token": "kat'î",
+          "count": 543,
+          "suggestedPronunciation": "katii"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Sûresi'ndeki",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][uû]r[eê][sş][iî]['’]?nd[eê]k[iî]\\b/giu",
+      "onerilenOkunus": "Suuresindeki",
+      "riskSeviyesi": "Orta",
+      "riskNedenleri": [
+        "Frekans düşük",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 499,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Sûresi'ndeki"
+      ],
+      "adaylar": [
+        {
+          "token": "Sûresi'ndeki",
+          "count": 499,
+          "suggestedPronunciation": "Suuresindeki"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "Sûr",
+      "altGrup": "kok",
+      "regexKurali": "/\\b[sş][uû]r\\b/giu",
+      "onerilenOkunus": "Suur",
+      "riskSeviyesi": "Yüksek",
+      "riskNedenleri": [
+        "Kök çok kısa",
+        "Frekans düşük",
+        "Telaffuz güveni düşük"
+      ],
+      "toplamFrekans": 489,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "Sûr'a"
+      ],
+      "adaylar": [
+        {
+          "token": "Sûr'a",
+          "count": 489,
+          "suggestedPronunciation": "Suura"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    },
+    {
+      "temsilKok": "mef'ûlün",
+      "altGrup": "kok",
+      "regexKurali": "/\\bm[eê]f['’]?[uû]l[üuû]n\\b/giu",
+      "onerilenOkunus": "mefuulün",
+      "riskSeviyesi": "Düşük",
+      "riskNedenleri": [
+        "Frekans düşük"
+      ],
+      "toplamFrekans": 486,
+      "yuzeyFormSayisi": 1,
+      "yuzeyFormlar": [
+        "mef'ûlün"
+      ],
+      "adaylar": [
+        {
+          "token": "mef'ûlün",
+          "count": 486,
+          "suggestedPronunciation": "mefuulün"
+        }
+      ],
+      "kuralDurumu": "Reddedildi"
+    }
+  ]
+}

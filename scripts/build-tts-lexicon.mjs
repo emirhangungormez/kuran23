@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 /**
  * build-tts-lexicon.mjs
@@ -27,91 +27,85 @@ const parsedOptions = parseOptions(optionArgs)
 const GENERATED_LIMIT = parsedOptions.limit || 500
 const RUNTIME_FILE = path.resolve(parsedOptions.runtime || DEFAULT_RUNTIME_FILE)
 const TOP_LIST_LIMIT = parsedOptions.top || 5000
+const MIN_CANDIDATE_COUNT = parsedOptions.minCount || 3
 
-const KNOWN_TURKISH_WORDS = new Set([
-  've', 'ile', 'bir', 'bu', 'su', 'o', 'da', 'de', 'ki', 'icin', 'olan', 'olarak',
-  'cok', 'daha', 'gibi', 'kadar', 'sonra', 'once', 'ancak', 'fakat', 'cunku',
-  'ayet', 'sure', 'suresi', 'ayetler', 'ayetleri', 'hadis', 'hadisi', 'tefsir',
-  'allah', 'peygamber', 'resul', 'islam', 'iman', 'amel', 'dunya', 'ahiret',
-  'insan', 'kitap', 'kuran', 'rab', 'rahmet', 'ilim', 'din', 'hak',
-  'batil', 'kalp', 'nefis', 'seytan', 'cennet', 'cehennem', 'melek', 'namaz',
-  'oruc', 'zekat', 'dua', 'tevbe', 'sabir', 'sukur', 'hikmet', 'ibadet', 'kul'
-])
+const SPECIALIZED_OR_OTTOMANIZED_REGEX =
+  /(ullah|iddin|uddin|te['’]?vil|me['’]?al|n[üu]z[üu]l|k[ıi]raat|ubudiyet|n[üu]b[üu]vvet|m[üu]te[sş]abih|marifetullah|muhabbetullah|esma[-\s]?i?\s*h[üu]sna|aleyhisselam|sallallahu|radiyallahu)/iu
 
 const CORE_REPLACEMENTS = [
   [/\bs\.a\.v\.?\b/gi, 'sallallahu aleyhi ve sellem'],
   [/\ba\.s\.?\b/gi, 'aleyhisselam'],
   [/\br\.a\.?\b/gi, 'radiyallahu anh'],
-  [/\br\.\s*anh[üu]m\b/gi, 'radiyallahu anhum'],
+  [/\br\.\s*anh[Ã¼u]m\b/gi, 'radiyallahu anhum'],
   [/\bk\.s\.?\b/gi, 'kuddise sirruh'],
   [/\bc\.c\.?\b/gi, 'celle celaluhu'],
   [/\bhz\.\b/gi, 'Hazreti'],
-  [/\bM\.Ö\.\b/gi, 'milattan once'],
+  [/\bM\.Ã–\.\b/gi, 'milattan once'],
   [/\bM\.S\.\b/gi, 'milattan sonra'],
-  [/\bH\.\s*(\d+)\.\s*yüzyıl\b/gi, 'hicri $1. yuzyil'],
-  [/\bM\.\s*(\d+)\.\s*yüzyıl\b/gi, 'miladi $1. yuzyil'],
+  [/\bH\.\s*(\d+)\.\s*yÃ¼zyÄ±l\b/gi, 'hicri $1. yuzyil'],
+  [/\bM\.\s*(\d+)\.\s*yÃ¼zyÄ±l\b/gi, 'miladi $1. yuzyil'],
   [/\bdr\.\b/gi, 'doktor'],
   [/\bprof\.\b/gi, 'profesor'],
-  [/\bdoç\.\b/gi, 'docent'],
+  [/\bdoÃ§\.\b/gi, 'docent'],
   [/(\d+)\s*\/\s*(\d+)/g, '$1 bolu $2']
 ]
 
 const CORE_PRONUNCIATION_LEXICON = [
-  [/\bkâfir\b/gi, 'kaafir'],
-  [/\bhâlâ\b/gi, 'haalaa'],
-  [/\bsûre\b/gi, 'suure'],
-  [/\bnüzûl\b/gi, 'nüzuul'],
-  [/\bnüzul\b/gi, 'nüzuul'],
-  [/\bmüteşabih\b/gi, 'müteşaabih'],
-  [/\bmüteşâbih\b/gi, 'müteşaabih'],
+  [/\bkÃ¢fir\b/gi, 'kaafir'],
+  [/\bhÃ¢lÃ¢\b/gi, 'haalaa'],
+  [/\bsÃ»re\b/gi, 'suure'],
+  [/\bnÃ¼zÃ»l\b/gi, 'nÃ¼zuul'],
+  [/\bnÃ¼zul\b/gi, 'nÃ¼zuul'],
+  [/\bmÃ¼teÅŸabih\b/gi, 'mÃ¼teÅŸaabih'],
+  [/\bmÃ¼teÅŸÃ¢bih\b/gi, 'mÃ¼teÅŸaabih'],
   [/\bmuhkem\b/gi, 'muhkem'],
   [/\btefsir\b/gi, 'tefsiir'],
-  [/\btefsîr\b/gi, 'tefsiir'],
+  [/\btefsÃ®r\b/gi, 'tefsiir'],
   [/\bte'vil\b/gi, 'tevil'],
-  [/\bte’vil\b/gi, 'tevil'],
+  [/\bteâ€™vil\b/gi, 'tevil'],
   [/\btev'il\b/gi, 'tevil'],
-  [/\bmeâl\b/gi, 'meaal'],
+  [/\bmeÃ¢l\b/gi, 'meaal'],
   [/\bmeal\b/gi, 'meaal'],
-  [/\bâyet\b/gi, 'aayet'],
-  [/\bâyeti\b/gi, 'aayeti'],
-  [/\bkıraat\b/gi, 'kıraat'],
-  [/\bzâhir\b/gi, 'zaahir'],
-  [/\bbâtın\b/gi, 'baatın'],
-  [/\baleyhissel[aâ]m\b/gi, 'aleyhisselaam'],
+  [/\bÃ¢yet\b/gi, 'aayet'],
+  [/\bÃ¢yeti\b/gi, 'aayeti'],
+  [/\bkÄ±raat\b/gi, 'kÄ±raat'],
+  [/\bzÃ¢hir\b/gi, 'zaahir'],
+  [/\bbÃ¢tÄ±n\b/gi, 'baatÄ±n'],
+  [/\baleyhissel[aÃ¢]m\b/gi, 'aleyhisselaam'],
   [/\bsallallahu aleyhi ve sellem\b/gi, 'sallallahu aleyhi vesellem'],
-  [/\brad[iı]yallahu anh\b/gi, 'radiyallahu anh'],
-  [/\bteâlâ\b/gi, 'tealaa'],
+  [/\brad[iÄ±]yallahu anh\b/gi, 'radiyallahu anh'],
+  [/\bteÃ¢lÃ¢\b/gi, 'tealaa'],
   [/\bisnad\b/gi, 'isnaad'],
   [/\brivayet\b/gi, 'rivaayet'],
-  [/\bkıyamet\b/gi, 'kıyaamet'],
+  [/\bkÄ±yamet\b/gi, 'kÄ±yaamet'],
   [/\bKur'an\b/gi, 'Kuran'],
-  [/\brahmân\b/gi, 'rahmaan'],
-  [/\brahîm\b/gi, 'rahiim'],
-  [/\bmelekût\b/gi, 'melekuut'],
+  [/\brahmÃ¢n\b/gi, 'rahmaan'],
+  [/\brahÃ®m\b/gi, 'rahiim'],
+  [/\bmelekÃ»t\b/gi, 'melekuut'],
   [/\bnasih\b/gi, 'naasih'],
   [/\bmensuh\b/gi, 'mensuuh'],
-  [/\bmensûh\b/gi, 'mensuuh'],
-  [/\btevhîd\b/gi, 'tevhiid'],
-  [/\bubûdiyet\b/gi, 'ubuudiyet'],
-  [/\bilâhî\b/gi, 'ilaahii'],
-  [/\brisâlet\b/gi, 'risaalet'],
+  [/\bmensÃ»h\b/gi, 'mensuuh'],
+  [/\btevhÃ®d\b/gi, 'tevhiid'],
+  [/\bubÃ»diyet\b/gi, 'ubuudiyet'],
+  [/\bilÃ¢hÃ®\b/gi, 'ilaahii'],
+  [/\brisÃ¢let\b/gi, 'risaalet'],
   [/\bmarifet\b/gi, 'maarifet'],
-  [/\bşeriat\b/gi, 'şeriaat'],
+  [/\bÅŸeriat\b/gi, 'ÅŸeriaat'],
   [/\bmarifetullah\b/gi, 'maarifetullah'],
   [/\bmuhabbetullah\b/gi, 'muhabbetullah'],
-  [/\besmâ-i hüsnâ\b/gi, 'esmaai hüsnaa'],
-  [/\besmâ\b/gi, 'esmaa'],
-  [/\bcemâl\b/gi, 'cemaal'],
-  [/\bcelâl\b/gi, 'celaal'],
-  [/\bkemâl\b/gi, 'kemaal'],
-  [/\bharâm\b/gi, 'haraam'],
-  [/\bhalâl\b/gi, 'halaal']
+  [/\besmÃ¢-i hÃ¼snÃ¢\b/gi, 'esmaai hÃ¼snaa'],
+  [/\besmÃ¢\b/gi, 'esmaa'],
+  [/\bcemÃ¢l\b/gi, 'cemaal'],
+  [/\bcelÃ¢l\b/gi, 'celaal'],
+  [/\bkemÃ¢l\b/gi, 'kemaal'],
+  [/\bharÃ¢m\b/gi, 'haraam'],
+  [/\bhalÃ¢l\b/gi, 'halaal']
 ]
 
 const ARABIC_CHAR_CLASS = '\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF'
 const ARABIC_CHAR_REGEX = new RegExp(`[${ARABIC_CHAR_CLASS}]`, 'u')
-const LATIN_TURKISH_WORD_REGEX = /[A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû]+/u
-const TOKEN_REGEX = /[A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû']+|[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+/gu
+const LATIN_TURKISH_WORD_REGEX = /\p{Script=Latin}+/u
+const TOKEN_REGEX = /[\p{Script=Latin}'’]+|[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+/gu
 const FILE_EXTENSIONS = new Set(['.txt', '.md', '.html', '.htm', '.json'])
 
 function parseOptions(options) {
@@ -121,9 +115,11 @@ function parseOptions(options) {
     const key = String(rawKey || '').trim()
     const value = String(rawValue || '').trim()
     if (!key) return
-    if (key === 'limit' || key === 'top') {
+    if (key === 'limit' || key === 'top' || key === 'min-count' || key === 'minCount') {
       const asNumber = Number(value)
-      if (Number.isFinite(asNumber) && asNumber > 0) parsed[key] = Math.floor(asNumber)
+      if (!Number.isFinite(asNumber) || asNumber <= 0) return
+      if (key === 'min-count') parsed.minCount = Math.floor(asNumber)
+      else parsed[key] = Math.floor(asNumber)
       return
     }
     parsed[key] = value
@@ -196,11 +192,11 @@ function normalizeBaseText(text) {
   })
 
   return normalized
-    .replace(/[ـ]+/gu, '')
-    .replace(/[“”"]/g, '')
-    .replace(/[’`´‘‛]/g, "'")
+    .replace(/[\u0640]+/gu, '')
+    .replace(/[\u201C\u201D"]/g, '')
+    .replace(/[\u2019`\u00B4\u2018\u203A]/g, "'")
     .replace(/\(([^)]*?)\)/g, ' $1 ')
-    .replace(/[ۖۗۘۙۚۛۜ۝۞]/gu, ' ')
+    .replace(/[\u06D6-\u06DC\u06DD\u06DE\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -208,7 +204,7 @@ function normalizeBaseText(text) {
 function normalizeToken(token) {
   return String(token || '')
     .normalize('NFKC')
-    .replace(/[’`´‘‛]/g, "'")
+    .replace(/[\u2019`\u00B4\u2018\u203A]/g, "'")
     .trim()
 }
 
@@ -220,11 +216,20 @@ function tokenize(text) {
 }
 
 function hasCircumflex(token) {
-  return /[âîûÂÎÛ]/.test(token)
+  return /[âîûÂÎÛ]/u.test(token)
 }
 
 function hasApostrophe(token) {
-  return /['’]/.test(token)
+  const normalized = String(token || '').replace(/[’]/g, "'").trim()
+  if (!normalized.includes("'")) return false
+  if (normalized.startsWith("'") || normalized.endsWith("'")) return false
+
+  const parts = normalized.split("'")
+  if (parts.length < 2) return false
+  if (parts.some((part) => !part || part.length < 2 || !/^\p{Script=Latin}+$/u.test(part))) return false
+
+  const letterCount = parts.join('').length
+  return letterCount >= 5
 }
 
 function isArabicToken(token) {
@@ -235,24 +240,18 @@ function looksLikeTurkishOrOttomanizedLatin(token) {
   return LATIN_TURKISH_WORD_REGEX.test(token)
 }
 
+function isSpecializedOrOttomanized(token) {
+  return SPECIALIZED_OR_OTTOMANIZED_REGEX.test(String(token || ''))
+}
 function isLikelyPronunciationCandidate(token) {
   const value = String(token || '')
   const lower = value.toLocaleLowerCase('tr-TR')
-
   if (lower.length < 3) return false
   if (isArabicToken(lower)) return true
   if (hasCircumflex(lower)) return true
   if (hasApostrophe(lower)) return true
-
-  if (/(ullah|iddin|üddin|âl|î|û|rahm|tefs|tevil|nüz|kıra|isnad|rivayet|hikmet|marifet|ubudiyet|nübüvvet|risalet|müteş|muhkem|zahir|batın)/i.test(lower)) {
-    return true
-  }
-
-  if (looksLikeTurkishOrOttomanizedLatin(lower) && !KNOWN_TURKISH_WORDS.has(lower)) {
-    if (/[kgşhlmnrvyz][aeiıioöuü]{1,2}[a-zçğıöşüâîû']{2,}/i.test(lower)) return true
-  }
-
-  return false
+  if (!looksLikeTurkishOrOttomanizedLatin(lower)) return false
+  return isSpecializedOrOttomanized(lower)
 }
 
 function suggestPronunciation(token) {
@@ -266,23 +265,23 @@ function suggestPronunciation(token) {
   if (isArabicToken(value)) return value
 
   value = value
-    .replace(/kâ/gi, 'kaa')
-    .replace(/gâ/gi, 'gaa')
-    .replace(/lâ/gi, 'laa')
-    .replace(/â/gi, 'aa')
-    .replace(/î/gi, 'ii')
-    .replace(/û/gi, 'uu')
-    .replace(/([A-Za-zÇĞİÖŞÜçğıöşü])'([A-Za-zÇĞİÖŞÜçğıöşü])/g, '$1$2')
+    .replace(/kÃ¢/gi, 'kaa')
+    .replace(/gÃ¢/gi, 'gaa')
+    .replace(/lÃ¢/gi, 'laa')
+    .replace(/Ã¢/gi, 'aa')
+    .replace(/Ã®/gi, 'ii')
+    .replace(/Ã»/gi, 'uu')
+    .replace(/([A-Za-zÃ‡ÄÄ°Ã–ÅÃœÃ§ÄŸÄ±Ã¶ÅŸÃ¼])'([A-Za-zÃ‡ÄÄ°Ã–ÅÃœÃ§ÄŸÄ±Ã¶ÅŸÃ¼])/g, '$1$2')
 
   value = value
     .replace(/\btefsir\b/gi, 'tefsiir')
-    .replace(/\btefsîr\b/gi, 'tefsiir')
+    .replace(/\btefsÃ®r\b/gi, 'tefsiir')
     .replace(/\bte'vil\b/gi, 'tevil')
-    .replace(/\bte’vil\b/gi, 'tevil')
-    .replace(/\bmeâl\b/gi, 'meaal')
-    .replace(/\bnüzûl\b/gi, 'nüzuul')
-    .replace(/\brahmân\b/gi, 'rahmaan')
-    .replace(/\brahîm\b/gi, 'rahiim')
+    .replace(/\bteâ€™vil\b/gi, 'tevil')
+    .replace(/\bmeÃ¢l\b/gi, 'meaal')
+    .replace(/\bnÃ¼zÃ»l\b/gi, 'nÃ¼zuul')
+    .replace(/\brahmÃ¢n\b/gi, 'rahmaan')
+    .replace(/\brahÃ®m\b/gi, 'rahiim')
 
   return value
 }
@@ -323,7 +322,7 @@ function finalizeStats(stats) {
   stats.uniqueTokens = entries.length
 
   entries.forEach((entry) => {
-    entry.flags.candidate = isLikelyPronunciationCandidate(entry.token)
+    entry.flags.candidate = entry.count >= MIN_CANDIDATE_COUNT && isLikelyPronunciationCandidate(entry.token)
     entry.fileCount = entry.files.size
     entry.files = Array.from(entry.files).sort()
   })
@@ -337,7 +336,7 @@ function scoreCandidate(item) {
   if (item.reason.includes('circumflex')) score += 50
   if (item.reason.includes('apostrophe')) score += 30
   if (item.reason.includes('arabic-script')) score += 40
-  if (item.reason.includes('unknown-or-specialized')) score += 20
+  if (item.reason.includes('specialized-legacy')) score += 20
   if (!item.sameAsOriginal) score += 35
   return score
 }
@@ -353,9 +352,7 @@ function buildCandidateList(stats) {
       if (entry.flags.arabic) reason.push('arabic-script')
       if (entry.flags.circumflex) reason.push('circumflex')
       if (entry.flags.apostrophe) reason.push('apostrophe')
-      if (!KNOWN_TURKISH_WORDS.has(lower) && looksLikeTurkishOrOttomanizedLatin(lower)) {
-        reason.push('unknown-or-specialized')
-      }
+      if (isSpecializedOrOttomanized(lower)) reason.push('specialized-legacy')
 
       const item = {
         token: entry.token,
@@ -382,9 +379,21 @@ function escapeRegex(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+function isUsableLexiconToken(token) {
+  const normalized = String(token || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['’]/g, '')
+    .replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g, '')
+
+  if (normalized.length < 3) return false
+  return /[aeıioöuü]/iu.test(normalized)
+}
+
 function buildGeneratedLexicon(candidates, limit = 500) {
   const selected = candidates
     .filter((item) => !item.sameAsOriginal && !isArabicToken(item.token))
+    .filter((item) => isUsableLexiconToken(item.token) && isUsableLexiconToken(item.suggestedPronunciation))
     .slice(0, limit)
 
   const lines = []
@@ -478,8 +487,10 @@ function main() {
   console.log(`Toplam token: ${stats.totalTokens}`)
   console.log(`Tekil token: ${stats.uniqueTokens}`)
   console.log(`Aday telaffuz sayisi: ${stats.candidateCount}`)
+  console.log(`Minimum aday frekansi: ${MIN_CANDIDATE_COUNT}`)
   console.log(`Cikti klasoru: ${OUTPUT_DIR}`)
   console.log(`Runtime lexicon: ${RUNTIME_FILE}`)
 }
 
 main()
+
