@@ -794,6 +794,7 @@ export async function synthesizePiperTafsirAudio(text, options = {}) {
       const durationMs = Number(result?.duration || 0)
       generatedSegments.push({
         url: URL.createObjectURL(audioBlob),
+        text: segment.text,
         voice: selectedVoice,
         lang: segment.lang,
         pauseAfterMs: Number(segment.pauseMs) || 0,

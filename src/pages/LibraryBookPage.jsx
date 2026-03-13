@@ -144,8 +144,7 @@ export default function LibraryBookPage() {
   const playerMeta = usePlayerStore((state) => state.meta)
   const playerTrackIndex = usePlayerStore((state) => state.currentTrackIndex)
   const playerIsPlaying = usePlayerStore((state) => state.isPlaying)
-  const playerCurrentTime = usePlayerStore((state) => state.currentTime)
-  const playerDuration = usePlayerStore((state) => state.duration)
+  const playerTtsProgressRatio = usePlayerStore((state) => state.ttsProgressRatio)
   const playTafsirPlaylist = usePlayerStore((state) => state.playTafsirPlaylist)
   const seekTafsirSpeechByRatio = usePlayerStore((state) => state.seekTafsirSpeechByRatio)
   const stopPlayback = usePlayerStore((state) => state.stopPlayback)
@@ -468,11 +467,9 @@ export default function LibraryBookPage() {
   ), [book?.id, effectiveScope, playerMeta, playerMode, resolvedAyahNo, resolvedSurahId])
   const currentTafsirSegmentIndex = isActiveTafsirPlayback ? playerTrackIndex : -1
   const activeTrackProgressRatio = useMemo(() => {
-    if (!isActiveTafsirPlayback || !playerDuration || playerDuration <= 0) return 0
-    const ratio = Math.max(0, Math.min(1, playerCurrentTime / playerDuration))
-    // Re-render frekansini dusurup titremeyi azaltmak icin adimlayalim.
-    return Math.round(ratio * 32) / 32
-  }, [isActiveTafsirPlayback, playerCurrentTime, playerDuration])
+    if (!isActiveTafsirPlayback) return 0
+    return Math.max(0, Math.min(1, Number(playerTtsProgressRatio) || 0))
+  }, [isActiveTafsirPlayback, playerTtsProgressRatio])
   const getSectionHighlightRatio = (index) => {
     if (!isActiveTafsirPlayback) return 0
     if (index < currentTafsirSegmentIndex) return 1
@@ -529,10 +526,6 @@ export default function LibraryBookPage() {
     playTafsirPlaylist(tafsirSpeechSegments, 0, tafsirPlaybackMeta, settings)
   }
 
-  const handleTafsirStop = () => {
-    stopPlayback({ resetMode: true })
-  }
-
   const handleTafsirWordClick = (event, sectionIndex) => {
     const target = event.target
     if (!(target instanceof HTMLElement)) return
@@ -542,7 +535,11 @@ export default function LibraryBookPage() {
 
     const wordIndex = Math.max(1, Number(token.dataset.wordIndex || 1))
     const wordTotal = Math.max(1, Number(token.dataset.wordTotal || 1))
-    const wordRatio = Math.max(0, Math.min(1, (wordIndex - 1) / wordTotal))
+    const segment = tafsirSpeechSegments[sectionIndex]
+    const leadWordCount = Math.max(0, Number(segment?.highlightLeadWordCount || 0))
+    const absoluteWordOffset = leadWordCount + (wordIndex - 1)
+    const totalWordCount = Math.max(1, leadWordCount + wordTotal)
+    const wordRatio = Math.max(0, Math.min(1, absoluteWordOffset / totalWordCount))
 
     if (!isActiveTafsirPlayback || currentTafsirSegmentIndex !== sectionIndex) {
       playTafsirPlaylist(tafsirSpeechSegments, sectionIndex, tafsirPlaybackMeta, settings, { startRatio: wordRatio })
@@ -837,13 +834,6 @@ export default function LibraryBookPage() {
                     <button type="button" className="speed-toggle" onClick={cycleTafsirVoiceRate}>
                       {tafsirVoiceRate.toFixed(2)}x
                     </button>
-                    {isActiveTafsirPlayback && (
-                      <button type="button" className="surah-audio-btn player-toggle" onClick={handleTafsirStop} title="Durdur">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                          <rect x="6" y="6" width="12" height="12" rx="2" />
-                        </svg>
-                      </button>
-                    )}
                   </div>
                 </div>
 

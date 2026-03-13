@@ -102,16 +102,15 @@ globalAudio.preload = 'auto'
 const generatedPreloadAudio = new Audio()
 generatedPreloadAudio.preload = 'auto'
 let lastPageAudioRecoveryKey = ''
-let activeSpeechProgressTimer = null
-let activeSpeechStartedAt = 0
-let activeSpeechElapsed = 0
-let activeSpeechDuration = 0
 let activeGeneratedAudioUrl = ''
 let activeSpeechSessionId = 0
 let activeSpeechSegmentDelayTimer = null
 let activeGeneratedSegments = []
 let activeGeneratedSegmentIndex = -1
 let preloadedGeneratedSegmentIndex = -1
+let activeSpeechProgressBase = 0
+let activeSpeechProgressSpan = 1
+const SPEECH_WORD_REGEX = /[\p{L}\p{N}]+/gu
 
 function getGeneratedSegmentDuration(segment) {
     const runtime = Number(segment?.runtimeDuration || 0)
@@ -134,6 +133,22 @@ function getGeneratedElapsedBefore(index) {
         .reduce((sum, segment) => sum + getGeneratedSegmentDuration(segment) + (Math.max(0, Number(segment?.pauseAfterMs || 0)) / 1000), 0)
 }
 
+function getGeneratedSegmentWordCount(segment) {
+    return Math.max(1, countSpeechWords(segment?.text || ''))
+}
+
+function getGeneratedSegmentsTotalWordCount() {
+    if (!Array.isArray(activeGeneratedSegments) || !activeGeneratedSegments.length) return 0
+    return activeGeneratedSegments.reduce((sum, segment) => sum + getGeneratedSegmentWordCount(segment), 0)
+}
+
+function getGeneratedWordsBefore(index) {
+    if (!Array.isArray(activeGeneratedSegments) || index <= 0) return 0
+    return activeGeneratedSegments
+        .slice(0, index)
+        .reduce((sum, segment) => sum + getGeneratedSegmentWordCount(segment), 0)
+}
+
 function clearGeneratedAudioUrl() {
     releaseGeneratedTafsirAudio(activeGeneratedSegments)
     activeGeneratedSegments = []
@@ -147,13 +162,6 @@ function clearGeneratedAudioUrl() {
 function getSpeechSynthesisEngine() {
     if (!isTafsirSpeechSupported()) return null
     return window.speechSynthesis
-}
-
-function clearSpeechProgressTimer() {
-    if (activeSpeechProgressTimer) {
-        window.clearInterval(activeSpeechProgressTimer)
-        activeSpeechProgressTimer = null
-    }
 }
 
 function clearSpeechDelayTimer() {
@@ -232,63 +240,51 @@ function playPreloadedGeneratedSegment(index) {
     return true
 }
 
-function resolveGeneratedSegmentForAbsoluteTime(targetSeconds) {
-    const safeTarget = Math.max(0, Number(targetSeconds || 0))
-    if (!Array.isArray(activeGeneratedSegments) || !activeGeneratedSegments.length) {
-        return { segmentIndex: 0, offsetSeconds: 0 }
-    }
-
-    let cursor = 0
-    for (let index = 0; index < activeGeneratedSegments.length; index += 1) {
-        const segment = activeGeneratedSegments[index]
-        const duration = getGeneratedSegmentDuration(segment)
-        const pause = Math.max(0, Number(segment?.pauseAfterMs || 0)) / 1000
-
-        if (safeTarget <= cursor + duration) {
-            return {
-                segmentIndex: index,
-                offsetSeconds: Math.max(0, safeTarget - cursor)
-            }
-        }
-        cursor += duration
-
-        if (safeTarget <= cursor + pause) {
-            return {
-                segmentIndex: Math.min(index + 1, activeGeneratedSegments.length - 1),
-                offsetSeconds: 0
-            }
-        }
-        cursor += pause
-    }
-
-    const lastIndex = activeGeneratedSegments.length - 1
-    const lastDuration = getGeneratedSegmentDuration(activeGeneratedSegments[lastIndex])
-    return {
-        segmentIndex: lastIndex,
-        offsetSeconds: Math.max(0, lastDuration - 0.2)
-    }
+function countSpeechWords(text) {
+    SPEECH_WORD_REGEX.lastIndex = 0
+    return (String(text || '').match(SPEECH_WORD_REGEX) || []).length
 }
 
-function startSpeechProgressTimer() {
-    clearSpeechProgressTimer()
-    activeSpeechStartedAt = Date.now()
-    activeSpeechProgressTimer = window.setInterval(() => {
-        const state = usePlayerStore.getState()
-        if (state.mode !== 'tts' || !state.isPlaying) return
-        const elapsedSeconds = activeSpeechElapsed + ((Date.now() - activeSpeechStartedAt) / 1000)
-        state.setCurrentTime(Math.min(activeSpeechDuration, elapsedSeconds))
-    }, 180)
+function sliceSpeechTextByWordRatio(text, ratio) {
+    const source = String(text || '').trim()
+    if (!source) return ''
+
+    const safeRatio = Math.max(0, Math.min(1, Number(ratio) || 0))
+    if (safeRatio <= 0) return source
+
+    SPEECH_WORD_REGEX.lastIndex = 0
+    const matches = Array.from(source.matchAll(SPEECH_WORD_REGEX))
+    if (!matches.length) return source
+
+    const totalWords = matches.length
+    const wordsToSkip = Math.max(0, Math.min(totalWords - 1, Math.floor(totalWords * safeRatio)))
+    if (wordsToSkip <= 0) return source
+
+    const startIndex = matches[wordsToSkip]?.index ?? 0
+    const sliced = source.slice(startIndex).trim()
+    return sliced || source
+}
+
+function getSpeechQueueWordCount(queue) {
+    if (!Array.isArray(queue) || !queue.length) return 0
+    return queue.reduce((sum, segment) => sum + Math.max(1, Number(segment?.wordCount || countSpeechWords(segment?.text || ''))), 0)
+}
+
+function normalizeProgressRatio(ratio) {
+    return Math.max(0, Math.min(1, Number(ratio) || 0))
+}
+
+function applySpeechProgress(localRatio) {
+    return normalizeProgressRatio(activeSpeechProgressBase + (normalizeProgressRatio(localRatio) * activeSpeechProgressSpan))
 }
 
 function stopSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     activeSpeechSessionId += 1
-    clearSpeechProgressTimer()
     clearSpeechDelayTimer()
     clearGeneratedAudioUrl()
-    activeSpeechStartedAt = 0
-    activeSpeechElapsed = 0
-    activeSpeechDuration = 0
+    activeSpeechProgressBase = 0
+    activeSpeechProgressSpan = 1
     if (!synthesis) return
     synthesis.cancel()
 }
@@ -296,10 +292,7 @@ function stopSpeechPlayback() {
 function pauseSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     clearSpeechDelayTimer()
-    if (!synthesis || !synthesis.speaking) return
-    activeSpeechElapsed += activeSpeechStartedAt ? ((Date.now() - activeSpeechStartedAt) / 1000) : 0
-    activeSpeechStartedAt = 0
-    clearSpeechProgressTimer()
+    if (!synthesis || !synthesis.speaking || synthesis.paused) return
     synthesis.pause()
 }
 
@@ -307,7 +300,6 @@ function resumeSpeechPlayback() {
     const synthesis = getSpeechSynthesisEngine()
     if (!synthesis || !synthesis.paused) return false
     synthesis.resume()
-    startSpeechProgressTimer()
     return true
 }
 
@@ -367,6 +359,7 @@ const usePlayerStore = create((set, get) => ({
     isPlaying: false,
     currentTime: 0,
     duration: 0,
+    ttsProgressRatio: 0,
     volume: 0.8,
     playbackSpeed: 1,
     isRepeat: false,
@@ -400,6 +393,7 @@ const usePlayerStore = create((set, get) => ({
     setIsPlaying: (playing) => set({ isPlaying: playing }),
     setCurrentTime: (time) => set({ currentTime: time }),
     setDuration: (duration) => set({ duration }),
+    setTtsProgressRatio: (ratio) => set({ ttsProgressRatio: normalizeProgressRatio(ratio) }),
     setVolume: (volume) => {
         globalAudio.volume = volume
         set({ volume })
@@ -436,6 +430,7 @@ const usePlayerStore = create((set, get) => ({
             isPlaying: false,
             currentTime: 0,
             duration: 0,
+            ttsProgressRatio: 0,
             playlist: resetMode ? [] : state.playlist,
             singleSource: resetMode ? null : state.singleSource,
             currentTrackIndex: resetMode ? 0 : state.currentTrackIndex,
@@ -452,6 +447,7 @@ const usePlayerStore = create((set, get) => ({
             singleSource: url,
             meta: typeof metadata === 'function' ? metadata(get().meta) : metadata,
             playlist: [],
+            ttsProgressRatio: 0,
             isPlaying: true
         })
 
@@ -476,6 +472,7 @@ const usePlayerStore = create((set, get) => ({
             playlist: tracks,
             currentTrackIndex: resolvedStartIndex,
             meta: resolvedMeta,
+            ttsProgressRatio: 0,
             isPlaying: true
         })
 
@@ -501,6 +498,7 @@ const usePlayerStore = create((set, get) => ({
             playlist: tracks,
             currentTrackIndex: resolvedStartIndex,
             meta: resolvedMeta,
+            ttsProgressRatio: 0,
             isPlaying: false
         })
 
@@ -532,10 +530,32 @@ const usePlayerStore = create((set, get) => ({
         const resolvedSettings = resolvePlaybackSettings(settings)
         const rate = resolveTafsirSpeechRate(resolvedSettings)
         const selectedEngine = resolveTafsirSpeechEngine()
+        const requestedRatio = Math.max(0, Math.min(1, Number(options?.startRatio) || 0))
+        const fullWordCount = Math.max(1, countSpeechWords(text))
+        const trimmedText = requestedRatio > 0
+            ? sliceSpeechTextByWordRatio(text, requestedRatio)
+            : text
+        const skippedWords = Math.min(
+            fullWordCount - 1,
+            Math.floor(fullWordCount * requestedRatio)
+        )
+        const baseProgress = skippedWords / fullWordCount
+        const remainingProgressSpan = Math.max(0, 1 - baseProgress)
+
+        activeSpeechProgressBase = baseProgress
+        activeSpeechProgressSpan = remainingProgressSpan
+        set({
+            mode: 'tts',
+            currentTrackIndex: idx,
+            currentTime: 0,
+            duration: 0,
+            ttsProgressRatio: baseProgress,
+            isPlaying: true
+        })
 
         try {
             const piperResult = await withTimeout(
-                synthesizePiperTafsirAudio(text, {
+                synthesizePiperTafsirAudio(trimmedText, {
                     rate,
                     engine: selectedEngine,
                     useArabicDiacritics: true
@@ -552,15 +572,10 @@ const usePlayerStore = create((set, get) => ({
                     currentTrackIndex: idx,
                     currentTime: 0,
                     duration: Math.max(1, totalDuration),
+                    ttsProgressRatio: baseProgress,
                     isPlaying: true
                 })
-                const requestedRatio = Math.max(0, Math.min(1, Number(options?.startRatio) || 0))
-                if (requestedRatio > 0) {
-                    const targetPosition = resolveGeneratedSegmentForAbsoluteTime(totalDuration * requestedRatio)
-                    playGeneratedSegmentAtWithOffset(targetPosition.segmentIndex, targetPosition.offsetSeconds)
-                } else {
-                    playGeneratedSegmentAt(0)
-                }
+                playGeneratedSegmentAt(0)
                 document.dispatchEvent(new CustomEvent('playerVisible'))
                 return
             }
@@ -574,27 +589,29 @@ const usePlayerStore = create((set, get) => ({
             return
         }
 
-        const queue = buildTafsirSpeechQueue(text, { maxChunkLength: 220 })
+        const queue = buildTafsirSpeechQueue(trimmedText, { maxChunkLength: 200 })
         if (!queue.length) {
             set({ isPlaying: false })
             return
         }
 
-        const duration = estimateTafsirSpeechDuration(text, rate)
-        const totalChars = queue.reduce((sum, segment) => sum + Math.max(1, segment.text.length), 0)
-        let completedChars = 0
+        const queueWithWordCounts = queue.map((segment) => ({
+            ...segment,
+            wordCount: Math.max(1, countSpeechWords(segment.text))
+        }))
+        const duration = estimateTafsirSpeechDuration(trimmedText, rate)
         const sessionId = ++activeSpeechSessionId
         const preferredVoice = resolveTafsirVoice(resolvedSettings.tafsirVoiceName)
         const fallbackLang = preferredVoice?.lang || 'tr-TR'
-
-        activeSpeechElapsed = 0
-        activeSpeechDuration = duration
+        const totalQueueWords = getSpeechQueueWordCount(queueWithWordCounts)
+        let completedWords = 0
 
         set({
             mode: 'tts',
             currentTrackIndex: idx,
             currentTime: 0,
             duration,
+            ttsProgressRatio: baseProgress,
             isPlaying: true
         })
 
@@ -602,9 +619,9 @@ const usePlayerStore = create((set, get) => ({
             const activeState = get()
             if (sessionId !== activeSpeechSessionId || activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
 
-            clearSpeechProgressTimer()
             clearSpeechDelayTimer()
             activeState.setCurrentTime(duration)
+            activeState.setTtsProgressRatio(1)
             if (idx < activeState.playlist.length - 1) {
                 activeState.playTafsirTrackAtIndex(idx + 1, resolvedSettings)
                 return
@@ -615,14 +632,13 @@ const usePlayerStore = create((set, get) => ({
 
         const failTrack = () => {
             if (sessionId !== activeSpeechSessionId) return
-            clearSpeechProgressTimer()
             clearSpeechDelayTimer()
             set({ isPlaying: false })
         }
 
         const speakSegment = (segmentIndex) => {
             if (sessionId !== activeSpeechSessionId) return
-            const segment = queue[segmentIndex]
+            const segment = queueWithWordCounts[segmentIndex]
             if (!segment) {
                 finishTrack()
                 return
@@ -641,13 +657,20 @@ const usePlayerStore = create((set, get) => ({
                 const activeState = get()
                 if (sessionId !== activeSpeechSessionId || activeState.mode !== 'tts' || activeState.currentTrackIndex !== idx) return
                 const localChars = Math.max(0, Math.min(segment.text.length, Number(event.charIndex) || 0))
-                const progress = Math.max(0, Math.min(1, (completedChars + localChars) / Math.max(1, totalChars)))
-                activeState.setCurrentTime(duration * progress)
+                const spokenText = segment.text.slice(0, localChars)
+                const localWords = Math.min(segment.wordCount, countSpeechWords(spokenText))
+                const localProgress = Math.max(0, Math.min(1, (completedWords + localWords) / Math.max(1, totalQueueWords)))
+                activeState.setCurrentTime(duration * localProgress)
+                activeState.setTtsProgressRatio(applySpeechProgress(localProgress))
             }
 
             utterance.onend = () => {
                 if (sessionId !== activeSpeechSessionId) return
-                completedChars += Math.max(1, segment.text.length)
+                completedWords += segment.wordCount
+                const segmentProgress = Math.max(0, Math.min(1, completedWords / Math.max(1, totalQueueWords)))
+                const activeState = get()
+                activeState.setCurrentTime(duration * segmentProgress)
+                activeState.setTtsProgressRatio(applySpeechProgress(segmentProgress))
                 const delayMs = Math.max(0, Number(segment.pauseMs || 0))
                 if (delayMs > 0) {
                     activeSpeechSegmentDelayTimer = window.setTimeout(() => {
@@ -664,7 +687,6 @@ const usePlayerStore = create((set, get) => ({
         }
 
         speakSegment(0)
-        startSpeechProgressTimer()
         document.dispatchEvent(new CustomEvent('playerVisible'))
     },
 
@@ -684,6 +706,7 @@ const usePlayerStore = create((set, get) => ({
             currentTrackIndex: Math.min(Math.max(startIndex, 0), safeTracks.length - 1),
             meta: typeof metadata === 'function' ? metadata(get().meta) : metadata,
             singleSource: null,
+            ttsProgressRatio: 0,
             isPlaying: true
         })
 
@@ -773,37 +796,7 @@ const usePlayerStore = create((set, get) => ({
         if (state.mode !== 'tts') return
 
         const safeRatio = Math.max(0, Math.min(1, Number(ratio) || 0))
-        const totalDuration = Math.max(0, Number(state.duration || getGeneratedSegmentsTotalDuration() || 0))
-        if (totalDuration <= 0) return
-
-        if (activeGeneratedSegments.length > 0) {
-            const targetSeconds = safeRatio * totalDuration
-            const targetPosition = resolveGeneratedSegmentForAbsoluteTime(targetSeconds)
-            clearSpeechDelayTimer()
-
-            if (targetPosition.segmentIndex === activeGeneratedSegmentIndex && globalAudio.src) {
-                const segmentBase = getGeneratedElapsedBefore(targetPosition.segmentIndex)
-                try {
-                    globalAudio.currentTime = Math.max(0, Number(targetPosition.offsetSeconds || 0))
-                    state.setCurrentTime(Math.min(totalDuration, segmentBase + Number(targetPosition.offsetSeconds || 0)))
-                    if (!state.isPlaying) {
-                        safePlayAudio(() => set({ isPlaying: false }))
-                        set({ isPlaying: true })
-                    }
-                } catch {
-                    playGeneratedSegmentAtWithOffset(targetPosition.segmentIndex, targetPosition.offsetSeconds)
-                    set({ isPlaying: true })
-                }
-                return
-            }
-
-            playGeneratedSegmentAtWithOffset(targetPosition.segmentIndex, targetPosition.offsetSeconds)
-            set({ isPlaying: true })
-            return
-        }
-
-        // SpeechSynthesis fallback modunda yalnizca lineer seek simule edilir.
-        state.seek(totalDuration * safeRatio)
+        state.playTafsirTrackAtIndex(state.currentTrackIndex, resolvePlaybackSettings(), { startRatio: safeRatio })
     },
 
     playTrackAtIndex: (idx) => {
@@ -1315,6 +1308,15 @@ export const initAudioListeners = (settingsFunction) => {
                 Math.max(0, elapsedBefore + Number(audio.currentTime || 0))
             )
             state.setCurrentTime(progressTime)
+            const currentSegment = activeGeneratedSegments[activeGeneratedSegmentIndex]
+            const totalWords = getGeneratedSegmentsTotalWordCount()
+            const segmentDuration = Math.max(0.001, getGeneratedSegmentDuration(currentSegment))
+            const segmentProgress = normalizeProgressRatio(Number(audio.currentTime || 0) / segmentDuration)
+            const wordProgress = (
+                getGeneratedWordsBefore(activeGeneratedSegmentIndex)
+                + (getGeneratedSegmentWordCount(currentSegment) * segmentProgress)
+            ) / Math.max(1, totalWords)
+            state.setTtsProgressRatio(applySpeechProgress(wordProgress))
             return
         }
         state.setCurrentTime(audio.currentTime)
