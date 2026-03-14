@@ -854,96 +854,59 @@
 
 .quick-link-card {
     --quick-card-accent: #1f5c3d;
-    --quick-card-surface: #ffffff;
-    --quick-card-border: #e6e8eb;
-    --quick-card-shadow: rgba(15, 23, 42, 0.1);
-    --quick-card-icon-bg: #eef5f0;
-    --quick-card-icon-border: #dce8df;
-    min-height: 146px;
+    --quick-card-border: color-mix(in srgb, var(--quick-card-accent) 8%, var(--separator));
+    --quick-card-icon-bg: color-mix(in srgb, var(--quick-card-accent) 10%, white);
+    --quick-card-icon-border: color-mix(in srgb, var(--quick-card-accent) 12%, var(--separator));
+    min-height: 132px;
     padding: 18px;
     border-radius: 18px;
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
     border: 1px solid var(--quick-card-border);
-    background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--quick-card-accent) 3%, var(--quick-card-surface)) 100%);
-    box-shadow: 0 14px 28px -26px var(--quick-card-shadow);
+    background: white;
     text-decoration: none;
     color: var(--text-primary);
     display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-columns: 52px minmax(0, 1fr);
     align-items: center;
     gap: 16px;
     min-width: 0;
     animation: fadeUp 0.35s var(--ease) both;
-    transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), box-shadow 0.2s var(--ease);
-}
-
-.quick-link-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    border-radius: 18px 0 0 18px;
-    background: var(--quick-card-accent);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.quick-link-head,
-.quick-link-body {
-    position: relative;
-    z-index: 1;
+    transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
 }
 
 .quick-link-card:hover {
-    transform: translateY(-2px);
-    border-color: color-mix(in srgb, var(--quick-card-accent) 16%, #d9dee4);
-    box-shadow: 0 18px 34px -24px var(--quick-card-shadow);
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--quick-card-accent) 18%, var(--separator));
+    background: color-mix(in srgb, var(--quick-card-accent) 2%, white);
 }
 
 .quick-link-card.tone-emerald {
     --quick-card-accent: #1f5c3d;
-    --quick-card-shadow: rgba(31, 92, 61, 0.14);
-    --quick-card-icon-bg: #eef5f0;
-    --quick-card-icon-border: #dce8df;
 }
 
 .quick-link-card.tone-sand {
-    --quick-card-accent: #8b6140;
-    --quick-card-shadow: rgba(139, 97, 64, 0.14);
-    --quick-card-icon-bg: #f7f0e7;
-    --quick-card-icon-border: #eadfce;
+    --quick-card-accent: #8a5b32;
 }
 
 .quick-link-card.tone-slate {
-    --quick-card-accent: #47637d;
-    --quick-card-shadow: rgba(71, 99, 125, 0.14);
-    --quick-card-icon-bg: #eef3f7;
-    --quick-card-icon-border: #dde5ed;
+    --quick-card-accent: #3f6280;
 }
 
 .quick-link-card.tone-ink {
     --quick-card-accent: #4a5565;
-    --quick-card-shadow: rgba(74, 85, 101, 0.14);
-    --quick-card-icon-bg: #eef1f4;
-    --quick-card-icon-border: #dde3e7;
 }
 
 .quick-link-head {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
     min-height: 0;
 }
 
 .quick-link-icon {
     position: static;
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     border-radius: 14px;
     display: inline-flex;
     align-items: center;
@@ -955,35 +918,35 @@
 }
 
 .quick-link-icon svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
 }
 
 .quick-link-badge {
     display: inline-block;
     padding: 0;
-    color: var(--quick-card-accent);
+    color: color-mix(in srgb, var(--quick-card-accent) 72%, var(--text-tertiary));
     font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     border: none;
     background: transparent;
 }
 
 .quick-link-body h3 {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.08;
-    margin-bottom: 6px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 4px;
     overflow-wrap: anywhere;
 }
 
 .quick-link-body p {
     margin: 0;
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.4;
     color: var(--text-secondary);
     overflow-wrap: anywhere;
 }
@@ -1185,35 +1148,35 @@
     }
 
     .quick-link-card {
-        min-height: 126px;
+        min-height: 114px;
         padding: 14px;
-        grid-template-columns: 44px minmax(0, 1fr);
+        grid-template-columns: 40px minmax(0, 1fr);
         gap: 12px;
     }
 
     .quick-link-icon {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         border-radius: 12px;
     }
 
     .quick-link-icon svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 
     .quick-link-badge {
         font-size: 8px;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.08em;
     }
 
     .quick-link-body h3 {
-        font-size: 17px;
-        margin-bottom: 6px;
+        font-size: 16px;
+        margin-bottom: 4px;
     }
 
     .quick-link-body p {
-        font-size: 12px;
+        font-size: 11px;
         line-height: 1.35;
     }
 
