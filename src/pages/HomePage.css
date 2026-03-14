@@ -950,7 +950,7 @@
     padding: 6px 12px;
     border-radius: 999px;
     background: var(--quick-card-badge-bg);
-    color: var(--quick-card-accent);
+    color: white;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.1em;
