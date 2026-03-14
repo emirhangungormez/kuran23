@@ -834,9 +834,9 @@
 }
 
 .explore-topics-section {
-    --topic-shell-accent: #334155;
-    --topic-shell-soft: rgba(148, 163, 184, 0.16);
-    --topic-shell-border: rgba(100, 116, 139, 0.16);
+    --topic-shell-accent: #3f3f46;
+    --topic-shell-soft: rgba(63, 63, 70, 0.08);
+    --topic-shell-border: rgba(63, 63, 70, 0.1);
     position: relative;
     overflow: hidden;
     border-radius: 24px;
@@ -879,13 +879,13 @@
 }
 
 .quick-link-card {
-    --quick-card-accent: #0f7a56;
-    --quick-card-bg-start: rgba(16, 185, 129, 0.18);
-    --quick-card-bg-end: rgba(5, 150, 105, 0.05);
-    --quick-card-border: rgba(5, 150, 105, 0.18);
-    --quick-card-glow: rgba(5, 150, 105, 0.28);
-    --quick-card-icon-bg: rgba(236, 253, 245, 0.84);
-    --quick-card-badge-bg: rgba(236, 253, 245, 0.78);
+    --quick-card-accent: #2f343c;
+    --quick-card-bg-start: rgba(15, 23, 42, 0.08);
+    --quick-card-bg-end: rgba(15, 23, 42, 0.02);
+    --quick-card-border: rgba(15, 23, 42, 0.08);
+    --quick-card-glow: rgba(15, 23, 42, 0.12);
+    --quick-card-icon-bg: rgba(255, 255, 255, 0.74);
+    --quick-card-badge-bg: rgba(255, 255, 255, 0.68);
     min-height: 168px;
     padding: 20px;
     border-radius: 22px;
@@ -932,43 +932,43 @@
 }
 
 .quick-link-card.tone-emerald {
-    --quick-card-accent: #0f7a56;
-    --quick-card-bg-start: rgba(16, 185, 129, 0.2);
-    --quick-card-bg-end: rgba(5, 150, 105, 0.06);
-    --quick-card-border: rgba(5, 150, 105, 0.18);
-    --quick-card-glow: rgba(16, 185, 129, 0.28);
-    --quick-card-icon-bg: rgba(236, 253, 245, 0.86);
-    --quick-card-badge-bg: rgba(236, 253, 245, 0.8);
+    --quick-card-accent: #2f343c;
+    --quick-card-bg-start: rgba(39, 39, 42, 0.09);
+    --quick-card-bg-end: rgba(39, 39, 42, 0.03);
+    --quick-card-border: rgba(39, 39, 42, 0.1);
+    --quick-card-glow: rgba(39, 39, 42, 0.14);
+    --quick-card-icon-bg: rgba(255, 255, 255, 0.74);
+    --quick-card-badge-bg: rgba(255, 255, 255, 0.68);
 }
 
 .quick-link-card.tone-sand {
-    --quick-card-accent: #a16207;
-    --quick-card-bg-start: rgba(245, 158, 11, 0.22);
-    --quick-card-bg-end: rgba(161, 98, 7, 0.06);
-    --quick-card-border: rgba(180, 83, 9, 0.2);
-    --quick-card-glow: rgba(245, 158, 11, 0.3);
-    --quick-card-icon-bg: rgba(255, 247, 237, 0.88);
-    --quick-card-badge-bg: rgba(255, 247, 237, 0.8);
+    --quick-card-accent: #57534e;
+    --quick-card-bg-start: rgba(120, 113, 108, 0.12);
+    --quick-card-bg-end: rgba(120, 113, 108, 0.03);
+    --quick-card-border: rgba(120, 113, 108, 0.12);
+    --quick-card-glow: rgba(120, 113, 108, 0.14);
+    --quick-card-icon-bg: rgba(255, 255, 255, 0.74);
+    --quick-card-badge-bg: rgba(255, 255, 255, 0.7);
 }
 
 .quick-link-card.tone-slate {
-    --quick-card-accent: #1d4ed8;
-    --quick-card-bg-start: rgba(59, 130, 246, 0.2);
-    --quick-card-bg-end: rgba(37, 99, 235, 0.05);
-    --quick-card-border: rgba(37, 99, 235, 0.18);
-    --quick-card-glow: rgba(59, 130, 246, 0.28);
-    --quick-card-icon-bg: rgba(239, 246, 255, 0.88);
-    --quick-card-badge-bg: rgba(239, 246, 255, 0.8);
+    --quick-card-accent: #475569;
+    --quick-card-bg-start: rgba(100, 116, 139, 0.12);
+    --quick-card-bg-end: rgba(100, 116, 139, 0.03);
+    --quick-card-border: rgba(100, 116, 139, 0.12);
+    --quick-card-glow: rgba(100, 116, 139, 0.14);
+    --quick-card-icon-bg: rgba(255, 255, 255, 0.74);
+    --quick-card-badge-bg: rgba(255, 255, 255, 0.7);
 }
 
 .quick-link-card.tone-ink {
-    --quick-card-accent: #1e3a8a;
-    --quick-card-bg-start: rgba(30, 64, 175, 0.18);
-    --quick-card-bg-end: rgba(30, 41, 59, 0.06);
-    --quick-card-border: rgba(30, 64, 175, 0.18);
-    --quick-card-glow: rgba(37, 99, 235, 0.24);
-    --quick-card-icon-bg: rgba(239, 246, 255, 0.84);
-    --quick-card-badge-bg: rgba(239, 246, 255, 0.76);
+    --quick-card-accent: #1f2937;
+    --quick-card-bg-start: rgba(31, 41, 55, 0.12);
+    --quick-card-bg-end: rgba(31, 41, 55, 0.03);
+    --quick-card-border: rgba(31, 41, 55, 0.12);
+    --quick-card-glow: rgba(31, 41, 55, 0.16);
+    --quick-card-icon-bg: rgba(255, 255, 255, 0.74);
+    --quick-card-badge-bg: rgba(255, 255, 255, 0.68);
 }
 
 .quick-link-head {
@@ -1031,11 +1031,11 @@
 }
 
 .popular-card {
-    --popular-accent: #0f7a56;
-    --popular-soft: rgba(16, 185, 129, 0.14);
-    --popular-border: rgba(5, 150, 105, 0.18);
+    --popular-accent: #3f3f46;
+    --popular-soft: rgba(63, 63, 70, 0.08);
+    --popular-border: rgba(63, 63, 70, 0.1);
     --popular-chip-bg: rgba(255, 255, 255, 0.8);
-    --popular-glow: rgba(16, 185, 129, 0.24);
+    --popular-glow: rgba(63, 63, 70, 0.12);
     position: relative;
     overflow: hidden;
     isolation: isolate;
@@ -1074,19 +1074,19 @@
 }
 
 .popular-card.tone-mekki {
-    --popular-accent: #0f7a56;
-    --popular-soft: rgba(16, 185, 129, 0.14);
-    --popular-border: rgba(5, 150, 105, 0.18);
-    --popular-chip-bg: rgba(236, 253, 245, 0.82);
-    --popular-glow: rgba(16, 185, 129, 0.24);
+    --popular-accent: #3f3f46;
+    --popular-soft: rgba(63, 63, 70, 0.08);
+    --popular-border: rgba(63, 63, 70, 0.1);
+    --popular-chip-bg: rgba(255, 255, 255, 0.82);
+    --popular-glow: rgba(63, 63, 70, 0.12);
 }
 
 .popular-card.tone-medeni {
-    --popular-accent: #1d4ed8;
-    --popular-soft: rgba(59, 130, 246, 0.13);
-    --popular-border: rgba(37, 99, 235, 0.16);
-    --popular-chip-bg: rgba(239, 246, 255, 0.84);
-    --popular-glow: rgba(59, 130, 246, 0.24);
+    --popular-accent: #475569;
+    --popular-soft: rgba(100, 116, 139, 0.09);
+    --popular-border: rgba(100, 116, 139, 0.11);
+    --popular-chip-bg: rgba(248, 250, 252, 0.84);
+    --popular-glow: rgba(100, 116, 139, 0.14);
 }
 
 .popular-no {
@@ -1177,9 +1177,9 @@
 }
 
 .topic-tag-chip {
-    --topic-chip-accent: #334155;
+    --topic-chip-accent: #3f3f46;
     --topic-chip-soft: rgba(255, 255, 255, 0.82);
-    --topic-chip-border: rgba(255, 255, 255, 0.48);
+    --topic-chip-border: rgba(63, 63, 70, 0.1);
     min-height: 40px;
     padding: 8px 14px;
     border-radius: 999px;
@@ -1202,45 +1202,45 @@
 }
 
 .topic-tag-chip.tone-emerald {
-    --topic-chip-accent: #0f7a56;
-    --topic-chip-soft: rgba(236, 253, 245, 0.82);
-    --topic-chip-border: rgba(16, 185, 129, 0.18);
+    --topic-chip-accent: #3f3f46;
+    --topic-chip-soft: rgba(255, 255, 255, 0.84);
+    --topic-chip-border: rgba(63, 63, 70, 0.1);
 }
 
 .topic-tag-chip.tone-blue {
-    --topic-chip-accent: #1d4ed8;
-    --topic-chip-soft: rgba(239, 246, 255, 0.84);
-    --topic-chip-border: rgba(37, 99, 235, 0.16);
+    --topic-chip-accent: #475569;
+    --topic-chip-soft: rgba(248, 250, 252, 0.84);
+    --topic-chip-border: rgba(100, 116, 139, 0.12);
 }
 
 .topic-tag-chip.tone-gold {
-    --topic-chip-accent: #a16207;
-    --topic-chip-soft: rgba(255, 247, 237, 0.84);
-    --topic-chip-border: rgba(180, 83, 9, 0.17);
+    --topic-chip-accent: #57534e;
+    --topic-chip-soft: rgba(250, 250, 249, 0.84);
+    --topic-chip-border: rgba(120, 113, 108, 0.12);
 }
 
 .topic-tag-chip.tone-rose {
-    --topic-chip-accent: #be185d;
-    --topic-chip-soft: rgba(252, 231, 243, 0.84);
-    --topic-chip-border: rgba(190, 24, 93, 0.15);
+    --topic-chip-accent: #52525b;
+    --topic-chip-soft: rgba(244, 244, 245, 0.84);
+    --topic-chip-border: rgba(82, 82, 91, 0.12);
 }
 
 .topic-tag-chip.tone-ink {
-    --topic-chip-accent: #1e3a8a;
-    --topic-chip-soft: rgba(239, 246, 255, 0.82);
-    --topic-chip-border: rgba(30, 64, 175, 0.15);
+    --topic-chip-accent: #1f2937;
+    --topic-chip-soft: rgba(248, 250, 252, 0.84);
+    --topic-chip-border: rgba(31, 41, 55, 0.13);
 }
 
 .topic-tag-chip.tone-teal {
-    --topic-chip-accent: #0f766e;
-    --topic-chip-soft: rgba(204, 251, 241, 0.74);
-    --topic-chip-border: rgba(15, 118, 110, 0.15);
+    --topic-chip-accent: #4b5563;
+    --topic-chip-soft: rgba(249, 250, 251, 0.84);
+    --topic-chip-border: rgba(107, 114, 128, 0.12);
 }
 
 .topic-tag-chip.all-topics {
-    --topic-chip-accent: #334155;
-    --topic-chip-soft: rgba(255, 255, 255, 0.86);
-    --topic-chip-border: rgba(100, 116, 139, 0.16);
+    --topic-chip-accent: #27272a;
+    --topic-chip-soft: rgba(255, 255, 255, 0.88);
+    --topic-chip-border: rgba(63, 63, 70, 0.12);
     font-weight: 700;
 }
 
