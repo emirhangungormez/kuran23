@@ -78,6 +78,7 @@ const HOME_SHORTCUTS = [
 ]
 
 const FEATURED_SURAH_IDS = [1, 2, 3, 18, 19, 20, 36, 44, 55, 56, 67, 78, 87, 97, 112, 114]
+const TOPIC_TONES = ['emerald', 'blue', 'gold', 'rose', 'ink', 'teal']
 
 export default function HomePage() {
     const [query, setQuery] = useState('')
@@ -291,7 +292,7 @@ export default function HomePage() {
                                         <Link
                                             key={surah.no}
                                             to={`/sure/${surah.no}`}
-                                            className="popular-card"
+                                            className={`popular-card tone-${surah.type?.toLowerCase() || 'mekki'}`}
                                             style={{ animationDelay: `${index * 0.03}s` }}
                                         >
                                             <span className="popular-no">{surah.no}</span>
@@ -316,14 +317,15 @@ export default function HomePage() {
                                     </div>
                                 </div>
                                 <div className="horizontal-topics">
-                                    {popularTopics.map((topic) => {
+                                    {popularTopics.map((topic, index) => {
                                         const label = typeof topic === 'string' ? topic : topic.label
                                         const searchQuery = sanitizeSearchInput(typeof topic === 'string' ? topic : (topic.query || topic.label))
                                         const isArabic = typeof topic === 'object' && topic.lang === 'ar'
+                                        const tone = TOPIC_TONES[index % TOPIC_TONES.length]
                                         return (
                                         <button
                                             key={searchQuery}
-                                            className={`topic-tag-chip ${isArabic ? 'topic-tag-chip-ar' : ''}`}
+                                            className={`topic-tag-chip tone-${tone} ${isArabic ? 'topic-tag-chip-ar' : ''}`}
                                             dir={isArabic ? 'rtl' : 'ltr'}
                                             onClick={() => {
                                                 setQuery(searchQuery);
