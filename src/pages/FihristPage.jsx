@@ -3,10 +3,40 @@ import { fihristData } from '../data/topicsData';
 import GlobalNav from '../components/GlobalNav';
 import './FihristPage.css';
 
+function buildLegacySections(group) {
+    if (group.subcategories?.length) {
+        return group.subcategories;
+    }
+
+    if (!group.terms?.length) {
+        return [];
+    }
+
+    if (group.terms.length <= 8) {
+        return [
+            {
+                title: 'Kelimeler',
+                topics: group.terms.map((term) => ({ name: term.name, query: term.query }))
+            }
+        ];
+    }
+
+    const midpoint = Math.ceil(group.terms.length / 2);
+
+    return [
+        {
+            title: 'Öne Çıkan Kelimeler',
+            topics: group.terms.slice(0, midpoint).map((term) => ({ name: term.name, query: term.query }))
+        },
+        {
+            title: 'Diğer Kelimeler',
+            topics: group.terms.slice(midpoint).map((term) => ({ name: term.name, query: term.query }))
+        }
+    ];
+}
+
 export default function FihristPage() {
     const navigate = useNavigate();
-    const featuredGroup = fihristData[0];
-    const secondaryGroups = fihristData.slice(1);
 
     const handleTopicClick = (query) => {
         navigate(`/?q=${encodeURIComponent(query)}`);
@@ -26,56 +56,44 @@ export default function FihristPage() {
                 </div>
 
                 <div className="fihrist-hero">
-                    <span className="fihrist-kicker">Kelime Fihristi</span>
-                    <h1 className="fihrist-title">Kur'an'da geçen kavramlar</h1>
-                    <p className="fihrist-subtitle">Konu rehberi gibi değil, doğrudan kelime ve kavram araması için hazırlanmış hızlı erişim alanı.</p>
+                    <h1 className="fihrist-title">Kur'an Fihristi</h1>
+                    <p className="fihrist-subtitle">Kur'an'da geçen kavramlara hızlı erişim</p>
                 </div>
 
-                {featuredGroup && (
-                    <section className={`fihrist-featured-card accent-${featuredGroup.accent}`}>
-                        <div className="fihrist-featured-head">
-                            <div>
-                                <p className="fihrist-featured-label">{featuredGroup.title}</p>
-                                <h2>Doğrudan aranan kelimeler</h2>
-                            </div>
-                            <span className="fihrist-featured-count">{featuredGroup.terms.length} kelime</span>
-                        </div>
-                        <div className="fihrist-chip-cloud">
-                            {featuredGroup.terms.map((term) => (
-                                <button
-                                    key={term.query}
-                                    type="button"
-                                    className="fihrist-chip fihrist-chip-featured"
-                                    onClick={() => handleTopicClick(term.query)}
-                                >
-                                    {term.name}
-                                </button>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                <div className="fihrist-grid">
+                    {fihristData.map((group, index) => {
+                        const sections = buildLegacySections(group);
+                        const description = group.desc || "Kur'an'da öne çıkan kavramlara hızlı erişim";
 
-                <div className="fihrist-sections-grid">
-                    {secondaryGroups.map((group) => (
-                        <section key={group.title} className={`fihrist-keyword-card accent-${group.accent}`}>
-                            <div className="fihrist-section-head">
-                                <h2>{group.title}</h2>
-                                <span>{group.terms.length} kelime</span>
+                        return (
+                            <div key={group.title || index} className="fihrist-category-card">
+                                <div className="cat-header-wrap">
+                                    <h2 className="cat-header">{group.title}</h2>
+                                    <p className="cat-desc">{description}</p>
+                                </div>
+
+                                <div className="cat-subcategories">
+                                    {sections.map((section, sectionIndex) => (
+                                        <div key={`${group.title}-${section.title}-${sectionIndex}`} className="subcategory-group">
+                                            <h3 className="subcat-title">{section.title}</h3>
+                                            <div className="subcat-topics">
+                                                {section.topics.map((topic) => (
+                                                    <button
+                                                        key={`${group.title}-${topic.query}`}
+                                                        type="button"
+                                                        className="fihrist-topic-tag"
+                                                        onClick={() => handleTopicClick(topic.query)}
+                                                    >
+                                                        #{topic.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="fihrist-chip-cloud">
-                                {group.terms.map((term) => (
-                                    <button
-                                        key={term.query}
-                                        type="button"
-                                        className="fihrist-chip"
-                                        onClick={() => handleTopicClick(term.query)}
-                                    >
-                                        {term.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </section>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>
