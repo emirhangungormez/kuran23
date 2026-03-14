@@ -25,7 +25,7 @@ export default function FihristPage() {
 
                 <div className="fihrist-hero">
                     <h1 className="fihrist-title">Kuran Fihristi</h1>
-                    <p className="fihrist-subtitle">Kur'an'da geçen ana kavramlara hızlı erişim</p>
+                    <p className="fihrist-subtitle">Kur'an'da öne çıkan başlıklara hızlı erişim</p>
                 </div>
 
                 <div className="fihrist-grid">

@@ -1,52 +1,52 @@
-﻿export const popularTopics = [
-    { label: 'Mümin', query: 'mümin' },
-    { label: 'Kafir', query: 'kafir' },
-    { label: 'Münafık', query: 'münafık' },
-    { label: 'Yahudiler', query: 'yahudiler' },
-    { label: 'Hristiyanlar', query: 'hıristiyanlar' },
-    { label: 'Şirk', query: 'şirk' },
+export const popularTopics = [
+    { label: 'İman', query: 'iman' },
+    { label: 'Takva', query: 'takva' },
+    { label: 'Sabır', query: 'sabır' },
+    { label: 'Rahmet', query: 'rahmet' },
     { label: 'Tevbe', query: 'tevbe' },
+    { label: 'Cennet', query: 'cennet' },
     { label: 'الله', query: 'الله', lang: 'ar' },
+    { label: 'الرحمن', query: 'الرحمن', lang: 'ar' },
     { label: 'الشيطان', query: 'الشيطان', lang: 'ar' },
     { label: 'الملائكة', query: 'الملائكة', lang: 'ar' },
+    { label: 'الحق', query: 'الحق', lang: 'ar' },
     { label: 'الإنسان', query: 'الإنسان', lang: 'ar' },
-    { label: 'الرجل', query: 'الرجل', lang: 'ar' },
-    { label: 'المرأة', query: 'المرأة', lang: 'ar' },
-    { label: 'موسى', query: 'موسى', lang: 'ar' }
-]
+    { label: 'الجنة', query: 'الجنة', lang: 'ar' },
+    { label: 'النار', query: 'النار', lang: 'ar' }
+];
 
 export const fihristData = [
     {
-        title: 'İman ve Tevhid',
-        desc: "Allah'a iman, vahiy ve temel inanç esasları",
+        title: 'İman ve Vahiy',
+        desc: "Kur'an'ın inanç dili, vahiy çağrısı ve gayb başlıkları",
         icon: 'iman',
         subcategories: [
             {
-                title: 'Allah ve Vahiy',
+                title: 'Tevhid ve Rahmet',
                 topics: [
+                    { name: 'Allah', query: 'allah' },
+                    { name: 'Rab', query: 'rab' },
                     { name: 'Tevhid', query: 'tevhid' },
                     { name: 'Rahmet', query: 'rahmet' },
+                    { name: 'Hidayet', query: 'hidayet' }
+                ]
+            },
+            {
+                title: 'Vahiy ve Kitap',
+                topics: [
+                    { name: 'Ayet', query: 'ayet' },
                     { name: 'Vahiy', query: 'vahiy' },
-                    { name: 'Hidayet', query: 'hidayet' },
-                    { name: 'Hikmet', query: 'hikmet' }
-                ]
-            },
-            {
-                title: 'Kitap ve Elçiler',
-                topics: [
                     { name: "Kur'an", query: 'kuran' },
-                    { name: 'Tevrat', query: 'tevrat' },
-                    { name: 'İncil', query: 'incil' },
-                    { name: 'Zebur', query: 'zebur' },
-                    { name: 'Resul', query: 'resul' },
-                    { name: 'Nebi', query: 'nebi' }
+                    { name: 'Kitap', query: 'kitap' },
+                    { name: 'Furkan', query: 'furkan' }
                 ]
             },
             {
-                title: 'Gayb Alemi',
+                title: 'Elçiler ve Gayb',
                 topics: [
-                    { name: 'Melekler', query: 'melek' },
-                    { name: 'Cinler', query: 'cin' },
+                    { name: 'Resul', query: 'resul' },
+                    { name: 'Nebi', query: 'nebi' },
+                    { name: 'Melek', query: 'melek' },
                     { name: 'Şeytan', query: 'şeytan' },
                     { name: 'İblis', query: 'iblis' }
                 ]
@@ -54,8 +54,8 @@ export const fihristData = [
         ]
     },
     {
-        title: 'İbadetler',
-        desc: "Kur'an'da açıkça geçen ibadet ve kulluk başlıkları",
+        title: 'Kulluk ve İbadet',
+        desc: "Kur'an'da açık karşılığı olan kulluk ve ibadet başlıkları",
         icon: 'ibadet',
         subcategories: [
             {
@@ -64,7 +64,6 @@ export const fihristData = [
                     { name: 'Namaz', query: 'namaz' },
                     { name: 'Secde', query: 'secde' },
                     { name: 'Rükû', query: 'rükû' },
-                    { name: 'Kıble', query: 'kıble' },
                     { name: 'Dua', query: 'dua' },
                     { name: 'Zikir', query: 'zikir' }
                 ]
@@ -75,34 +74,35 @@ export const fihristData = [
                     { name: 'Ramazan', query: 'ramazan' },
                     { name: 'Oruç', query: 'oruç' },
                     { name: 'Hac', query: 'hac' },
+                    { name: 'Kıble', query: 'kıble' },
                     { name: 'Kurban', query: 'kurban' }
                 ]
             },
             {
-                title: 'Mali Sorumluluk',
+                title: 'İnfak ve Paylaşım',
                 topics: [
                     { name: 'Zekat', query: 'zekat' },
                     { name: 'İnfak', query: 'infak' },
                     { name: 'Sadaka', query: 'sadaka' },
-                    { name: 'Yetim', query: 'yetim' }
+                    { name: 'Yetim', query: 'yetim' },
+                    { name: 'Miskin', query: 'miskin' }
                 ]
             }
         ]
     },
     {
         title: 'Ahlak ve Toplum',
-        desc: 'Övülen ahlak, adalet ve sosyal düzen ilkeleri',
+        desc: 'İnsanın terbiyesi ve toplumsal düzenle ilgili temel başlıklar',
         icon: 'ahlak',
         subcategories: [
             {
-                title: 'Övülen Özellikler',
+                title: 'Övülen Haller',
                 topics: [
                     { name: 'Takva', query: 'takva' },
                     { name: 'Sabır', query: 'sabır' },
-                    { name: 'Adalet', query: 'adalet' },
-                    { name: 'Doğruluk', query: 'doğruluk' },
-                    { name: 'Şükretmek', query: 'şükretmek' },
-                    { name: 'Affetmek', query: 'affetmek' }
+                    { name: 'Şükür', query: 'şükür' },
+                    { name: 'Tevbe', query: 'tevbe' },
+                    { name: 'Salih Amel', query: 'salih amel' }
                 ]
             },
             {
@@ -111,35 +111,35 @@ export const fihristData = [
                     { name: 'Zulüm', query: 'zulüm' },
                     { name: 'Kibir', query: 'kibir' },
                     { name: 'İsraf', query: 'israf' },
-                    { name: 'Gıybet', query: 'gıybet' },
-                    { name: 'Fitne', query: 'fitne' },
-                    { name: 'Nifak', query: 'münafık' }
+                    { name: 'Nifak', query: 'münafık' },
+                    { name: 'Fesat', query: 'fesat' }
                 ]
             },
             {
-                title: 'Toplumsal Haklar',
+                title: 'Hak ve Sorumluluk',
                 topics: [
+                    { name: 'Adalet', query: 'adalet' },
                     { name: 'Emanet', query: 'emanet' },
-                    { name: 'Akit', query: 'akit' },
-                    { name: 'Borçlar', query: 'borç' },
-                    { name: 'Ölçü ve Tartı', query: 'ölçü tartı' }
+                    { name: 'Anne Baba', query: 'anne baba' },
+                    { name: 'Akraba', query: 'akraba' },
+                    { name: 'Ölçü', query: 'ölçü' }
                 ]
             }
         ]
     },
     {
-        title: 'Ahiret',
-        desc: 'Ölüm sonrası hayat ve hesap günü kavramları',
+        title: 'Ahiret ve Hesap',
+        desc: 'Diriliş, hesap ve ebedi yurt tasvirleri',
         icon: 'ahiret',
         subcategories: [
             {
-                title: 'Hesap ve Diriliş',
+                title: 'Hesap Günü',
                 topics: [
                     { name: 'Kıyamet', query: 'kıyamet' },
                     { name: 'Diriliş', query: 'diriliş' },
-                    { name: 'Mahşer', query: 'mahşer' },
+                    { name: 'Hesap', query: 'hesap' },
                     { name: 'Mizan', query: 'mizan' },
-                    { name: 'Hesap', query: 'hesap' }
+                    { name: 'Mahşer', query: 'mahşer' }
                 ]
             },
             {
@@ -155,18 +155,18 @@ export const fihristData = [
         ]
     },
     {
-        title: 'Kıssalar ve Kavimler',
-        desc: 'Peygamber kıssaları ve ibretlik tarihsel örnekler',
+        title: 'Peygamberler ve Kavimler',
+        desc: 'Peygamber kıssaları ve ibret sahneleri',
         icon: 'kissa',
         subcategories: [
             {
                 title: 'Peygamberler',
                 topics: [
                     { name: 'Muhammed', query: 'muhammed' },
+                    { name: 'Nuh', query: 'nuh' },
                     { name: 'İbrahim', query: 'ibrahim' },
                     { name: 'Musa', query: 'musa' },
                     { name: 'İsa', query: 'isa' },
-                    { name: 'Nuh', query: 'nuh' },
                     { name: 'Yusuf', query: 'yusuf' },
                     { name: 'Yunus', query: 'yunus' }
                 ]
@@ -174,12 +174,12 @@ export const fihristData = [
             {
                 title: 'Kavimler ve Kişiler',
                 topics: [
-                    { name: 'Ad Kavmi', query: 'ad kavmi' },
-                    { name: 'Semud Kavmi', query: 'semud' },
                     { name: 'Firavun', query: 'firavun' },
-                    { name: 'Karun', query: 'karun' },
-                    { name: 'Haman', query: 'haman' },
-                    { name: 'Lut Kavmi', query: 'lut kavmi' },
+                    { name: 'Ad', query: 'ad' },
+                    { name: 'Semud', query: 'semud' },
+                    { name: 'Medyen', query: 'medyen' },
+                    { name: 'Lut', query: 'lut' },
+                    { name: 'İsrailoğulları', query: 'israiloğulları' },
                     { name: 'Ashab-ı Kehf', query: 'kehf' }
                 ]
             }
@@ -187,28 +187,31 @@ export const fihristData = [
     },
     {
         title: 'Yaratılış ve Kevni Ayetler',
-        desc: 'Evren, tabiat ve insanın yaratılışına dair ayetler',
+        desc: 'İnsan, tabiat ve gökler üzerinden kurulan deliller',
         icon: 'kevn',
         subcategories: [
             {
                 title: 'Gökler ve Yer',
                 topics: [
-                    { name: 'Gökler ve Yer', query: 'gökler yer' },
-                    { name: 'Güneş ve Ay', query: 'güneş ay' },
-                    { name: 'Gece ve Gündüz', query: 'gece gündüz' },
-                    { name: 'Yıldızlar', query: 'yıldızlar' }
+                    { name: 'Gökler', query: 'gökler' },
+                    { name: 'Yer', query: 'yer' },
+                    { name: 'Güneş', query: 'güneş' },
+                    { name: 'Ay', query: 'ay' },
+                    { name: 'Gece', query: 'gece' },
+                    { name: 'Gündüz', query: 'gündüz' }
                 ]
             },
             {
-                title: 'Yeryüzü ve İnsan',
+                title: 'İnsan ve Yeryüzü',
                 topics: [
-                    { name: 'İnsanın Yaratılışı', query: 'yaratılış insan' },
+                    { name: 'İnsan', query: 'insan' },
+                    { name: 'Toprak', query: 'toprak' },
                     { name: 'Dağlar', query: 'dağlar' },
-                    { name: 'Denizler', query: 'denizler' },
+                    { name: 'Deniz', query: 'deniz' },
                     { name: 'Yağmur', query: 'yağmur' },
                     { name: 'Rüzgar', query: 'rüzgar' }
                 ]
             }
         ]
     }
-]
+];
