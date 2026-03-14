@@ -1,10 +1,12 @@
-﻿import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { fihristData } from '../data/topicsData';
 import GlobalNav from '../components/GlobalNav';
 import './FihristPage.css';
 
 export default function FihristPage() {
     const navigate = useNavigate();
+    const featuredGroup = fihristData[0];
+    const secondaryGroups = fihristData.slice(1);
 
     const handleTopicClick = (query) => {
         navigate(`/?q=${encodeURIComponent(query)}`);
@@ -24,39 +26,55 @@ export default function FihristPage() {
                 </div>
 
                 <div className="fihrist-hero">
-                    <h1 className="fihrist-title">Kuran Fihristi</h1>
-                    <p className="fihrist-subtitle">Kur'an'da öne çıkan başlıklara hızlı erişim</p>
+                    <span className="fihrist-kicker">Kelime Fihristi</span>
+                    <h1 className="fihrist-title">Kur'an'da geçen kavramlar</h1>
+                    <p className="fihrist-subtitle">Konu rehberi gibi değil, doğrudan kelime ve kavram araması için hazırlanmış hızlı erişim alanı.</p>
                 </div>
 
-                <div className="fihrist-grid">
-                    {fihristData.map((category, idx) => (
-                        <div key={idx} className="fihrist-category-card">
-                            <div className="cat-header-wrap">
-                                <h2 className="cat-header">
-                                    {category.title}
-                                </h2>
-                                <p className="cat-desc">{category.desc}</p>
+                {featuredGroup && (
+                    <section className={`fihrist-featured-card accent-${featuredGroup.accent}`}>
+                        <div className="fihrist-featured-head">
+                            <div>
+                                <p className="fihrist-featured-label">{featuredGroup.title}</p>
+                                <h2>Doğrudan aranan kelimeler</h2>
                             </div>
+                            <span className="fihrist-featured-count">{featuredGroup.terms.length} kelime</span>
+                        </div>
+                        <div className="fihrist-chip-cloud">
+                            {featuredGroup.terms.map((term) => (
+                                <button
+                                    key={term.query}
+                                    type="button"
+                                    className="fihrist-chip fihrist-chip-featured"
+                                    onClick={() => handleTopicClick(term.query)}
+                                >
+                                    {term.name}
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
-                            <div className="cat-subcategories">
-                                {category.subcategories.map((sub, subIdx) => (
-                                    <div key={subIdx} className="subcategory-group">
-                                        <h3 className="subcat-title">{sub.title}</h3>
-                                        <div className="subcat-topics">
-                                            {sub.topics.map((topic, tIdx) => (
-                                                <button
-                                                    key={tIdx}
-                                                    className="fihrist-topic-tag"
-                                                    onClick={() => handleTopicClick(topic.query)}
-                                                >
-                                                    #{topic.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
+                <div className="fihrist-sections-grid">
+                    {secondaryGroups.map((group) => (
+                        <section key={group.title} className={`fihrist-keyword-card accent-${group.accent}`}>
+                            <div className="fihrist-section-head">
+                                <h2>{group.title}</h2>
+                                <span>{group.terms.length} kelime</span>
+                            </div>
+                            <div className="fihrist-chip-cloud">
+                                {group.terms.map((term) => (
+                                    <button
+                                        key={term.query}
+                                        type="button"
+                                        className="fihrist-chip"
+                                        onClick={() => handleTopicClick(term.query)}
+                                    >
+                                        {term.name}
+                                    </button>
                                 ))}
                             </div>
-                        </div>
+                        </section>
                     ))}
                 </div>
             </div>
