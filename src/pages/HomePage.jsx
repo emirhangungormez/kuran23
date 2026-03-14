@@ -43,7 +43,7 @@ const HOME_SHORTCUTS = [
         to: '/fihrist',
         badge: 'REHBER',
         title: 'Fihrist',
-        description: 'Sure ve konu başlıklarına doğrudan geç.',
+        description: 'Kur\'an kavram ve konu başlıklarına doğrudan geç.',
         tone: 'slate',
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -278,7 +278,7 @@ export default function HomePage() {
                                         <h2 className="section-title">Sık Açılan Sureler</h2>
                                         <p className="section-note">Okumaya hızlı başlamak için seçili sureler.</p>
                                     </div>
-                                    <Link to="/fihrist" className="section-link">Tüm sureler</Link>
+                                    <Link to="/sureler" className="section-link">Tüm sureler</Link>
                                 </div>
                                 <div className="popular-grid">
                                     {featuredSurahs.map((surah, index) => (

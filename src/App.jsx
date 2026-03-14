@@ -17,6 +17,7 @@ import SupportPage from './pages/SupportPage'
 import SupportersPage from './pages/SupportersPage'
 import TefsirlerPage from './pages/TefsirlerPage'
 import LibraryBookPage from './pages/LibraryBookPage'
+import SurahsPage from './pages/SurahsPage'
 import ScrollToTop from './components/ScrollToTop'
 import MoonPage from './pages/MoonPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -139,6 +140,7 @@ function AppContent() {
               <Route path="/ay-evresi" element={<MoonPage />} />
               <Route path="/profil" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/" replace />} />
               <Route path="/seruvenler" element={<JourneysPage />} />
+              <Route path="/sureler" element={<SurahsPage />} />
               <Route path="/sure/:id" element={<SurahPage />} />
               <Route path="/sure/:surahId/:ayahNo" element={<VersePage />} />
               <Route path="/oku" element={<Navigate to="/oku/1" replace />} />
