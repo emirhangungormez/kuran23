@@ -160,7 +160,7 @@
     color: var(--text-primary);
     opacity: 0.96;
     margin: 0;
-    transform: translate(-10px, 128px);
+    transform: translate(-10px, 120px);
 }
 
 [data-theme='dark'] .footer-giant-logo {
@@ -225,7 +225,7 @@
 
     .footer-giant-logo {
         width: calc(100% + 18px);
-        transform: translate(-9px, 112px);
+        transform: translate(-9px, 104px);
     }
 }
 
@@ -267,7 +267,7 @@
         max-width: none;
         height: auto;
         display: block;
-        transform: translate(-8px, 84px);
+        transform: translate(-8px, 76px);
     }
 
     .footer-bottom {
