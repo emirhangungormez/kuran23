@@ -254,15 +254,20 @@
 
     .footer-logo-wrap {
         margin: 0;
-        height: 130px;
+        height: 110px;
         padding: 0;
         border-radius: 0;
+        align-items: center;
+        justify-content: center;
     }
 
     .footer-giant-logo {
-        width: 226%;
-        height: auto;
-        transform: translate(2px, 76px);
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        transform: none;
     }
 
     .footer-bottom {
