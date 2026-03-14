@@ -5,6 +5,7 @@ import { searchQuran as searchApi, getDailyVerse } from '../services/api'
 import { searchQuran as searchMock, surahs as allSurahs } from '../data/quranData'
 import SearchResults from '../components/SearchResults'
 import DailyVerse from '../components/DailyVerse'
+import LibraryShelfIcon from '../components/LibraryShelfIcon'
 import { popularTopics } from '../data/topicsData'
 import { sanitizeSearchInput } from '../utils/security'
 import { normalizeArabicDisplayText } from '../utils/textEncoding'
@@ -35,14 +36,7 @@ const HOME_SHORTCUTS = [
         title: 'Tefsir Kütüphanesi',
         description: 'Tefsir ve meal kitaplarını tek yerden aç.',
         tone: 'sand',
-        icon: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M5 4.5h4a2 2 0 0 1 2 2V20H7a2 2 0 0 0-2 2z" />
-                <path d="M19 4.5h-4a2 2 0 0 0-2 2V20h4a2 2 0 0 1 2 2z" />
-                <path d="M9 7.5H7.5" />
-                <path d="M16.5 7.5H15" />
-            </svg>
-        )
+        icon: <LibraryShelfIcon strokeWidth={1.8} />
     },
     {
         key: 'fihrist',

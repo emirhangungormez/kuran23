@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useSettings } from '../contexts/SettingsContext'
+import LibraryShelfIcon from './LibraryShelfIcon'
 import usePlayerStore from '../stores/usePlayerStore'
 import './BottomNav.css'
 
@@ -33,14 +34,7 @@ const items = [
     to: '/kutuphane',
     label: 'Kütüphane',
     isActive: (pathname) => pathname.startsWith('/kutuphane') || pathname.startsWith('/tefsirler'),
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M5 4.5h4a2 2 0 0 1 2 2V20H7a2 2 0 0 0-2 2z" />
-        <path d="M19 4.5h-4a2 2 0 0 0-2 2V20h4a2 2 0 0 1 2 2z" />
-        <path d="M9 7.5H7.5" />
-        <path d="M16.5 7.5H15" />
-      </svg>
-    )
+    icon: <LibraryShelfIcon />
   },
   {
     key: 'profile',
