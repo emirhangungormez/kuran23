@@ -154,13 +154,13 @@
 }
 
 .footer-giant-logo {
-    width: 170%;
+    width: calc(100% + 20px);
     height: auto;
     max-width: none;
     color: var(--text-primary);
     opacity: 0.96;
     margin: 0;
-    transform: translate(0, 128px);
+    transform: translate(-10px, 128px);
 }
 
 [data-theme='dark'] .footer-giant-logo {
@@ -224,8 +224,8 @@
     }
 
     .footer-giant-logo {
-        width: 186%;
-        transform: translate(0, 112px);
+        width: calc(100% + 18px);
+        transform: translate(-9px, 112px);
     }
 }
 
@@ -263,11 +263,11 @@
     }
 
     .footer-giant-logo {
-        width: 188%;
+        width: calc(100% + 16px);
         max-width: none;
         height: auto;
         display: block;
-        transform: translate(0, 76px);
+        transform: translate(-8px, 84px);
     }
 
     .footer-bottom {
