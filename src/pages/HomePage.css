@@ -854,27 +854,25 @@
 
 .quick-link-card {
     --quick-card-accent: #166534;
-    --quick-card-surface: #f2f7f3;
-    --quick-card-border: #d7e5dc;
-    --quick-card-shadow: rgba(15, 23, 42, 0.14);
-    --quick-card-icon-bg: #e2eee5;
+    --quick-card-border: #e6e8eb;
+    --quick-card-shadow: rgba(15, 23, 42, 0.12);
+    --quick-card-icon-bg: #166534;
     --quick-card-badge-bg: #edf5ef;
-    --quick-card-badge-border: #d7e5dc;
-    min-height: 168px;
-    padding: 20px;
-    border-radius: 22px;
+    min-height: 160px;
+    padding: 18px 18px 18px 22px;
+    border-radius: 18px;
     position: relative;
     overflow: hidden;
     isolation: isolate;
     border: 1px solid var(--quick-card-border);
-    background: var(--quick-card-surface);
-    box-shadow: 0 16px 30px -28px var(--quick-card-shadow);
+    background: #ffffff;
+    box-shadow: 0 16px 28px -24px var(--quick-card-shadow);
     text-decoration: none;
     color: var(--text-primary);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 22px;
+    gap: 18px;
     min-width: 0;
     animation: fadeUp 0.35s var(--ease) both;
     transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), box-shadow 0.2s var(--ease);
@@ -883,10 +881,10 @@
 .quick-link-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 20px;
-    width: 56px;
-    height: 4px;
+    top: 16px;
+    left: 0;
+    width: 4px;
+    height: calc(100% - 32px);
     border-radius: 999px;
     background: var(--quick-card-accent);
     pointer-events: none;
@@ -901,53 +899,41 @@
 
 .quick-link-card:hover {
     transform: translateY(-2px);
-    border-color: color-mix(in srgb, var(--quick-card-accent) 22%, #cfd6dd);
-    box-shadow: 0 18px 34px -24px var(--quick-card-shadow);
+    border-color: color-mix(in srgb, var(--quick-card-accent) 16%, #d9dee4);
+    box-shadow: 0 18px 34px -22px var(--quick-card-shadow);
 }
 
 .quick-link-card.tone-emerald {
     --quick-card-accent: #166534;
-    --quick-card-surface: #f2f7f3;
-    --quick-card-border: #d7e5dc;
     --quick-card-shadow: rgba(22, 101, 52, 0.18);
-    --quick-card-icon-bg: #e2eee5;
+    --quick-card-icon-bg: #166534;
     --quick-card-badge-bg: #edf5ef;
-    --quick-card-badge-border: #d7e5dc;
 }
 
 .quick-link-card.tone-sand {
     --quick-card-accent: #8b5e1a;
-    --quick-card-surface: #faf4ea;
-    --quick-card-border: #ead9bc;
     --quick-card-shadow: rgba(139, 94, 26, 0.16);
-    --quick-card-icon-bg: #f2e3c9;
+    --quick-card-icon-bg: #8b5e1a;
     --quick-card-badge-bg: #f8eedf;
-    --quick-card-badge-border: #ead9bc;
 }
 
 .quick-link-card.tone-slate {
     --quick-card-accent: #315d8f;
-    --quick-card-surface: #eef3f8;
-    --quick-card-border: #d7e1eb;
     --quick-card-shadow: rgba(49, 93, 143, 0.16);
-    --quick-card-icon-bg: #dee9f4;
+    --quick-card-icon-bg: #315d8f;
     --quick-card-badge-bg: #edf3f9;
-    --quick-card-badge-border: #d7e1eb;
 }
 
 .quick-link-card.tone-ink {
     --quick-card-accent: #30445a;
-    --quick-card-surface: #eef1f4;
-    --quick-card-border: #d8dee5;
     --quick-card-shadow: rgba(48, 68, 90, 0.16);
-    --quick-card-icon-bg: #e0e6ec;
+    --quick-card-icon-bg: #30445a;
     --quick-card-badge-bg: #eef2f6;
-    --quick-card-badge-border: #d8dee5;
 }
 
 .quick-link-head {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
 }
@@ -960,8 +946,9 @@
     align-items: center;
     justify-content: center;
     background: var(--quick-card-icon-bg);
-    color: var(--quick-card-accent);
-    border: 1px solid color-mix(in srgb, var(--quick-card-accent) 10%, #d7dde4);
+    color: white;
+    border: none;
+    flex-shrink: 0;
 }
 
 .quick-link-icon svg {
@@ -970,30 +957,30 @@
 }
 
 .quick-link-badge {
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-radius: 999px;
     background: var(--quick-card-badge-bg);
     color: var(--quick-card-accent);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    border: 1px solid var(--quick-card-badge-border);
+    letter-spacing: 0.1em;
+    border: none;
 }
 
 .quick-link-body h3 {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     overflow-wrap: anywhere;
 }
 
 .quick-link-body p {
     margin: 0;
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: 13px;
+    line-height: 1.5;
     color: var(--text-secondary);
-    max-width: 26ch;
+    max-width: 28ch;
     overflow-wrap: anywhere;
 }
 
