@@ -860,6 +860,7 @@
     --quick-card-icon-border: rgba(255, 255, 255, 0.08);
     --quick-card-badge-bg: rgba(255, 255, 255, 0.14);
     min-height: 178px;
+    height: 178px;
     padding: 22px;
     border-radius: 22px;
     position: relative;
@@ -972,6 +973,10 @@
     margin-bottom: 8px;
     overflow-wrap: anywhere;
     max-width: 11ch;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .quick-link-body p {
@@ -981,6 +986,10 @@
     color: rgba(255, 255, 255, 0.86);
     overflow-wrap: anywhere;
     max-width: 26ch;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .popular-grid {
@@ -1181,6 +1190,7 @@
 
     .quick-link-card {
         min-height: 142px;
+        height: 142px;
         padding: 18px;
         gap: 14px;
     }
