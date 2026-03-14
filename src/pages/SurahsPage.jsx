@@ -32,6 +32,10 @@ export default function SurahsPage() {
         return left.no - right.no
     })
 
+    const helperText = sortMode === 'revelation'
+        ? 'Kutudaki sayı iniş sırasını gösterir.'
+        : 'Kur\'an sureleri sıralanış sırasına göre listeleniyor.'
+
     return (
         <div className="page surahs-page">
             <GlobalNav />
@@ -45,103 +49,81 @@ export default function SurahsPage() {
                     </Link>
                 </div>
 
-                <section className="surahs-hero">
-                    <div className="surahs-hero-copy">
-                        <span className="surahs-kicker">114 Sure</span>
-                        <h1 className="surahs-title">Sureler</h1>
-                        <p className="surahs-subtitle">
-                            Kur&apos;an surelerini Mushaf sırasına veya iniş sırasına göre gez.{' '}
-                            {isLoggedIn ? (
-                                <span>{bookmarks.surahs.length} kaydın profilinde senkron durur.</span>
-                            ) : (
-                                <span>
-                                    Kaydetmek için <Link to="/giris" className="surahs-inline-link">profil girişi</Link> yapabilirsin.
-                                </span>
-                            )}
-                        </p>
-                    </div>
+                <section className="surahs-panel">
+                    <div className="surahs-panel-head">
+                        <div className="surahs-panel-copy">
+                            <h1 className="surahs-panel-title">Tüm Sureler</h1>
+                            <p className="surahs-panel-note">{helperText}</p>
+                            <p className="surahs-panel-sync">
+                                {isLoggedIn
+                                    ? `${bookmarks.surahs.length} kaydedilen sure profilinde senkron görünür.`
+                                    : 'Kaydetmek için profil girişi yapabilirsin.'}
+                            </p>
+                        </div>
 
-                    <div className="surahs-toolbar">
-                        <span className="surahs-toolbar-label">Listeleme</span>
-                        <div className="surahs-sort-toggle" role="tablist" aria-label="Sure listeleme sırasını seç">
-                            <button
-                                type="button"
-                                className={`surahs-sort-btn ${sortMode === 'mushaf' ? 'active' : ''}`}
-                                onClick={() => setSortMode('mushaf')}
-                                aria-pressed={sortMode === 'mushaf'}
-                            >
-                                Sıralanış sırası
-                            </button>
-                            <button
-                                type="button"
-                                className={`surahs-sort-btn ${sortMode === 'revelation' ? 'active' : ''}`}
-                                onClick={() => setSortMode('revelation')}
-                                aria-pressed={sortMode === 'revelation'}
-                            >
-                                İniş sırası
-                            </button>
+                        <div className="surahs-sorter">
+                            <span className="surahs-sort-label">Listeleme</span>
+                            <div className="surahs-sort-toggle" role="tablist" aria-label="Sure listeleme sırasını seç">
+                                <button
+                                    type="button"
+                                    className={`surahs-sort-btn ${sortMode === 'mushaf' ? 'active' : ''}`}
+                                    onClick={() => setSortMode('mushaf')}
+                                    aria-pressed={sortMode === 'mushaf'}
+                                >
+                                    Sıralanış sırası
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`surahs-sort-btn ${sortMode === 'revelation' ? 'active' : ''}`}
+                                    onClick={() => setSortMode('revelation')}
+                                    aria-pressed={sortMode === 'revelation'}
+                                >
+                                    İniş sırası
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                <div className="surahs-summary-bar">
-                    <span>
-                        {sortMode === 'revelation'
-                            ? 'Liste nüzul sırasına göre dizildi.'
-                            : 'Liste Mushaf sırasına göre dizildi.'}
-                    </span>
-                    <span>{bookmarks.surahs.length} kayıtlı sure</span>
-                </div>
+                    <section className="surahs-grid" aria-label="Sure listesi">
+                        {sortedSurahs.map((surah, index) => {
+                            const revelationOrder = getSurahRevelationOrder(surah.no)
+                            const isSaved = isSurahBookmarked(surah.no)
+                            const visibleNumber = sortMode === 'revelation' ? revelationOrder : surah.no
 
-                <section className="surahs-list" aria-label="Sure listesi">
-                    {sortedSurahs.map((surah, index) => {
-                        const revelationOrder = getSurahRevelationOrder(surah.no)
-                        const isSaved = isSurahBookmarked(surah.no)
+                            return (
+                                <article
+                                    key={surah.no}
+                                    className={`surahs-directory-card ${isSaved ? 'is-saved' : ''}`}
+                                    style={{ animationDelay: `${Math.min(index, 15) * 0.03}s` }}
+                                >
+                                    <Link to={`/sure/${surah.no}`} className="surahs-directory-link">
+                                        <span className="surahs-directory-no">{visibleNumber}</span>
 
-                        return (
-                            <article
-                                key={surah.no}
-                                className={`surahs-card ${isSaved ? 'is-saved' : ''}`}
-                                style={{ animationDelay: `${Math.min(index, 14) * 0.03}s` }}
-                            >
-                                <Link to={`/sure/${surah.no}`} className="surahs-card-link">
-                                    <div className="surahs-rank-pill">
-                                        <span className="surahs-rank-label">{sortMode === 'revelation' ? 'İniş' : 'Sure'}</span>
-                                        <strong className="surahs-rank-value">
-                                            {sortMode === 'revelation' ? revelationOrder : surah.no}
-                                        </strong>
-                                    </div>
-
-                                    <div className="surahs-card-main">
-                                        <div className="surahs-card-head">
-                                            <div className="surahs-card-titles">
-                                                <h2>{surah.nameTr}</h2>
-                                                <p>{surah.nameEn}</p>
-                                            </div>
-                                            <span className="surahs-card-ar" dir="rtl">
+                                        <div className="surahs-directory-info">
+                                            <span className="surahs-directory-name-ar" dir="rtl">
                                                 {normalizeArabicDisplayText(surah.nameAr)}
                                             </span>
+                                            <span className="surahs-directory-name-tr">{surah.nameTr}</span>
                                         </div>
 
-                                        <div className="surahs-card-meta">
-                                            <span>{surah.ayahCount} ayet</span>
-                                            <span className={`surahs-type-badge ${surah.type.toLowerCase()}`}>{surah.type}</span>
-                                            <span className="surahs-secondary-order">
-                                                {sortMode === 'revelation' ? `Mushaf ${surah.no}` : `İniş ${revelationOrder}`}
+                                        <div className="surahs-directory-meta">
+                                            <span className="surahs-directory-ayah">{surah.ayahCount} Ayet</span>
+                                            <span className={`surah-type-badge ${surah.type.toLowerCase()}`}>
+                                                {surah.type.toLocaleUpperCase('tr-TR')}
                                             </span>
                                         </div>
-                                    </div>
-                                </Link>
+                                    </Link>
 
-                                <div className="surahs-card-action">
-                                    <BookmarkButton
-                                        isBookmarked={isSaved}
-                                        onToggle={() => toggleSurah(toBookmarkPayload(surah))}
-                                    />
-                                </div>
-                            </article>
-                        )
-                    })}
+                                    <div className="surahs-directory-save">
+                                        <BookmarkButton
+                                            isBookmarked={isSaved}
+                                            onToggle={() => toggleSurah(toBookmarkPayload(surah))}
+                                        />
+                                    </div>
+                                </article>
+                            )
+                        })}
+                    </section>
                 </section>
             </div>
         </div>

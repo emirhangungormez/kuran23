@@ -2,70 +2,57 @@
     min-height: 100%;
 }
 
-.surahs-hero {
+.surahs-panel {
+    width: 100%;
+    animation: fadeUp 0.35s var(--ease) both;
+}
+
+.surahs-panel-head {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 24px;
-    padding: 18px 0 24px;
+    gap: 16px;
+    margin-bottom: 18px;
 }
 
-.surahs-hero-copy {
-    max-width: 680px;
+.surahs-panel-copy {
+    min-width: 0;
 }
 
-.surahs-kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--accent-light) 70%, var(--fill) 30%);
-    color: var(--accent);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.surahs-title {
-    margin: 16px 0 10px;
-    font-size: clamp(34px, 6vw, 54px);
-    line-height: 0.98;
-    letter-spacing: -0.05em;
-    color: var(--text-primary);
-}
-
-.surahs-subtitle {
+.surahs-panel-title {
     margin: 0;
-    max-width: 62ch;
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--text-secondary);
-}
-
-.surahs-inline-link {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     color: var(--text-primary);
-    font-weight: 600;
-    text-decoration: none;
 }
 
-.surahs-inline-link:hover {
-    text-decoration: underline;
+.surahs-panel-note {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
 }
 
-.surahs-toolbar {
+.surahs-panel-sync {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+}
+
+.surahs-sorter {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 12px;
+    gap: 8px;
     flex-shrink: 0;
 }
 
-.surahs-toolbar-label {
+.surahs-sort-label {
+    color: var(--text-tertiary);
     font-size: 11px;
     font-weight: 700;
-    color: var(--text-tertiary);
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
@@ -73,21 +60,21 @@
 .surahs-sort-toggle {
     display: inline-flex;
     align-items: center;
-    padding: 5px;
+    gap: 4px;
+    padding: 4px;
     border: 1px solid var(--separator);
     border-radius: 999px;
-    background: color-mix(in srgb, var(--card-bg) 88%, var(--fill) 12%);
+    background: white;
 }
 
 .surahs-sort-btn {
-    min-width: 144px;
-    min-height: 40px;
-    padding: 0 16px;
+    min-height: 34px;
+    padding: 0 13px;
     border: none;
     border-radius: 999px;
     background: transparent;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s var(--ease);
@@ -98,265 +85,187 @@
 }
 
 .surahs-sort-btn.active {
-    background: var(--text-primary);
-    color: var(--card-bg);
+    background: var(--fill);
+    color: var(--text-primary);
 }
 
-.surahs-summary-bar {
+.surahs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.surahs-directory-card {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 18px;
-    padding: 12px 14px;
+    gap: 8px;
+    padding: 14px 12px 14px 16px;
     border: 1px solid var(--separator);
-    border-radius: 16px;
-    background:
-        radial-gradient(circle at left top, color-mix(in srgb, var(--accent-light) 55%, transparent) 0, transparent 42%),
-        color-mix(in srgb, var(--card-bg) 86%, var(--fill) 14%);
-    color: var(--text-secondary);
-    font-size: 13px;
-}
-
-.surahs-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.surahs-card {
-    display: flex;
-    align-items: stretch;
-    gap: 12px;
-    padding: 12px;
-    border: 1px solid var(--separator);
-    border-radius: 22px;
-    background: var(--card-bg);
-    animation: fadeUp 0.45s var(--ease) both;
+    border-radius: var(--radius);
+    background: white;
+    animation: fadeUp 0.35s var(--ease) both;
     transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
 
-.surahs-card:hover {
-    transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--accent) 28%, var(--separator) 72%);
-    background: color-mix(in srgb, var(--card-bg) 88%, var(--fill) 12%);
+.surahs-directory-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(60, 60, 67, 0.18);
+    background: var(--fill);
 }
 
-.surahs-card.is-saved {
-    border-color: color-mix(in srgb, var(--accent) 32%, var(--separator) 68%);
+.surahs-directory-card.is-saved {
+    border-color: color-mix(in srgb, var(--accent) 24%, var(--separator) 76%);
 }
 
-.surahs-card-link {
+.surahs-directory-link {
     min-width: 0;
     flex: 1;
     display: flex;
     align-items: center;
     gap: 14px;
     text-decoration: none;
+    color: inherit;
 }
 
-.surahs-rank-pill {
-    width: 64px;
-    min-width: 64px;
-    min-height: 68px;
-    padding: 10px 8px;
-    border-radius: 18px;
-    background:
-        linear-gradient(180deg, color-mix(in srgb, var(--accent-light) 68%, var(--fill) 32%) 0%, color-mix(in srgb, var(--card-bg) 88%, var(--fill) 12%) 100%);
+.surahs-directory-no {
+    width: 32px;
+    height: 32px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    color: var(--text-primary);
-    flex-shrink: 0;
-}
-
-.surahs-rank-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-}
-
-.surahs-rank-value {
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: -0.04em;
-}
-
-.surahs-card-main {
-    min-width: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
-}
-
-.surahs-card-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.surahs-card-titles {
-    min-width: 0;
-}
-
-.surahs-card-titles h2 {
-    margin: 0 0 4px;
-    font-size: 18px;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    color: var(--text-primary);
-}
-
-.surahs-card-titles p {
-    margin: 0;
-    color: var(--text-secondary);
     font-size: 12px;
-    line-height: 1.5;
-}
-
-.surahs-card-ar {
-    font-size: 28px;
-    line-height: 1.05;
-    color: var(--text-primary);
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.surahs-card-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    color: var(--text-tertiary);
-    font-size: 12px;
-}
-
-.surahs-type-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 24px;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.surahs-type-badge.mekki {
-    background: #fff7ed;
-    color: #f97316;
-}
-
-.surahs-type-badge.medeni {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.surahs-secondary-order {
-    padding: 4px 9px;
-    border-radius: 999px;
-    background: var(--fill);
-    color: var(--text-secondary);
     font-weight: 600;
+    color: var(--text-tertiary);
+    background: var(--fill);
+    border-radius: 8px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
 }
 
-.surahs-card-action {
+.surahs-directory-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.surahs-directory-name-ar {
+    display: block;
+    font-size: 18px;
+    font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.surahs-directory-name-tr {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.surahs-directory-meta {
+    text-align: right;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.surahs-directory-ayah {
+    display: block;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+}
+
+.surahs-directory-save {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
-.surahs-card-action .bookmark-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
+.surahs-directory-save .bookmark-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--fill);
 }
 
-[data-theme='dark'] .surahs-card,
-[data-theme='dark'] .surahs-summary-bar {
-    background: color-mix(in srgb, var(--card-bg) 93%, var(--fill) 7%);
+.surahs-directory-save .bookmark-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
-[data-theme='dark'] .surahs-card:hover {
+[data-theme='dark'] .surahs-sort-toggle,
+[data-theme='dark'] .surahs-directory-card {
+    background: color-mix(in srgb, var(--card-bg) 94%, var(--fill) 6%);
+}
+
+[data-theme='dark'] .surahs-directory-card:hover {
     background: color-mix(in srgb, var(--card-bg) 82%, var(--fill) 18%);
 }
 
-@media (max-width: 940px) {
-    .surahs-hero {
+@media (max-width: 980px) {
+    .surahs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .surahs-panel-head {
+        align-items: flex-start;
         flex-direction: column;
+    }
+
+    .surahs-sorter {
         align-items: flex-start;
-    }
-
-    .surahs-toolbar {
-        width: 100%;
-        align-items: flex-start;
-    }
-
-    .surahs-sort-toggle {
-        width: 100%;
-    }
-
-    .surahs-sort-btn {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .surahs-list {
-        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 640px) {
-    .surahs-hero {
-        padding-top: 8px;
+@media (max-width: 720px) {
+    .surahs-grid {
+        grid-template-columns: 1fr;
     }
 
-    .surahs-title {
-        font-size: 36px;
-    }
-
-    .surahs-summary-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .surahs-card {
-        padding: 10px;
+    .surahs-directory-card {
         gap: 10px;
-        border-radius: 18px;
+        padding: 12px 10px;
     }
 
-    .surahs-card-link {
+    .surahs-directory-link {
         gap: 10px;
     }
 
-    .surahs-rank-pill {
-        width: 56px;
-        min-width: 56px;
-        min-height: 62px;
-        border-radius: 15px;
+    .surahs-directory-no {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
     }
 
-    .surahs-rank-value {
-        font-size: 22px;
+    .surahs-directory-name-ar {
+        font-size: 15px;
+        line-height: 1.2;
     }
 
-    .surahs-card-head {
-        flex-direction: column;
-        gap: 8px;
+    .surahs-directory-name-tr {
+        font-size: 11px;
+        line-height: 1.15;
     }
 
-    .surahs-card-ar {
-        font-size: 25px;
+    .surahs-directory-meta {
+        gap: 6px;
+    }
+
+    .surahs-directory-ayah {
+        font-size: 10px;
+    }
+
+    .surahs-directory-card .surah-type-badge {
+        padding: 3px 6px;
+        font-size: 9px;
+        letter-spacing: 0.03em;
     }
 }
