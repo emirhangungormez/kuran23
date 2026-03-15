@@ -290,7 +290,7 @@ export default function HomePage() {
                                         >
                                             <span className="popular-no">{surah.no}</span>
                                             <div className="popular-info">
-                                                <span className="popular-name-ar">{normalizeArabicDisplayText(surah.nameAr)}</span>
+                                                <span className="popular-name-ar" dir="rtl">{normalizeArabicDisplayText(surah.nameAr)}</span>
                                                 <span className="popular-name-tr">{surah.nameTr}</span>
                                             </div>
                                             <div className="popular-meta">

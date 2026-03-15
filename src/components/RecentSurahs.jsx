@@ -62,7 +62,7 @@ export default function RecentSurahs() {
                             <div className="rs-ios-left">
                                 <div className="rs-ios-number">{s.no}</div>
                                 <div className="rs-ios-names">
-                                    <span className="rs-ios-name-ar">{normalizeArabicDisplayText(meta.nameAr || s.nameAr)}</span>
+                                    <span className="rs-ios-name-ar" dir="rtl">{normalizeArabicDisplayText(meta.nameAr || s.nameAr)}</span>
                                     <span className="rs-ios-name-tr">{meta.nameTr || s.nameTr}</span>
                                 </div>
                             </div>

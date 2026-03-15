@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
+import { surahs as allSurahs } from '../data/quranData'
 import { normalizeArabicDisplayText } from '../utils/textEncoding'
 import './SearchResults.css'
 
 const ARABIC_RE = /[\u0600-\u06FF]/
+const SURAH_META_MAP = new Map(allSurahs.map((surah) => [Number(surah.no), surah]))
 
 function hasArabic(input) {
     return ARABIC_RE.test(input || '')
@@ -115,43 +117,59 @@ export default function SearchResults({ results, query, onLoadMore, isLoadingMor
             {surahs.length > 0 && (
                 <div className="sr-section">
                     <h3 className="sr-section-title">Sureler</h3>
-                    {surahs.map((s, i) => (
-                        <Link key={s.no} to={`/sure/${s.no}`} className="sr-surah" style={{ animationDelay: `${i * 0.04}s` }}>
-                            <div className="sr-surah-no">{s.no}</div>
-                            <div className="sr-surah-body">
-                                <div className="sr-surah-top">
-                                    <span className="sr-surah-name">{highlightText(s.nameTr, query)}</span>
-                                    <span className="sr-surah-ar" dir="rtl">{normalizeArabicDisplayText(s.nameAr)}</span>
+                    {surahs.map((surah, i) => {
+                        const meta = SURAH_META_MAP.get(Number(surah.no))
+                        const surahType = meta?.type || surah.type || ''
+
+                        return (
+                            <Link
+                                key={surah.no}
+                                to={`/sure/${surah.no}`}
+                                className="sr-surah"
+                                style={{ animationDelay: `${i * 0.04}s` }}
+                            >
+                                <div className="sr-surah-no">{surah.no}</div>
+                                <div className="sr-surah-body">
+                                    <span className="sr-surah-ar" dir="rtl">
+                                        {highlightText(normalizeArabicDisplayText(surah.nameAr), query)}
+                                    </span>
+                                    <span className="sr-surah-name">{highlightText(surah.nameTr, query)}</span>
                                 </div>
                                 <div className="sr-surah-meta">
-                                    {s.nameEn && <><span>{s.nameEn}</span><span>·</span></>}
-                                    <span>{s.ayahCount} ayet</span>
+                                    <span className="sr-surah-ayah">{surah.ayahCount} Ayet</span>
+                                    {surahType && (
+                                        <span className={`surah-type-badge ${surahType.toLowerCase()}`}>
+                                            {surahType.toLocaleUpperCase('tr-TR')}
+                                        </span>
+                                    )}
                                 </div>
-                            </div>
-                            <svg className="sr-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                <path d="M9 18l6-6-6-6" />
-                            </svg>
-                        </Link>
-                    ))}
+                            </Link>
+                        )
+                    })}
                 </div>
             )}
 
             {verses.length > 0 && (
                 <div className="sr-section">
                     <h3 className="sr-section-title">Ayetler</h3>
-                    {verses.map((v, i) => (
-                        <Link key={`${v.surahNo}-${v.ayah}-${i}`} to={`/sure/${v.surahNo}/${v.ayah}`} className="sr-verse" style={{ animationDelay: `${(surahs.length + i) * 0.04}s` }}>
+                    {verses.map((verse, i) => (
+                        <Link
+                            key={`${verse.surahNo}-${verse.ayah}-${i}`}
+                            to={`/sure/${verse.surahNo}/${verse.ayah}`}
+                            className="sr-verse"
+                            style={{ animationDelay: `${(surahs.length + i) * 0.04}s` }}
+                        >
                             <div className="sr-verse-ref">
-                                <span className="sr-verse-surah">{v.surahTr}</span>
-                                <span className="sr-verse-ayah">{v.surahNo}:{v.ayah}</span>
-                                {v.translationLang && (
-                                    <span className={`sr-translation-lang ${String(v.translationLang).toLowerCase()}`}>
-                                        {String(v.translationLang).toUpperCase()}
+                                <span className="sr-verse-surah">{verse.surahTr}</span>
+                                <span className="sr-verse-ayah">{verse.surahNo}:{verse.ayah}</span>
+                                {verse.translationLang && (
+                                    <span className={`sr-translation-lang ${String(verse.translationLang).toLowerCase()}`}>
+                                        {String(verse.translationLang).toUpperCase()}
                                     </span>
                                 )}
                             </div>
-                            <p className="sr-verse-ar" dir="rtl">{highlightText(normalizeArabicDisplayText(v.textAr), query)}</p>
-                            <p className="sr-verse-tr">{highlightText(v.textTr, query)}</p>
+                            <p className="sr-verse-ar" dir="rtl">{highlightText(normalizeArabicDisplayText(verse.textAr), query)}</p>
+                            <p className="sr-verse-tr">{highlightText(verse.textTr, query)}</p>
                         </Link>
                     ))}
                 </div>

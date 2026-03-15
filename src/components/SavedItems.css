@@ -23,9 +23,9 @@
 
 .rs-ios-card {
     background: white;
-    border: 1px solid var(--separator);
-    border-radius: 12px;
-    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--separator) 82%, var(--text-tertiary) 18%);
+    border-radius: var(--radius);
+    padding: 14px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -36,28 +36,30 @@
 }
 
 .rs-ios-card:hover {
-    border-color: rgba(60, 60, 67, 0.25);
-    background: var(--fill);
-    transform: translateY(-1px);
+    border-color: rgba(60, 60, 67, 0.28);
+    background: white;
+    transform: translateY(-2px);
 }
 
 .rs-ios-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
 }
 
 .rs-ios-number {
-    width: 44px;
-    height: 44px;
-    background: var(--fill);
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    background: color-mix(in srgb, var(--fill) 78%, white 22%);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 700;
-    color: var(--text-tertiary);
+    color: color-mix(in srgb, var(--text-secondary) 74%, var(--text-tertiary) 26%);
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
 }
@@ -66,19 +68,29 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    align-items: flex-start;
+    min-width: 0;
 }
 
 .rs-ios-name-ar {
-    font-size: 20px;
+    display: block;
+    width: 100%;
+    font-size: 18px;
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
     color: var(--text-primary);
-    line-height: 1.2;
+    line-height: 1.3;
+    font-weight: 500;
+    text-align: left;
 }
 
 .rs-ios-name-tr {
     font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
+    font-weight: 600;
+    line-height: 1.2;
+    color: color-mix(in srgb, var(--text-primary) 82%, var(--text-secondary) 18%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .rs-ios-right {
@@ -94,22 +106,27 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 4px;
+    gap: 8px;
 }
 
 .rs-ios-ayah-count {
     font-size: 11px;
     font-weight: 500;
-    color: var(--text-tertiary);
+    color: color-mix(in srgb, var(--text-secondary) 72%, var(--text-tertiary) 28%);
 }
 
 .rs-ios-badge {
     font-size: 9px;
     font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 0 10px;
+    border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
 }
 
 .rs-ios-badge.mekki {
@@ -127,7 +144,7 @@
     height: 24px;
     background: var(--accent-light);
     color: var(--accent);
-    border-radius: 6px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1001,7 +1001,7 @@
 .popular-card {
     min-height: 0;
     padding: 14px 16px;
-    border: 1px solid var(--separator);
+    border: 1px solid color-mix(in srgb, var(--separator) 82%, var(--text-tertiary) 18%);
     border-radius: var(--radius);
     background: white;
     text-decoration: none;
@@ -1016,8 +1016,8 @@
 
 .popular-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(60, 60, 67, 0.18);
-    background: var(--fill);
+    border-color: rgba(60, 60, 67, 0.28);
+    background: white;
 }
 
 .popular-no {
@@ -1027,10 +1027,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--fill);
-    color: var(--text-tertiary);
+    background: color-mix(in srgb, var(--fill) 78%, white 22%);
+    color: color-mix(in srgb, var(--text-secondary) 74%, var(--text-tertiary) 26%);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
 }
@@ -1042,21 +1042,27 @@
 .popular-info {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .popular-name-ar {
     display: block;
+    width: 100%;
     font-size: 18px;
     line-height: 1.3;
     color: var(--text-primary);
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
+    font-weight: 500;
+    text-align: left;
 }
 
 .popular-name-tr {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.2;
-    color: var(--text-secondary);
+    color: color-mix(in srgb, var(--text-primary) 82%, var(--text-secondary) 18%);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -1075,7 +1081,8 @@
 .popular-ayah {
     display: block;
     font-size: 11px;
-    color: var(--text-tertiary);
+    color: color-mix(in srgb, var(--text-secondary) 72%, var(--text-tertiary) 28%);
+    font-weight: 500;
 }
 
 .horizontal-topics {

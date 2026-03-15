@@ -29,32 +29,33 @@
     align-items: center;
     gap: 14px;
     padding: 14px 16px;
-    border: 1px solid var(--separator);
+    border: 1px solid color-mix(in srgb, var(--separator) 82%, var(--text-tertiary) 18%);
     border-radius: var(--radius);
     margin-bottom: 8px;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s var(--ease);
+    transition: transform 0.2s var(--ease), border-color 0.2s, background 0.2s;
     animation: fadeUp 0.3s var(--ease) both;
     text-decoration: none;
     color: inherit;
+    background: white;
 }
 
 .sr-surah:hover {
-    border-color: rgba(60, 60, 67, 0.18);
-    background: var(--fill);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    transform: translateY(-2px);
+    border-color: rgba(60, 60, 67, 0.28);
+    background: white;
 }
 
 .sr-surah-no {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-tertiary);
-    background: var(--fill);
+    font-size: 12px;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--text-secondary) 74%, var(--text-tertiary) 26%);
+    background: color-mix(in srgb, var(--fill) 78%, white 22%);
     border-radius: 8px;
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
@@ -63,46 +64,52 @@
 .sr-surah-body {
     flex: 1;
     min-width: 0;
-}
-
-.sr-surah-top {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 3px;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .sr-surah-name {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--text-primary);
+    line-height: 1.2;
+    color: color-mix(in srgb, var(--text-primary) 82%, var(--text-secondary) 18%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
 }
 
 .sr-surah-ar {
-    font-size: 17px;
+    display: block;
+    width: 100%;
+    font-size: 18px;
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    line-height: 1.3;
+    font-weight: 500;
+    text-align: left;
 }
 
 .sr-surah-meta {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--text-tertiary);
-}
-
-.sr-arrow {
-    width: 16px;
-    height: 16px;
-    color: var(--text-tertiary);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
     flex-shrink: 0;
-    opacity: 0;
-    transition: opacity 0.2s;
+    text-align: right;
 }
 
-.sr-surah:hover .sr-arrow {
-    opacity: 1;
+.sr-surah-ayah {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--text-secondary) 72%, var(--text-tertiary) 28%);
+    white-space: nowrap;
+}
+
+.sr-surah .surah-type-badge {
+    flex-shrink: 0;
 }
 
 /* Verse results */
@@ -282,6 +289,43 @@
 .sr-load-info {
     font-size: 12px;
     color: var(--text-tertiary);
+}
+
+@media (max-width: 720px) {
+    .sr-surah {
+        gap: 10px;
+        padding: 12px 10px;
+    }
+
+    .sr-surah-no {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+    }
+
+    .sr-surah-ar {
+        font-size: 15px;
+        line-height: 1.2;
+    }
+
+    .sr-surah-name {
+        font-size: 11px;
+        line-height: 1.15;
+    }
+
+    .sr-surah-meta {
+        gap: 6px;
+    }
+
+    .sr-surah-ayah {
+        font-size: 10px;
+    }
+
+    .sr-surah .surah-type-badge {
+        padding: 3px 6px;
+        font-size: 9px;
+        letter-spacing: 0.03em;
+    }
 }
 
 
