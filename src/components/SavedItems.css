@@ -81,6 +81,9 @@
     line-height: 1.3;
     font-weight: 500;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .rs-ios-name-tr {

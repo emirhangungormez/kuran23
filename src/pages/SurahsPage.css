@@ -160,6 +160,9 @@
     color: var(--text-primary);
     font-weight: 500;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .surahs-directory-name-tr {

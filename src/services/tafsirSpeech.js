@@ -542,16 +542,14 @@ export function getTafsirVoices(lang = 'tr') {
   if (!synthesis) return []
 
   const target = String(lang || 'tr').toLocaleLowerCase('tr-TR')
-  const filterByLang = (voice) => {
-    if (target.startsWith('ar')) {
-      return isArabicVoice(voice) && !isLikelyFemaleVoice(voice)
-    }
+  const voices = (synthesis.getVoices() || []).filter((voice) => (target.startsWith('ar') ? isArabicVoice(voice) : isTurkishVoice(voice)))
+  const preferred = voices.filter((voice) => (
+    !isLikelyFemaleVoice(voice)
+    && (target.startsWith('ar') || isLikelyMaleVoice(voice))
+  ))
+  const fallback = voices.filter((voice) => !isLikelyFemaleVoice(voice))
 
-    return isTurkishVoice(voice) && isLikelyMaleVoice(voice) && !isLikelyFemaleVoice(voice)
-  }
-
-  return (synthesis.getVoices() || [])
-    .filter(filterByLang)
+  return (preferred.length ? preferred : (fallback.length ? fallback : voices))
     .map((voice) => ({
       id: `${voice.name}__${voice.lang}`,
       name: voice.name,
@@ -585,10 +583,24 @@ export function resolveTafsirVoice(voiceName) {
       && !isLikelyFemaleVoice(voice)
     ))
     if (exactMatch) return exactMatch
+
+    const exactNonFemale = voices.find((voice) => (
+      normalizeVoiceName(voice.name) === normalizedTarget
+      && !isLikelyFemaleVoice(voice)
+    ))
+    if (exactNonFemale) return exactNonFemale
+
+    const exactAny = voices.find((voice) => normalizeVoiceName(voice.name) === normalizedTarget)
+    if (exactAny) return exactAny
   }
 
   const maleMatch = voices.find((voice) => isLikelyMaleVoice(voice) && !isLikelyFemaleVoice(voice))
   if (maleMatch) return maleMatch
+
+  const neutralMatch = voices.find((voice) => !isLikelyFemaleVoice(voice))
+  if (neutralMatch) return neutralMatch
+
+  if (voices.length) return voices[0]
 
   return null
 }
@@ -610,6 +622,15 @@ export function resolveTafsirVoiceByLanguage(lang, voiceName) {
       return isArabicTarget ? true : isLikelyMaleVoice(voice)
     })
     if (exact) return exact
+
+    const exactNonFemale = filtered.find((voice) => (
+      normalizeVoiceName(voice.name) === normalizedTargetName
+      && !isLikelyFemaleVoice(voice)
+    ))
+    if (exactNonFemale) return exactNonFemale
+
+    const exactAny = filtered.find((voice) => normalizeVoiceName(voice.name) === normalizedTargetName)
+    if (exactAny) return exactAny
   }
 
   const allowed = filtered.filter((voice) => (
@@ -634,6 +655,19 @@ export function resolveTafsirVoiceByLanguage(lang, voiceName) {
 
   if (allowed.length) {
     return allowed
+      .slice()
+      .sort((a, b) => scoreVoice(b) - scoreVoice(a))[0]
+  }
+
+  const nonFemale = filtered.filter((voice) => !isLikelyFemaleVoice(voice))
+  if (nonFemale.length) {
+    return nonFemale
+      .slice()
+      .sort((a, b) => scoreVoice(b) - scoreVoice(a))[0]
+  }
+
+  if (filtered.length) {
+    return filtered
       .slice()
       .sort((a, b) => scoreVoice(b) - scoreVoice(a))[0]
   }

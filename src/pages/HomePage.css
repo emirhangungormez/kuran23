@@ -1056,6 +1056,9 @@
     font-family: var(--arabic-font-family, 'Noto Naskh Arabic', serif);
     font-weight: 500;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .popular-name-tr {
